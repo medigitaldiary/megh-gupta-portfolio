@@ -99,10 +99,6 @@ export default function Home() {
                   I care about 0→1 builds, growth loops, and shipping internal
                   tools that compound team leverage.
                 </p>
-                <p className="font-medium text-fg">
-                  Currently interviewing for PM roles at VC-backed fintechs and
-                  AI-first startups.
-                </p>
               </div>
             </div>
           </div>
