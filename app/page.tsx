@@ -94,9 +94,16 @@ export default function Home() {
         <Contact />
       </main>
 
-      {/* TODO: real copy — add "· Source" back once the GitHub repo is public, per PRD §6.7 */}
       <footer className="px-6 py-8 text-center font-sans text-xs text-fg-subtle">
-        © 2026 Megh Gupta · Built with Claude Code
+        © 2026 Megh Gupta · Built with Claude Code ·{" "}
+        <a
+          href="https://github.com/medigitaldiary/megh-gupta-portfolio"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-4 transition-colors duration-150 ease-out hover:text-fg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-sm"
+        >
+          Source
+        </a>
       </footer>
     </>
   );
