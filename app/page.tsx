@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Contact } from "@/components/contact";
 import { Hero } from "@/components/hero";
 import { LabCard } from "@/components/lab-card";
@@ -65,28 +66,44 @@ export default function Home() {
         <section id="about" className="px-6 py-24 md:px-8 md:py-32">
           <div className="mx-auto max-w-5xl">
             <SectionHeader eyebrow="About" heading="A bit about me." />
-            {/* TODO: real copy — placeholder prose, structure is locked per PRD §6.5 */}
-            <div className="max-w-[36rem] space-y-4 text-lg leading-relaxed text-fg-muted">
-              <p>
-                I&apos;m Megh, a Product Manager working at the intersection of
-                fintech and AI tooling.
-              </p>
-              <p>
-                Right now I&apos;m Founding PM at BondScanner, building
-                India&apos;s bond market for retail investors.
-              </p>
-              <p>
-                Before that, I was Platform PM at Ultra, working on growth loops
-                and reinvestment.
-              </p>
-              <p>
-                I care about 0→1 builds, growth loops, and shipping internal
-                tools that compound team leverage.
-              </p>
-              <p className="font-medium text-fg">
-                Currently interviewing for PM roles at VC-backed fintechs and
-                AI-first startups.
-              </p>
+            <div className="flex flex-col items-start gap-8 md:flex-row md:gap-12">
+              <div className="relative h-[200px] w-[200px] shrink-0 md:h-[240px] md:w-[240px]">
+                <div
+                  aria-hidden="true"
+                  className="absolute left-3 top-3 h-full w-full rounded-2xl bg-accent md:left-4 md:top-4"
+                />
+                <Image
+                  src="/images/about/megh.jpg"
+                  alt="Megh Gupta"
+                  width={240}
+                  height={240}
+                  className="relative z-10 h-full w-full rounded-2xl object-cover"
+                />
+              </div>
+
+              {/* TODO: real copy — placeholder prose, structure is locked per PRD §6.5 */}
+              <div className="max-w-[36rem] space-y-4 text-lg leading-relaxed text-fg-muted">
+                <p>
+                  I&apos;m Megh, a Product Manager working at the intersection
+                  of fintech and AI tooling.
+                </p>
+                <p>
+                  Right now I&apos;m Founding PM at BondScanner, building
+                  India&apos;s bond market for retail investors.
+                </p>
+                <p>
+                  Before that, I was Platform PM at Ultra, working on growth
+                  loops and reinvestment.
+                </p>
+                <p>
+                  I care about 0→1 builds, growth loops, and shipping internal
+                  tools that compound team leverage.
+                </p>
+                <p className="font-medium text-fg">
+                  Currently interviewing for PM roles at VC-backed fintechs and
+                  AI-first startups.
+                </p>
+              </div>
             </div>
           </div>
         </section>
