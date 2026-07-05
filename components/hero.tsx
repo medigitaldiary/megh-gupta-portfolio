@@ -7,18 +7,20 @@ export function Hero() {
       className="flex min-h-[80vh] md:min-h-[85vh] items-center px-6 md:px-8 pt-32 md:pt-40"
     >
       <div className="mx-auto max-w-5xl">
+        <p className="mb-6 font-mono text-xs uppercase tracking-wider text-fg-subtle">
+          Megh Gupta · Product Manager
+        </p>
+
         <h1 className="font-serif text-[3rem] md:text-[4.5rem] leading-[1.05] text-fg">
-          I&apos;m Megh.
-          <br />I ship fintech products
-          <br />
-          and the AI tools that
-          <br />
-          run them.
+          I turn ideas into features,
+          <br className="hidden md:block" /> features into products,
+          <br className="hidden md:block" /> products into systems.
         </h1>
 
-        <p className="mt-6 max-w-[32rem] text-lg text-fg-muted">
-          Currently at BondScanner, building India&apos;s bond market for
-          retail.
+        <p className="mt-8 max-w-[32rem] text-lg leading-[1.6] text-fg-muted">
+          Currently at BondScanner, revamping support flows, building
+          Swiggy-style chatbots, and shipping growth systems in regulated
+          fintech.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-4">
