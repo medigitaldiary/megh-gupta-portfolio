@@ -67,24 +67,13 @@ export default function Home() {
           <div className="mx-auto max-w-5xl">
             <SectionHeader eyebrow="About" heading="A bit about me." />
             <div className="flex flex-col items-start gap-8 md:flex-row md:gap-12">
-              <div className="relative h-[200px] w-[200px] shrink-0 md:h-[240px] md:w-[240px]">
-                <div
-                  aria-hidden="true"
-                  className="absolute left-5 top-5 h-full w-full overflow-hidden rounded-2xl md:left-7 md:top-7"
-                >
-                  <Image
-                    src="/images/about/photo-backdrop.png"
-                    alt=""
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+              <div className="h-[200px] w-[200px] shrink-0 overflow-hidden rounded-2xl md:h-[240px] md:w-[240px]">
                 <Image
-                  src="/images/about/megh.jpg"
+                  src="/images/about/megh-on-green.png"
                   alt="Megh Gupta"
                   width={240}
                   height={240}
-                  className="relative z-10 h-full w-full rounded-2xl object-cover"
+                  className="h-full w-full object-cover"
                 />
               </div>
 
