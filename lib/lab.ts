@@ -6,7 +6,8 @@ export type LabCard = {
   externalUrl?: string;
 };
 
-// TODO: real copy — one-line descriptions and links to be filled in later.
+// TODO: real copy — job-search-os and interview-prep-system are still placeholder
+// (personal projects not covered by Megh_Gupta_PM_Case_Studies.docx).
 export const labCards: LabCard[] = [
   {
     slug: "job-search-os",
@@ -20,7 +21,7 @@ export const labCards: LabCard[] = [
     slug: "bond-dictionary",
     title: "Bond Dictionary",
     description:
-      "An Investopedia-style glossary hub for BondScanner, built to rank and to teach retail investors bond terms.",
+      "An Investopedia-style glossary hub for BondScanner — 200+ terms, each anchored to a high-intent keyword, built to rank and to teach retail investors bond terms.",
     stack: ["next.js", "programmatic-seo"],
     externalUrl: "#",
   },
@@ -28,14 +29,14 @@ export const labCards: LabCard[] = [
     slug: "compliance-content-tool",
     title: "Compliance Content Reviewer",
     description:
-      "An AI tool that flags non-compliant language in marketing copy before it ships.",
-    stack: ["claude-api", "python"],
+      "A no-code AI tool (Claude API) that checks draft content against SEBI/NSE/BSE guidelines, flags risky claims, and suggests compliant rewrites — powers the 350+ blog SEO engine.",
+    stack: ["claude-api"],
   },
   {
     slug: "call-analysis-pipeline",
     title: "Call Analysis Pipeline",
     description:
-      "Sarvam + Claude pipeline that transcribes and scores support calls automatically.",
+      "Sarvam speech-to-text + Claude scoring pipeline that grades BondScanner RM call quality and auto-extracts action items into Radar.",
     stack: ["sarvam", "claude-api"],
   },
   {
@@ -50,7 +51,7 @@ export const labCards: LabCard[] = [
     slug: "moengage-mcp-workflows",
     title: "MoEngage MCP Workflows",
     description:
-      "MCP-driven lifecycle ops — campaign QA and segment checks without leaving the terminal.",
+      "MCP-driven MoEngage workflows for AI-assisted campaign reporting, lifecycle execution, and cross-channel orchestration.",
     stack: ["mcp", "moengage"],
   },
 ];

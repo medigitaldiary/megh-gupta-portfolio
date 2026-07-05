@@ -11,44 +11,46 @@ export type WorkCard = {
   status: "live" | "soon";
 };
 
-// TODO: real copy — swap in details from Megh_Gupta_PM_Case_Studies.docx once prepared.
+// TODO: real link — copy is real (from Megh_Gupta_PM_Case_Studies.docx), but the
+// docx itself only has "[Insert link]" placeholders for every artifact, so
+// externalUrl stays "#" until real decks/PRDs/dashboards are ready to link.
 export const workCards: WorkCard[] = [
   {
     slug: "seo-engine",
-    title: "Growing organic traffic at BondScanner",
+    title: "How I 2x'd organic traffic at BondScanner in 3 months",
     tags: ["Growth", "SEO", "Fintech"],
     headlineMetric: "2x",
-    headlineMetricLabel: "organic traffic — placeholder",
+    headlineMetricLabel: "daily organic clicks in 3 months",
     description:
-      "Built a programmatic SEO engine spanning thousands of bond pages and shipped compliance-safe content at scale. Placeholder description — replace with real case study copy.",
+      'Built and ran BondScanner\'s product-led SEO engine — 350+ compliance-safe blogs, a 200+ term Bond Dictionary, and 26,000+ programmatic bond pages. Ranked #3 for "hedge funds in india" and captured ISIN-level search intent.',
     role: "Growth PM",
-    timeline: "2026",
+    timeline: "Jan 2026 – Q2 2026",
     externalUrl: "#",
     status: "live",
   },
   {
     slug: "ai-call-analysis",
-    title: "AI call analysis pipeline for support ops",
+    title: "AI call analysis pipeline for BondScanner's RM team",
     tags: ["AI Tooling", "Ops", "Fintech"],
-    headlineMetric: "10x",
-    headlineMetricLabel: "faster call review — placeholder",
+    headlineMetric: "5.2 → 6.0",
+    headlineMetricLabel: "call quality score in 30 days",
     description:
-      "Designed and shipped an AI pipeline that transcribes and scores customer calls automatically, cutting manual QA time. Placeholder description — replace with real case study copy.",
+      "Vibe-coded an end-to-end pipeline — Sarvam speech-to-text plus Claude scoring — to grade 8 hours of daily RM call recordings and auto-extract action items into Radar as tasks.",
     role: "PM",
-    timeline: "2026",
+    timeline: "Mar 2026 – present",
     externalUrl: "#",
     status: "live",
   },
   {
     slug: "ultra-reinvestment",
-    title: "Reinvestment growth loop at Ultra",
+    title: "Lifting payout-to-reinvestment from 55% to 70% at Ultra",
     tags: ["Growth", "Fintech", "Platform"],
-    headlineMetric: "1.5x",
-    headlineMetricLabel: "reinvestment rate — placeholder",
+    headlineMetric: "+15pp",
+    headlineMetricLabel: "retention lift in 30 days",
     description:
-      "Owned the reinvestment funnel end to end, from trigger design to in-app nudges. Placeholder description — replace with real case study copy.",
+      "Audited every screen across Ultra's investment flows, fixed hygiene gaps, then shipped lifecycle automations across push, email, and WhatsApp for users sitting on un-reinvested payouts.",
     role: "Platform PM",
-    timeline: "2025",
+    timeline: "Jun 2025 – Jul 2025",
     externalUrl: "#",
     status: "live",
   },
@@ -56,12 +58,12 @@ export const workCards: WorkCard[] = [
     slug: "bondscanner-launch",
     title: "Founding PM: BondScanner 0→1",
     tags: ["0→1", "Fintech", "Founding PM"],
-    headlineMetric: "0→1",
-    headlineMetricLabel: "launched the product — placeholder",
+    headlineMetric: "2 months",
+    headlineMetricLabel: "regulated platform, sign-up to launch",
     description:
-      "Founding PM on BondScanner — scoped the initial product and shipped v1 with a small team. Placeholder description — replace with real case study copy.",
+      "Founding PM on BondScanner's 0→1 build — owned the sign-up and onboarding funnel and the inbound support system, ran competitive benchmarking, and shipped the MVP across web and mobile to a hard regulatory deadline.",
     role: "Founding PM",
-    timeline: "2025 – present",
+    timeline: "Nov 2025 – present",
     externalUrl: "#",
     status: "live",
   },

@@ -3,7 +3,6 @@ import { Contact } from "@/components/contact";
 import { Hero } from "@/components/hero";
 import { LabCard } from "@/components/lab-card";
 import { Nav } from "@/components/nav";
-import { Trajectory } from "@/components/trajectory";
 import { WorkCard } from "@/components/work-card";
 import { labCards } from "@/lib/lab";
 import { workCards } from "@/lib/work";
@@ -31,7 +30,6 @@ export default function Home() {
       <Nav />
       <main id="main">
         <Hero />
-        <Trajectory />
 
         <section id="work" className="px-6 py-24 md:px-8 md:py-32">
           <div className="mx-auto max-w-5xl">
