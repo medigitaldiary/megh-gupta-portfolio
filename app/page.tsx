@@ -70,8 +70,15 @@ export default function Home() {
               <div className="relative h-[200px] w-[200px] shrink-0 md:h-[240px] md:w-[240px]">
                 <div
                   aria-hidden="true"
-                  className="absolute left-3 top-3 h-full w-full rounded-2xl bg-accent md:left-4 md:top-4"
-                />
+                  className="absolute left-5 top-5 h-full w-full overflow-hidden rounded-2xl md:left-7 md:top-7"
+                >
+                  <Image
+                    src="/images/about/photo-backdrop.png"
+                    alt=""
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 <Image
                   src="/images/about/megh.jpg"
                   alt="Megh Gupta"
