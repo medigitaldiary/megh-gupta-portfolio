@@ -1,10 +1,6 @@
 const CONTACT_EMAIL = "hi@meghgupta.com";
 
-// TODO: real link — swap in the actual LinkedIn profile URL.
-const LINKEDIN_URL = "https://www.linkedin.com/in/meghgupta/";
-
-// TODO: real link — drop the resume PDF at public/resume.pdf, or swap this
-// for a hosted URL (Notion, Read.cv, Dropbox).
+const LINKEDIN_URL = "https://www.linkedin.com/in/megh-gupta-917280200";
 const RESUME_URL = "/resume.pdf";
 
 export function ComingSoon() {
