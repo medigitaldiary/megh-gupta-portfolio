@@ -351,4 +351,56 @@ At the start of every session, before making any changes:
 
 If something here is wrong or out of date, edit this file in the same PR as the change that makes it wrong. CLAUDE.md is living documentation — stale docs are worse than no docs.
 
+---
+
+## 13. Branch strategy & deploys (locked)
+
+Two long-lived branches, mapped one-to-one to Vercel environments:
+
+| Branch | Vercel environment | What lives there | Serves |
+|---|---|---|---|
+| `main` | Production | The version the public sees. Today: coming-soon page. When portfolio is ready: full portfolio. | `www.meghgupta.in` (apex 308-redirects) |
+| `dev` | Preview | The real portfolio, actively built. Continuous integration playground. | Vercel preview URL (or `preview.meghgupta.in` if attached) |
+
+**Feature branches** (`mxg/<something>`) branch off `dev`, get their own throwaway preview URLs, and merge back into `dev`. Never directly into `main`.
+
+**Promotion to production = merge PR from `dev` → `main`.** That single merge is the "one-click ship." Vercel picks up the merge commit and atomically swaps `www.meghgupta.in` in ~60 seconds.
+
+### Rules
+
+- **Never push directly to `main`.** Merge-via-PR only. `main` has a branch protection rule enforcing this.
+- **Never push directly to `dev`.** Feature branches only, PR into `dev`.
+- **Never rewrite history on `main` or `dev`.** No `--force`, no `rebase -i`, no amending pushed commits on these branches.
+- **Do not open PRs from a feature branch straight to `main`** unless it's a hotfix Megh explicitly asked for. Default target is `dev`.
+- **Do not delete `dev`** even when it feels empty (e.g., right after a launch merge). It's a long-lived branch.
+
+### Common workflow (Megh's day-to-day)
+
+```
+# Start any new work
+git fetch origin
+git checkout -b mxg/<slug> origin/dev
+# ...work, commit, push...
+# Open PR → base: dev
+
+# Once in dev, verify on Vercel preview URL (or preview.meghgupta.in).
+# When happy, open PR: dev → main, merge. Production ships.
+```
+
+### Hotfixes (rare)
+
+If production is broken and dev has unshippable in-flight changes, branch a hotfix directly off `main`:
+
+```
+git fetch origin
+git checkout -b mxg/hotfix-<slug> origin/main
+# ...fix, commit, push...
+# Open PR → base: main. Merge. Then merge main back into dev to keep them in sync.
+```
+
+### Coming-soon vs. launched state
+
+- **While portfolio is under development:** `main` shows the coming-soon page (`components/coming-soon.tsx` rendered from `app/page.tsx`). Real portfolio lives on `dev`.
+- **On launch day:** merge `dev` → `main`. `main`'s `app/page.tsx` becomes the real portfolio. The coming-soon component stays in the repo (unused) so a future "we're rebuilding" moment can toggle it back with one file swap.
+
 End of file.

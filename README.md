@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# megh-gupta-portfolio
 
-## Getting Started
+Personal portfolio for **Megh Gupta** — Product Manager (fintech, growth, AI tooling).
 
-First, run the development server:
+Live at **[www.meghgupta.in](https://www.meghgupta.in)** (currently a coming-soon page while the full portfolio is under construction).
+
+## Stack
+
+Next.js 15 (App Router) · TypeScript · Tailwind CSS v4 · Biome · pnpm · Vercel.
+
+Locked technical decisions live in [`CLAUDE.md`](./CLAUDE.md). Product spec lives in [`PRD.md`](./PRD.md).
+
+## Branch strategy
+
+Two long-lived branches, mapped one-to-one to Vercel environments:
+
+| Branch | Deploys to | State |
+|---|---|---|
+| `main` | Production — `www.meghgupta.in` | Coming-soon page today, real portfolio after launch |
+| `dev` | Preview — Vercel preview URL | Active portfolio development |
+
+Feature branches (`mxg/<slug>`) branch off `dev`, get their own preview URL, and merge back into `dev`. Never directly into `main`.
+
+**Shipping to production = merge PR from `dev` → `main`.** One click.
+
+Full rules in `CLAUDE.md` §13.
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev          # http://localhost:3000
+pnpm build        # production build
+pnpm check        # Biome lint + format
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Node 20 LTS or newer.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`main` and `dev` both auto-deploy to Vercel. Any push to a feature branch also gets its own throwaway preview URL.
 
-## Learn More
+## Contact
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`hi@meghgupta.com`
