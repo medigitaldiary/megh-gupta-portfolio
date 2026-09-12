@@ -24,7 +24,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://meghgupta.in"),
+  metadataBase: new URL("https://www.meghgupta.in"),
   title: "Megh Gupta — Product Manager (Fintech, Growth, AI)",
   description:
     "PM building fintech products and the AI tools that run them. Currently at BondScanner. Previously Ultra.",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     title: "Megh Gupta — Product Manager (Fintech, Growth, AI)",
     description:
       "PM building fintech products and the AI tools that run them. Currently at BondScanner. Previously Ultra.",
-    url: "https://meghgupta.in",
+    url: "https://www.meghgupta.in",
     siteName: "Megh Gupta",
     type: "website",
   },
@@ -43,7 +43,7 @@ const personJsonLd = {
   "@type": "Person",
   name: "Megh Gupta",
   jobTitle: "Product Manager",
-  url: "https://meghgupta.in",
+  url: "https://www.meghgupta.in",
   sameAs: [] as string[], // TODO: real copy — add LinkedIn/Twitter/GitHub URLs once available
 };
 
