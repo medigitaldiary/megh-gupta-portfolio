@@ -1,5 +1,6 @@
-const CONTACT_EMAIL = "hi@meghgupta.com";
+import Image from "next/image";
 
+const CONTACT_EMAIL = "hi@meghgupta.com";
 const LINKEDIN_URL = "https://www.linkedin.com/in/megh-gupta-917280200";
 const RESUME_URL = "/resume.pdf";
 
@@ -7,30 +8,44 @@ export function ComingSoon() {
   return (
     <main
       id="main"
-      className="flex min-h-[100svh] flex-col items-start justify-between bg-bg px-6 py-16 md:px-12 md:py-20"
+      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-16 text-center md:px-8"
     >
-      <p className="font-mono text-xs uppercase tracking-wider text-fg-subtle">
-        Megh Gupta · Product Manager
-      </p>
+      <Image
+        src="/images/coming-soon/bg.jpg"
+        alt=""
+        aria-hidden="true"
+        fill
+        priority
+        sizes="100vw"
+        className="-z-20 object-cover object-center"
+      />
 
-      <div className="max-w-2xl">
-        <h1 className="font-serif text-[3rem] leading-[1.05] text-fg md:text-[4.5rem]">
-          Portfolio,
-          <br />
-          <span className="text-accent">soon.</span>
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-gradient-to-b from-bg/55 via-bg/40 to-bg/25"
+      />
+
+      <div className="flex max-w-2xl flex-col items-center">
+        <h1 className="font-serif text-[3.25rem] leading-[1.05] text-fg md:text-[5rem]">
+          Under Construction
         </h1>
-        <p className="mt-8 max-w-[32rem] text-lg leading-[1.6] text-fg-muted">
-          I&apos;m rebuilding this from scratch — fintech, growth, and the AI
-          tooling that runs behind both. In the meantime, here&apos;s the short
-          version.
+
+        <p className="mt-6 font-serif text-xl leading-[1.4] text-fg md:text-2xl">
+          Building a new home for my work &amp; ideas.
         </p>
 
-        <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+        <p className="mt-10 text-base leading-[1.7] text-fg md:text-lg">
+          I&apos;m Megh — Product Manager at BondScanner, building 0→1 fintech
+          and the AI tools that quietly run behind it. Previously platform PM
+          at Ultra.
+        </p>
+
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
           <a
             href={LINKEDIN_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-md bg-accent px-5 py-3 text-accent-fg transition-opacity duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            className="rounded-md bg-accent px-5 py-3 text-sm text-accent-fg transition-opacity duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
             LinkedIn →
           </a>
@@ -38,21 +53,22 @@ export function ComingSoon() {
             href={RESUME_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-md border border-border px-5 py-3 text-fg transition-colors duration-150 ease-out hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            className="rounded-md border border-fg/30 bg-bg/60 px-5 py-3 text-sm text-fg backdrop-blur-sm transition-colors duration-150 ease-out hover:border-fg hover:bg-bg/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
             Resume (PDF)
           </a>
-          <a
-            href={`mailto:${CONTACT_EMAIL}?subject=Hello%20from%20your%20site`}
-            className="text-fg-muted underline decoration-fg-subtle underline-offset-4 transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-sm"
-          >
-            {CONTACT_EMAIL}
-          </a>
         </div>
+
+        <a
+          href={`mailto:${CONTACT_EMAIL}?subject=Hello%20from%20your%20site`}
+          className="mt-8 text-sm text-fg-muted underline decoration-fg-subtle underline-offset-4 transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-sm"
+        >
+          {CONTACT_EMAIL}
+        </a>
       </div>
 
-      <p className="font-mono text-xs text-fg-subtle">
-        © 2026 · Built with Claude Code
+      <p className="absolute bottom-6 font-mono text-xs uppercase tracking-wider text-fg-subtle">
+        Megh Gupta · Product Manager
       </p>
     </main>
   );
