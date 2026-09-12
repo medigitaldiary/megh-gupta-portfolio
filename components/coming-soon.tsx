@@ -36,8 +36,8 @@ export function ComingSoon() {
 
         <p className="mt-10 text-base leading-[1.7] text-fg md:text-lg">
           I&apos;m Megh — Product Manager at BondScanner, building 0→1 fintech
-          and the AI tools that quietly run behind it. Previously platform PM
-          at Ultra.
+          and the AI tools that quietly run behind it. Previously platform PM at
+          Ultra.
         </p>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
