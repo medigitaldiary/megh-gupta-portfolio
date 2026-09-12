@@ -10,11 +10,26 @@ const RESUME_URL = "/resume.pdf";
 
 type Variant = "A" | "B" | "C";
 
+const LABELS: Record<Variant, { name: string; note: string }> = {
+  A: {
+    name: "Variant A · Live paper (WebGL)",
+    note: "Animated bent glass. Best-looking. Heavy on mobile.",
+  },
+  B: {
+    name: "Variant B · Static paper (no WebGL)",
+    note: "Same four certs, no animation. Fast on every device.",
+  },
+  C: {
+    name: "Variant C · Live on desktop, static on mobile",
+    note: "WebGL where the device can afford it, static elsewhere.",
+  },
+};
+
 /**
- * Coming-soon page with paper background, in three flavors:
- * - A: always WebGL
- * - B: WebGL on desktop, static canvas fallback on mobile/reduced-motion
- * - C: static fallback on load, upgrade to WebGL on first pointermove or after 2s
+ * Coming-soon with three visually distinct background strategies:
+ * - A: always WebGL. Heavy but the strongest first impression.
+ * - B: always the static canvas composition. No WebGL anywhere.
+ * - C: WebGL on desktop with hover + no reduced-motion; static otherwise.
  */
 export function ComingSoonWithPaper({ variant }: { variant: Variant }) {
   const [mode, setMode] = useState<"webgl" | "fallback">(() => {
@@ -23,35 +38,14 @@ export function ComingSoonWithPaper({ variant }: { variant: Variant }) {
   });
 
   useEffect(() => {
-    if (variant === "A") return;
-
+    if (variant !== "C") return;
     const reduce = window.matchMedia?.(
       "(prefers-reduced-motion: reduce)",
     ).matches;
     const capable = window.matchMedia?.(
       "(min-width: 768px) and (hover: hover)",
     ).matches;
-
-    if (variant === "B") {
-      if (capable && !reduce) setMode("webgl");
-      return;
-    }
-
-    // Variant C: fallback first, upgrade on interaction or timeout.
-    if (!capable || reduce) return;
-    let upgraded = false;
-    const upgrade = () => {
-      if (upgraded) return;
-      upgraded = true;
-      setMode("webgl");
-      window.removeEventListener("pointermove", upgrade);
-    };
-    window.addEventListener("pointermove", upgrade, { once: true });
-    const t = setTimeout(upgrade, 2000);
-    return () => {
-      clearTimeout(t);
-      window.removeEventListener("pointermove", upgrade);
-    };
+    if (capable && !reduce) setMode("webgl");
   }, [variant]);
 
   return (
@@ -59,11 +53,10 @@ export function ComingSoonWithPaper({ variant }: { variant: Variant }) {
       id="main"
       className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-bg px-6 py-16 text-center md:px-8"
     >
-      <div className="absolute inset-0 -z-20">
+      <div className="-z-20 absolute inset-0">
         {mode === "webgl" ? <ThreeDPaper background /> : <PaperFallback />}
       </div>
 
-      {/* Radial scrim keeps the middle readable without hiding the papers */}
       <div
         aria-hidden="true"
         className="-z-10 absolute inset-0"
@@ -73,16 +66,20 @@ export function ComingSoonWithPaper({ variant }: { variant: Variant }) {
         }}
       />
 
+      <div className="pointer-events-none absolute top-6 left-1/2 -translate-x-1/2 rounded-full border border-fg/20 bg-bg/70 px-4 py-1.5 font-mono text-fg-muted text-xs uppercase tracking-wider backdrop-blur-sm">
+        {LABELS[variant].name} · rendering: {mode}
+      </div>
+
       <div className="flex max-w-2xl flex-col items-center">
-        <h1 className="font-serif text-[3.25rem] leading-[1.05] text-fg md:text-[5rem]">
+        <h1 className="font-serif text-[3.25rem] text-fg leading-[1.05] md:text-[5rem]">
           Under Construction
         </h1>
 
-        <p className="mt-6 font-serif text-xl leading-[1.4] text-fg md:text-2xl">
+        <p className="mt-6 font-serif text-fg text-xl leading-[1.4] md:text-2xl">
           Building a new home for my work &amp; ideas.
         </p>
 
-        <p className="mt-10 text-base leading-[1.7] text-fg md:text-lg">
+        <p className="mt-10 text-base text-fg leading-[1.7] md:text-lg">
           I&apos;m Megh — Product Manager at BondScanner, building 0→1 fintech
           and the AI tools that quietly run behind it. Previously platform PM at
           Ultra.
@@ -93,7 +90,7 @@ export function ComingSoonWithPaper({ variant }: { variant: Variant }) {
             href={LINKEDIN_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-md bg-accent px-5 py-3 text-sm text-accent-fg transition-opacity duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            className="rounded-md bg-accent px-5 py-3 text-accent-fg text-sm transition-opacity duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
             LinkedIn →
           </a>
@@ -101,7 +98,7 @@ export function ComingSoonWithPaper({ variant }: { variant: Variant }) {
             href={RESUME_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-md border border-fg/30 bg-bg/60 px-5 py-3 text-sm text-fg backdrop-blur-sm transition-colors duration-150 ease-out hover:border-fg hover:bg-bg/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            className="rounded-md border border-fg/30 bg-bg/60 px-5 py-3 text-fg text-sm backdrop-blur-sm transition-colors duration-150 ease-out hover:border-fg hover:bg-bg/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
             Resume (PDF)
           </a>
@@ -113,10 +110,14 @@ export function ComingSoonWithPaper({ variant }: { variant: Variant }) {
         >
           {CONTACT_EMAIL}
         </a>
+
+        <p className="mt-6 max-w-md text-fg-subtle text-xs">
+          {LABELS[variant].note}
+        </p>
       </div>
 
       <p className="absolute bottom-6 font-mono text-fg-subtle text-xs uppercase tracking-wider">
-        Megh Gupta · Product Manager · Variant {variant}
+        Megh Gupta · Product Manager
       </p>
     </main>
   );

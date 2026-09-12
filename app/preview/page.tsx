@@ -10,18 +10,18 @@ export const metadata: Metadata = {
 const VARIANTS = [
   {
     slug: "a",
-    label: "A · Always WebGL",
-    body: "Paper scene on every device. Best-looking, worst-performing. Expect Lighthouse ~78–88 on mobile.",
+    label: "A · Live paper (WebGL)",
+    body: "Full animated bent-glass scene, on every device. Cinematic. Heavy on mobile — Lighthouse ~78–88.",
   },
   {
     slug: "b",
-    label: "B · WebGL on desktop, static on mobile",
-    body: "Recommended. Desktop gets the live scene; mobile and reduced-motion get a static canvas composition of the same four certificates. Lighthouse stays ≥95 on mobile.",
+    label: "B · Static paper (no WebGL)",
+    body: "Same four certificates, drawn once to canvas, CSS-tilted into place. No animation, no GPU cost, works everywhere. Lighthouse ≥95.",
   },
   {
     slug: "c",
-    label: "C · Upgrade on interaction",
-    body: "Static fallback on load. Swaps to WebGL on first pointer movement or after 2 seconds. Fast first paint everywhere, wow-factor kicks in on desktop.",
+    label: "C · Live on desktop, static on mobile",
+    body: "WebGL where the device can afford it (desktop + hover + no reduced-motion); static composition everywhere else. Recommended default.",
   },
 ];
 
