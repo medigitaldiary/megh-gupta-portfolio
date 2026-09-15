@@ -283,12 +283,103 @@ Grouped by priority. Everything below is either not built, placeholder, or expli
 ### 6.4 Explicitly deferred (do NOT build without asking)
 
 Per `CLAUDE.md` §6.3:
-- ❌ Contact form (mailto is enough).
 - ❌ Blog surface.
 - ❌ Dark mode.
 - ❌ CMS.
 - ❌ Search.
 - ❌ Framer Motion / heavy animation.
+
+> Note: the "no contact form" rule (previously here) is **superseded by §7.2 "Let's connect"** below — a contact form is now planned. `CLAUDE.md` §6.3 should be updated when that section ships.
+
+---
+
+## 7. Future sections (not built yet — spec here for when we do)
+
+These are approved additions to the eventual full portfolio, captured here so nothing gets lost between now and building them. Order in the page = order in this section.
+
+### 7.1 "My Work Stack" — the tools I use, and how
+
+**Placement:** after **Selected Work**, before **The Lab**. Reads as a bridge — "here's what I shipped, here's what I ship with."
+
+**Why it exists:** hiring PMs and founders want to know how someone actually works, not just what they've delivered. Listing the stack in a PM-native way ("Cursor for writing PRDs alongside code," not "expert in Cursor") signals fluency without needing a résumé. Also a differentiator vs. traditional PM portfolios that stop at case studies.
+
+**Content model — one entry per tool:**
+- `tool` — display name (e.g. "Claude Code", "Cursor", "Vercel", "GitHub", "Notion", "Figma", "Linear", "MoEngage", "Sarvam").
+- `category` — one of: `AI / LLM`, `Editor / IDE`, `Hosting / Infra`, `Version control`, `PM & docs`, `Design`, `Analytics`, `Messaging / lifecycle`.
+- `how_i_use_it` — 1–2 sentences, PM-voice, specific. "I write PRDs alongside code in Cursor so implementation questions surface at spec time, not review time." NOT: "productivity tool for developers."
+- `since` — optional, first year I used it (e.g. `2024`).
+- `link` — optional external URL.
+- `icon` — optional; if we do icons, use a monochrome set for consistency (e.g. `simple-icons`).
+
+**Layout:**
+- Grid of small cards, 3 cols desktop / 2 tablet / 1 mobile.
+- Each card: category label (mono eyebrow) → tool name (serif h3) → `how_i_use_it` prose → optional link arrow.
+- Group cards by `category` with a mono heading per group. Groups collapse to a single flat scroll on mobile.
+- Copy the visual grammar from The Lab section — don't invent a new card style.
+
+**Content format:** MDX file at `/content/stack/stack.mdx`, with entries as a typed frontmatter array; OR a plain TS array in `lib/stack.ts` if we want the same shape as `lib/lab.ts`. Decide when building — same rule as Lab.
+
+**Voice rules (per `CLAUDE.md` §10):**
+- Specific over vague — say what I do with it, not what it is.
+- No jargon like "leverage", "ecosystem", "productivity 10x".
+- If a tool is trendy but I barely use it, leave it out. This section is a self-portrait, not a keyword sponge.
+
+**Nice-to-haves (not in v1):**
+- Sortable by category or by "how often I use it".
+- A tiny recency badge ("using since 2024", "recently added").
+- Filter chip: `AI-first` / `hands-on-code` / `PM-only`.
+
+---
+
+### 7.2 "Let's connect" — reach-out section
+
+**Placement:** replaces the current mailto-only Contact section at the bottom of the homepage. Same slot, richer surface.
+
+**Why it exists:** a `mailto:` link opens a mail client, breaks the flow on mobile, and loses anyone whose default client isn't set up. An inline form keeps the reader on the page, captures intent while it's warm, and gives me a structured inbox instead of freeform emails.
+
+**Copy:**
+- **Section heading:** `Let's connect.`
+- **Description:** *(same as my current LinkedIn bio — TODO: paste exact copy here before build. Keep tone consistent with the rest of the site — first-person, contractions, no résumé voice.)*
+
+**Form fields (all required unless noted):**
+- `email` — email input, RFC-5322-ish validation, autofocus.
+- `subject` — single-line text, ~80 char cap. Placeholder: "What's this about?"
+- `message` — multi-line textarea, ~1500 char cap. Placeholder: "A sentence or two is fine."
+- `honeypot` — hidden field, must stay empty. Basic spam filter, no CAPTCHA.
+
+**Submit UX:**
+- Submit button: `Send →`, same visual grammar as the LinkedIn CTA on the coming-soon page.
+- Loading state: button label swaps to `Sending…`, disabled.
+- Success: inline confirmation replacing the form — "Got it. I'll reply from `hi@meghgupta.com` within a couple of days."
+- Failure: inline error under the button — "Something broke on my end. Try again, or email `megh.bpgc@gmail.com` directly." Never expose the underlying error to the user.
+
+**Delivery — pick one at build time:**
+1. **Email via Resend** (recommended default): server action posts to Resend API, delivers to my inbox. Simplest, no DB, works on Vercel's free tier. Costs ~$0/mo for this volume.
+2. **Store in Supabase + email digest**: server action inserts into a `contact_submissions` row, plus a daily/weekly Vercel cron email. Good if I want history + analytics on who's reaching out.
+3. **Forward to WhatsApp via a bot** (Twilio, WhatsApp Cloud API, or a simple webhook to Baileys/whatsapp-web.js): highest-signal for me, most infra to set up. Reserve for later if inbound volume grows.
+
+Default = option 1 unless volume changes. All three keep the same form UI — only the server action swaps.
+
+**Anti-abuse:**
+- Honeypot field (above).
+- Server-side rate limit: max 3 submissions per IP per hour (Vercel KV or a simple in-memory store).
+- Server-side email format check before hitting the delivery adapter.
+
+**Accessibility:**
+- Every field has an associated `<label>`, not just a placeholder.
+- Error messages announced via `aria-live="polite"`.
+- Full keyboard flow, focus ring on the submit button.
+
+**Environment / secrets:**
+- API key(s) in `.env.local` and Vercel project env vars, never committed.
+- Reference via `process.env.RESEND_API_KEY` etc.
+- Add `.env.example` when this ships so setup is self-serve.
+
+**Analytics:**
+- Track: form view, form submit-attempt, submit-success, submit-error. Vercel Analytics custom events — no PII, no field contents.
+
+**Deprecates:**
+- The current mailto link + `hi@meghgupta.com` on the coming-soon page. Both stay until this section ships (mailto is the fallback if the form 500s).
 
 ### 6.5 Quality gates before "done"
 
