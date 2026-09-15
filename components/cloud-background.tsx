@@ -66,7 +66,7 @@ function CloudSvg({ shadowFill }: { shadowFill: string }) {
   );
 }
 
-export function CloudBackground({ palette = "blue" }: { palette?: Palette }) {
+export function CloudBackground({ palette = "dawn" }: { palette?: Palette }) {
   const p = PALETTES[palette];
   return (
     <div aria-hidden="true" className="-z-20 absolute inset-0 overflow-hidden">
