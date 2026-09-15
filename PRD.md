@@ -381,6 +381,32 @@ Default = option 1 unless volume changes. All three keep the same form UI — on
 **Deprecates:**
 - The current mailto link + `hi@meghgupta.com` on the coming-soon page. Both stay until this section ships (mailto is the fallback if the form 500s).
 
+---
+
+### 7.3 "10-second intro" long-form copy (future replacement for the coming-soon paragraph)
+
+**Where:** replaces the current short intro paragraph on the coming-soon page (`components/coming-soon.tsx`).
+
+**Current live copy** (short, kept for now):
+> Hi, I'm Megh. I build 0→1 fintech, and the AI tools that quietly run behind it. Right now at BondScanner. Ultra before.
+
+**Future copy — the "10-second intro":**
+> Hi, I'm Megh. I'm a product manager at BondScanner, a SEBI-registered online bond platform, where I'm trying to make bond investing as simple as it should be. I'm a BITS Goa grad, over 1.5 yrs in fintech now, and lately I've been experimenting with voice AI and use cases around it.
+
+**Why it's parked:**
+- Adds concrete evidence (`SEBI-registered`, `BITS Goa`, `1.5 yrs`, `voice AI`) that lifts the paragraph from generic-PM to specific-person.
+- Not shipped yet because the current line is tighter and the coming-soon layout is still moving; will drop this in once the visual system stabilizes.
+
+**Voice checks before shipping (per `CLAUDE.md` §10):**
+- One 55-word sentence. Consider breaking into 2–3 shorter sentences to hit the ~15-word target.
+- "trying to make X as simple as it should be" — good voice; keep.
+- Consider whether "BITS Goa grad" reads too résumé-forward next to the personal opener.
+- The final clause ("experimenting with voice AI") is the strongest hook for the next section (Work Stack §7.1). Consider making it its own sentence.
+
+**Drop-in target:**
+- File: `components/coming-soon.tsx`
+- Element: the `<p>` immediately below the italic subtitle "Building a new home for my work & ideas."
+
 ### 6.5 Quality gates before "done"
 
 From `CLAUDE.md` §7 — verify each before shipping any substantial change:
