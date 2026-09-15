@@ -107,8 +107,11 @@ export function ComingSoon({ palette = "blue" }: { palette?: Palette }) {
           className="mt-10 max-w-xl text-base leading-[1.75] md:text-lg"
           style={{ color: t.body }}
         >
-          Hi, I&apos;m Megh. I build 0→1 fintech, and the AI tools that quietly
-          run behind it. Right now at BondScanner. Ultra before.
+          Hi, I&apos;m Megh. I&apos;m a product manager at BondScanner, a
+          SEBI-registered online bond platform, where I&apos;m trying to make
+          bond investing as simple as it should be. I&apos;m a BITS Goa grad,
+          over 1.5 yrs in fintech now, and lately I&apos;ve been experimenting
+          with voice AI and use cases around it.
         </p>
 
         <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
