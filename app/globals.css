@@ -68,7 +68,7 @@ section {
   animation-name: cs-cloud-drift;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
-  filter: drop-shadow(0 18px 30px rgba(60, 78, 110, 0.14));
+  filter: blur(9px) drop-shadow(0 18px 30px rgba(60, 78, 110, 0.14));
 }
 
 @keyframes cs-cloud-drift {
