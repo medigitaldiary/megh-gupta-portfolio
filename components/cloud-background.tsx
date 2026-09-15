@@ -11,13 +11,19 @@
  * Scoped inline; nothing here leaks into the rest of the site.
  */
 
+// Eight clouds across the vertical band. Durations vary slightly for
+// parallax; delays are chosen so at load time the phases are evenly
+// spaced (~1/8 of a cycle apart). Since each cloud is in the viewport
+// for ~65% of its own cycle, 5+ clouds are visible at any moment.
 const CLOUDS = [
-  { top: "8%", size: 520, opacity: 0.95, duration: 120, delay: -30 },
-  { top: "22%", size: 380, opacity: 0.85, duration: 165, delay: -95 },
-  { top: "38%", size: 640, opacity: 0.78, duration: 210, delay: -60 },
-  { top: "55%", size: 460, opacity: 0.9, duration: 140, delay: -110 },
-  { top: "70%", size: 560, opacity: 0.7, duration: 185, delay: -130 },
-  { top: "84%", size: 500, opacity: 0.62, duration: 240, delay: -170 },
+  { top: "5%", size: 380, opacity: 0.92, duration: 155, delay: -9 },
+  { top: "16%", size: 460, opacity: 0.82, duration: 170, delay: -32 },
+  { top: "28%", size: 340, opacity: 0.88, duration: 185, delay: -58 },
+  { top: "40%", size: 520, opacity: 0.75, duration: 150, delay: -66 },
+  { top: "52%", size: 400, opacity: 0.86, duration: 195, delay: -110 },
+  { top: "64%", size: 480, opacity: 0.72, duration: 160, delay: -110 },
+  { top: "76%", size: 380, opacity: 0.8, duration: 180, delay: -146 },
+  { top: "88%", size: 440, opacity: 0.68, duration: 165, delay: -155 },
 ] as const;
 
 type Palette = "dawn" | "blue";
@@ -60,7 +66,7 @@ function CloudSvg({ shadowFill }: { shadowFill: string }) {
   );
 }
 
-export function CloudBackground({ palette = "dawn" }: { palette?: Palette }) {
+export function CloudBackground({ palette = "blue" }: { palette?: Palette }) {
   const p = PALETTES[palette];
   return (
     <div aria-hidden="true" className="-z-20 absolute inset-0 overflow-hidden">

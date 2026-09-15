@@ -65,7 +65,7 @@ function LinkedInMark() {
   );
 }
 
-export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
+export function ComingSoon({ palette = "blue" }: { palette?: Palette }) {
   const t = TOKENS[palette];
   return (
     <main
