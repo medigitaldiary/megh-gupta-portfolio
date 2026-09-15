@@ -34,7 +34,7 @@ export function ComingSoon() {
           className="mb-6 font-mono text-[0.7rem] uppercase tracking-[0.28em]"
           style={{ color: "#6B7078" }}
         >
-          Megh · cloud
+          Product Manager · Fintech
         </p>
 
         <h1
@@ -99,13 +99,6 @@ export function ComingSoon() {
           {CONTACT_EMAIL}
         </a>
       </div>
-
-      <p
-        className="absolute bottom-6 font-mono text-[0.65rem] uppercase tracking-[0.32em]"
-        style={{ color: "#7A8089" }}
-      >
-        Megh Gupta · Product Manager
-      </p>
     </main>
   );
 }
