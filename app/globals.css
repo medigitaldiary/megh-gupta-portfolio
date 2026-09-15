@@ -58,3 +58,92 @@ body {
 section {
   scroll-margin-top: 80px;
 }
+
+/* Drifting cloud background — see components/cloud-background.tsx.
+   Each .cloud is a soft radial gradient, heavily blurred, drifting
+   left-to-right on its own timing so the sky never repeats. */
+.cloud {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.55) 35%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  filter: blur(40px);
+  will-change: transform;
+  animation-name: cloud-drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.cloud-1 {
+  top: 8%;
+  width: 55vw;
+  height: 22vh;
+  opacity: 0.85;
+  animation-duration: 90s;
+  animation-delay: -12s;
+}
+.cloud-2 {
+  top: 22%;
+  width: 40vw;
+  height: 18vh;
+  opacity: 0.7;
+  filter: blur(56px);
+  animation-duration: 130s;
+  animation-delay: -45s;
+}
+.cloud-3 {
+  top: 40%;
+  width: 65vw;
+  height: 26vh;
+  opacity: 0.6;
+  filter: blur(72px);
+  animation-duration: 170s;
+  animation-delay: -80s;
+}
+.cloud-4 {
+  top: 58%;
+  width: 45vw;
+  height: 20vh;
+  opacity: 0.75;
+  filter: blur(48px);
+  animation-duration: 110s;
+  animation-delay: -30s;
+}
+.cloud-5 {
+  top: 74%;
+  width: 60vw;
+  height: 24vh;
+  opacity: 0.55;
+  filter: blur(64px);
+  animation-duration: 150s;
+  animation-delay: -95s;
+}
+.cloud-6 {
+  top: 88%;
+  width: 50vw;
+  height: 20vh;
+  opacity: 0.5;
+  filter: blur(56px);
+  animation-duration: 200s;
+  animation-delay: -60s;
+}
+
+@keyframes cloud-drift {
+  from {
+    transform: translate3d(-60vw, 0, 0);
+  }
+  to {
+    transform: translate3d(120vw, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud {
+    animation: none;
+    transform: translate3d(20vw, 0, 0);
+  }
+}

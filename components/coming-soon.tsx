@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { CloudBackground } from "@/components/cloud-background";
 
 const CONTACT_EMAIL = "megh.bpgc@gmail.com";
 const LINKEDIN_URL = "https://www.linkedin.com/in/megh-gupta-917280200";
@@ -10,19 +10,11 @@ export function ComingSoon() {
       id="main"
       className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-16 text-center md:px-8"
     >
-      <Image
-        src="/images/coming-soon/bg.jpg"
-        alt=""
-        aria-hidden="true"
-        fill
-        priority
-        sizes="100vw"
-        className="-z-20 object-cover object-center"
-      />
+      <CloudBackground />
 
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-b from-bg/55 via-bg/40 to-bg/25"
+        className="-z-10 absolute inset-0 bg-gradient-to-b from-bg/25 via-bg/10 to-bg/30"
       />
 
       <div className="flex max-w-2xl flex-col items-center">
