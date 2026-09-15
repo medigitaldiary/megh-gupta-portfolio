@@ -1,22 +1,97 @@
 /**
- * Soft drifting-cloud background for the coming-soon page.
+ * Soft cumulus sky for the coming-soon page.
  *
- * Sky is a top-to-bottom gradient from a pale cool tone to the warm bg.
- * Clouds are radial-gradient "puffs" of near-white, heavily blurred, then
- * drifted across the viewport by CSS keyframes (see app/globals.css).
- * No JS runtime cost. Honors prefers-reduced-motion.
+ * Real cloud silhouettes (overlapping ellipses in an SVG) drifting
+ * left-to-right over a gradient sky. `palette` picks the color grammar:
+ * - "dawn" (default): sky-blue at top warming into gold at the horizon,
+ *   with a low warm sun-glow. The current live version.
+ * - "blue": pure blue-and-white, no warm tones anywhere. A cooler,
+ *   more editorial feel — for the experiment at /preview/sky.
+ *
+ * Scoped inline; nothing here leaks into the rest of the site.
  */
-export function CloudBackground() {
+
+// Eight clouds across the vertical band. Durations vary slightly for
+// parallax; delays are chosen so at load time the phases are evenly
+// spaced (~1/8 of a cycle apart). Since each cloud is in the viewport
+// for ~65% of its own cycle, 5+ clouds are visible at any moment.
+const CLOUDS = [
+  { top: "5%", size: 380, opacity: 0.92, duration: 155, delay: -9 },
+  { top: "16%", size: 460, opacity: 0.82, duration: 170, delay: -32 },
+  { top: "28%", size: 340, opacity: 0.88, duration: 185, delay: -58 },
+  { top: "40%", size: 520, opacity: 0.75, duration: 150, delay: -66 },
+  { top: "52%", size: 400, opacity: 0.86, duration: 195, delay: -110 },
+  { top: "64%", size: 480, opacity: 0.72, duration: 160, delay: -110 },
+  { top: "76%", size: 380, opacity: 0.8, duration: 180, delay: -146 },
+  { top: "88%", size: 440, opacity: 0.68, duration: 165, delay: -155 },
+] as const;
+
+type Palette = "dawn" | "blue";
+
+const PALETTES: Record<
+  Palette,
+  { sky: string; glow: string; shadowFill: string; highlight: string }
+> = {
+  dawn: {
+    sky: "linear-gradient(180deg,#B7CDE1 0%,#CCDAE7 28%,#E3DFCF 60%,#F1E6CE 88%,#F6ECD1 100%)",
+    glow: "radial-gradient(ellipse at center,rgba(255,239,200,0.85) 0%,rgba(255,232,187,0.35) 28%,transparent 60%)",
+    shadowFill: "#D5DBE3",
+    highlight: "#FFFFFF",
+  },
+  blue: {
+    sky: "linear-gradient(180deg,#5E8BB7 0%,#7EA6CE 22%,#A9C5DE 48%,#D2E1EE 78%,#EDF3F8 100%)",
+    glow: "radial-gradient(ellipse at center,rgba(255,255,255,0.75) 0%,rgba(255,255,255,0.25) 32%,transparent 62%)",
+    shadowFill: "#B3C3D3",
+    highlight: "#FFFFFF",
+  },
+};
+
+function CloudSvg({ shadowFill }: { shadowFill: string }) {
+  return (
+    <svg
+      viewBox="0 0 300 140"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMid meet"
+      className="h-auto w-full"
+      aria-hidden="true"
+      role="presentation"
+    >
+      <ellipse cx="150" cy="108" rx="112" ry="22" fill={shadowFill} />
+      <ellipse cx="70" cy="92" rx="42" ry="36" fill="#FFFFFF" />
+      <ellipse cx="130" cy="64" rx="62" ry="52" fill="#FFFFFF" />
+      <ellipse cx="205" cy="72" rx="54" ry="46" fill="#FFFFFF" />
+      <ellipse cx="248" cy="92" rx="36" ry="32" fill="#FFFFFF" />
+      <ellipse cx="140" cy="45" rx="55" ry="14" fill="#FFFFFF" opacity="0.7" />
+    </svg>
+  );
+}
+
+export function CloudBackground({ palette = "blue" }: { palette?: Palette }) {
+  const p = PALETTES[palette];
   return (
     <div aria-hidden="true" className="-z-20 absolute inset-0 overflow-hidden">
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,#A9C4DC_0%,#C9DAE7_28%,#E4E7DE_62%,#F1EAD6_92%,#F5EBD6_100%)]" />
-      <div className="absolute inset-x-0 top-[8%] mx-auto h-[45vh] w-[45vh] rounded-full bg-[radial-gradient(circle_at_center,rgba(255,244,214,0.9)_0%,rgba(255,235,196,0.35)_35%,transparent_65%)] blur-2xl" />
-      <div className="cloud cloud-1" />
-      <div className="cloud cloud-2" />
-      <div className="cloud cloud-3" />
-      <div className="cloud cloud-4" />
-      <div className="cloud cloud-5" />
-      <div className="cloud cloud-6" />
+      <div className="absolute inset-0" style={{ background: p.sky }} />
+      <div
+        className="absolute inset-x-0 top-[55%] mx-auto h-[70vh] w-[85vw] max-w-4xl rounded-full blur-2xl"
+        style={{ background: p.glow }}
+      />
+
+      {CLOUDS.map((c, i) => (
+        <div
+          // biome-ignore lint/suspicious/noArrayIndexKey: static config
+          key={i}
+          className="cs-cloud absolute"
+          style={{
+            top: c.top,
+            width: `${c.size}px`,
+            opacity: c.opacity,
+            animationDuration: `${c.duration}s`,
+            animationDelay: `${c.delay}s`,
+          }}
+        >
+          <CloudSvg shadowFill={p.shadowFill} />
+        </div>
+      ))}
     </div>
   );
 }
