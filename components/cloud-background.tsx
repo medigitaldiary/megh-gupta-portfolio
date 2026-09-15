@@ -9,7 +9,8 @@
 export function CloudBackground() {
   return (
     <div aria-hidden="true" className="-z-20 absolute inset-0 overflow-hidden">
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#E7EDF0_0%,#F1F2EF_45%,#FAFAF7_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,#A9C4DC_0%,#C9DAE7_28%,#E4E7DE_62%,#F1EAD6_92%,#F5EBD6_100%)]" />
+      <div className="absolute inset-x-0 top-[8%] mx-auto h-[45vh] w-[45vh] rounded-full bg-[radial-gradient(circle_at_center,rgba(255,244,214,0.9)_0%,rgba(255,235,196,0.35)_35%,transparent_65%)] blur-2xl" />
       <div className="cloud cloud-1" />
       <div className="cloud cloud-2" />
       <div className="cloud cloud-3" />
