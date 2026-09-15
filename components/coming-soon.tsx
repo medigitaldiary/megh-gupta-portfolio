@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-const CONTACT_EMAIL = "hi@meghgupta.com";
+const CONTACT_EMAIL = "megh.bpgc@gmail.com";
 const LINKEDIN_URL = "https://www.linkedin.com/in/megh-gupta-917280200";
 const RESUME_URL = "/resume.pdf";
 
@@ -35,9 +35,8 @@ export function ComingSoon() {
         </p>
 
         <p className="mt-10 text-base leading-[1.7] text-fg md:text-lg">
-          I&apos;m Megh — Product Manager at BondScanner, building 0→1 fintech
-          and the AI tools that quietly run behind it. Previously platform PM at
-          Ultra.
+          Hi, I&apos;m Megh. I build 0→1 fintech, and the AI tools that quietly
+          run behind it. Right now at BondScanner. Ultra before.
         </p>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
