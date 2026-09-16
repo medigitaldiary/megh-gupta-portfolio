@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 72" width="32" height="32" role="img" aria-label="Megh — cloud">
+  <!-- Soft cumulus silhouette — matches the coming-soon page's cloud shapes -->
+  <g>
+    <ellipse cx="50" cy="58" rx="38" ry="9" fill="#8AAECC"/>
+    <circle cx="28" cy="42" r="18" fill="#C6DDEE"/>
+    <circle cx="52" cy="28" r="22" fill="#C6DDEE"/>
+    <circle cx="74" cy="38" r="17" fill="#C6DDEE"/>
+    <ellipse cx="50" cy="52" rx="34" ry="12" fill="#C6DDEE"/>
+    <!-- Highlight along the top for depth -->
+    <ellipse cx="48" cy="18" rx="18" ry="4" fill="#FFFFFF" opacity="0.55"/>
+  </g>
+</svg>
