@@ -26,7 +26,7 @@ const CLOUDS = [
   { top: "88%", size: 440, opacity: 0.68, duration: 165, delay: -155 },
 ] as const;
 
-type Palette = "dawn" | "blue";
+type Palette = "dawn" | "blue" | "ods";
 
 const PALETTES: Record<
   Palette,
@@ -42,6 +42,13 @@ const PALETTES: Record<
     sky: "linear-gradient(180deg,#5E8BB7 0%,#7EA6CE 22%,#A9C5DE 48%,#D2E1EE 78%,#EDF3F8 100%)",
     glow: "radial-gradient(ellipse at center,rgba(255,255,255,0.75) 0%,rgba(255,255,255,0.25) 32%,transparent 62%)",
     shadowFill: "#B3C3D3",
+    highlight: "#FFFFFF",
+  },
+  // ownCloud palette: brand navy at the top, steel-blue mid, near-white bottom.
+  ods: {
+    sky: "linear-gradient(180deg,#041E42 0%,#22385A 22%,#4A76AC 48%,#B4C7DF 78%,#EEF3F9 100%)",
+    glow: "radial-gradient(ellipse at center,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0.18) 32%,transparent 60%)",
+    shadowFill: "#A4B4CC",
     highlight: "#FFFFFF",
   },
 };

@@ -1,10 +1,11 @@
 import { CloudBackground } from "@/components/cloud-background";
+import { CopyEmailButton } from "@/components/copy-email-button";
 
 const CONTACT_EMAIL = "megh.bpgc@gmail.com";
 const LINKEDIN_URL = "https://www.linkedin.com/in/megh-gupta-917280200";
 const RESUME_URL = "/resume.pdf";
 
-type Palette = "dawn" | "blue";
+type Palette = "dawn" | "blue" | "ods";
 
 const TOKENS: Record<
   Palette,
@@ -47,6 +48,21 @@ const TOKENS: Record<
     ctaBorder: "rgba(15,34,55,0.4)",
     ctaGhostBg: "rgba(255,255,255,0.5)",
     veil: "radial-gradient(ellipse 55% 45% at 50% 55%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 55%, transparent 80%)",
+  },
+  // Derived from the ownCloud Design System v14 tokens (src/tokens/ods/color.yaml).
+  // brand.default rgb(4,30,66), primary.default rgb(74,118,172), success.muted rgb(83,150,10).
+  ods: {
+    headline: "#041E42", // brand.default
+    subtitle: "#22385A",
+    body: "#22385A",
+    eyebrow: "#4A76AC", // primary.default
+    muted: "#4A76AC",
+    ctaBg: "#041E42", // brand.default — dark navy pill
+    ctaFg: "#FFFFFF",
+    ctaShadow: "0 8px 28px rgba(4,30,66,0.32)",
+    ctaBorder: "rgba(4,30,66,0.35)",
+    ctaGhostBg: "rgba(255,255,255,0.6)",
+    veil: "radial-gradient(ellipse 55% 45% at 50% 55%, rgba(240,245,252,0.55) 0%, rgba(240,245,252,0.15) 55%, transparent 80%)",
   },
 };
 
@@ -141,16 +157,14 @@ export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
           </a>
         </div>
 
-        <a
-          href={`mailto:${CONTACT_EMAIL}?subject=Hello%20from%20your%20site`}
-          className="mt-10 rounded-sm text-sm underline underline-offset-4 transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        <CopyEmailButton
+          email={CONTACT_EMAIL}
+          className="mt-10 inline-flex cursor-pointer items-center gap-2 rounded-sm bg-transparent text-sm underline underline-offset-4 transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           style={{
             color: t.muted,
             textDecorationColor: `${t.muted}59`,
           }}
-        >
-          {CONTACT_EMAIL}
-        </a>
+        />
       </div>
     </main>
   );
