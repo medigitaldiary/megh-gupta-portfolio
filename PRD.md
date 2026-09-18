@@ -407,6 +407,76 @@ Default = option 1 unless volume changes. All three keep the same form UI — on
 - File: `components/coming-soon.tsx`
 - Element: the `<p>` immediately below the italic subtitle "Building a new home for my work & ideas."
 
+---
+
+### 7.4 Fold-by-fold storyboard for the full portfolio launch
+
+Applies **only** to the full portfolio, not the coming-soon page. The rules that lock this in live in `CLAUDE.md §14`. This section is the *content* of the storyboard: what each fold says, shows, and hooks into next.
+
+**The whole homepage reads as one scroll story, not a stack of tiles.** Every fold has a job, answers one specific question, and hands the reader off to the next fold with a hook. Write this list before you write components.
+
+#### Fold 1 · Hero (the hook, 3-second grab)
+
+- **Job:** get a recruiter or hiring PM to stop skimming.
+- **Question answered:** "Who is this and why should I keep scrolling?"
+- **Contents:** name, one-line role/identity, a single primary CTA (the strongest link — LinkedIn or "See work"), a subtle secondary (resume or scroll cue).
+- **Voice:** the 10-second intro from §7.3.
+- **Lead-out hook:** the sentence should end with a fragment that plants the next fold ("… lately I've been building X" → Fold 2 shows X).
+
+#### Fold 2 · Selected Work (the proof)
+
+- **Job:** replace vague adjectives with named numbers.
+- **Question answered:** "What have they actually shipped, with numbers?"
+- **Contents:** 3–4 case study cards (per `lib/work.ts`), each with a headline metric visible without hover. Cards link to `/work/[slug]` when case study pages exist; before that, link to Notion / deck / Loom.
+- **Voice:** past tense, verbs first, numbers early. "Grew organic clicks 2×." Not "Responsible for growth."
+- **Lead-out hook:** last card gently implies "there's more" — either "See all case studies →" or a bridge line into Fold 3.
+
+#### Fold 3 · The Lab (the range)
+
+- **Job:** show the reader Megh builds beyond the day job — signals initiative and taste.
+- **Question answered:** "Do they build outside their day job? Do I like what they build?"
+- **Contents:** side projects grid (per `lib/lab.ts`), smaller cards than Work, each with 1–2 sentence description and a mono stack tag row.
+- **Voice:** present tense where projects are live, past for wrapped. Playful is allowed here (only here).
+- **Lead-out hook:** implies "and here's how I actually work" → Fold 4.
+
+#### Fold 4 · My Work Stack (the craft)
+
+- **Job:** show fluency with the tools that make him productive — a PM-native answer to "what's your stack."
+- **Question answered:** "How do they actually work day-to-day?"
+- **Contents:** full spec in §7.1.
+- **Voice:** specific per-tool one-liners ("Cursor for PRDs alongside code so implementation Qs surface at spec time"). Not adjective lists.
+- **Lead-out hook:** by now they've seen work, side work, and tooling; the natural next question is "who is this person?" → Fold 5.
+
+#### Fold 5 · About (the person)
+
+- **Job:** turn the résumé signal into a person the reader would want to work with.
+- **Question answered:** "Would I want to spend 40 hours a week with them?"
+- **Contents:** portrait (250 px square, off-white bg), 3–4 short paragraphs on background, why-fintech, what he's curious about, one lightly personal line.
+- **Voice:** warm, still specific. "I got into fintech because…" not "passionate about finance."
+- **Lead-out hook:** ends on "here's how to reach me" → Fold 6.
+
+#### Fold 6 · Let's connect (the action)
+
+- **Job:** convert intent into a message that reaches Megh.
+- **Question answered:** "Okay, how do I reach out?"
+- **Contents:** full spec in §7.2.
+- **Voice:** LinkedIn-bio-derived heading, direct CTA, no filler.
+- **Lead-out hook:** none — this is the terminal fold. A minimal footer (© year, mono initials) can sit below it but should not compete for attention.
+
+---
+
+**Anti-patterns for the launch (do not add without asking):**
+
+- A testimonials fold without real, attributed quotes.
+- A newsletter signup between Work and About.
+- A "logos I've worked with" strip that duplicates Fold 2.
+- A stats-tile row ("years of experience," "products shipped") — that's résumé, not story.
+- Any fold that exists because "the page felt short."
+
+**Pre-launch storyboard review:**
+
+Before merging the launch PR, write the storyboard as six bullets in the PR body — headline + job + hook. If any bullet feels weak, cut or redesign the fold before shipping. It's cheaper here than in front of a recruiter.
+
 ### 6.5 Quality gates before "done"
 
 From `CLAUDE.md` §7 — verify each before shipping any substantial change:
