@@ -23,28 +23,122 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+const SITE_URL = "https://www.meghgupta.in";
+const TITLE = "Megh Gupta | Product Manager";
+const DESCRIPTION =
+  "Megh Gupta is a product manager at BondScanner, a SEBI-registered online bond platform. BITS Goa grad, 1.5 years in fintech, experimenting with voice AI.";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.meghgupta.in"),
-  title: "Megh Gupta — Product Manager (Fintech, Growth, AI)",
-  description:
-    "PM building fintech products and the AI tools that run them. Currently at BondScanner. Previously Ultra.",
-  openGraph: {
-    title: "Megh Gupta — Product Manager (Fintech, Growth, AI)",
-    description:
-      "PM building fintech products and the AI tools that run them. Currently at BondScanner. Previously Ultra.",
-    url: "https://www.meghgupta.in",
-    siteName: "Megh Gupta",
-    type: "website",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: TITLE,
+    template: "%s | Megh Gupta",
   },
+  description: DESCRIPTION,
+  applicationName: "Megh Gupta",
+  authors: [{ name: "Megh Gupta", url: SITE_URL }],
+  creator: "Megh Gupta",
+  publisher: "Megh Gupta",
+  keywords: [
+    "Megh Gupta",
+    "Product Manager",
+    "BondScanner",
+    "SEBI",
+    "Fintech India",
+    "BITS Goa",
+    "Voice AI",
+  ],
+  robots: {
+    index: true,
+    follow: true,
+    "max-image-preview": "large",
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
+  openGraph: {
+    type: "profile",
+    url: SITE_URL,
+    siteName: "Megh Gupta",
+    title: TITLE,
+    description: DESCRIPTION,
+    locale: "en_IN",
+    firstName: "Megh",
+    lastName: "Gupta",
+    username: "meghgupta",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Megh Gupta — Product Manager, BondScanner",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ["/opengraph-image"],
+  },
+  category: "personal",
 };
 
-const personJsonLd = {
+// JSON-LD graph — Person + WebSite + ProfilePage. Rendered inline in <head>
+// so crawlers see it on first byte without waiting for JS.
+const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "Person",
-  name: "Megh Gupta",
-  jobTitle: "Product Manager",
-  url: "https://www.meghgupta.in",
-  sameAs: [] as string[], // TODO: real copy — add LinkedIn/Twitter/GitHub URLs once available
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": `${SITE_URL}/#person`,
+      name: "Megh Gupta",
+      alternateName: "meghgupta",
+      url: `${SITE_URL}/`,
+      jobTitle: "Product Manager",
+      description: DESCRIPTION,
+      worksFor: {
+        "@type": "Organization",
+        name: "BondScanner",
+        url: "https://www.bondscanner.com/",
+      },
+      alumniOf: {
+        "@type": "CollegeOrUniversity",
+        name: "BITS Pilani, K.K. Birla Goa Campus",
+      },
+      homeLocation: {
+        "@type": "Place",
+        name: "India",
+      },
+      email: "mailto:megh.bpgc@gmail.com",
+      sameAs: ["https://www.linkedin.com/in/megh-gupta-917280200"],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: `${SITE_URL}/`,
+      name: "Megh Gupta",
+      publisher: { "@id": `${SITE_URL}/#person` },
+      inLanguage: "en",
+    },
+    {
+      "@type": "ProfilePage",
+      "@id": `${SITE_URL}/#webpage`,
+      url: `${SITE_URL}/`,
+      name: TITLE,
+      description: DESCRIPTION,
+      mainEntity: { "@id": `${SITE_URL}/#person` },
+      isPartOf: { "@id": `${SITE_URL}/#website` },
+      inLanguage: "en",
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -55,10 +149,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <meta name="theme-color" content="#FAFAF7" />
         <script
           type="application/ld+json"
           // biome-ignore lint/security/noDangerouslySetInnerHtml: static, non-user-controlled JSON-LD
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body
