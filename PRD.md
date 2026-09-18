@@ -453,6 +453,39 @@ Default = option 1 unless volume changes. All three keep the same form UI — on
 **Deprecates:**
 - The current mailto link + `hi@meghgupta.com` on the coming-soon page. Both stay until this section ships (mailto is the fallback if the form 500s).
 
+**Anchor & CTA target:**
+- The section's `<section>` has `id="connect"`. The hero's single `Let's connect →` CTA smooth-scrolls to it (`document.getElementById('connect')?.scrollIntoView({ behavior: 'smooth' })` — or CSS-native scroll-behavior on `html`).
+- If nav ever exists, its final item points to `#connect`.
+
+---
+
+### 7.2a Third-party embed options (short-list for the connect surface)
+
+If a custom Resend + server action feels like more surface area than the connect fold needs, the alternative is embedding a hosted form / booking widget. Below are the candidates, ordered by how well their default UI fits an editorial personal portfolio. Not a recommendation yet — the pick depends on whether the goal is *messages* or *meetings*.
+
+| Option | Category | Free tier | UI fit for editorial portfolio | Notes |
+|---|---|---|---|---|
+| **Tally** ([tally.so](https://tally.so)) | Form | Generous (unlimited forms, ~50 submissions/month free-ish) | ★★★★★ — clean, minimal, notion-adjacent | The current default answer for personal-site forms. Embeds via iframe or a hosted subpage. Supports Notion / Airtable webhooks. Very easy to make it look native. |
+| **Fillout** ([fillout.com](https://fillout.com)) | Form | Yes (limited submissions) | ★★★★☆ — modern, clean, slightly denser than Tally | Newer Tally competitor. Stronger conditional-logic and multi-step flows; overkill for a contact form but no worse looking. |
+| **Cal.com** ([cal.com](https://cal.com)) | Booking | Yes | ★★★★★ — clean brutalist, matches editorial | Different mental model: instead of "send a message" it says "book 20 min." Higher signal per submission — a recruiter putting time on your calendar is a strong intent — but excludes async messages. Can embed inline or as a popover. Consider pairing with a small mailto/copy fallback. |
+| **Youform** ([youform.com](https://youform.com)) | Form | Yes | ★★★★☆ — minimal, monochrome by default | Newer entrant. Aggressively simple. Fewer integrations than Tally, but the default styling is closer to editorial. |
+| **Formspark** / **Basin** / **Formspree** | Backend only | Yes (limits vary) | You style the form yourself | These are backends, not UIs. You still author the HTML / React form; they handle submission + spam + email delivery. Good middle ground: keeps your styling, avoids Resend setup. |
+| **Typeform** ([typeform.com](https://typeform.com)) | Form | Very limited (10 responses/mo on free) | ★★★☆☆ — polished but conversational-marketing vibe | Feels like a landing-page tool. On a personal portfolio it can read as over-produced. Skip unless you want the conversational one-question-at-a-time flow. |
+| **HubSpot Forms** | Form | Yes | ★★☆☆☆ — corporate CRM aesthetic | Ships CRM tracking baggage. Wrong tool for a personal site. |
+| **Google Forms** | Form | Yes | ★☆☆☆☆ — Google's default styling | Works, ugly, no brand control. Skip. |
+| **Airtable Forms** | Form | Yes | ★★☆☆☆ — utilitarian | Right if you want submissions in an Airtable base for follow-up tracking; wrong if you care how the form looks embedded. |
+| **NotionForms** ([notionforms.io](https://notionforms.io)) | Form → Notion | Yes | ★★★☆☆ — decent, some ads on free | Third-party wrapper that pipes submissions into a Notion database. Convenient if your inbox is already in Notion. Free tier has visible branding. |
+
+**PM-shortlist recommendations:**
+
+1. **Cal.com if the goal is meetings.** A "book 20 min" button beats a form on intent-per-click for recruiters, hiring PMs, and founders. Higher signal, less inbox management. Pair with a small mailto/copy-email fallback for async.
+2. **Tally if the goal is messages.** Free tier is enough for a personal-site volume forever, the default UI matches editorial vibes with almost no theming, iframe embed is one line, and switching backends later (Notion, Airtable, Zapier → email) is a settings change, not a rewrite.
+3. **Resend + custom server action (the original PRD §7.2 plan) if you want to own the pixels.** More setup, more maintenance, but zero third-party UI dependency and full control.
+
+**Rule of thumb:** for a section that will exist for the life of the site, hosted forms are a two-line ship; a custom form is a two-day ship plus ongoing spam / delivery ops. The savings compound. The one thing hosted forms cost you is total control over the visual — worth checking whether the embed still reads as "your site" or as "someone else's widget."
+
+**Next step (decision needed from Megh):** message-shaped surface or meeting-shaped surface? That determines whether the pick is Tally / Fillout / Youform (form) or Cal.com (booking). I'll wire up whichever direction you name, in whichever chrome (embedded iframe vs. hosted subdomain vs. server action) fits.
+
 ---
 
 ### 7.3 "10-second intro" long-form copy (future replacement for the coming-soon paragraph)
@@ -491,7 +524,7 @@ Applies **only** to the full portfolio, not the coming-soon page. The rules that
 
 - **Job:** get a recruiter or hiring PM to stop skimming.
 - **Question answered:** "Who is this and why should I keep scrolling?"
-- **Contents:** name, one-line role/identity, a single primary CTA (the strongest link — LinkedIn or "See work"), a subtle secondary (resume or scroll cue).
+- **Contents:** name, one-line role/identity, and **exactly one primary CTA** labeled `Let's connect →` that smooth-scrolls to the Let's-connect fold (id `#connect`). No secondary CTA, no separate LinkedIn / Resume buttons. LinkedIn and Resume live inside the connect section, not the hero — the hero pulls the reader down the page rather than shipping them off it.
 - **Voice:** the 10-second intro from §7.3.
 - **Lead-out hook:** the sentence should end with a fragment that plants the next fold ("… lately I've been building X" → Fold 2 shows X).
 

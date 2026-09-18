@@ -158,16 +158,21 @@ export default function SkeletonPage() {
           >
             [10-second intro paragraph — PRD §7.3]
           </div>
-          <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
-            <div style={{ ...grayBlock("44px"), flex: "0 0 160px" }}>
-              [CTA · LinkedIn]
-            </div>
-            <div style={{ ...grayBlock("44px"), flex: "0 0 160px" }}>
-              [CTA · Resume]
+          <div style={{ marginTop: "20px" }}>
+            <div
+              style={{
+                ...grayBlock("48px"),
+                flex: "0 0 200px",
+                maxWidth: "220px",
+              }}
+            >
+              [CTA · Let&apos;s connect → scrolls to #connect]
             </div>
           </div>
-          <div style={{ marginTop: "20px", ...placeholder }}>
-            ↓ scroll cue &quot;experience below&quot;
+          <div style={{ marginTop: "16px", ...placeholder, fontSize: "11px" }}>
+            One CTA only. LinkedIn + Resume live inside the Let&apos;s connect
+            fold, not here — the hero pulls the reader down the page, not off
+            it.
           </div>
         </div>
       </section>
