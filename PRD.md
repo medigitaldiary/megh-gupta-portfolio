@@ -663,7 +663,12 @@ Cards on `/writing` show a dark thumbnail per entry. To avoid asking Megh to aut
 
 **Placement:** homepage fold immediately after the Hero, before Selected Work. Reads as: *who I am → where I've been → what I shipped there.* Not a résumé block — a scannable trajectory that expands on demand.
 
-**Reference:** `docs/references/experience/01-list-view.webp`. Copy the visual grammar directly: lowercase headings, mono uppercase eyebrow, timeline gutter with company logo tiles down the left edge, dates in mono type on the right, tap-to-expand cards.
+**References (three screenshots checked into `docs/references/experience/`):**
+- `03-timeline-pills.webp` — the **default** view. Horizontal timeline with a year axis, company pill cards positioned at their era, current role highlighted in warm cream, a dashed "now" marker, "drag sideways" hint underneath.
+- `01-list-view.webp` — the **alternate** view. LinkedIn-style vertical stack with logo tiles down the left, dates on the right, tap-to-expand cards.
+- `02-hero-with-era-timeline.webp` — inspirational reference for how a horizontal timeline can carry narrative weight; kept for future About-fold ideas, not the direct pattern for this section.
+
+**Both views render the same `lib/experience.ts` data.** The toggle in the top-right (`list / timeline`) swaps presentation only. Default state on load is **timeline** — it's more compact vertically, which matters because Experience is Fold 2 and can't eat too much of the reader's scroll budget.
 
 **Why it exists:** recruiters and hiring PMs form a first-pass "is this senior enough / relevant enough" judgment inside 15 seconds. A tight experience list, above Work, front-loads that context and lets them decide whether to keep scrolling into the case studies. Without it, they scroll into Work with no anchor for what environment those numbers came from.
 
@@ -686,6 +691,45 @@ type ExperienceEntry = {
   order?: number;                // optional override; default is reverse-chronological by `start`
 };
 ```
+
+**View toggle (top-right of the section):**
+- Pill container in `--bg-elevated` with two segments: `list` and `timeline`. Active segment = filled dark pill (`--fg`) with cream text; inactive = transparent with `--fg-muted` text.
+- Follows the reference exactly, including the handwritten "try this" arrow the first time a visitor hits the section (drop the doodle after 30 days per client-side flag if we ship it at all — v1 can skip the doodle).
+- Toggle state persists in `localStorage` under `mxg.experience.view` so a returning visitor lands on their preferred view.
+- Keyboard: `role="tablist"`, each segment a `<button role="tab">`, `aria-selected` toggles, arrow keys move between them.
+- Both views render the same data structure below the toggle. Swapping is a client component (`components/experience/section.tsx` with `"use client"` at the top).
+
+---
+
+#### Timeline view (default)
+
+Reference: `docs/references/experience/03-timeline-pills.webp`.
+
+**Layout:**
+- Horizontal band across the section's `max-w-5xl` container.
+- **Year axis** along the bottom: mono numbers (`2020` … `2027`, `--fg-subtle`) evenly spaced. Extends 1 year past the earliest role and ~6 months past `now` for headroom.
+- **Duration band** behind the pills: a soft warm-cream translucent strip (`rgba(246,236,209,0.55)` on dawn palette) spanning from the earliest role's start to the current role's start. Signals "this is the active career span" as one continuous ribbon.
+- **Pill cards** positioned by start-date on the axis, each ~360×72px. Contents: 44×44 logo tile (top-left of the pill), company name in sans-semibold 16–17px on line 1, role in sans-regular 13–14px `--fg-muted` on line 2. Wide enough for one company name; overflow with `…` on narrow columns (`wint we…` in the reference).
+- **Current role pill** gets the warm-cream fill (`rgba(246,236,209,0.9)`), making it pop against the other neutral-white pills.
+- **"now" marker**: dashed vertical rule at today's date, `--accent`-tinted, with a small handwritten-style "now" label above it. (Handwritten style = 400-weight italic serif — no new font).
+- **Overlap handling**: when two roles overlap in time (rare — internships during college etc.), stack pills vertically at the same x-position. The godaddy pill floats below the arre-bro pill in the reference; use that pattern.
+- **Bottom hint**: small italic serif line `drag sideways, the last N years are in here` where N is computed from the data (`currentYear - firstEntryYear`).
+
+**Interaction:**
+- **Desktop scroll**: horizontal scroll on the timeline container. Two-finger touchpad, mouse wheel (shift+wheel for wheel mice), or click-and-drag to pan.
+- **Click a pill**: expands a detail panel *below* the timeline (not inline in the row) with the same tagline + bullets used in the list view's expanded state. Only one pill's detail visible at a time. Clicking the same pill again collapses; clicking a different pill swaps the detail.
+- **Keyboard**: Tab focuses each pill in chronological order; Enter/Space opens its detail panel; Left/Right arrow keys pan the timeline by ~1 year of x-scroll.
+- **Mobile**: native horizontal touch scroll; tap a pill for its detail panel.
+- **Reduced motion**: no smooth-scroll animation, no drag inertia, detail panel appears without a height animation.
+- **Focus scroll**: when a pill receives keyboard focus off-screen, smooth-scroll it into view (native `scrollIntoView({ block: 'nearest', inline: 'center' })`).
+
+**Screen-reader path**: the timeline is decorative for AT. Under the `<div role="tablist">` toggle, both views live inside `<div role="tabpanel">` regions with the same accessible content — screen readers can jump to the list view via the tablist without a lost trail.
+
+---
+
+#### List view (alternate)
+
+Reference: `docs/references/experience/01-list-view.webp`.
 
 **Layout — collapsed row (default state):**
 - Left column: 44×44 rounded logo tile with a hairline border. A small green dot in the top-right corner if `current`.
@@ -753,21 +797,23 @@ Draft entries ship with `TODO:` placeholders per `CLAUDE.md §6.1` conventions. 
 - **No "responsibilities included" language.** Every bullet is something you *shipped*, *grew*, *scoped*, *ran*. Present the outcome, not the job description.
 - **No filler roles.** A 2-month contract that didn't ship anything meaningful stays off. Better to have three entries with real bullets than seven with fluff.
 - **No unverified logos.** Use official brand assets or ask before creating a stand-in.
-- **Do not build the `list` / `timeline` toggle** shown in the reference (top-right pill) in v1. It's a good future feature but the list view alone is fine for a portfolio with 3–6 entries. Add the toggle only if the entry count grows past 6 or Megh explicitly asks.
+- **Do not skip the view toggle in v1.** Both views ship together — timeline default, list as the alternate — and the toggle in the top-right is the primary control. Skipping either view means recruiters on assistive tech or narrow mobile viewports lose the accessible path.
 
 **Storage decision:** TS array in `lib/experience.ts`. Matches `lib/lab.ts` shape. Not MDX because entries are structured and short; no long-form body earns its way in here. If a role warrants a longer story, that's a `/writing/mini-case` entry (§7.6) linked from the experience bullets, not an expanded experience row.
 
 **Analytics events** (per `CLAUDE.md §6.3`, custom Vercel Analytics — no PII):
-- `experience_row_expand` (property: slug)
-- `experience_row_collapse` (property: slug)
+- `experience_view_toggle` (property: `to` = `list | timeline`) — which view the visitor lands in.
+- `experience_pill_open` (property: slug) — click on a timeline pill.
+- `experience_row_expand` / `experience_row_collapse` (property: slug) — list-view expands.
 
-Track how many recruiters actually engage — early signal on whether the section earns its fold.
+Track view distribution over time — if 95% of visitors stay in the default view, we can consider dropping the toggle in a future PR.
 
 **Launch order:**
 1. Author entries in `lib/experience.ts` from Megh's real history before wiring the fold. Empty rows or `TODO` stubs cannot ship on production.
-2. Ship the collapsed-only version first (no expand animation) — proves layout at 375 / 768 / 1440.
-3. Add the expand behavior + `prefers-reduced-motion` handling in a follow-up commit.
-4. Wire analytics events in the same commit as the expand behavior.
+2. Ship the **list view first** (layout is simpler, gets the data model + expand behavior proven). Toggle is present but the timeline segment is a placeholder.
+3. Ship the timeline view in a follow-up: layout + horizontal scroll + click-to-open-detail-panel.
+4. Add drag-to-pan and keyboard pan in a third commit — these are the trickiest interactions and the section works without them.
+5. Wire all analytics events in the same commit as the timeline ships.
 
 **Visual reference (locked layout pattern):**
 
