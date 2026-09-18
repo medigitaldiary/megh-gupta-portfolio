@@ -568,8 +568,8 @@ title: "Ten minutes as a Blinkit delivery partner"
 slug: "blinkit-ten-minutes"
 date: "2026-03-04"                 # first-published, YYYY-MM-DD
 updated: "2026-03-11"              # optional, when meaningful
-kind: "learning"                   # note | learning | thought | idea | case-study-mini | product-review | feature-review
-tags: ["quick-commerce", "field-notes", "operations"]
+kind: "field-note"                 # see Kind vocabulary below — one required label
+tags: ["quick-commerce", "operations"]  # freeform, cross-cutting
 excerpt: "Signed up as a rider, ran three deliveries, wrote it up. Here's what I couldn't have seen from a dashboard."
 reading_time: "4 min"              # optional; can auto-compute
 featured: false                     # true = shows on homepage Writing fold
@@ -578,6 +578,37 @@ published: true                     # false to draft
 canonical: null                    # set to the original URL if cross-posted from Substack/LinkedIn
 ---
 ```
+
+**Kind vocabulary (locked — six kinds, curated to Megh's profile):**
+
+Kind is a single required label, chosen from this fixed set. Tags stay open-ended for topics; kind names what *shape of thought* the entry is. Card thumbnails and filter chips key off this field, so keep it stable.
+
+| Kind (slug) | Display label | What it is | Voice register |
+|---|---|---|---|
+| `field-note` | Field Note | A quick observation from the day-to-day — a Slack thread that changed a decision, a stand-up realization, something spotted in a product used at work. | Short, present-tense, specific to a moment. |
+| `learning` | Learning | Retrospective on a shipped decision, a launch that worked or didn't, a mistake and what it cost. | First person, honest attribution, ends with what you'd do differently. |
+| `take` | Take | An opinion or hot-take on a product, market, or craft debate (fintech regulation, PM interview format, a category shift). | Direct, position first, argument after. State the take in the first sentence. |
+| `idea` | Idea | "I would build X because Y." Half-formed product concepts, feature wishlists for tools you use, market gaps. | Speculative but concrete — name the audience, the shape, and why it doesn't exist yet. |
+| `mini-case` | Mini Case | A smaller-scope story than a full `/work/[slug]` — a sub-feature, an experiment, a growth loop that didn't warrant a case study but taught something. | Same structure as a case study but compressed: context → decision → outcome, in ~500-700 words. |
+| `teardown` | Teardown | A product or single feature analyzed as if we shipped it — why now, what it costs, what it competes with, what would you have done differently. | Analytical, screenshot-driven, opinionated but sourced. Combines the earlier "product review" + "feature review" kinds. |
+
+New kinds need an explicit ask + a card thumbnail glyph (below) + an update to `lib/writing.ts`. Don't drift the vocabulary silently.
+
+**Procedural thumbnails (locked — no hand-authored images):**
+
+Cards on `/writing` show a dark thumbnail per entry. To avoid asking Megh to author illustrations for every new note, thumbnails are generated deterministically at build time from the entry's `kind` + `slug`. Rendered as inline SVG (no PNG assets, no `next/og` route).
+
+- **Frame:** `aspect-ratio: 3 / 2`, rounded corners matching the card, background `#0E1622` (deeper charcoal than the site's `--fg`), 1px inner border in `rgba(245,235,212,0.08)`.
+- **Glyph (center, single stroke, cream `#F5EBD4`, ~2px):** determined by `kind`.
+  - `field-note` → map pin outline.
+  - `learning` → circular arrow (retry).
+  - `take` → typographic quotation mark, oversized.
+  - `idea` → simple lightbulb outline.
+  - `mini-case` → 3×2 grid of unequal squares (one filled).
+  - `teardown` → four small squares in a row, one dashed and marked with an ✕.
+- **Background pattern (subtle, `rgba(245,235,212,0.05)`):** picked from `hash(slug) % 4` — dot grid, hairline horizontal rules, hairline vertical rules, or blank. Zero per-entry authoring.
+- **No text, no per-entry color variance.** Consistency across the grid > individual expression. If a specific entry ever needs custom art, that's a `hero_image` override on the entry (deferred; add only when the first entry actually needs it).
+- **Implementation target:** `components/writing/thumbnail.tsx` — pure SVG, server component, ~40 lines. `getGlyph(kind)` and `getPattern(slug)` as pure functions in `lib/writing.ts`.
 
 **Homepage fold (§7.6a in the storyboard):**
 - Job: show that Megh reflects on the work, not just executes it.
