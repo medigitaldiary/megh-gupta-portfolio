@@ -657,6 +657,118 @@ Cards on `/writing` show a dark thumbnail per entry. To avoid asking Megh to aut
 2. Ship `/writing/[slug]` first (per-entry pages, MDX + JSON-LD), then `/writing` index, then the homepage fold.
 3. RSS in a separate PR after the section is proven.
 
+---
+
+### 7.7 "Experience" — where I have worked
+
+**Placement:** homepage fold immediately after the Hero, before Selected Work. Reads as: *who I am → where I've been → what I shipped there.* Not a résumé block — a scannable trajectory that expands on demand.
+
+**Reference:** `docs/references/experience/01-list-view.webp`. Copy the visual grammar directly: lowercase headings, mono uppercase eyebrow, timeline gutter with company logo tiles down the left edge, dates in mono type on the right, tap-to-expand cards.
+
+**Why it exists:** recruiters and hiring PMs form a first-pass "is this senior enough / relevant enough" judgment inside 15 seconds. A tight experience list, above Work, front-loads that context and lets them decide whether to keep scrolling into the case studies. Without it, they scroll into Work with no anchor for what environment those numbers came from.
+
+**Fold job:** trajectory. Question answered: *"Where has this person been?"* Lead-out hook: the current role plants a promise ("here's what I've built at BondScanner") that the next fold (Selected Work) pays off with case studies from that role.
+
+**Content model (`lib/experience.ts`, TS array — no MDX):**
+
+```ts
+type ExperienceEntry = {
+  slug: string;                  // "bondscanner", "ultra", etc.
+  company: string;               // display name, lowercase per reference ("wint wealth")
+  role: string;                  // job title, lowercase ("senior product designer")
+  logo: string;                  // "/images/experience/bondscanner.svg"
+  start: string;                 // "2025-01" (YYYY-MM)
+  end: string | "present";       // "2024-12" or "present"
+  tagline: string;               // one-line what the company does
+  bullets: string[];             // 2–4 short strings, action + evidence per bullet
+  current?: boolean;             // true = green dot indicator, defaults from end === "present"
+  nda?: boolean;                 // true adds "recent work under NDA" affordance in the expand
+  order?: number;                // optional override; default is reverse-chronological by `start`
+};
+```
+
+**Layout — collapsed row (default state):**
+- Left column: 44×44 rounded logo tile with a hairline border. A small green dot in the top-right corner if `current`.
+- Middle: company name (sans, semibold, 18–20px, lowercase) on line 1; role (sans, regular, 14–15px, `--fg-muted`) on line 2.
+- Right column: date range in mono type, `--fg-muted`, right-aligned (`sep 2025 to present`, `jun 2023 to sep 2025`, single-year entries render as `2022`).
+- A single chevron `>` (rotating to `v` when expanded) at the far right hints the expand affordance.
+- Timeline gutter: vertical hairline between the logo tiles, connecting every entry so it reads as one continuous history.
+
+**Layout — expanded row (on click / Enter / Space):**
+- Reveals a tagline line first: one sentence italicized in `--fg-muted` describing the company ("making fixed income investing feel simple and trustworthy.").
+- Then 2–4 bullets, each prefixed with a small warm accent asterisk `*` in the site's accent color, matching the reference. Bullet copy is one line where possible, wraps to two max.
+- No embedded images or logos beyond the row's own tile — this is a fast-read block, not a case study.
+- 220ms ease-out expand, respects `prefers-reduced-motion` (jumps instantly, no height animation).
+
+**Interaction:**
+- Whole row is a `<button>` (semantic — not a `<div onClick>`), `aria-expanded` toggles, `aria-controls` points at the expand region.
+- Keyboard: `Enter` and `Space` toggle; `Tab` moves to next row.
+- Only one row expanded at a time on mobile (accordion-style) to keep the fold's height bounded. Desktop allows multiple.
+- No routing changes — expand is inline, URL doesn't change. If we ever want deep-linking (`/#experience/bondscanner`), add later.
+
+**Voice rules (per `CLAUDE.md §10`):**
+- All company names and role titles in lowercase. It's an editorial choice from the reference and holds across the section.
+- Tagline says what the *company* does in one line. Not what you did — that's the bullets.
+- Bullets are verb-first, numbers-forward. "shipped X → Y," "grew AUM ₹50Cr in 6 months." Not "responsible for" or "helped with."
+- NDA cases: one bullet acknowledging it directly. Reference language: *"recent work is under NDA, happy to walk through it on a call."*
+- Present tense only for current role. Past tense for prior roles, even if the company still exists.
+
+**Seed entries (draft — Megh to confirm and refine):**
+
+```ts
+[
+  {
+    slug: "bondscanner",
+    company: "bondscanner",
+    role: "product manager",
+    logo: "/images/experience/bondscanner.svg",
+    start: "2025-01", end: "present", current: true,
+    tagline: "sebi-registered online bond platform making bond investing simple for retail investors.",
+    bullets: [
+      "TODO: shipped X flow that did Y (headline metric).",
+      "TODO: growth loop / SEO engine / AI-review-tool bullet.",
+      "TODO: one more concrete shipped thing with numbers.",
+    ],
+  },
+  {
+    slug: "ultra",
+    company: "ultra",
+    role: "platform product manager",
+    logo: "/images/experience/ultra.svg",
+    start: "TODO", end: "TODO",
+    tagline: "TODO: one-line what ultra does / did.",
+    bullets: [
+      "TODO: reinvestment loop bullet with numbers.",
+      "TODO: one more shipped thing.",
+    ],
+  },
+  // Add earlier roles (internships, freelance if meaningful) in the same shape.
+]
+```
+
+Draft entries ship with `TODO:` placeholders per `CLAUDE.md §6.1` conventions. Fill from Megh's resume, LinkedIn, or offer letters — never invent titles or dates.
+
+**Anti-patterns:**
+- **No stat tile row.** ("2.5 years in PM," "3 companies") The reader can compute it from the dates. Adding a tile makes the section read as résumé instead of story.
+- **No "responsibilities included" language.** Every bullet is something you *shipped*, *grew*, *scoped*, *ran*. Present the outcome, not the job description.
+- **No filler roles.** A 2-month contract that didn't ship anything meaningful stays off. Better to have three entries with real bullets than seven with fluff.
+- **No unverified logos.** Use official brand assets or ask before creating a stand-in.
+- **Do not build the `list` / `timeline` toggle** shown in the reference (top-right pill) in v1. It's a good future feature but the list view alone is fine for a portfolio with 3–6 entries. Add the toggle only if the entry count grows past 6 or Megh explicitly asks.
+
+**Storage decision:** TS array in `lib/experience.ts`. Matches `lib/lab.ts` shape. Not MDX because entries are structured and short; no long-form body earns its way in here. If a role warrants a longer story, that's a `/writing/mini-case` entry (§7.6) linked from the experience bullets, not an expanded experience row.
+
+**Analytics events** (per `CLAUDE.md §6.3`, custom Vercel Analytics — no PII):
+- `experience_row_expand` (property: slug)
+- `experience_row_collapse` (property: slug)
+
+Track how many recruiters actually engage — early signal on whether the section earns its fold.
+
+**Launch order:**
+1. Author entries in `lib/experience.ts` from Megh's real history before wiring the fold. Empty rows or `TODO` stubs cannot ship on production.
+2. Ship the collapsed-only version first (no expand animation) — proves layout at 375 / 768 / 1440.
+3. Add the expand behavior + `prefers-reduced-motion` handling in a follow-up commit.
+4. Wire analytics events in the same commit as the expand behavior.
+
 **Visual reference (locked layout pattern):**
 
 Reference screenshots checked into `docs/references/writing/`. Follow this layout language when building — don't invent a new one.
