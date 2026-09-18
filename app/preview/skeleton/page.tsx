@@ -309,7 +309,7 @@ export default function SkeletonPage() {
           name="The Lab"
           job="Range"
           question="Do they build outside their day job?"
-          docRef="CLAUDE.md §4"
+          docRef="PRD §7.8"
         />
         <div style={box}>
           <div style={placeholder}>[MONO EYEBROW · &quot;THE LAB&quot;]</div>
@@ -326,25 +326,78 @@ export default function SkeletonPage() {
               marginTop: "24px",
             }}
           >
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} style={{ ...box, background: "#f8fafc" }}>
-                <div style={{ ...grayBlock("30px"), fontSize: "12px" }}>
-                  [LAB PROJECT NAME]
+            {[
+              { kind: "SKILL FILE" },
+              { kind: "PERSONAL TOOL" },
+              { kind: "GITHUB" },
+              { kind: "SKILL FILE" },
+              { kind: "PERSONAL TOOL" },
+              { kind: "GITHUB" },
+            ].map((c, i) => (
+              <div
+                // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton
+                key={i}
+                style={{ ...box, background: "#f8fafc", position: "relative" }}
+              >
+                <div
+                  style={{
+                    ...placeholder,
+                    fontSize: "10px",
+                    letterSpacing: "0.14em",
+                    position: "absolute",
+                    top: "10px",
+                    right: "12px",
+                  }}
+                >
+                  {c.kind}
                 </div>
                 <div
                   style={{
-                    ...grayBlock("60px"),
+                    ...grayBlock("30px"),
+                    fontSize: "12px",
+                    marginTop: "18px",
+                  }}
+                >
+                  [BUILD TITLE]
+                </div>
+                <div
+                  style={{
+                    ...grayBlock("48px"),
                     marginTop: "8px",
                     fontSize: "11px",
                   }}
                 >
-                  [1-2 sentence description]
+                  [1-2 sentence description, verb-first]
                 </div>
-                <div style={{ marginTop: "8px", ...placeholder }}>
-                  [MONO STACK TAGS]
+                <div
+                  style={{
+                    marginTop: "10px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    ...placeholder,
+                    fontSize: "10px",
+                  }}
+                >
+                  <span>[STACK · mono chips]</span>
+                  <span>↗</span>
                 </div>
               </div>
             ))}
+          </div>
+          <div
+            style={{
+              marginTop: "16px",
+              display: "flex",
+              justifyContent: "flex-end",
+              ...placeholder,
+            }}
+          >
+            [all builds → /lab]
+          </div>
+          <div style={{ marginTop: "12px", ...placeholder, fontSize: "11px" }}>
+            Three kinds locked: skill-file, personal-tool, github-project. Kind
+            badge in the top-right of each card. Full spec in PRD §7.8.
           </div>
         </div>
       </section>

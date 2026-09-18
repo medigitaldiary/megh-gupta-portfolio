@@ -946,6 +946,87 @@ Reference screenshots checked into `docs/references/writing/`. Follow this layou
 
 Any of the above can be relaxed later; if we do, note the deviation in the PR that ships it, and update this section in the same PR.
 
+---
+
+### 7.8 "The Lab" — three kinds of builds
+
+**Placement:** Fold 4 on the homepage per `CLAUDE.md §14`. Job: range. Question: *"Do they build outside their day job?"*
+
+**What lives here (locked to three kinds):**
+
+| Kind (slug) | Display label | What it is | Signal it sends |
+|---|---|---|---|
+| `skill-file` | Skill File | A `.md` instruction file authored for an AI agent (Claude Code, Cursor, custom agents) — a repeatable playbook a model executes on demand. | "I write for agents, not just humans." Compounds: reused every time the file fires. |
+| `personal-tool` | Personal Tool | A self-built utility that solves a real problem in your day — CLI, web app, Chrome extension, script, workflow. Must run for someone other than yourself. | "I build to solve my own problems." Direct evidence of taste and follow-through. |
+| `github-project` | GitHub Project | A public GitHub repo — open-source library, boilerplate, demo, or contribution. Must be public and functional. | "I build in public." Anyone can read the code. |
+
+No other kinds. If a build doesn't fit one of these three, either reshape it or leave it out. Locked vocabulary keeps the fold coherent — same rule as Writing (`§7.6`).
+
+**Content model — `lib/lab.ts` (extends the current shape):**
+
+```ts
+type LabEntry = {
+  slug: string;                                        // "job-search-os"
+  title: string;                                       // display title, sentence case
+  kind: "skill-file" | "personal-tool" | "github-project";
+  description: string;                                 // 1–2 sentences, verb-first
+  stack: string[];                                     // mono tags: ["claude-code", "supabase"]
+  url: string;                                         // outbound link (GitHub file, repo, or live URL)
+  featured?: boolean;                                  // true = homepage fold (else /lab index only)
+  order?: number;                                      // sort within featured group
+  published?: boolean;                                 // default true; false hides
+};
+```
+
+Migration from the current `LabCard` shape: add `kind` (required) to every existing entry; rename `externalUrl` → `url` and make it required (a Lab entry without a link is just a claim); everything else stays. `job-search-os` → `personal-tool`, `bond-dictionary` → `personal-tool`, `compliance-content-tool` → `skill-file` or `personal-tool` (Megh's call), `call-analysis-pipeline` → `personal-tool`, `interview-prep-system` → `skill-file`, `moengage-mcp-workflows` → `skill-file`.
+
+**Layout — homepage fold:**
+- Mono uppercase eyebrow (`THE LAB`), serif headline (Megh writes it — reference in the current `app/page.tsx` is *"Things I built when a tool didn't exist or moved too slow."* Keep or replace).
+- Grid: 3 cols desktop / 2 tablet / 1 mobile.
+- Show 6 featured entries max on the homepage fold. If more than 6 are `featured: true`, show 6 by `order` and drop the rest to `/lab`.
+- Each card:
+  - **Kind badge** in the top-right corner: mono, uppercase, small (~10–11px), `--fg-muted`. `SKILL FILE`, `PERSONAL TOOL`, `GITHUB`.
+  - **Title** (sans-semibold, ~18–20px, one line).
+  - **Description** (sans-regular, ~14px, 2 lines max, `--fg-muted`, truncated with `…`).
+  - **Stack row** at the bottom: mono chips (`--fg-subtle` text on a hairline `--border` background), 2–4 tags visible; overflow with `+ N`.
+  - **Outbound arrow** in the bottom-right (small `↗`).
+- Whole card is a link (`<a href={url}>`), `target="_blank"`, `rel="noopener noreferrer"`.
+- Bottom of the fold: `all builds →` link to `/lab`, right-aligned.
+
+**Layout — `/lab` index page** (future):
+- Same eyebrow + headline, one step larger.
+- Filter chips at the top by kind: `All / Skill files / Personal tools / GitHub`. Client-side filter.
+- Same card grammar as the homepage; no cap on entries.
+- Add `/lab` to sitemap.
+
+**Voice rules for descriptions** (per `CLAUDE.md §10`):
+- Verb-first. "Grades RM calls…" not "A tool for grading…"
+- Say what it *does*, not what category it is. "Auto-extracts action items into Radar" beats "productivity tool for support teams."
+- Numbers when they earn their place. "200+ terms" is evidence; "many terms" is filler.
+- Under 25 words. If it needs more, cut, don't split.
+
+**Anti-patterns:**
+- **No private repos** as `github-project`. If the code isn't public, it's a `personal-tool` at best. If it's not even runnable by others, it doesn't belong on the fold.
+- **No broken links.** A Lab card whose `url` 404s is worse than not having the card. Add a build check that fetches every Lab entry's `url` and fails the build on non-2xx.
+- **No "learning exercises"** or tutorial follow-alongs. This section is builds, not homework.
+- **No repos you contributed one PR to.** The bar is "you built this or you led it." Attribution stays honest per CLAUDE.md §10.
+- **No brand-color icons.** If per-kind icons ship, they're monochrome in `currentColor`, same rule as the Stack row (`§7.1`).
+- **No search on `/lab`** until >20 entries — same discipline as everywhere else.
+
+**Analytics** (per `CLAUDE.md §6.3`, custom Vercel Analytics — no PII):
+- `lab_card_click` (properties: `slug`, `kind`) — track which builds recruiters actually open.
+- `lab_all_click` — click on the homepage fold's `all builds →` link.
+- `lab_filter_apply` (property: `kind`) — `/lab` index filter usage.
+
+**Launch order:**
+1. Update `lib/lab.ts` to the new schema. Migrate the six existing entries with the right `kind` (with Megh confirming each). Every entry needs a real `url` — no `#` placeholders.
+2. Ship the homepage Lab fold with the new card grammar. Test at 375 / 768 / 1440.
+3. `/lab` index page in a follow-up.
+4. Wire analytics events in the same commit as the homepage fold.
+5. Build-time URL check for broken links added in a small follow-up.
+
+**Deprecated:** the current `LabCard` type (no `kind`, optional `externalUrl` with `#` placeholders). Migrate on the first Lab-touching PR.
+
 ### 6.5 Quality gates before "done"
 
 From `CLAUDE.md` §7 — verify each before shipping any substantial change:
