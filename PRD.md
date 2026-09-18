@@ -543,6 +543,89 @@ Baseline `Person + WebSite + ProfilePage` graph, discovery block, canonical, OG 
 - [ ] All linked `.md` alternates return 200.
 - [ ] No hardcoded absolute URLs pointing at a wrong domain (e.g., `www.meghgupta.com` when the site is `www.meghgupta.in`).
 
+---
+
+### 7.6 "Writing" — the product-journey journal
+
+**Placement:** homepage fold between **My Work Stack (§7.1)** and **About**. Reads as "here's how I think" after "here's how I work," before "here's who I am." Also lives as its own top-level section at `/writing` for the full archive and `/writing/[slug]` for individual entries.
+
+**Why it exists:** most PM portfolios stop at case studies. A writing surface signals that Megh reflects on the work as it happens — small learnings, product reviews, opinions on features — which is a durable differentiator vs. résumé + case-studies-only portfolios. It also compounds: every entry is another crawlable page with a real keyword surface, and readers who like one entry are one click away from the case studies and the reach-out form.
+
+**What lives here (all first-person, short-form):**
+- **Notes** — quick observations from the day-to-day (a stand-up realization, a Slack thread that changed a decision).
+- **Learnings** — post-mortems on a specific thing that worked or didn't.
+- **Thoughts / opinions** — takes on a product, market, or PM-craft debate.
+- **Ideas** — half-formed product concepts, "I would build X because Y."
+- **Case-study mini** — smaller-scope stories that don't earn a full `/work/[slug]` write-up.
+- **Product reviews** — a tool or app used substantively (see anti-patterns for the bar).
+- **Feature reviews** — a single feature analyzed as if we shipped it (why now, what it costs, what it competes with).
+
+**Content model — MDX frontmatter per entry (`/content/writing/[slug].mdx`):**
+
+```yaml
+---
+title: "Ten minutes as a Blinkit delivery partner"
+slug: "blinkit-ten-minutes"
+date: "2026-03-04"                 # first-published, YYYY-MM-DD
+updated: "2026-03-11"              # optional, when meaningful
+kind: "learning"                   # note | learning | thought | idea | case-study-mini | product-review | feature-review
+tags: ["quick-commerce", "field-notes", "operations"]
+excerpt: "Signed up as a rider, ran three deliveries, wrote it up. Here's what I couldn't have seen from a dashboard."
+reading_time: "4 min"              # optional; can auto-compute
+featured: false                     # true = shows on homepage Writing fold
+order: 0                            # tie-breaker among featured
+published: true                     # false to draft
+canonical: null                    # set to the original URL if cross-posted from Substack/LinkedIn
+---
+```
+
+**Homepage fold (§7.6a in the storyboard):**
+- Job: show that Megh reflects on the work, not just executes it.
+- Question answered: "How do they think about product?"
+- Contents: 3 most-recent-and-featured entries as small cards — `kind` pill (mono, uppercase), date, title (serif), excerpt (~2 lines), tag chips. Cards link to `/writing/[slug]`.
+- Bottom of the fold: `All writing →` link to `/writing`.
+- Lead-out hook: implied "and here's who's behind all this" → About.
+
+**`/writing` index page:**
+- Reverse-chronological list, grouped by month heading (mono eyebrow).
+- Filter chips at the top: `All / Notes / Learnings / Thoughts / Reviews / Ideas / Mini case studies`. Client-side filter, no server round-trip.
+- Search deferred (per §6.4 anti-patterns); revisit only at 20+ entries.
+- RSS feed at `/writing/rss.xml` — one of the few places a real feed reader still helps recruiters and other PMs follow along.
+
+**`/writing/[slug]` detail page:**
+- MDX-rendered body.
+- Header strip: `kind` pill, date, "updated" date if present, reading time, tags.
+- Prev/next entry links at the bottom, cross-linked to related tags.
+- Same SEO/JSON-LD baseline as `/work/[slug]` but with `@type: BlogPosting` on the JSON-LD graph.
+- Discovery block includes `alternate type="text/markdown"` → `/writing/[slug].md` (raw MDX).
+
+**Voice rules (per `CLAUDE.md §10`):**
+- First person, present tense unless retelling.
+- Short opening — one sentence hook, then the story.
+- Show numbers when they exist (`ran 3 deliveries in 90 minutes`), skip when they'd be fluff.
+- Name products, companies, people you're critiquing directly. No "a certain popular delivery app."
+- End with what you'd do next / what you'd want to see next — an active close, not a summary.
+
+**Anti-patterns (do not ship):**
+- Product reviews of tools used < 30 min or one week of daily use. State usage duration in the entry.
+- "Rewrites" of AI-generated summaries. If it doesn't come from lived experience or original analysis, it isn't a writing entry.
+- Entries that duplicate a `/work/[slug]` case study. If the story fits a full case study, write it there; if not, keep this shorter.
+- Publishing drafts. Use `published: false`.
+- Chasing SEO topics you don't care about. This surface is a *self*-portrait, not a keyword farm.
+
+**Storage decision:** MDX in `/content/writing/[slug].mdx` (matches the case-study system in `CLAUDE.md §5`). `lib/writing.ts` exports `getAllWriting()`, `getWritingBySlug()`, `getRecent(n)`, and `getByKind(kind)`. RSS built from the same array at build time.
+
+**Analytics events to add** (per `CLAUDE.md §6.3`, custom Vercel Analytics — no PII):
+- `writing_index_view`
+- `writing_entry_view` (property: slug, kind)
+- `writing_filter_apply` (property: kind)
+- `writing_all_click` (from homepage fold to `/writing`)
+
+**Launch order:**
+1. Author 4–6 entries in `/content/writing/` before the surface goes live. An empty section reads worse than none.
+2. Ship `/writing/[slug]` first (per-entry pages, MDX + JSON-LD), then `/writing` index, then the homepage fold.
+3. RSS in a separate PR after the section is proven.
+
 ### 6.5 Quality gates before "done"
 
 From `CLAUDE.md` §7 — verify each before shipping any substantial change:
