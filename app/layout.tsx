@@ -24,7 +24,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 const SITE_URL = "https://www.meghgupta.in";
-const TITLE = "Megh Gupta | Product Manager at BondScanner";
+const TITLE = "Megh Gupta | Product Manager";
 const DESCRIPTION =
   "Megh Gupta is a product manager at BondScanner, a SEBI-registered online bond platform. BITS Goa grad, 1.5 years in fintech, experimenting with voice AI.";
 
