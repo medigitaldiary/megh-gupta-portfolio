@@ -348,57 +348,6 @@ export default function SkeletonPage() {
       <section style={foldStyle}>
         <FoldHeader
           n={5}
-          name="My Work Stack"
-          job="Craft"
-          question="How do they actually work?"
-          docRef="PRD §7.1"
-        />
-        <div style={box}>
-          <div style={placeholder}>
-            [MONO EYEBROW · &quot;MY WORK STACK&quot;]
-          </div>
-          <div style={{ ...grayBlock("48px"), marginTop: "8px" }}>
-            [SECTION HEADLINE · e.g. &quot;what I ship with&quot;]
-          </div>
-
-          {["AI / LLM", "Editor / IDE", "PM & docs", "Design"].map((cat) => (
-            <div key={cat} style={{ marginTop: "24px" }}>
-              <div style={{ ...placeholder, marginBottom: "8px" }}>
-                [CATEGORY · &quot;{cat}&quot;]
-              </div>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(3, 1fr)",
-                  gap: "10px",
-                }}
-              >
-                {[1, 2, 3].map((i) => (
-                  <div key={i} style={{ ...box, background: "#f8fafc" }}>
-                    <div style={{ ...grayBlock("24px"), fontSize: "11px" }}>
-                      [TOOL NAME]
-                    </div>
-                    <div
-                      style={{
-                        ...grayBlock("40px"),
-                        marginTop: "6px",
-                        fontSize: "11px",
-                      }}
-                    >
-                      [how I use it · 1-2 sentences · PM voice]
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─────────────────────────────── FOLD 6 ─────────────────────────────── */}
-      <section style={foldStyle}>
-        <FoldHeader
-          n={6}
           name="Writing"
           job="Thought"
           question="How do they think about product?"
@@ -494,14 +443,14 @@ export default function SkeletonPage() {
         </div>
       </section>
 
-      {/* ─────────────────────────────── FOLD 7 ─────────────────────────────── */}
+      {/* ─────────────────────────────── FOLD 6 ─────────────────────────────── */}
       <section style={foldStyle}>
         <FoldHeader
-          n={7}
-          name="About"
-          job="Person"
-          question="Would I want to work with them?"
-          docRef="CLAUDE.md §14"
+          n={6}
+          name="About + Stack"
+          job="Person + Craft"
+          question="Would I want to work with them, and what do they build with?"
+          docRef="PRD §7.1"
         />
         <div style={box}>
           <div style={placeholder}>[MONO EYEBROW · &quot;ABOUT&quot;]</div>
@@ -535,13 +484,68 @@ export default function SkeletonPage() {
               ))}
             </div>
           </div>
+
+          {/* Stack row inside About */}
+          <div
+            style={{
+              marginTop: "32px",
+              paddingTop: "16px",
+              borderTop: "1px dashed #94a3b8",
+            }}
+          >
+            <div
+              style={{
+                ...placeholder,
+                fontStyle: "italic",
+                marginBottom: "10px",
+              }}
+            >
+              my stack
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "16px",
+                alignItems: "center",
+              }}
+            >
+              {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "50%",
+                    background: "#e2e8f0",
+                    border: "1px dashed #94a3b8",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "10px",
+                    color: "#64748b",
+                  }}
+                >
+                  [icon]
+                </div>
+              ))}
+              <div style={{ ...placeholder, fontSize: "12px" }}>+ more</div>
+            </div>
+            <div
+              style={{ ...placeholder, fontSize: "11px", marginTop: "12px" }}
+            >
+              Hover / focus → dark tooltip pill above the icon: tool name +
+              one-liner &quot;how I use it.&quot; Content in lib/stack.ts. See
+              PRD §7.1.
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ─────────────────────────────── FOLD 8 ─────────────────────────────── */}
+      {/* ─────────────────────────────── FOLD 7 ─────────────────────────────── */}
       <section style={foldStyle}>
         <FoldHeader
-          n={8}
+          n={7}
           name="Let's connect"
           job="Action"
           question="Okay, how do I reach them?"

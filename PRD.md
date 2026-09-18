@@ -297,7 +297,79 @@ Per `CLAUDE.md` §6.3:
 
 These are approved additions to the eventual full portfolio, captured here so nothing gets lost between now and building them. Order in the page = order in this section.
 
-### 7.1 "My Work Stack" — the tools I use, and how
+### 7.1 "My Stack" — icon row inside the About fold
+
+> **Layout change (locked):** the earlier full-fold "My Work Stack" is retired. The stack now lives as a compressed icon row *inside* the About fold — no separate fold, no per-tool card grid. Reference: `docs/references/stack/01-icon-row.png`.
+
+**Where:** at the bottom of the About fold, after the portrait + prose block. A small italic-serif label reads `my stack`, then a single horizontal row of circular tool icons, then a `+ more` text toggle at the end. Hover or keyboard-focus on any icon reveals a dark pill tooltip above it with the tool's name **and** the one-line "how I use it."
+
+**Why the change:**
+- Craft signals shouldn't earn a full fold. A recruiter doesn't scroll to the stack fold and think "ah, now I want to work with him because he uses Cursor." They form that opinion from Work and Experience. The stack is *evidence*, not the pitch.
+- Compressing to an icon row keeps the signal without buying a fold.
+- Hover tooltip is enough depth for anyone who cares to look; anyone who doesn't sees a quiet identity strip.
+
+**Fold impact:** homepage drops from 8 to 7 folds. About's job is now `Person + Craft` — "Would I want to work with them, *and* what do they build with?" See `CLAUDE.md §14` for the updated storyboard.
+
+**Layout — icon row:**
+- Small handwritten-style label above the row: `my stack` in italic serif (`Instrument Serif italic`), ~14–15px, in `--fg-muted`. Matches the reference's handwritten register.
+- Row of 6–10 circular icon buttons, ~48px diameter each, gap ~16–20px, wrapping to a second row on mobile.
+- Each icon: soft `--bg-elevated` circle with 1px `--border`, brand-mono glyph (24px) centered in `--fg`. When the tool has an official monogram, use it — otherwise a monochrome SVG cast in `currentColor`.
+- The current-focus tool gets a subtle dark fill on the circle (matches the "mixpanel" active state in the reference). Not a hover — this is the actively-tooltipped tool.
+- A `+ more` link at the end of the row (mono-ish sans, `--fg-muted`, underline on hover). Click expands the row inline to reveal additional icons; second click collapses. No modal, no navigation, no `/stack` subpage.
+
+**Tooltip:**
+- Dark pill (`--fg` background, `--bg` text), ~10–12px vertical padding, ~14–18px horizontal padding, ~6px radius. Anchored above the icon with a 4px gap.
+- Contents (two lines):
+  - **Line 1:** tool name, sans-semibold, ~14px.
+  - **Line 2:** one-liner "how I use it," sans-regular, ~12px, opacity 0.75. Wraps to 2 lines max; anything longer gets rewritten shorter, not truncated.
+- Appears on hover, focus, or long-press. Disappears on mouseleave, blur, or Esc.
+- Positioning: `absolute` above the icon by default; flips to below at the edge of the viewport (right-edge tools would clip on mobile otherwise).
+- 100ms fade-in via CSS, honors `prefers-reduced-motion` (no animation, appears instantly).
+- Keyboard: tooltip is announced via `aria-describedby` on the button, so screen readers get the one-liner as part of the button's accessible name.
+
+**Content model — `lib/stack.ts`:**
+
+```ts
+type StackTool = {
+  slug: string;              // "figma", "cursor", "mixpanel"
+  name: string;              // display name, lowercase per reference ("mixpanel")
+  icon: string;              // "/images/stack/figma.svg" — monochrome, viewBox 24x24
+  one_liner: string;         // "funnel + retention analytics on the growth loops"
+  featured?: boolean;         // true = in the default row; false = behind "+ more"
+  order?: number;             // sort within featured group; defaults to source order
+};
+```
+
+Author 6–10 tools with `featured: true` for the default row; put the rest behind `featured: false` (shown only when `+ more` is expanded). No categories, no `since` field, no `how_i_use_it` prose paragraphs. The one-liner is the whole story.
+
+**Voice rules for `one_liner`** (per `CLAUDE.md §10`):
+- Verb-first, present tense. "writes PRDs alongside code so implementation Qs surface at spec time" beats "productivity tool for writing PRDs."
+- Name the actual use, not the category. "funnel + retention analytics on the growth loops" beats "product analytics."
+- Under 12 words when possible. Absolute cap: 18. If it needs more, rewrite the use, not the sentence.
+- No adjective stacks ("powerful, flexible, beautiful") — those read as marketing copy for the tool, not evidence of use.
+
+**Anti-patterns:**
+- No per-tool "since 2024" badge — years since first use is résumé weight, not signal.
+- No filter chips (`AI-first / hands-on-code / PM-only` from the retired spec) — the row is short enough to scan whole; filtering is friction.
+- No categories or grouping — one row, one story. If the row breaks 10 tools, cut the weakest ones, don't group them.
+- No brand-color icons — everything in `currentColor` so the row reads as one system, not a sponsor strip.
+- No `/stack` subpage. If the "+ more" expansion isn't enough, the fix is to cut tools from the row, not add a new surface.
+
+**Analytics** (per `CLAUDE.md §6.3`, custom Vercel Analytics — no PII):
+- `stack_tool_hover` (property: slug) — track which tools recruiters actually inspect.
+- `stack_more_toggle` (property: `to` = `open | closed`) — signal on whether the "+ more" toggle earns its complexity.
+
+**Launch order:**
+1. Populate `lib/stack.ts` with 6–10 real tools, one-liners written in PM voice. TODO stubs cannot ship.
+2. Ship the icon row and tooltip in the same commit — half the pattern is worthless.
+3. Wire analytics events with the first ship.
+4. `+ more` expansion in a follow-up commit if the default row proves too tight.
+
+**Deprecated:** the earlier fold-level "My Work Stack" spec (category-grouped card grid, per-tool "since" year, `how_i_use_it` prose). If any content model was drafted under the old spec, migrate to the compressed `lib/stack.ts` shape above.
+
+---
+
+### 7.1a "My Work Stack" — DEPRECATED (see §7.1 above)
 
 **Placement:** after **Selected Work**, before **The Lab**. Reads as a bridge — "here's what I shipped, here's what I ship with."
 
