@@ -819,11 +819,13 @@ Track view distribution over time — if 95% of visitors stay in the default vie
 
 Reference screenshots checked into `docs/references/writing/`. Follow this layout language when building — don't invent a new one.
 
-- **Homepage fold** — `docs/references/writing/01-homepage-fold.webp`
+- **Homepage fold** — same card grammar as the `/writing` index, condensed to three. Reference: `docs/references/writing/02-index-grid.webp` (used to be the quiet-list layout in `01-homepage-fold.webp`; that layout is deprecated).
   - Mono uppercase eyebrow (`WRITING`, wide tracking), on the same off-white body bg.
-  - Serif headline underneath, ~40–48px, e.g. *"notes on design and making"* — Megh writes his own version.
-  - A vertical list of 3 entries, each row: title (sans, medium weight, ~18–20px) on the left, date (mono, muted) right-aligned. Hairline `--border` between rows. No thumbnails, no excerpts — the list stays quiet on the homepage.
-  - `all posts →` link at the bottom (mono-ish sans, muted color, subtle underline on hover).
+  - Serif headline underneath, ~40–48px, e.g. *"notes on product and building"* — Megh writes his own version.
+  - **Three cards in a 3-column row on desktop, 2 on tablet, 1 on mobile.** Each card is identical in grammar to the `/writing` index card: procedural thumbnail (see Kind vocabulary and thumbnail spec below), mono uppercase category label pulled from `kind` display name, sans semibold title (2 lines max, truncated with `…`), 2-line excerpt, mono date + read time.
+  - Three entries are picked in this order: `featured: true` first (by `order`), then most-recent-published; cap at 3. If fewer than 3 published entries exist, hide the fold entirely rather than shipping half-empty cards.
+  - Below the row: a `view all →` CTA aligned to the right (or centered on mobile), taking the reader to `/writing`.
+  - No filter chips on the homepage fold — those live on `/writing` only.
 - **`/writing` index** — `docs/references/writing/02-index-grid.webp`
   - Same eyebrow (`BLOG` or `WRITING`) + serif headline treatment, one step larger than the homepage fold.
   - Grid of cards, 3 columns desktop / 2 tablet / 1 mobile.

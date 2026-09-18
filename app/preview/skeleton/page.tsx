@@ -410,36 +410,76 @@ export default function SkeletonPage() {
             [SECTION HEADLINE · e.g. &quot;notes on product and building&quot;]
           </div>
 
-          <div style={{ marginTop: "20px" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "16px",
+              marginTop: "24px",
+            }}
+          >
             {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "16px 0",
-                  borderTop: "1px dashed #94a3b8",
-                  ...(i === 3 ? { borderBottom: "1px dashed #94a3b8" } : {}),
-                }}
-              >
+              <div key={i} style={{ ...box, background: "#f8fafc" }}>
                 <div
-                  style={{ ...grayBlock("28px"), flex: 1, marginRight: "16px" }}
+                  style={{
+                    height: "140px",
+                    background: "#0e1622",
+                    border: "1px dashed #94a3b8",
+                    borderRadius: "6px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#f5ebd4",
+                    fontSize: "11px",
+                    fontStyle: "italic",
+                  }}
                 >
-                  [ENTRY TITLE — sans, medium, ~18px]
+                  [PROCEDURAL THUMBNAIL · glyph by kind]
                 </div>
                 <div
                   style={{
+                    marginTop: "12px",
                     ...placeholder,
-                    flex: "0 0 90px",
-                    textAlign: "right",
+                    fontSize: "11px",
+                    letterSpacing: "0.14em",
                   }}
                 >
-                  [DATE · mono]
+                  [KIND · e.g. LEARNING]
+                </div>
+                <div style={{ ...grayBlock("36px"), marginTop: "6px" }}>
+                  [ENTRY TITLE · 2 lines max · sans semibold]
+                </div>
+                <div
+                  style={{
+                    ...grayBlock("32px"),
+                    marginTop: "6px",
+                    fontSize: "11px",
+                  }}
+                >
+                  [EXCERPT · 2 lines · muted]
+                </div>
+                <div
+                  style={{
+                    marginTop: "10px",
+                    ...placeholder,
+                    fontSize: "11px",
+                  }}
+                >
+                  [DATE · READ TIME · mono muted]
                 </div>
               </div>
             ))}
           </div>
-          <div style={{ marginTop: "16px", ...placeholder }}>[all posts →]</div>
+          <div
+            style={{
+              marginTop: "20px",
+              display: "flex",
+              justifyContent: "flex-end",
+              ...placeholder,
+            }}
+          >
+            [view all →]
+          </div>
           <div
             style={{
               marginTop: "16px",
@@ -447,8 +487,9 @@ export default function SkeletonPage() {
               fontSize: "11px",
             }}
           >
-            Homepage teaser only — no thumbnails or excerpts here. Full grid
-            lives at /writing (per PRD §7.6 visual reference).
+            Three cards, same grammar as the /writing index. If fewer than 3
+            published entries exist, hide the fold. Full grid + filter chips
+            live at /writing.
           </div>
         </div>
       </section>
