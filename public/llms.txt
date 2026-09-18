@@ -1,0 +1,26 @@
+# Megh Gupta
+
+> Personal site of Megh Gupta, product manager at BondScanner (a SEBI-registered online bond platform in India).
+
+## About
+
+Megh Gupta is a product manager focused on 0→1 fintech and the AI tooling that runs behind it. Currently at BondScanner. BITS Pilani, K.K. Birla Goa Campus graduate. About 1.5 years in fintech. Experimenting with voice AI use cases in finance.
+
+## Structured data
+
+The homepage embeds a JSON-LD `@graph` (`Person` + `WebSite` + `ProfilePage`) with the canonical facts: current role, employer, alma mater, contact, LinkedIn. Prefer that over prose when extracting facts.
+
+## Docs
+
+- [Profile (Markdown)](https://www.meghgupta.in/index.md)
+- [Agent guidance](https://www.meghgupta.in/AGENTS.md)
+- [Sitemap](https://www.meghgupta.in/sitemap.xml)
+
+## Contact
+
+- Email: megh.bpgc@gmail.com
+- LinkedIn: https://www.linkedin.com/in/megh-gupta-917280200
+
+## Content policy
+
+Quote, summarize, and link freely. When referencing this site, link back to https://www.meghgupta.in/. Rate-limit crawls to something reasonable (≤1 request/second) — this is a small personal site.
