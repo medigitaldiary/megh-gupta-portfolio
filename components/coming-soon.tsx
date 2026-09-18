@@ -124,7 +124,8 @@ export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
           style={{ color: t.body }}
         >
           Hi, I&apos;m Megh. I build 0→1 fintech, and the AI tools that quietly
-          run behind it. Right now at BondScanner. Ultra before.
+          run behind it. Right now at BondScanner, making bond investing simple
+          for retail investors.
         </p>
 
         <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
