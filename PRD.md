@@ -543,6 +543,302 @@ Baseline `Person + WebSite + ProfilePage` graph, discovery block, canonical, OG 
 - [ ] All linked `.md` alternates return 200.
 - [ ] No hardcoded absolute URLs pointing at a wrong domain (e.g., `www.meghgupta.com` when the site is `www.meghgupta.in`).
 
+---
+
+### 7.6 "Writing" — the product-journey journal
+
+**Placement:** homepage fold between **My Work Stack (§7.1)** and **About**. Reads as "here's how I think" after "here's how I work," before "here's who I am." Also lives as its own top-level section at `/writing` for the full archive and `/writing/[slug]` for individual entries.
+
+**Why it exists:** most PM portfolios stop at case studies. A writing surface signals that Megh reflects on the work as it happens — small learnings, product reviews, opinions on features — which is a durable differentiator vs. résumé + case-studies-only portfolios. It also compounds: every entry is another crawlable page with a real keyword surface, and readers who like one entry are one click away from the case studies and the reach-out form.
+
+**What lives here (all first-person, short-form):**
+- **Notes** — quick observations from the day-to-day (a stand-up realization, a Slack thread that changed a decision).
+- **Learnings** — post-mortems on a specific thing that worked or didn't.
+- **Thoughts / opinions** — takes on a product, market, or PM-craft debate.
+- **Ideas** — half-formed product concepts, "I would build X because Y."
+- **Case-study mini** — smaller-scope stories that don't earn a full `/work/[slug]` write-up.
+- **Product reviews** — a tool or app used substantively (see anti-patterns for the bar).
+- **Feature reviews** — a single feature analyzed as if we shipped it (why now, what it costs, what it competes with).
+
+**Content model — MDX frontmatter per entry (`/content/writing/[slug].mdx`):**
+
+```yaml
+---
+title: "Ten minutes as a Blinkit delivery partner"
+slug: "blinkit-ten-minutes"
+date: "2026-03-04"                 # first-published, YYYY-MM-DD
+updated: "2026-03-11"              # optional, when meaningful
+kind: "field-note"                 # see Kind vocabulary below — one required label
+tags: ["quick-commerce", "operations"]  # freeform, cross-cutting
+excerpt: "Signed up as a rider, ran three deliveries, wrote it up. Here's what I couldn't have seen from a dashboard."
+reading_time: "4 min"              # optional; can auto-compute
+featured: false                     # true = shows on homepage Writing fold
+order: 0                            # tie-breaker among featured
+published: true                     # false to draft
+canonical: null                    # set to the original URL if cross-posted from Substack/LinkedIn
+---
+```
+
+**Kind vocabulary (locked — six kinds, curated to Megh's profile):**
+
+Kind is a single required label, chosen from this fixed set. Tags stay open-ended for topics; kind names what *shape of thought* the entry is. Card thumbnails and filter chips key off this field, so keep it stable.
+
+| Kind (slug) | Display label | What it is | Voice register |
+|---|---|---|---|
+| `field-note` | Field Note | A quick observation from the day-to-day — a Slack thread that changed a decision, a stand-up realization, something spotted in a product used at work. | Short, present-tense, specific to a moment. |
+| `learning` | Learning | Retrospective on a shipped decision, a launch that worked or didn't, a mistake and what it cost. | First person, honest attribution, ends with what you'd do differently. |
+| `take` | Take | An opinion or hot-take on a product, market, or craft debate (fintech regulation, PM interview format, a category shift). | Direct, position first, argument after. State the take in the first sentence. |
+| `idea` | Idea | "I would build X because Y." Half-formed product concepts, feature wishlists for tools you use, market gaps. | Speculative but concrete — name the audience, the shape, and why it doesn't exist yet. |
+| `mini-case` | Mini Case | A smaller-scope story than a full `/work/[slug]` — a sub-feature, an experiment, a growth loop that didn't warrant a case study but taught something. | Same structure as a case study but compressed: context → decision → outcome, in ~500-700 words. |
+| `teardown` | Teardown | A product or single feature analyzed as if we shipped it — why now, what it costs, what it competes with, what would you have done differently. | Analytical, screenshot-driven, opinionated but sourced. Combines the earlier "product review" + "feature review" kinds. |
+
+New kinds need an explicit ask + a card thumbnail glyph (below) + an update to `lib/writing.ts`. Don't drift the vocabulary silently.
+
+**Procedural thumbnails (locked — no hand-authored images):**
+
+Cards on `/writing` show a dark thumbnail per entry. To avoid asking Megh to author illustrations for every new note, thumbnails are generated deterministically at build time from the entry's `kind` + `slug`. Rendered as inline SVG (no PNG assets, no `next/og` route).
+
+- **Frame:** `aspect-ratio: 3 / 2`, rounded corners matching the card, background `#0E1622` (deeper charcoal than the site's `--fg`), 1px inner border in `rgba(245,235,212,0.08)`.
+- **Glyph (center, single stroke, cream `#F5EBD4`, ~2px):** determined by `kind`.
+  - `field-note` → map pin outline.
+  - `learning` → circular arrow (retry).
+  - `take` → typographic quotation mark, oversized.
+  - `idea` → simple lightbulb outline.
+  - `mini-case` → 3×2 grid of unequal squares (one filled).
+  - `teardown` → four small squares in a row, one dashed and marked with an ✕.
+- **Background pattern (subtle, `rgba(245,235,212,0.05)`):** picked from `hash(slug) % 4` — dot grid, hairline horizontal rules, hairline vertical rules, or blank. Zero per-entry authoring.
+- **No text, no per-entry color variance.** Consistency across the grid > individual expression. If a specific entry ever needs custom art, that's a `hero_image` override on the entry (deferred; add only when the first entry actually needs it).
+- **Implementation target:** `components/writing/thumbnail.tsx` — pure SVG, server component, ~40 lines. `getGlyph(kind)` and `getPattern(slug)` as pure functions in `lib/writing.ts`.
+
+**Homepage fold (§7.6a in the storyboard):**
+- Job: show that Megh reflects on the work, not just executes it.
+- Question answered: "How do they think about product?"
+- Contents: 3 most-recent-and-featured entries as small cards — `kind` pill (mono, uppercase), date, title (serif), excerpt (~2 lines), tag chips. Cards link to `/writing/[slug]`.
+- Bottom of the fold: `All writing →` link to `/writing`.
+- Lead-out hook: implied "and here's who's behind all this" → About.
+
+**`/writing` index page:**
+- Reverse-chronological list, grouped by month heading (mono eyebrow).
+- Filter chips at the top: `All / Notes / Learnings / Thoughts / Reviews / Ideas / Mini case studies`. Client-side filter, no server round-trip.
+- Search deferred (per §6.4 anti-patterns); revisit only at 20+ entries.
+- RSS feed at `/writing/rss.xml` — one of the few places a real feed reader still helps recruiters and other PMs follow along.
+
+**`/writing/[slug]` detail page:**
+- MDX-rendered body.
+- Header strip: `kind` pill, date, "updated" date if present, reading time, tags.
+- Prev/next entry links at the bottom, cross-linked to related tags.
+- Same SEO/JSON-LD baseline as `/work/[slug]` but with `@type: BlogPosting` on the JSON-LD graph.
+- Discovery block includes `alternate type="text/markdown"` → `/writing/[slug].md` (raw MDX).
+
+**Voice rules (per `CLAUDE.md §10`):**
+- First person, present tense unless retelling.
+- Short opening — one sentence hook, then the story.
+- Show numbers when they exist (`ran 3 deliveries in 90 minutes`), skip when they'd be fluff.
+- Name products, companies, people you're critiquing directly. No "a certain popular delivery app."
+- End with what you'd do next / what you'd want to see next — an active close, not a summary.
+
+**Anti-patterns (do not ship):**
+- Product reviews of tools used < 30 min or one week of daily use. State usage duration in the entry.
+- "Rewrites" of AI-generated summaries. If it doesn't come from lived experience or original analysis, it isn't a writing entry.
+- Entries that duplicate a `/work/[slug]` case study. If the story fits a full case study, write it there; if not, keep this shorter.
+- Publishing drafts. Use `published: false`.
+- Chasing SEO topics you don't care about. This surface is a *self*-portrait, not a keyword farm.
+
+**Storage decision:** MDX in `/content/writing/[slug].mdx` (matches the case-study system in `CLAUDE.md §5`). `lib/writing.ts` exports `getAllWriting()`, `getWritingBySlug()`, `getRecent(n)`, and `getByKind(kind)`. RSS built from the same array at build time.
+
+**Analytics events to add** (per `CLAUDE.md §6.3`, custom Vercel Analytics — no PII):
+- `writing_index_view`
+- `writing_entry_view` (property: slug, kind)
+- `writing_filter_apply` (property: kind)
+- `writing_all_click` (from homepage fold to `/writing`)
+
+**Launch order:**
+1. Author 4–6 entries in `/content/writing/` before the surface goes live. An empty section reads worse than none.
+2. Ship `/writing/[slug]` first (per-entry pages, MDX + JSON-LD), then `/writing` index, then the homepage fold.
+3. RSS in a separate PR after the section is proven.
+
+---
+
+### 7.7 "Experience" — where I have worked
+
+**Placement:** homepage fold immediately after the Hero, before Selected Work. Reads as: *who I am → where I've been → what I shipped there.* Not a résumé block — a scannable trajectory that expands on demand.
+
+**References (three screenshots checked into `docs/references/experience/`):**
+- `03-timeline-pills.webp` — the **default** view. Horizontal timeline with a year axis, company pill cards positioned at their era, current role highlighted in warm cream, a dashed "now" marker, "drag sideways" hint underneath.
+- `01-list-view.webp` — the **alternate** view. LinkedIn-style vertical stack with logo tiles down the left, dates on the right, tap-to-expand cards.
+- `02-hero-with-era-timeline.webp` — inspirational reference for how a horizontal timeline can carry narrative weight; kept for future About-fold ideas, not the direct pattern for this section.
+
+**Both views render the same `lib/experience.ts` data.** The toggle in the top-right (`list / timeline`) swaps presentation only. Default state on load is **timeline** — it's more compact vertically, which matters because Experience is Fold 2 and can't eat too much of the reader's scroll budget.
+
+**Why it exists:** recruiters and hiring PMs form a first-pass "is this senior enough / relevant enough" judgment inside 15 seconds. A tight experience list, above Work, front-loads that context and lets them decide whether to keep scrolling into the case studies. Without it, they scroll into Work with no anchor for what environment those numbers came from.
+
+**Fold job:** trajectory. Question answered: *"Where has this person been?"* Lead-out hook: the current role plants a promise ("here's what I've built at BondScanner") that the next fold (Selected Work) pays off with case studies from that role.
+
+**Content model (`lib/experience.ts`, TS array — no MDX):**
+
+```ts
+type ExperienceEntry = {
+  slug: string;                  // "bondscanner", "ultra", etc.
+  company: string;               // display name, lowercase per reference ("wint wealth")
+  role: string;                  // job title, lowercase ("senior product designer")
+  logo: string;                  // "/images/experience/bondscanner.svg"
+  start: string;                 // "2025-01" (YYYY-MM)
+  end: string | "present";       // "2024-12" or "present"
+  tagline: string;               // one-line what the company does
+  bullets: string[];             // 2–4 short strings, action + evidence per bullet
+  current?: boolean;             // true = green dot indicator, defaults from end === "present"
+  nda?: boolean;                 // true adds "recent work under NDA" affordance in the expand
+  order?: number;                // optional override; default is reverse-chronological by `start`
+};
+```
+
+**View toggle (top-right of the section):**
+- Pill container in `--bg-elevated` with two segments: `list` and `timeline`. Active segment = filled dark pill (`--fg`) with cream text; inactive = transparent with `--fg-muted` text.
+- Follows the reference exactly, including the handwritten "try this" arrow the first time a visitor hits the section (drop the doodle after 30 days per client-side flag if we ship it at all — v1 can skip the doodle).
+- Toggle state persists in `localStorage` under `mxg.experience.view` so a returning visitor lands on their preferred view.
+- Keyboard: `role="tablist"`, each segment a `<button role="tab">`, `aria-selected` toggles, arrow keys move between them.
+- Both views render the same data structure below the toggle. Swapping is a client component (`components/experience/section.tsx` with `"use client"` at the top).
+
+---
+
+#### Timeline view (default)
+
+Reference: `docs/references/experience/03-timeline-pills.webp`.
+
+**Layout:**
+- Horizontal band across the section's `max-w-5xl` container.
+- **Year axis** along the bottom: mono numbers (`2020` … `2027`, `--fg-subtle`) evenly spaced. Extends 1 year past the earliest role and ~6 months past `now` for headroom.
+- **Duration band** behind the pills: a soft warm-cream translucent strip (`rgba(246,236,209,0.55)` on dawn palette) spanning from the earliest role's start to the current role's start. Signals "this is the active career span" as one continuous ribbon.
+- **Pill cards** positioned by start-date on the axis, each ~360×72px. Contents: 44×44 logo tile (top-left of the pill), company name in sans-semibold 16–17px on line 1, role in sans-regular 13–14px `--fg-muted` on line 2. Wide enough for one company name; overflow with `…` on narrow columns (`wint we…` in the reference).
+- **Current role pill** gets the warm-cream fill (`rgba(246,236,209,0.9)`), making it pop against the other neutral-white pills.
+- **"now" marker**: dashed vertical rule at today's date, `--accent`-tinted, with a small handwritten-style "now" label above it. (Handwritten style = 400-weight italic serif — no new font).
+- **Overlap handling**: when two roles overlap in time (rare — internships during college etc.), stack pills vertically at the same x-position. The godaddy pill floats below the arre-bro pill in the reference; use that pattern.
+- **Bottom hint**: small italic serif line `drag sideways, the last N years are in here` where N is computed from the data (`currentYear - firstEntryYear`).
+
+**Interaction:**
+- **Desktop scroll**: horizontal scroll on the timeline container. Two-finger touchpad, mouse wheel (shift+wheel for wheel mice), or click-and-drag to pan.
+- **Click a pill**: expands a detail panel *below* the timeline (not inline in the row) with the same tagline + bullets used in the list view's expanded state. Only one pill's detail visible at a time. Clicking the same pill again collapses; clicking a different pill swaps the detail.
+- **Keyboard**: Tab focuses each pill in chronological order; Enter/Space opens its detail panel; Left/Right arrow keys pan the timeline by ~1 year of x-scroll.
+- **Mobile**: native horizontal touch scroll; tap a pill for its detail panel.
+- **Reduced motion**: no smooth-scroll animation, no drag inertia, detail panel appears without a height animation.
+- **Focus scroll**: when a pill receives keyboard focus off-screen, smooth-scroll it into view (native `scrollIntoView({ block: 'nearest', inline: 'center' })`).
+
+**Screen-reader path**: the timeline is decorative for AT. Under the `<div role="tablist">` toggle, both views live inside `<div role="tabpanel">` regions with the same accessible content — screen readers can jump to the list view via the tablist without a lost trail.
+
+---
+
+#### List view (alternate)
+
+Reference: `docs/references/experience/01-list-view.webp`.
+
+**Layout — collapsed row (default state):**
+- Left column: 44×44 rounded logo tile with a hairline border. A small green dot in the top-right corner if `current`.
+- Middle: company name (sans, semibold, 18–20px, lowercase) on line 1; role (sans, regular, 14–15px, `--fg-muted`) on line 2.
+- Right column: date range in mono type, `--fg-muted`, right-aligned (`sep 2025 to present`, `jun 2023 to sep 2025`, single-year entries render as `2022`).
+- A single chevron `>` (rotating to `v` when expanded) at the far right hints the expand affordance.
+- Timeline gutter: vertical hairline between the logo tiles, connecting every entry so it reads as one continuous history.
+
+**Layout — expanded row (on click / Enter / Space):**
+- Reveals a tagline line first: one sentence italicized in `--fg-muted` describing the company ("making fixed income investing feel simple and trustworthy.").
+- Then 2–4 bullets, each prefixed with a small warm accent asterisk `*` in the site's accent color, matching the reference. Bullet copy is one line where possible, wraps to two max.
+- No embedded images or logos beyond the row's own tile — this is a fast-read block, not a case study.
+- 220ms ease-out expand, respects `prefers-reduced-motion` (jumps instantly, no height animation).
+
+**Interaction:**
+- Whole row is a `<button>` (semantic — not a `<div onClick>`), `aria-expanded` toggles, `aria-controls` points at the expand region.
+- Keyboard: `Enter` and `Space` toggle; `Tab` moves to next row.
+- Only one row expanded at a time on mobile (accordion-style) to keep the fold's height bounded. Desktop allows multiple.
+- No routing changes — expand is inline, URL doesn't change. If we ever want deep-linking (`/#experience/bondscanner`), add later.
+
+**Voice rules (per `CLAUDE.md §10`):**
+- All company names and role titles in lowercase. It's an editorial choice from the reference and holds across the section.
+- Tagline says what the *company* does in one line. Not what you did — that's the bullets.
+- Bullets are verb-first, numbers-forward. "shipped X → Y," "grew AUM ₹50Cr in 6 months." Not "responsible for" or "helped with."
+- NDA cases: one bullet acknowledging it directly. Reference language: *"recent work is under NDA, happy to walk through it on a call."*
+- Present tense only for current role. Past tense for prior roles, even if the company still exists.
+
+**Seed entries (draft — Megh to confirm and refine):**
+
+```ts
+[
+  {
+    slug: "bondscanner",
+    company: "bondscanner",
+    role: "product manager",
+    logo: "/images/experience/bondscanner.svg",
+    start: "2025-01", end: "present", current: true,
+    tagline: "sebi-registered online bond platform making bond investing simple for retail investors.",
+    bullets: [
+      "TODO: shipped X flow that did Y (headline metric).",
+      "TODO: growth loop / SEO engine / AI-review-tool bullet.",
+      "TODO: one more concrete shipped thing with numbers.",
+    ],
+  },
+  {
+    slug: "ultra",
+    company: "ultra",
+    role: "platform product manager",
+    logo: "/images/experience/ultra.svg",
+    start: "TODO", end: "TODO",
+    tagline: "TODO: one-line what ultra does / did.",
+    bullets: [
+      "TODO: reinvestment loop bullet with numbers.",
+      "TODO: one more shipped thing.",
+    ],
+  },
+  // Add earlier roles (internships, freelance if meaningful) in the same shape.
+]
+```
+
+Draft entries ship with `TODO:` placeholders per `CLAUDE.md §6.1` conventions. Fill from Megh's resume, LinkedIn, or offer letters — never invent titles or dates.
+
+**Anti-patterns:**
+- **No stat tile row.** ("2.5 years in PM," "3 companies") The reader can compute it from the dates. Adding a tile makes the section read as résumé instead of story.
+- **No "responsibilities included" language.** Every bullet is something you *shipped*, *grew*, *scoped*, *ran*. Present the outcome, not the job description.
+- **No filler roles.** A 2-month contract that didn't ship anything meaningful stays off. Better to have three entries with real bullets than seven with fluff.
+- **No unverified logos.** Use official brand assets or ask before creating a stand-in.
+- **Do not skip the view toggle in v1.** Both views ship together — timeline default, list as the alternate — and the toggle in the top-right is the primary control. Skipping either view means recruiters on assistive tech or narrow mobile viewports lose the accessible path.
+
+**Storage decision:** TS array in `lib/experience.ts`. Matches `lib/lab.ts` shape. Not MDX because entries are structured and short; no long-form body earns its way in here. If a role warrants a longer story, that's a `/writing/mini-case` entry (§7.6) linked from the experience bullets, not an expanded experience row.
+
+**Analytics events** (per `CLAUDE.md §6.3`, custom Vercel Analytics — no PII):
+- `experience_view_toggle` (property: `to` = `list | timeline`) — which view the visitor lands in.
+- `experience_pill_open` (property: slug) — click on a timeline pill.
+- `experience_row_expand` / `experience_row_collapse` (property: slug) — list-view expands.
+
+Track view distribution over time — if 95% of visitors stay in the default view, we can consider dropping the toggle in a future PR.
+
+**Launch order:**
+1. Author entries in `lib/experience.ts` from Megh's real history before wiring the fold. Empty rows or `TODO` stubs cannot ship on production.
+2. Ship the **list view first** (layout is simpler, gets the data model + expand behavior proven). Toggle is present but the timeline segment is a placeholder.
+3. Ship the timeline view in a follow-up: layout + horizontal scroll + click-to-open-detail-panel.
+4. Add drag-to-pan and keyboard pan in a third commit — these are the trickiest interactions and the section works without them.
+5. Wire all analytics events in the same commit as the timeline ships.
+
+**Visual reference (locked layout pattern):**
+
+Reference screenshots checked into `docs/references/writing/`. Follow this layout language when building — don't invent a new one.
+
+- **Homepage fold** — `docs/references/writing/01-homepage-fold.webp`
+  - Mono uppercase eyebrow (`WRITING`, wide tracking), on the same off-white body bg.
+  - Serif headline underneath, ~40–48px, e.g. *"notes on design and making"* — Megh writes his own version.
+  - A vertical list of 3 entries, each row: title (sans, medium weight, ~18–20px) on the left, date (mono, muted) right-aligned. Hairline `--border` between rows. No thumbnails, no excerpts — the list stays quiet on the homepage.
+  - `all posts →` link at the bottom (mono-ish sans, muted color, subtle underline on hover).
+- **`/writing` index** — `docs/references/writing/02-index-grid.webp`
+  - Same eyebrow (`BLOG` or `WRITING`) + serif headline treatment, one step larger than the homepage fold.
+  - Grid of cards, 3 columns desktop / 2 tablet / 1 mobile.
+  - Each card: a large dark thumbnail (per-entry accent art, cream stroke on charcoal — same tone across cards for consistency), category label (mono, uppercase, small, above the title), title (sans, semibold, 2 lines max, truncated with `…`), 2-line excerpt, date + read time (mono, muted) below.
+  - No filter chips in v1; add them only once entry count > 15.
+- **Entry detail** — `docs/references/writing/03-entry-detail.webp`
+  - Full-width prose page, ~640px reading column, centered.
+  - Breadcrumb `← all posts` at top-left of the reading column.
+  - Title (serif, ~32–40px), then a meta strip: date · reading time · category (mono, muted, one line, dot-separated).
+  - Body: sans, ~16–18px, line-height 1.65. Subheads in bold sans (not serif) — the serif is reserved for the title on this page. Short paragraphs. No pull-quotes. Real quotes go inline in `"..."` — no `<blockquote>` styling.
+  - No sidebars, no related-posts rail, no sticky share buttons. The page is a reading page.
+  - Footer of the reading column: small "one last thing before you go" line + a light signature (mono initials or single-word signoff). Keep it quiet — the value is the prose.
+
+Any of the above can be relaxed later; if we do, note the deviation in the PR that ships it, and update this section in the same PR.
+
 ### 6.5 Quality gates before "done"
 
 From `CLAUDE.md` §7 — verify each before shipping any substantial change:

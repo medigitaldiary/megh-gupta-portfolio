@@ -422,11 +422,13 @@ The coming-soon page is one screen with no scroll story. The full portfolio is n
 | Fold | Job | Question it answers |
 |---|---|---|
 | 1 · Hero | Hook | "Who is this and why should I keep scrolling?" |
-| 2 · Selected Work | Proof | "What have they actually shipped, with numbers?" |
-| 3 · The Lab | Range | "Do they build outside their day job?" |
-| 4 · My Work Stack (§7.1) | Craft | "How do they actually work?" |
-| 5 · About | Person | "Would I want to work with them?" |
-| 6 · Let's connect (§7.2) | Action | "Okay, how do I reach them?" |
+| 2 · Experience (§7.7) | Trajectory | "Where has this person been?" |
+| 3 · Selected Work | Proof | "What have they actually shipped, with numbers?" |
+| 4 · The Lab | Range | "Do they build outside their day job?" |
+| 5 · My Work Stack (§7.1) | Craft | "How do they actually work?" |
+| 6 · Writing (§7.6) | Thought | "How do they think about product?" |
+| 7 · About | Person | "Would I want to work with them?" |
+| 8 · Let's connect (§7.2) | Action | "Okay, how do I reach them?" |
 
 Nav (when nav exists) must mirror this order and use the same section names — the map should not contradict the territory.
 
