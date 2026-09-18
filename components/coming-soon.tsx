@@ -1,4 +1,5 @@
 import { CloudBackground } from "@/components/cloud-background";
+import { CopyEmailButton } from "@/components/copy-email-button";
 
 const CONTACT_EMAIL = "megh.bpgc@gmail.com";
 const LINKEDIN_URL = "https://www.linkedin.com/in/megh-gupta-917280200";
@@ -156,16 +157,14 @@ export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
           </a>
         </div>
 
-        <a
-          href={`mailto:${CONTACT_EMAIL}?subject=Hello%20from%20your%20site`}
-          className="mt-10 rounded-sm text-sm underline underline-offset-4 transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        <CopyEmailButton
+          email={CONTACT_EMAIL}
+          className="mt-10 inline-flex cursor-pointer items-center gap-2 rounded-sm bg-transparent text-sm underline underline-offset-4 transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           style={{
             color: t.muted,
             textDecorationColor: `${t.muted}59`,
           }}
-        >
-          {CONTACT_EMAIL}
-        </a>
+        />
       </div>
     </main>
   );
