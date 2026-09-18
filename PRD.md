@@ -407,6 +407,142 @@ Default = option 1 unless volume changes. All three keep the same form UI — on
 - File: `components/coming-soon.tsx`
 - Element: the `<p>` immediately below the italic subtitle "Building a new home for my work & ideas."
 
+---
+
+### 7.4 Fold-by-fold storyboard for the full portfolio launch
+
+Applies **only** to the full portfolio, not the coming-soon page. The rules that lock this in live in `CLAUDE.md §14`. This section is the *content* of the storyboard: what each fold says, shows, and hooks into next.
+
+**The whole homepage reads as one scroll story, not a stack of tiles.** Every fold has a job, answers one specific question, and hands the reader off to the next fold with a hook. Write this list before you write components.
+
+#### Fold 1 · Hero (the hook, 3-second grab)
+
+- **Job:** get a recruiter or hiring PM to stop skimming.
+- **Question answered:** "Who is this and why should I keep scrolling?"
+- **Contents:** name, one-line role/identity, a single primary CTA (the strongest link — LinkedIn or "See work"), a subtle secondary (resume or scroll cue).
+- **Voice:** the 10-second intro from §7.3.
+- **Lead-out hook:** the sentence should end with a fragment that plants the next fold ("… lately I've been building X" → Fold 2 shows X).
+
+#### Fold 2 · Selected Work (the proof)
+
+- **Job:** replace vague adjectives with named numbers.
+- **Question answered:** "What have they actually shipped, with numbers?"
+- **Contents:** 3–4 case study cards (per `lib/work.ts`), each with a headline metric visible without hover. Cards link to `/work/[slug]` when case study pages exist; before that, link to Notion / deck / Loom.
+- **Voice:** past tense, verbs first, numbers early. "Grew organic clicks 2×." Not "Responsible for growth."
+- **Lead-out hook:** last card gently implies "there's more" — either "See all case studies →" or a bridge line into Fold 3.
+
+#### Fold 3 · The Lab (the range)
+
+- **Job:** show the reader Megh builds beyond the day job — signals initiative and taste.
+- **Question answered:** "Do they build outside their day job? Do I like what they build?"
+- **Contents:** side projects grid (per `lib/lab.ts`), smaller cards than Work, each with 1–2 sentence description and a mono stack tag row.
+- **Voice:** present tense where projects are live, past for wrapped. Playful is allowed here (only here).
+- **Lead-out hook:** implies "and here's how I actually work" → Fold 4.
+
+#### Fold 4 · My Work Stack (the craft)
+
+- **Job:** show fluency with the tools that make him productive — a PM-native answer to "what's your stack."
+- **Question answered:** "How do they actually work day-to-day?"
+- **Contents:** full spec in §7.1.
+- **Voice:** specific per-tool one-liners ("Cursor for PRDs alongside code so implementation Qs surface at spec time"). Not adjective lists.
+- **Lead-out hook:** by now they've seen work, side work, and tooling; the natural next question is "who is this person?" → Fold 5.
+
+#### Fold 5 · About (the person)
+
+- **Job:** turn the résumé signal into a person the reader would want to work with.
+- **Question answered:** "Would I want to spend 40 hours a week with them?"
+- **Contents:** portrait (250 px square, off-white bg), 3–4 short paragraphs on background, why-fintech, what he's curious about, one lightly personal line.
+- **Voice:** warm, still specific. "I got into fintech because…" not "passionate about finance."
+- **Lead-out hook:** ends on "here's how to reach me" → Fold 6.
+
+#### Fold 6 · Let's connect (the action)
+
+- **Job:** convert intent into a message that reaches Megh.
+- **Question answered:** "Okay, how do I reach out?"
+- **Contents:** full spec in §7.2.
+- **Voice:** LinkedIn-bio-derived heading, direct CTA, no filler.
+- **Lead-out hook:** none — this is the terminal fold. A minimal footer (© year, mono initials) can sit below it but should not compete for attention.
+
+---
+
+**Anti-patterns for the launch (do not add without asking):**
+
+- A testimonials fold without real, attributed quotes.
+- A newsletter signup between Work and About.
+- A "logos I've worked with" strip that duplicates Fold 2.
+- A stats-tile row ("years of experience," "products shipped") — that's résumé, not story.
+- Any fold that exists because "the page felt short."
+
+**Pre-launch storyboard review:**
+
+Before merging the launch PR, write the storyboard as six bullets in the PR body — headline + job + hook. If any bullet feels weak, cut or redesign the fold before shipping. It's cheaper here than in front of a recruiter.
+
+---
+
+### 7.5 SEO & head-tag spec for future page types
+
+Shape rules — canonical, OG, Twitter card, JSON-LD graph, discovery block, etc. — are locked in `CLAUDE.md §15`. This section captures the *content* each page type has to fill in when it gets built. The baseline never gets simplified out; new pages only add.
+
+#### Root (`app/layout.tsx`) — already shipped
+
+Baseline `Person + WebSite + ProfilePage` graph, discovery block, canonical, OG profile, Twitter card, favicon. Nothing to change here except when the elevator pitch changes (bump `TITLE`, `DESCRIPTION`, `public/index.md`, `public/llms.txt` together).
+
+#### `/work` (case study index) — future
+
+- `metadata.title`: `"Selected work"` → renders as `"Selected work | Megh Gupta"` via the template.
+- `metadata.description`: 1 sentence naming the case-study themes ("Growth PM work at BondScanner, platform PM at Ultra, AI tooling.").
+- OpenGraph `type: "website"`, page-specific `og:image` (a grid of case-study covers, generated by `/api/og?type=work-index`).
+- JSON-LD: extend the root graph with a `CollectionPage` node whose `mainEntity` is an `ItemList` of the case studies.
+- Discovery block: `alternate type="text/markdown"` → `/work/index.md` (Markdown list of case studies).
+- Sitemap: added on the same PR.
+
+#### `/work/[slug]` (individual case study) — future
+
+- `metadata.title`: case study headline; auto-suffixed via the root template.
+- `metadata.description`: the case study TL;DR (per MDX schema, `CLAUDE.md §5`).
+- OpenGraph `type: "article"`, `og:image` from `/api/og/[slug]` (headline metric over a solid accent card, generated dynamically). Include `og:article:author`, `og:article:published_time`, `og:article:tag` (from MDX frontmatter `tags`).
+- Twitter card: same `summary_large_image` with the per-case OG image.
+- JSON-LD: **extend** the root graph with an `Article` node → `author: { @id: Person }`, `headline`, `datePublished`, `image`, `about` (the tags), `mainEntity` reference from `WebPage`.
+- Canonical: `https://www.meghgupta.in/work/[slug]`. If a case study was originally published elsewhere (Notion, Medium, LinkedIn), set canonical to *that* URL and add `rel="alternate"` back to this one — never cannibalize the original's rank.
+- Discovery block: `alternate type="text/markdown"` → `/work/[slug].md` (the raw MDX rendered as plain markdown).
+- Sitemap: added by iterating `getAllCaseStudies()` in `app/sitemap.ts`.
+
+#### `/lab` and `/lab/[slug]` — future
+
+- `metadata.title`: `"The Lab"` / individual project title.
+- OpenGraph `type: "website"` for the index, `"article"` for individual entries.
+- JSON-LD: extend with `CollectionPage` (index) and `CreativeWork` nodes per entry — `name`, `description`, `url` (external), `keywords` (stack tags), `creator: { @id: Person }`.
+- Same discovery block. Add each lab entry to sitemap.
+
+#### `/about` — future (if separated from the homepage About fold)
+
+- `metadata.title`: `"About"`.
+- OpenGraph `type: "profile"` (same as root).
+- JSON-LD: extends `Person` on the root graph with deeper `description`, `knowsAbout` (topics: fintech, product management, voice AI, growth), `alumniOf` already present.
+
+#### `/api/og/[slug]` — future dynamic OG images
+
+- `next/og` `ImageResponse`, 1200×630, cream `--bg` background, headline metric in Instrument Serif, cloud favicon in the corner.
+- One-line PM voice quote below the metric (from MDX `headline_metric` + author line).
+- No auth, no cookies, no user data — safe for any social platform to fetch.
+
+#### Discovery files — living
+
+- `public/llms.txt` — refresh whenever the elevator pitch changes.
+- `public/AGENTS.md` — refresh whenever new sections ship (add a "Sections" list once Work / Lab / Stack are live).
+- `public/index.md` — refresh whenever `/` copy changes.
+- Per-page `.md` alternates (`/work/[slug].md`, `/lab/[slug].md`) — generated from the same MDX source at build time; never hand-maintained separately.
+
+#### Validation checklist (per launch or per new page type)
+
+- [ ] View-source of the new route contains the full discovery block.
+- [ ] Google Rich Results Test renders a matching structured-data card.
+- [ ] LinkedIn Post Inspector shows the correct OG image and description.
+- [ ] `sitemap.xml` includes the new route.
+- [ ] `robots.ts` allows the new route (no accidental disallow).
+- [ ] All linked `.md` alternates return 200.
+- [ ] No hardcoded absolute URLs pointing at a wrong domain (e.g., `www.meghgupta.com` when the site is `www.meghgupta.in`).
+
 ### 6.5 Quality gates before "done"
 
 From `CLAUDE.md` §7 — verify each before shipping any substantial change:

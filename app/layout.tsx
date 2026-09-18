@@ -62,6 +62,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: SITE_URL,
+    types: {
+      "text/markdown": [{ url: "/index.md", title: "Profile as Markdown" }],
+    },
   },
   openGraph: {
     type: "profile",
@@ -150,11 +153,31 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="theme-color" content="#FAFAF7" />
+        {/* discovery:start */}
+        <link
+          rel="help"
+          type="text/plain"
+          href="/llms.txt"
+          title="AI reading guide"
+        />
+        <link
+          rel="help"
+          type="text/markdown"
+          href="/AGENTS.md"
+          title="Agent guidance"
+        />
+        <link
+          rel="sitemap"
+          type="application/xml"
+          href="/sitemap.xml"
+          title="Sitemap"
+        />
         <script
           type="application/ld+json"
           // biome-ignore lint/security/noDangerouslySetInnerHtml: static, non-user-controlled JSON-LD
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* discovery:end */}
       </head>
       <body
         className={`${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased bg-bg text-fg`}

@@ -403,4 +403,95 @@ git checkout -b mxg/hotfix-<slug> origin/main
 - **While portfolio is under development:** `main` shows the coming-soon page (`components/coming-soon.tsx` rendered from `app/page.tsx`). Real portfolio lives on `dev`.
 - **On launch day:** merge `dev` → `main`. `main`'s `app/page.tsx` becomes the real portfolio. The coming-soon component stays in the repo (unused) so a future "we're rebuilding" moment can toggle it back with one file swap.
 
+---
+
+## 14. Fold-based storyboarding (locked, applies to the full portfolio only)
+
+The coming-soon page is one screen with no scroll story. The full portfolio is not. Whenever the real portfolio is being built or restructured, the homepage must be designed as a **sequence of viewport-height "folds,"** each of which carries a single job in a deliberate narrative. This is the story a recruiter or hiring PM reads while scrolling.
+
+**Rules that don't get relitigated:**
+
+1. **Every homepage section = one fold (roughly 100svh on desktop, tolerated overflow on mobile).** Never chain two unrelated ideas into the same fold. If a section can't earn a fold, it doesn't belong on the homepage.
+2. **Each fold has one job**, named in a comment above its `<section>` in code. Pin the job in the JSX (`{/* Fold 3: proof — numbers over adjectives */}`), so the intent survives future edits.
+3. **Every fold answers one question the reader is asking at that scroll depth.** Don't answer questions they haven't asked yet, and don't leave open the one they *are* asking.
+4. **Every fold has one lead-in and one lead-out** — a hook the previous fold left dangling, and a hook this fold plants for the next. No fold ends flat.
+5. **Storyboard the sequence before writing components.** Owner (Megh) writes the fold list first, one line each — headline + job + question answered. Only after that list is approved does the code get written.
+
+**The default storyboard for launch (change with an explicit ask, don't drift):**
+
+| Fold | Job | Question it answers |
+|---|---|---|
+| 1 · Hero | Hook | "Who is this and why should I keep scrolling?" |
+| 2 · Selected Work | Proof | "What have they actually shipped, with numbers?" |
+| 3 · The Lab | Range | "Do they build outside their day job?" |
+| 4 · My Work Stack (§7.1) | Craft | "How do they actually work?" |
+| 5 · About | Person | "Would I want to work with them?" |
+| 6 · Let's connect (§7.2) | Action | "Okay, how do I reach them?" |
+
+Nav (when nav exists) must mirror this order and use the same section names — the map should not contradict the territory.
+
+**How this interacts with mobile (~60% of traffic per §1):** on phones a "fold" is smaller and stacks vertically; the *sequence* stays identical, only the internal layout collapses to one column. Do not reorder folds by breakpoint.
+
+**What NOT to do:** don't add a fold "because the page feels short." Don't build a testimonials fold without real testimonials. Don't put a newsletter signup between Work and About just because it's a common pattern. Every fold earns its place by carrying a specific job in the story.
+
+The detailed spec of what each fold contains lives in `PRD.md §7` (Future sections) and its subsections — this file only holds the shape rules.
+
+---
+
+## 15. SEO & head discoverability (locked — carries into the full portfolio)
+
+Everything that's in `app/layout.tsx`'s `<head>` today is a **baseline, not a sample.** When the full portfolio ships, none of these signals get dropped, "simplified," or refactored away. New page types add their own overrides on top; they never subtract from the baseline.
+
+### Baseline every page inherits from `app/layout.tsx`
+
+- **Title:** shared `TITLE` constant; child pages override via `metadata.title.template` (`"%s | Megh Gupta"`).
+- **Description:** shared `DESCRIPTION` constant for the root; child pages set their own.
+- **Canonical:** `metadata.alternates.canonical`, absolute URL, always present.
+- **Robots:** `index, follow`, `max-image-preview: large`, plus explicit `googleBot` directives (`max-video-preview: -1`, `max-snippet: -1`). Only override to `noindex` on preview / experimental routes.
+- **OpenGraph:** `type` (`profile` on `/`, `article` on case studies, `website` elsewhere), `url`, `siteName: "Megh Gupta"`, `locale: en_IN`, `images` with 1200×630 + `alt`.
+- **Twitter card:** `summary_large_image`, `title`, `description`, `images`.
+- **`theme-color`:** matches the page's dominant background token.
+- **JSON-LD graph** inline in `<head>`: at minimum `Person + WebSite + ProfilePage` linked by `@id`. Case study pages extend the graph with an `Article` node. The Lab and Work Stack extend with `CreativeWork` and `HowTo`-style nodes as they get built.
+- **Discovery block** wrapped in `{/* discovery:start */}` / `{/* discovery:end */}` comments:
+  - `rel="alternate" type="text/markdown"` → per-page `.md` version.
+  - `rel="help" type="text/plain"` → `/llms.txt`.
+  - `rel="help" type="text/markdown"` → `/AGENTS.md`.
+  - `rel="sitemap" type="application/xml"` → `/sitemap.xml`.
+- **Favicon:** `app/icon.svg` (adaptive light/dark cloud).
+
+### Per-page-type overrides that MUST ship at launch
+
+| Page type | Overrides / additions |
+|---|---|
+| `/work/[slug]` | `openGraph.type: "article"`, per-case-study OG image via `next/og`, add `Article` + `Person(author)` JSON-LD, extend the graph with `mainEntity: Article`. Update sitemap. |
+| `/lab` and `/lab/[slug]` | `CreativeWork` JSON-LD per lab entry, per-page canonical, per-page OG image. |
+| `/about` | `ProfilePage` stays, add `Person.description` deep dive. Same discovery block. |
+| `/api/og/[slug]` | Dynamic per-case-study OG image at 1200×630, must be reachable without auth. |
+| Any new page | Add to `sitemap.ts` in the same PR, or the page ships un-indexed. |
+
+### Discovery files kept in sync
+
+- `public/llms.txt` — update whenever the elevator pitch changes.
+- `public/AGENTS.md` — update whenever new site sections ship.
+- `public/index.md` — the Markdown version of the homepage; refresh when the copy on `/` changes.
+
+### Definition of done for any launch or restructure
+
+Before merging any PR that touches `app/layout.tsx`, homepage content, or introduces new page types:
+
+- [ ] `pnpm build` clean; sitemap includes the new route.
+- [ ] View-source of the new route contains: `canonical`, `og:type`, `og:image`, `twitter:card`, `application/ld+json`, discovery block.
+- [ ] Google Rich Results Test at `search.google.com/test/rich-results` renders a matching structured-data card.
+- [ ] LinkedIn Post Inspector renders the OG image cleanly.
+- [ ] `/llms.txt`, `/AGENTS.md`, `/index.md` (and any `[slug].md` alternates) still resolve.
+
+### What NOT to do
+
+- Do not remove the JSON-LD graph "because Next.js Metadata already covers OG." They serve different consumers (search engines vs. social unfurlers vs. LLM agents).
+- Do not switch to a single `<meta name="description">` line and call it done — recruiters see the OG card in LinkedIn, not the search snippet.
+- Do not let a new page type ship without a corresponding sitemap entry and (where relevant) a JSON-LD extension.
+- Do not silently `noindex` a real page. If a page shouldn't be indexed, say so in the PR body.
+
+The detailed content spec for future sections' meta (case studies, Lab, Stack, Connect) lives in `PRD.md §7.5`. This file only holds the shape rules.
+
 End of file.
