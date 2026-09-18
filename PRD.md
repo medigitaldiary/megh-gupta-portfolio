@@ -626,6 +626,30 @@ canonical: null                    # set to the original URL if cross-posted fro
 2. Ship `/writing/[slug]` first (per-entry pages, MDX + JSON-LD), then `/writing` index, then the homepage fold.
 3. RSS in a separate PR after the section is proven.
 
+**Visual reference (locked layout pattern):**
+
+Reference screenshots checked into `docs/references/writing/`. Follow this layout language when building — don't invent a new one.
+
+- **Homepage fold** — `docs/references/writing/01-homepage-fold.webp`
+  - Mono uppercase eyebrow (`WRITING`, wide tracking), on the same off-white body bg.
+  - Serif headline underneath, ~40–48px, e.g. *"notes on design and making"* — Megh writes his own version.
+  - A vertical list of 3 entries, each row: title (sans, medium weight, ~18–20px) on the left, date (mono, muted) right-aligned. Hairline `--border` between rows. No thumbnails, no excerpts — the list stays quiet on the homepage.
+  - `all posts →` link at the bottom (mono-ish sans, muted color, subtle underline on hover).
+- **`/writing` index** — `docs/references/writing/02-index-grid.webp`
+  - Same eyebrow (`BLOG` or `WRITING`) + serif headline treatment, one step larger than the homepage fold.
+  - Grid of cards, 3 columns desktop / 2 tablet / 1 mobile.
+  - Each card: a large dark thumbnail (per-entry accent art, cream stroke on charcoal — same tone across cards for consistency), category label (mono, uppercase, small, above the title), title (sans, semibold, 2 lines max, truncated with `…`), 2-line excerpt, date + read time (mono, muted) below.
+  - No filter chips in v1; add them only once entry count > 15.
+- **Entry detail** — `docs/references/writing/03-entry-detail.webp`
+  - Full-width prose page, ~640px reading column, centered.
+  - Breadcrumb `← all posts` at top-left of the reading column.
+  - Title (serif, ~32–40px), then a meta strip: date · reading time · category (mono, muted, one line, dot-separated).
+  - Body: sans, ~16–18px, line-height 1.65. Subheads in bold sans (not serif) — the serif is reserved for the title on this page. Short paragraphs. No pull-quotes. Real quotes go inline in `"..."` — no `<blockquote>` styling.
+  - No sidebars, no related-posts rail, no sticky share buttons. The page is a reading page.
+  - Footer of the reading column: small "one last thing before you go" line + a light signature (mono initials or single-word signoff). Keep it quiet — the value is the prose.
+
+Any of the above can be relaxed later; if we do, note the deviation in the PR that ships it, and update this section in the same PR.
+
 ### 6.5 Quality gates before "done"
 
 From `CLAUDE.md` §7 — verify each before shipping any substantial change:
