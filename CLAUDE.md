@@ -436,4 +436,62 @@ Nav (when nav exists) must mirror this order and use the same section names — 
 
 The detailed spec of what each fold contains lives in `PRD.md §7` (Future sections) and its subsections — this file only holds the shape rules.
 
+---
+
+## 15. SEO & head discoverability (locked — carries into the full portfolio)
+
+Everything that's in `app/layout.tsx`'s `<head>` today is a **baseline, not a sample.** When the full portfolio ships, none of these signals get dropped, "simplified," or refactored away. New page types add their own overrides on top; they never subtract from the baseline.
+
+### Baseline every page inherits from `app/layout.tsx`
+
+- **Title:** shared `TITLE` constant; child pages override via `metadata.title.template` (`"%s | Megh Gupta"`).
+- **Description:** shared `DESCRIPTION` constant for the root; child pages set their own.
+- **Canonical:** `metadata.alternates.canonical`, absolute URL, always present.
+- **Robots:** `index, follow`, `max-image-preview: large`, plus explicit `googleBot` directives (`max-video-preview: -1`, `max-snippet: -1`). Only override to `noindex` on preview / experimental routes.
+- **OpenGraph:** `type` (`profile` on `/`, `article` on case studies, `website` elsewhere), `url`, `siteName: "Megh Gupta"`, `locale: en_IN`, `images` with 1200×630 + `alt`.
+- **Twitter card:** `summary_large_image`, `title`, `description`, `images`.
+- **`theme-color`:** matches the page's dominant background token.
+- **JSON-LD graph** inline in `<head>`: at minimum `Person + WebSite + ProfilePage` linked by `@id`. Case study pages extend the graph with an `Article` node. The Lab and Work Stack extend with `CreativeWork` and `HowTo`-style nodes as they get built.
+- **Discovery block** wrapped in `{/* discovery:start */}` / `{/* discovery:end */}` comments:
+  - `rel="alternate" type="text/markdown"` → per-page `.md` version.
+  - `rel="help" type="text/plain"` → `/llms.txt`.
+  - `rel="help" type="text/markdown"` → `/AGENTS.md`.
+  - `rel="sitemap" type="application/xml"` → `/sitemap.xml`.
+- **Favicon:** `app/icon.svg` (adaptive light/dark cloud).
+
+### Per-page-type overrides that MUST ship at launch
+
+| Page type | Overrides / additions |
+|---|---|
+| `/work/[slug]` | `openGraph.type: "article"`, per-case-study OG image via `next/og`, add `Article` + `Person(author)` JSON-LD, extend the graph with `mainEntity: Article`. Update sitemap. |
+| `/lab` and `/lab/[slug]` | `CreativeWork` JSON-LD per lab entry, per-page canonical, per-page OG image. |
+| `/about` | `ProfilePage` stays, add `Person.description` deep dive. Same discovery block. |
+| `/api/og/[slug]` | Dynamic per-case-study OG image at 1200×630, must be reachable without auth. |
+| Any new page | Add to `sitemap.ts` in the same PR, or the page ships un-indexed. |
+
+### Discovery files kept in sync
+
+- `public/llms.txt` — update whenever the elevator pitch changes.
+- `public/AGENTS.md` — update whenever new site sections ship.
+- `public/index.md` — the Markdown version of the homepage; refresh when the copy on `/` changes.
+
+### Definition of done for any launch or restructure
+
+Before merging any PR that touches `app/layout.tsx`, homepage content, or introduces new page types:
+
+- [ ] `pnpm build` clean; sitemap includes the new route.
+- [ ] View-source of the new route contains: `canonical`, `og:type`, `og:image`, `twitter:card`, `application/ld+json`, discovery block.
+- [ ] Google Rich Results Test at `search.google.com/test/rich-results` renders a matching structured-data card.
+- [ ] LinkedIn Post Inspector renders the OG image cleanly.
+- [ ] `/llms.txt`, `/AGENTS.md`, `/index.md` (and any `[slug].md` alternates) still resolve.
+
+### What NOT to do
+
+- Do not remove the JSON-LD graph "because Next.js Metadata already covers OG." They serve different consumers (search engines vs. social unfurlers vs. LLM agents).
+- Do not switch to a single `<meta name="description">` line and call it done — recruiters see the OG card in LinkedIn, not the search snippet.
+- Do not let a new page type ship without a corresponding sitemap entry and (where relevant) a JSON-LD extension.
+- Do not silently `noindex` a real page. If a page shouldn't be indexed, say so in the PR body.
+
+The detailed content spec for future sections' meta (case studies, Lab, Stack, Connect) lives in `PRD.md §7.5`. This file only holds the shape rules.
+
 End of file.
