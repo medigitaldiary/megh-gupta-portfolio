@@ -126,7 +126,7 @@ export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
         >
           Hi, I&apos;m Megh. I build 0→1 fintech, and the AI tools that quietly
           run behind it. Right now at{" "}
-          <span className="inline-flex items-baseline gap-1 whitespace-nowrap align-baseline">
+          <span className="inline-flex items-baseline gap-[2px] whitespace-nowrap align-baseline">
             <Image
               src="/images/logos/bondscanner.jpg"
               alt=""
@@ -134,7 +134,7 @@ export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
               height={20}
               className="inline-block translate-y-[3px] rounded-[4px]"
             />
-            BondScanner
+            <span className="font-semibold">BondScanner</span>
           </span>
           , making bond investing simple for retail investors.
         </p>
