@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { CloudBackground } from "@/components/cloud-background";
 import { CopyEmailButton } from "@/components/copy-email-button";
 
@@ -124,8 +125,18 @@ export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
           style={{ color: t.body }}
         >
           Hi, I&apos;m Megh. I build 0→1 fintech, and the AI tools that quietly
-          run behind it. Right now at BondScanner, making bond investing simple
-          for retail investors.
+          run behind it. Right now at{" "}
+          <span className="inline-flex items-baseline gap-1 whitespace-nowrap align-baseline">
+            <Image
+              src="/images/logos/bondscanner.jpg"
+              alt=""
+              width={20}
+              height={20}
+              className="inline-block translate-y-[3px] rounded-[4px]"
+            />
+            BondScanner
+          </span>
+          , making bond investing simple for retail investors.
         </p>
 
         <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
