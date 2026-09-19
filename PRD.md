@@ -297,7 +297,79 @@ Per `CLAUDE.md` §6.3:
 
 These are approved additions to the eventual full portfolio, captured here so nothing gets lost between now and building them. Order in the page = order in this section.
 
-### 7.1 "My Work Stack" — the tools I use, and how
+### 7.1 "My Stack" — icon row inside the About fold
+
+> **Layout change (locked):** the earlier full-fold "My Work Stack" is retired. The stack now lives as a compressed icon row *inside* the About fold — no separate fold, no per-tool card grid. Reference: `docs/references/stack/01-icon-row.png`.
+
+**Where:** at the bottom of the About fold, after the portrait + prose block. A small italic-serif label reads `my stack`, then a single horizontal row of circular tool icons, then a `+ more` text toggle at the end. Hover or keyboard-focus on any icon reveals a dark pill tooltip above it with the tool's name **and** the one-line "how I use it."
+
+**Why the change:**
+- Craft signals shouldn't earn a full fold. A recruiter doesn't scroll to the stack fold and think "ah, now I want to work with him because he uses Cursor." They form that opinion from Work and Experience. The stack is *evidence*, not the pitch.
+- Compressing to an icon row keeps the signal without buying a fold.
+- Hover tooltip is enough depth for anyone who cares to look; anyone who doesn't sees a quiet identity strip.
+
+**Fold impact:** homepage drops from 8 to 7 folds. About's job is now `Person + Craft` — "Would I want to work with them, *and* what do they build with?" See `CLAUDE.md §14` for the updated storyboard.
+
+**Layout — icon row:**
+- Small handwritten-style label above the row: `my stack` in italic serif (`Instrument Serif italic`), ~14–15px, in `--fg-muted`. Matches the reference's handwritten register.
+- Row of 6–10 circular icon buttons, ~48px diameter each, gap ~16–20px, wrapping to a second row on mobile.
+- Each icon: soft `--bg-elevated` circle with 1px `--border`, brand-mono glyph (24px) centered in `--fg`. When the tool has an official monogram, use it — otherwise a monochrome SVG cast in `currentColor`.
+- The current-focus tool gets a subtle dark fill on the circle (matches the "mixpanel" active state in the reference). Not a hover — this is the actively-tooltipped tool.
+- A `+ more` link at the end of the row (mono-ish sans, `--fg-muted`, underline on hover). Click expands the row inline to reveal additional icons; second click collapses. No modal, no navigation, no `/stack` subpage.
+
+**Tooltip:**
+- Dark pill (`--fg` background, `--bg` text), ~10–12px vertical padding, ~14–18px horizontal padding, ~6px radius. Anchored above the icon with a 4px gap.
+- Contents (two lines):
+  - **Line 1:** tool name, sans-semibold, ~14px.
+  - **Line 2:** one-liner "how I use it," sans-regular, ~12px, opacity 0.75. Wraps to 2 lines max; anything longer gets rewritten shorter, not truncated.
+- Appears on hover, focus, or long-press. Disappears on mouseleave, blur, or Esc.
+- Positioning: `absolute` above the icon by default; flips to below at the edge of the viewport (right-edge tools would clip on mobile otherwise).
+- 100ms fade-in via CSS, honors `prefers-reduced-motion` (no animation, appears instantly).
+- Keyboard: tooltip is announced via `aria-describedby` on the button, so screen readers get the one-liner as part of the button's accessible name.
+
+**Content model — `lib/stack.ts`:**
+
+```ts
+type StackTool = {
+  slug: string;              // "figma", "cursor", "mixpanel"
+  name: string;              // display name, lowercase per reference ("mixpanel")
+  icon: string;              // "/images/stack/figma.svg" — monochrome, viewBox 24x24
+  one_liner: string;         // "funnel + retention analytics on the growth loops"
+  featured?: boolean;         // true = in the default row; false = behind "+ more"
+  order?: number;             // sort within featured group; defaults to source order
+};
+```
+
+Author 6–10 tools with `featured: true` for the default row; put the rest behind `featured: false` (shown only when `+ more` is expanded). No categories, no `since` field, no `how_i_use_it` prose paragraphs. The one-liner is the whole story.
+
+**Voice rules for `one_liner`** (per `CLAUDE.md §10`):
+- Verb-first, present tense. "writes PRDs alongside code so implementation Qs surface at spec time" beats "productivity tool for writing PRDs."
+- Name the actual use, not the category. "funnel + retention analytics on the growth loops" beats "product analytics."
+- Under 12 words when possible. Absolute cap: 18. If it needs more, rewrite the use, not the sentence.
+- No adjective stacks ("powerful, flexible, beautiful") — those read as marketing copy for the tool, not evidence of use.
+
+**Anti-patterns:**
+- No per-tool "since 2024" badge — years since first use is résumé weight, not signal.
+- No filter chips (`AI-first / hands-on-code / PM-only` from the retired spec) — the row is short enough to scan whole; filtering is friction.
+- No categories or grouping — one row, one story. If the row breaks 10 tools, cut the weakest ones, don't group them.
+- No brand-color icons — everything in `currentColor` so the row reads as one system, not a sponsor strip.
+- No `/stack` subpage. If the "+ more" expansion isn't enough, the fix is to cut tools from the row, not add a new surface.
+
+**Analytics** (per `CLAUDE.md §6.3`, custom Vercel Analytics — no PII):
+- `stack_tool_hover` (property: slug) — track which tools recruiters actually inspect.
+- `stack_more_toggle` (property: `to` = `open | closed`) — signal on whether the "+ more" toggle earns its complexity.
+
+**Launch order:**
+1. Populate `lib/stack.ts` with 6–10 real tools, one-liners written in PM voice. TODO stubs cannot ship.
+2. Ship the icon row and tooltip in the same commit — half the pattern is worthless.
+3. Wire analytics events with the first ship.
+4. `+ more` expansion in a follow-up commit if the default row proves too tight.
+
+**Deprecated:** the earlier fold-level "My Work Stack" spec (category-grouped card grid, per-tool "since" year, `how_i_use_it` prose). If any content model was drafted under the old spec, migrate to the compressed `lib/stack.ts` shape above.
+
+---
+
+### 7.1a "My Work Stack" — DEPRECATED (see §7.1 above)
 
 **Placement:** after **Selected Work**, before **The Lab**. Reads as a bridge — "here's what I shipped, here's what I ship with."
 
@@ -381,6 +453,39 @@ Default = option 1 unless volume changes. All three keep the same form UI — on
 **Deprecates:**
 - The current mailto link + `hi@meghgupta.com` on the coming-soon page. Both stay until this section ships (mailto is the fallback if the form 500s).
 
+**Anchor & CTA target:**
+- The section's `<section>` has `id="connect"`. The hero's single `Let's connect →` CTA smooth-scrolls to it (`document.getElementById('connect')?.scrollIntoView({ behavior: 'smooth' })` — or CSS-native scroll-behavior on `html`).
+- If nav ever exists, its final item points to `#connect`.
+
+---
+
+### 7.2a Third-party embed options (short-list for the connect surface)
+
+If a custom Resend + server action feels like more surface area than the connect fold needs, the alternative is embedding a hosted form / booking widget. Below are the candidates, ordered by how well their default UI fits an editorial personal portfolio. Not a recommendation yet — the pick depends on whether the goal is *messages* or *meetings*.
+
+| Option | Category | Free tier | UI fit for editorial portfolio | Notes |
+|---|---|---|---|---|
+| **Tally** ([tally.so](https://tally.so)) | Form | Generous (unlimited forms, ~50 submissions/month free-ish) | ★★★★★ — clean, minimal, notion-adjacent | The current default answer for personal-site forms. Embeds via iframe or a hosted subpage. Supports Notion / Airtable webhooks. Very easy to make it look native. |
+| **Fillout** ([fillout.com](https://fillout.com)) | Form | Yes (limited submissions) | ★★★★☆ — modern, clean, slightly denser than Tally | Newer Tally competitor. Stronger conditional-logic and multi-step flows; overkill for a contact form but no worse looking. |
+| **Cal.com** ([cal.com](https://cal.com)) | Booking | Yes | ★★★★★ — clean brutalist, matches editorial | Different mental model: instead of "send a message" it says "book 20 min." Higher signal per submission — a recruiter putting time on your calendar is a strong intent — but excludes async messages. Can embed inline or as a popover. Consider pairing with a small mailto/copy fallback. |
+| **Youform** ([youform.com](https://youform.com)) | Form | Yes | ★★★★☆ — minimal, monochrome by default | Newer entrant. Aggressively simple. Fewer integrations than Tally, but the default styling is closer to editorial. |
+| **Formspark** / **Basin** / **Formspree** | Backend only | Yes (limits vary) | You style the form yourself | These are backends, not UIs. You still author the HTML / React form; they handle submission + spam + email delivery. Good middle ground: keeps your styling, avoids Resend setup. |
+| **Typeform** ([typeform.com](https://typeform.com)) | Form | Very limited (10 responses/mo on free) | ★★★☆☆ — polished but conversational-marketing vibe | Feels like a landing-page tool. On a personal portfolio it can read as over-produced. Skip unless you want the conversational one-question-at-a-time flow. |
+| **HubSpot Forms** | Form | Yes | ★★☆☆☆ — corporate CRM aesthetic | Ships CRM tracking baggage. Wrong tool for a personal site. |
+| **Google Forms** | Form | Yes | ★☆☆☆☆ — Google's default styling | Works, ugly, no brand control. Skip. |
+| **Airtable Forms** | Form | Yes | ★★☆☆☆ — utilitarian | Right if you want submissions in an Airtable base for follow-up tracking; wrong if you care how the form looks embedded. |
+| **NotionForms** ([notionforms.io](https://notionforms.io)) | Form → Notion | Yes | ★★★☆☆ — decent, some ads on free | Third-party wrapper that pipes submissions into a Notion database. Convenient if your inbox is already in Notion. Free tier has visible branding. |
+
+**PM-shortlist recommendations:**
+
+1. **Cal.com if the goal is meetings.** A "book 20 min" button beats a form on intent-per-click for recruiters, hiring PMs, and founders. Higher signal, less inbox management. Pair with a small mailto/copy-email fallback for async.
+2. **Tally if the goal is messages.** Free tier is enough for a personal-site volume forever, the default UI matches editorial vibes with almost no theming, iframe embed is one line, and switching backends later (Notion, Airtable, Zapier → email) is a settings change, not a rewrite.
+3. **Resend + custom server action (the original PRD §7.2 plan) if you want to own the pixels.** More setup, more maintenance, but zero third-party UI dependency and full control.
+
+**Rule of thumb:** for a section that will exist for the life of the site, hosted forms are a two-line ship; a custom form is a two-day ship plus ongoing spam / delivery ops. The savings compound. The one thing hosted forms cost you is total control over the visual — worth checking whether the embed still reads as "your site" or as "someone else's widget."
+
+**Next step (decision needed from Megh):** message-shaped surface or meeting-shaped surface? That determines whether the pick is Tally / Fillout / Youform (form) or Cal.com (booking). I'll wire up whichever direction you name, in whichever chrome (embedded iframe vs. hosted subdomain vs. server action) fits.
+
 ---
 
 ### 7.3 "10-second intro" long-form copy (future replacement for the coming-soon paragraph)
@@ -419,7 +524,7 @@ Applies **only** to the full portfolio, not the coming-soon page. The rules that
 
 - **Job:** get a recruiter or hiring PM to stop skimming.
 - **Question answered:** "Who is this and why should I keep scrolling?"
-- **Contents:** name, one-line role/identity, a single primary CTA (the strongest link — LinkedIn or "See work"), a subtle secondary (resume or scroll cue).
+- **Contents:** name, one-line role/identity, and **exactly one primary CTA** labeled `Let's connect →` that smooth-scrolls to the Let's-connect fold (id `#connect`). No secondary CTA, no separate LinkedIn / Resume buttons. LinkedIn and Resume live inside the connect section, not the hero — the hero pulls the reader down the page rather than shipping them off it.
 - **Voice:** the 10-second intro from §7.3.
 - **Lead-out hook:** the sentence should end with a fragment that plants the next fold ("… lately I've been building X" → Fold 2 shows X).
 
@@ -819,11 +924,13 @@ Track view distribution over time — if 95% of visitors stay in the default vie
 
 Reference screenshots checked into `docs/references/writing/`. Follow this layout language when building — don't invent a new one.
 
-- **Homepage fold** — `docs/references/writing/01-homepage-fold.webp`
+- **Homepage fold** — same card grammar as the `/writing` index, condensed to three. Reference: `docs/references/writing/02-index-grid.webp` (used to be the quiet-list layout in `01-homepage-fold.webp`; that layout is deprecated).
   - Mono uppercase eyebrow (`WRITING`, wide tracking), on the same off-white body bg.
-  - Serif headline underneath, ~40–48px, e.g. *"notes on design and making"* — Megh writes his own version.
-  - A vertical list of 3 entries, each row: title (sans, medium weight, ~18–20px) on the left, date (mono, muted) right-aligned. Hairline `--border` between rows. No thumbnails, no excerpts — the list stays quiet on the homepage.
-  - `all posts →` link at the bottom (mono-ish sans, muted color, subtle underline on hover).
+  - Serif headline underneath, ~40–48px, e.g. *"notes on product and building"* — Megh writes his own version.
+  - **Three cards in a 3-column row on desktop, 2 on tablet, 1 on mobile.** Each card is identical in grammar to the `/writing` index card: procedural thumbnail (see Kind vocabulary and thumbnail spec below), mono uppercase category label pulled from `kind` display name, sans semibold title (2 lines max, truncated with `…`), 2-line excerpt, mono date + read time.
+  - Three entries are picked in this order: `featured: true` first (by `order`), then most-recent-published; cap at 3. If fewer than 3 published entries exist, hide the fold entirely rather than shipping half-empty cards.
+  - Below the row: a `view all →` CTA aligned to the right (or centered on mobile), taking the reader to `/writing`.
+  - No filter chips on the homepage fold — those live on `/writing` only.
 - **`/writing` index** — `docs/references/writing/02-index-grid.webp`
   - Same eyebrow (`BLOG` or `WRITING`) + serif headline treatment, one step larger than the homepage fold.
   - Grid of cards, 3 columns desktop / 2 tablet / 1 mobile.
@@ -838,6 +945,87 @@ Reference screenshots checked into `docs/references/writing/`. Follow this layou
   - Footer of the reading column: small "one last thing before you go" line + a light signature (mono initials or single-word signoff). Keep it quiet — the value is the prose.
 
 Any of the above can be relaxed later; if we do, note the deviation in the PR that ships it, and update this section in the same PR.
+
+---
+
+### 7.8 "The Lab" — three kinds of builds
+
+**Placement:** Fold 4 on the homepage per `CLAUDE.md §14`. Job: range. Question: *"Do they build outside their day job?"*
+
+**What lives here (locked to three kinds):**
+
+| Kind (slug) | Display label | What it is | Signal it sends |
+|---|---|---|---|
+| `skill-file` | Skill File | A `.md` instruction file authored for an AI agent (Claude Code, Cursor, custom agents) — a repeatable playbook a model executes on demand. | "I write for agents, not just humans." Compounds: reused every time the file fires. |
+| `personal-tool` | Personal Tool | A self-built utility that solves a real problem in your day — CLI, web app, Chrome extension, script, workflow. Must run for someone other than yourself. | "I build to solve my own problems." Direct evidence of taste and follow-through. |
+| `github-project` | GitHub Project | A public GitHub repo — open-source library, boilerplate, demo, or contribution. Must be public and functional. | "I build in public." Anyone can read the code. |
+
+No other kinds. If a build doesn't fit one of these three, either reshape it or leave it out. Locked vocabulary keeps the fold coherent — same rule as Writing (`§7.6`).
+
+**Content model — `lib/lab.ts` (extends the current shape):**
+
+```ts
+type LabEntry = {
+  slug: string;                                        // "job-search-os"
+  title: string;                                       // display title, sentence case
+  kind: "skill-file" | "personal-tool" | "github-project";
+  description: string;                                 // 1–2 sentences, verb-first
+  stack: string[];                                     // mono tags: ["claude-code", "supabase"]
+  url: string;                                         // outbound link (GitHub file, repo, or live URL)
+  featured?: boolean;                                  // true = homepage fold (else /lab index only)
+  order?: number;                                      // sort within featured group
+  published?: boolean;                                 // default true; false hides
+};
+```
+
+Migration from the current `LabCard` shape: add `kind` (required) to every existing entry; rename `externalUrl` → `url` and make it required (a Lab entry without a link is just a claim); everything else stays. `job-search-os` → `personal-tool`, `bond-dictionary` → `personal-tool`, `compliance-content-tool` → `skill-file` or `personal-tool` (Megh's call), `call-analysis-pipeline` → `personal-tool`, `interview-prep-system` → `skill-file`, `moengage-mcp-workflows` → `skill-file`.
+
+**Layout — homepage fold:**
+- Mono uppercase eyebrow (`THE LAB`), serif headline (Megh writes it — reference in the current `app/page.tsx` is *"Things I built when a tool didn't exist or moved too slow."* Keep or replace).
+- Grid: 3 cols desktop / 2 tablet / 1 mobile.
+- Show 6 featured entries max on the homepage fold. If more than 6 are `featured: true`, show 6 by `order` and drop the rest to `/lab`.
+- Each card:
+  - **Kind badge** in the top-right corner: mono, uppercase, small (~10–11px), `--fg-muted`. `SKILL FILE`, `PERSONAL TOOL`, `GITHUB`.
+  - **Title** (sans-semibold, ~18–20px, one line).
+  - **Description** (sans-regular, ~14px, 2 lines max, `--fg-muted`, truncated with `…`).
+  - **Stack row** at the bottom: mono chips (`--fg-subtle` text on a hairline `--border` background), 2–4 tags visible; overflow with `+ N`.
+  - **Outbound arrow** in the bottom-right (small `↗`).
+- Whole card is a link (`<a href={url}>`), `target="_blank"`, `rel="noopener noreferrer"`.
+- Bottom of the fold: `all builds →` link to `/lab`, right-aligned.
+
+**Layout — `/lab` index page** (future):
+- Same eyebrow + headline, one step larger.
+- Filter chips at the top by kind: `All / Skill files / Personal tools / GitHub`. Client-side filter.
+- Same card grammar as the homepage; no cap on entries.
+- Add `/lab` to sitemap.
+
+**Voice rules for descriptions** (per `CLAUDE.md §10`):
+- Verb-first. "Grades RM calls…" not "A tool for grading…"
+- Say what it *does*, not what category it is. "Auto-extracts action items into Radar" beats "productivity tool for support teams."
+- Numbers when they earn their place. "200+ terms" is evidence; "many terms" is filler.
+- Under 25 words. If it needs more, cut, don't split.
+
+**Anti-patterns:**
+- **No private repos** as `github-project`. If the code isn't public, it's a `personal-tool` at best. If it's not even runnable by others, it doesn't belong on the fold.
+- **No broken links.** A Lab card whose `url` 404s is worse than not having the card. Add a build check that fetches every Lab entry's `url` and fails the build on non-2xx.
+- **No "learning exercises"** or tutorial follow-alongs. This section is builds, not homework.
+- **No repos you contributed one PR to.** The bar is "you built this or you led it." Attribution stays honest per CLAUDE.md §10.
+- **No brand-color icons.** If per-kind icons ship, they're monochrome in `currentColor`, same rule as the Stack row (`§7.1`).
+- **No search on `/lab`** until >20 entries — same discipline as everywhere else.
+
+**Analytics** (per `CLAUDE.md §6.3`, custom Vercel Analytics — no PII):
+- `lab_card_click` (properties: `slug`, `kind`) — track which builds recruiters actually open.
+- `lab_all_click` — click on the homepage fold's `all builds →` link.
+- `lab_filter_apply` (property: `kind`) — `/lab` index filter usage.
+
+**Launch order:**
+1. Update `lib/lab.ts` to the new schema. Migrate the six existing entries with the right `kind` (with Megh confirming each). Every entry needs a real `url` — no `#` placeholders.
+2. Ship the homepage Lab fold with the new card grammar. Test at 375 / 768 / 1440.
+3. `/lab` index page in a follow-up.
+4. Wire analytics events in the same commit as the homepage fold.
+5. Build-time URL check for broken links added in a small follow-up.
+
+**Deprecated:** the current `LabCard` type (no `kind`, optional `externalUrl` with `#` placeholders). Migrate on the first Lab-touching PR.
 
 ### 6.5 Quality gates before "done"
 

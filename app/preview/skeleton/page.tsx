@@ -158,16 +158,21 @@ export default function SkeletonPage() {
           >
             [10-second intro paragraph — PRD §7.3]
           </div>
-          <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
-            <div style={{ ...grayBlock("44px"), flex: "0 0 160px" }}>
-              [CTA · LinkedIn]
-            </div>
-            <div style={{ ...grayBlock("44px"), flex: "0 0 160px" }}>
-              [CTA · Resume]
+          <div style={{ marginTop: "20px" }}>
+            <div
+              style={{
+                ...grayBlock("48px"),
+                flex: "0 0 200px",
+                maxWidth: "220px",
+              }}
+            >
+              [CTA · Let&apos;s connect → scrolls to #connect]
             </div>
           </div>
-          <div style={{ marginTop: "20px", ...placeholder }}>
-            ↓ scroll cue &quot;experience below&quot;
+          <div style={{ marginTop: "16px", ...placeholder, fontSize: "11px" }}>
+            One CTA only. LinkedIn + Resume live inside the Let&apos;s connect
+            fold, not here — the hero pulls the reader down the page, not off
+            it.
           </div>
         </div>
       </section>
@@ -304,7 +309,7 @@ export default function SkeletonPage() {
           name="The Lab"
           job="Range"
           question="Do they build outside their day job?"
-          docRef="CLAUDE.md §4"
+          docRef="PRD §7.8"
         />
         <div style={box}>
           <div style={placeholder}>[MONO EYEBROW · &quot;THE LAB&quot;]</div>
@@ -321,25 +326,78 @@ export default function SkeletonPage() {
               marginTop: "24px",
             }}
           >
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} style={{ ...box, background: "#f8fafc" }}>
-                <div style={{ ...grayBlock("30px"), fontSize: "12px" }}>
-                  [LAB PROJECT NAME]
+            {[
+              { kind: "SKILL FILE" },
+              { kind: "PERSONAL TOOL" },
+              { kind: "GITHUB" },
+              { kind: "SKILL FILE" },
+              { kind: "PERSONAL TOOL" },
+              { kind: "GITHUB" },
+            ].map((c, i) => (
+              <div
+                // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton
+                key={i}
+                style={{ ...box, background: "#f8fafc", position: "relative" }}
+              >
+                <div
+                  style={{
+                    ...placeholder,
+                    fontSize: "10px",
+                    letterSpacing: "0.14em",
+                    position: "absolute",
+                    top: "10px",
+                    right: "12px",
+                  }}
+                >
+                  {c.kind}
                 </div>
                 <div
                   style={{
-                    ...grayBlock("60px"),
+                    ...grayBlock("30px"),
+                    fontSize: "12px",
+                    marginTop: "18px",
+                  }}
+                >
+                  [BUILD TITLE]
+                </div>
+                <div
+                  style={{
+                    ...grayBlock("48px"),
                     marginTop: "8px",
                     fontSize: "11px",
                   }}
                 >
-                  [1-2 sentence description]
+                  [1-2 sentence description, verb-first]
                 </div>
-                <div style={{ marginTop: "8px", ...placeholder }}>
-                  [MONO STACK TAGS]
+                <div
+                  style={{
+                    marginTop: "10px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    ...placeholder,
+                    fontSize: "10px",
+                  }}
+                >
+                  <span>[STACK · mono chips]</span>
+                  <span>↗</span>
                 </div>
               </div>
             ))}
+          </div>
+          <div
+            style={{
+              marginTop: "16px",
+              display: "flex",
+              justifyContent: "flex-end",
+              ...placeholder,
+            }}
+          >
+            [all builds → /lab]
+          </div>
+          <div style={{ marginTop: "12px", ...placeholder, fontSize: "11px" }}>
+            Three kinds locked: skill-file, personal-tool, github-project. Kind
+            badge in the top-right of each card. Full spec in PRD §7.8.
           </div>
         </div>
       </section>
@@ -348,57 +406,6 @@ export default function SkeletonPage() {
       <section style={foldStyle}>
         <FoldHeader
           n={5}
-          name="My Work Stack"
-          job="Craft"
-          question="How do they actually work?"
-          docRef="PRD §7.1"
-        />
-        <div style={box}>
-          <div style={placeholder}>
-            [MONO EYEBROW · &quot;MY WORK STACK&quot;]
-          </div>
-          <div style={{ ...grayBlock("48px"), marginTop: "8px" }}>
-            [SECTION HEADLINE · e.g. &quot;what I ship with&quot;]
-          </div>
-
-          {["AI / LLM", "Editor / IDE", "PM & docs", "Design"].map((cat) => (
-            <div key={cat} style={{ marginTop: "24px" }}>
-              <div style={{ ...placeholder, marginBottom: "8px" }}>
-                [CATEGORY · &quot;{cat}&quot;]
-              </div>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(3, 1fr)",
-                  gap: "10px",
-                }}
-              >
-                {[1, 2, 3].map((i) => (
-                  <div key={i} style={{ ...box, background: "#f8fafc" }}>
-                    <div style={{ ...grayBlock("24px"), fontSize: "11px" }}>
-                      [TOOL NAME]
-                    </div>
-                    <div
-                      style={{
-                        ...grayBlock("40px"),
-                        marginTop: "6px",
-                        fontSize: "11px",
-                      }}
-                    >
-                      [how I use it · 1-2 sentences · PM voice]
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─────────────────────────────── FOLD 6 ─────────────────────────────── */}
-      <section style={foldStyle}>
-        <FoldHeader
-          n={6}
           name="Writing"
           job="Thought"
           question="How do they think about product?"
@@ -410,36 +417,76 @@ export default function SkeletonPage() {
             [SECTION HEADLINE · e.g. &quot;notes on product and building&quot;]
           </div>
 
-          <div style={{ marginTop: "20px" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "16px",
+              marginTop: "24px",
+            }}
+          >
             {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "16px 0",
-                  borderTop: "1px dashed #94a3b8",
-                  ...(i === 3 ? { borderBottom: "1px dashed #94a3b8" } : {}),
-                }}
-              >
+              <div key={i} style={{ ...box, background: "#f8fafc" }}>
                 <div
-                  style={{ ...grayBlock("28px"), flex: 1, marginRight: "16px" }}
+                  style={{
+                    height: "140px",
+                    background: "#0e1622",
+                    border: "1px dashed #94a3b8",
+                    borderRadius: "6px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#f5ebd4",
+                    fontSize: "11px",
+                    fontStyle: "italic",
+                  }}
                 >
-                  [ENTRY TITLE — sans, medium, ~18px]
+                  [PROCEDURAL THUMBNAIL · glyph by kind]
                 </div>
                 <div
                   style={{
+                    marginTop: "12px",
                     ...placeholder,
-                    flex: "0 0 90px",
-                    textAlign: "right",
+                    fontSize: "11px",
+                    letterSpacing: "0.14em",
                   }}
                 >
-                  [DATE · mono]
+                  [KIND · e.g. LEARNING]
+                </div>
+                <div style={{ ...grayBlock("36px"), marginTop: "6px" }}>
+                  [ENTRY TITLE · 2 lines max · sans semibold]
+                </div>
+                <div
+                  style={{
+                    ...grayBlock("32px"),
+                    marginTop: "6px",
+                    fontSize: "11px",
+                  }}
+                >
+                  [EXCERPT · 2 lines · muted]
+                </div>
+                <div
+                  style={{
+                    marginTop: "10px",
+                    ...placeholder,
+                    fontSize: "11px",
+                  }}
+                >
+                  [DATE · READ TIME · mono muted]
                 </div>
               </div>
             ))}
           </div>
-          <div style={{ marginTop: "16px", ...placeholder }}>[all posts →]</div>
+          <div
+            style={{
+              marginTop: "20px",
+              display: "flex",
+              justifyContent: "flex-end",
+              ...placeholder,
+            }}
+          >
+            [view all →]
+          </div>
           <div
             style={{
               marginTop: "16px",
@@ -447,20 +494,21 @@ export default function SkeletonPage() {
               fontSize: "11px",
             }}
           >
-            Homepage teaser only — no thumbnails or excerpts here. Full grid
-            lives at /writing (per PRD §7.6 visual reference).
+            Three cards, same grammar as the /writing index. If fewer than 3
+            published entries exist, hide the fold. Full grid + filter chips
+            live at /writing.
           </div>
         </div>
       </section>
 
-      {/* ─────────────────────────────── FOLD 7 ─────────────────────────────── */}
+      {/* ─────────────────────────────── FOLD 6 ─────────────────────────────── */}
       <section style={foldStyle}>
         <FoldHeader
-          n={7}
-          name="About"
-          job="Person"
-          question="Would I want to work with them?"
-          docRef="CLAUDE.md §14"
+          n={6}
+          name="About + Stack"
+          job="Person + Craft"
+          question="Would I want to work with them, and what do they build with?"
+          docRef="PRD §7.1"
         />
         <div style={box}>
           <div style={placeholder}>[MONO EYEBROW · &quot;ABOUT&quot;]</div>
@@ -494,13 +542,68 @@ export default function SkeletonPage() {
               ))}
             </div>
           </div>
+
+          {/* Stack row inside About */}
+          <div
+            style={{
+              marginTop: "32px",
+              paddingTop: "16px",
+              borderTop: "1px dashed #94a3b8",
+            }}
+          >
+            <div
+              style={{
+                ...placeholder,
+                fontStyle: "italic",
+                marginBottom: "10px",
+              }}
+            >
+              my stack
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "16px",
+                alignItems: "center",
+              }}
+            >
+              {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "50%",
+                    background: "#e2e8f0",
+                    border: "1px dashed #94a3b8",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "10px",
+                    color: "#64748b",
+                  }}
+                >
+                  [icon]
+                </div>
+              ))}
+              <div style={{ ...placeholder, fontSize: "12px" }}>+ more</div>
+            </div>
+            <div
+              style={{ ...placeholder, fontSize: "11px", marginTop: "12px" }}
+            >
+              Hover / focus → dark tooltip pill above the icon: tool name +
+              one-liner &quot;how I use it.&quot; Content in lib/stack.ts. See
+              PRD §7.1.
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ─────────────────────────────── FOLD 8 ─────────────────────────────── */}
+      {/* ─────────────────────────────── FOLD 7 ─────────────────────────────── */}
       <section style={foldStyle}>
         <FoldHeader
-          n={8}
+          n={7}
           name="Let's connect"
           job="Action"
           question="Okay, how do I reach them?"
