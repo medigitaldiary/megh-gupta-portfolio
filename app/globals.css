@@ -9,6 +9,12 @@
   --border: #e8e6e0;
   --accent: #1f4d3a;
   --accent-fg: #fafaf7;
+
+  /* Product Venn palette — used only by components/product-venn.tsx */
+  --venn-user: #c1497f;
+  --venn-tech: #4a72b0;
+  --venn-biz: #c77e3b;
+  --venn-cream: #fdf7ee;
 }
 
 @theme inline {
@@ -24,6 +30,7 @@
   --font-serif: var(--font-instrument-serif);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
+  --font-hand: var(--font-caveat);
 
   --text-display: 4rem;
   --text-display--line-height: 1.05;
