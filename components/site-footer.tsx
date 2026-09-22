@@ -74,9 +74,9 @@ function useIstClock() {
 export function SiteFooter() {
   const clock = useIstClock();
   return (
-    <footer className="border-t border-border px-6 py-8 md:px-8">
-      <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-6 sm:flex-row">
-        <ul className="flex items-center gap-5">
+    <footer className="px-6 py-12 md:px-8 md:py-16">
+      <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 sm:flex-row">
+        <ul className="flex items-center gap-2">
           {SOCIALS.map((s) => (
             <li key={s.label}>
               <a
@@ -86,15 +86,15 @@ export function SiteFooter() {
                   s.href.startsWith("http") ? "noopener noreferrer" : undefined
                 }
                 aria-label={s.label}
-                className="inline-flex h-5 w-5 items-center justify-center text-fg-subtle transition-colors duration-150 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full text-fg-subtle transition-colors duration-150 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               >
-                {s.icon}
+                <span className="h-4 w-4">{s.icon}</span>
               </a>
             </li>
           ))}
         </ul>
 
-        <div className="text-center text-xs leading-relaxed text-fg-subtle sm:text-right">
+        <div className="text-center text-xs leading-[1.6] text-fg-subtle sm:text-right">
           <p suppressHydrationWarning>megh gupta{clock ? ` · ${clock}` : ""}</p>
           <p>made with zero em dashes</p>
         </div>
