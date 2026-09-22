@@ -9,7 +9,7 @@ export function Hero() {
           Megh Gupta · Product Manager
         </p>
 
-        <h1 className="font-serif text-[3rem] leading-[1.05] tracking-tight text-fg md:text-[4.5rem]">
+        <h1 className="font-serif text-[3rem] leading-[1.05] tracking-tight text-fg md:text-[4rem]">
           I turn ideas into features,
           <br className="hidden md:block" /> features into products,
           <br className="hidden md:block" /> products into systems.
