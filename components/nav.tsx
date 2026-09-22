@@ -3,13 +3,12 @@
 import { useEffect, useState } from "react";
 
 const NAV_LINKS = [
+  { label: "Experience", href: "#experience" },
   { label: "Work", href: "#work" },
   { label: "Lab", href: "#lab" },
+  { label: "Writing", href: "#writing" },
   { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
 ];
-
-const CONTACT_EMAIL = "hi@meghgupta.com";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -52,7 +51,7 @@ export function Nav() {
   return (
     <nav aria-label="Primary" className="sticky top-0 z-50">
       <div
-        className={`h-14 md:h-16 bg-bg/80 backdrop-blur-md transition-[border-color] duration-150 ${
+        className={`h-14 bg-bg/80 backdrop-blur-md transition-[border-color] duration-150 md:h-16 ${
           scrolled ? "border-b border-border" : "border-b border-transparent"
         }`}
       >
@@ -60,26 +59,26 @@ export function Nav() {
           <button
             type="button"
             onClick={scrollToTop}
-            className="font-sans text-base font-semibold text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-sm"
+            className="rounded-sm font-sans text-base font-semibold text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
             Megh Gupta
           </button>
 
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden items-center gap-7 md:flex">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm text-fg-muted transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-sm"
+                className="rounded-sm text-sm text-fg-muted transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               >
                 {link.label}
               </a>
             ))}
             <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="rounded-md bg-accent px-4 py-2 text-sm text-accent-fg transition-colors duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              href="#connect"
+              className="rounded-full bg-accent px-4 py-2 text-sm text-accent-fg transition-opacity duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             >
-              Get in touch →
+              Let&apos;s connect →
             </a>
           </div>
 
@@ -89,7 +88,7 @@ export function Nav() {
             aria-controls="mobile-menu"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             onClick={() => setMenuOpen((v) => !v)}
-            className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-md text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
           >
             <span aria-hidden="true" className="font-mono text-xl">
               {menuOpen ? "✕" : "☰"}
@@ -108,17 +107,18 @@ export function Nav() {
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="text-lg text-fg-muted transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-sm"
+              className="rounded-sm text-lg text-fg-muted transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             >
               {link.label}
             </a>
           ))}
+          {/* biome-ignore lint/a11y/useValidAnchor: anchor scrolls to #connect; onClick only closes the mobile menu */}
           <a
-            href={`mailto:${CONTACT_EMAIL}`}
+            href="#connect"
             onClick={() => setMenuOpen(false)}
-            className="rounded-md bg-accent px-6 py-3 text-base text-accent-fg transition-colors duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            className="rounded-full bg-accent px-6 py-3 text-base text-accent-fg transition-opacity duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
-            Get in touch →
+            Let&apos;s connect →
           </a>
         </div>
       )}
