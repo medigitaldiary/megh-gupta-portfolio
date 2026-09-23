@@ -76,6 +76,9 @@ export function ProductVenn() {
       svg.querySelectorAll<SVGGElement>("[data-role='chip']"),
     );
     const arrow = svg.querySelector<SVGPathElement>("[data-role='arrow']");
+    const arrowhead = svg.querySelector<SVGPolygonElement>(
+      "[data-role='arrowhead']",
+    );
     const marker = svg.querySelector<SVGCircleElement>("[data-role='marker']");
     const markerLabel = svg.querySelector<SVGTextElement>(
       "[data-role='marker-label']",
@@ -167,6 +170,7 @@ export function ProductVenn() {
         arrow.style.strokeDashoffset = "0";
         arrow.style.opacity = "1";
       }
+      if (arrowhead) arrowhead.style.opacity = "1";
     };
 
     const kickOff = () => {
@@ -232,7 +236,34 @@ export function ProductVenn() {
         animsRef.current.push(a);
       });
 
-      // 4. Marker + arrow draw in last.
+      // 4. Marker → arrow → arrowhead → label, in that order.
+      // Timing constants so we can shift the whole sequence together.
+      const MARKER_START = 2600;
+      const MARKER_DUR = 550;
+      const ARROW_START = MARKER_START + MARKER_DUR; // marker settles first
+      const ARROW_DUR = 700;
+      const ARROWHEAD_START = ARROW_START + ARROW_DUR; // line arrives, then head
+      const ARROWHEAD_DUR = 200;
+      const LABEL_START = ARROWHEAD_START + ARROWHEAD_DUR - 50; // just after
+      const LABEL_DUR = 400;
+      const FLOAT_START = LABEL_START + LABEL_DUR + 200;
+
+      if (marker) {
+        // Overshoot bounce: scale 0 → past 1 → 1, with cubic-bezier back-out.
+        const a = marker.animate(
+          [
+            { opacity: 1, transform: "scale(0)" },
+            { opacity: 1, transform: "scale(1)" },
+          ],
+          {
+            duration: MARKER_DUR,
+            delay: MARKER_START,
+            easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+            fill: "forwards",
+          },
+        );
+        animsRef.current.push(a);
+      }
       if (arrow) {
         const len = arrow.getTotalLength();
         arrow.style.strokeDasharray = String(len);
@@ -241,33 +272,27 @@ export function ProductVenn() {
         const a = arrow.animate(
           [{ strokeDashoffset: len }, { strokeDashoffset: 0 }],
           {
-            duration: 600,
-            delay: 2600,
+            duration: ARROW_DUR,
+            delay: ARROW_START,
             easing: "cubic-bezier(.4,.0,.2,1)",
             fill: "forwards",
           },
         );
         animsRef.current.push(a);
       }
-      if (marker) {
-        const a = marker.animate(
-          [
-            { opacity: 0, transform: "scale(0)" },
-            { opacity: 1, transform: "scale(1)" },
-          ],
-          {
-            duration: 380,
-            delay: 2450,
-            easing: "cubic-bezier(.2,.7,.3,1)",
-            fill: "forwards",
-          },
-        );
+      if (arrowhead) {
+        const a = arrowhead.animate([{ opacity: 0 }, { opacity: 1 }], {
+          duration: ARROWHEAD_DUR,
+          delay: ARROWHEAD_START,
+          easing: "ease-out",
+          fill: "forwards",
+        });
         animsRef.current.push(a);
       }
       if (markerLabel) {
         const a = markerLabel.animate([{ opacity: 0 }, { opacity: 1 }], {
-          duration: 400,
-          delay: 3100,
+          duration: LABEL_DUR,
+          delay: LABEL_START,
           easing: "ease-out",
           fill: "forwards",
         });
@@ -338,7 +363,7 @@ export function ProductVenn() {
       // Delay float start until intro is done.
       const floatStart = window.setTimeout(() => {
         rafRef.current = requestAnimationFrame(tick);
-      }, 3400);
+      }, FLOAT_START);
       // Attach cleanup for the setTimeout too.
       animsRef.current.push({
         cancel: () => window.clearTimeout(floatStart),
@@ -374,20 +399,6 @@ export function ProductVenn() {
       role="img"
       aria-label="A three-circle Venn diagram showing User, Technology, and Business. Each circle holds the tools and topics I work across; the green marker sits where they overlap and labels 'I'm here.'"
     >
-      <defs>
-        <marker
-          id="pv-arrowhead"
-          viewBox="0 0 12 12"
-          refX="9"
-          refY="6"
-          markerWidth="9"
-          markerHeight="9"
-          orient="auto-start-reverse"
-        >
-          <path d="M1 1 L10 6 L1 11 Z" fill="var(--accent)" />
-        </marker>
-      </defs>
-
       {/* Rings — colored strokes only, no fill, big overlap area */}
       {(Object.keys(CIRCLES) as Zone[]).map((z) => {
         const c = CIRCLES[z];
@@ -484,7 +495,17 @@ export function ProductVenn() {
         stroke="var(--accent)"
         strokeWidth="2.5"
         strokeLinecap="round"
-        markerEnd="url(#pv-arrowhead)"
+        style={{ opacity: 0 }}
+      />
+      {/* Standalone arrowhead — decoupled from the path so it doesn't
+          ride the stroke tip while the line draws in. Faded in only
+          after the arrow finishes drawing. Rotated to match the cubic
+          bezier's tangent at t=1 (dir ≈ (141, -5), angle ≈ -2°). */}
+      <polygon
+        data-role="arrowhead"
+        points="1023,471 1010,464.5 1010,477.5"
+        fill="var(--accent)"
+        transform="rotate(-2 1023 471)"
         style={{ opacity: 0 }}
       />
       <text
