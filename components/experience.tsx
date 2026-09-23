@@ -469,6 +469,7 @@ type TimelineItem = {
   current?: boolean;
   logo?: string;
   logoBg?: string;
+  summary?: string;
   start: number;
   end: number;
 };
@@ -483,11 +484,12 @@ function expandToItems(entries: ExperienceEntry[]): TimelineItem[] {
         items.push({
           key: `${entry.slug}-${p.name}`,
           label: p.name,
-          role: entry.role,
+          role: p.role ?? entry.role,
           url: p.url,
           current: p.current ?? p.end === "present",
           logo: p.logo ?? entry.logo,
           logoBg: p.logo ? p.logoBg : entry.logoBg,
+          summary: p.summary ?? entry.summary,
           start: toDecimalYear(p.start as string),
           end: toDecimalYear(p.end as string),
         });
@@ -501,6 +503,7 @@ function expandToItems(entries: ExperienceEntry[]): TimelineItem[] {
         current: entry.current ?? entry.end === "present",
         logo: entry.logo,
         logoBg: entry.logoBg,
+        summary: entry.summary,
         start: toDecimalYear(entry.start),
         end: endAsDecimalYear(entry),
       });
@@ -615,7 +618,7 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
         className="mt-6 text-center text-sm text-fg-subtle md:text-base"
         style={{ fontFamily: "var(--font-hand), cursive" }}
       >
-        scroll sideways — the last {Math.ceil(span)} years are in here
+        hover any card to see what I built there
       </p>
     </div>
   );
@@ -632,7 +635,8 @@ function TimelineChip({
   widthPct: number;
   topPx: number;
 }) {
-  const content = (
+  const tipId = `tl-tip-${item.key}`;
+  const chipInner = (
     <div className="flex h-full items-center gap-2 rounded-xl border border-border bg-bg-elevated px-3 py-2 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:border-accent hover:shadow-md">
       <LogoTile
         logo={item.logo}
@@ -655,21 +659,32 @@ function TimelineChip({
     top: `${topPx}px`,
     height: "52px",
   } as const;
+  const tooltip = item.summary ? (
+    <div
+      id={tipId}
+      role="tooltip"
+      className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 hidden w-max max-w-[280px] -translate-x-1/2 rounded-md bg-fg px-3 py-2 text-left text-xs leading-[1.4] text-accent-fg opacity-0 shadow-lg transition-opacity duration-100 group-hover:block group-hover:opacity-100 group-focus-within:block group-focus-within:opacity-100"
+    >
+      {item.summary}
+    </div>
+  ) : null;
   return (
-    <div className="absolute" style={style}>
+    <div className="group absolute" style={style}>
       {item.url ? (
         <a
           href={item.url}
           target="_blank"
           rel="noopener noreferrer"
+          aria-describedby={item.summary ? tipId : undefined}
           className="block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-          aria-label={item.role ? `${item.label} — ${item.role}` : item.label}
+          aria-label={item.role ? `${item.label} - ${item.role}` : item.label}
         >
-          {content}
+          {chipInner}
         </a>
       ) : (
-        content
+        chipInner
       )}
+      {tooltip}
     </div>
   );
 }
