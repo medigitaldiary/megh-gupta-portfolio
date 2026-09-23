@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { SectionHeader } from "@/components/section-header";
 import {
+  durationLabel,
   type ExperienceEntry,
   endAsDecimalYear,
   formatDateRange,
@@ -117,6 +119,7 @@ function ListRow({
   onToggle: () => void;
 }) {
   const panelId = `exp-panel-${entry.slug}`;
+  const hasProducts = entry.products && entry.products.length > 0;
   return (
     <li>
       <button
@@ -126,7 +129,12 @@ function ListRow({
         onClick={onToggle}
         className="group flex w-full items-center gap-4 py-5 text-left transition-colors duration-150 ease-out hover:bg-bg-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset md:gap-6"
       >
-        <LogoTile entry={entry} />
+        <LogoTile
+          logo={entry.logo}
+          fallback={entry.company}
+          current={entry.current}
+          size="md"
+        />
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
@@ -153,54 +161,68 @@ function ListRow({
         id={panelId}
         aria-label={`${entry.company} details`}
         hidden={!open}
-        className="pb-6 pl-[calc(2.75rem+1rem)] pr-2 md:pl-[calc(2.75rem+1.5rem)]"
+        className="pb-10"
       >
-        <p className="mb-2 font-mono text-xs uppercase tracking-wider text-fg-subtle sm:hidden">
-          {formatDateRange(entry)}
-        </p>
-        <p className="mb-4 font-serif text-base italic leading-[1.5] text-fg-muted md:text-lg">
-          {entry.tagline}
-        </p>
-        {entry.products && entry.products.length > 0 && (
-          <p className="mb-4 flex flex-wrap gap-2 text-xs">
-            {entry.products.map((p) => (
-              <a
-                key={p.name}
-                href={p.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full border border-border bg-bg-elevated px-3 py-1 font-mono uppercase tracking-wider text-fg-muted transition-colors duration-150 hover:border-accent hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-              >
-                {p.name} ↗
-              </a>
-            ))}
-          </p>
+        {hasProducts ? (
+          <TapInvestExpanded entry={entry} />
+        ) : (
+          <EntryDetail
+            role={entry.role}
+            company={entry.company}
+            headline={entry.headline}
+            roleChips={entry.roleChips}
+            narrative={entry.narrative}
+            achievements={entry.achievements}
+            closer={entry.closer}
+            linkOut={entry.linkOut}
+            tagline={entry.tagline}
+            start={entry.start}
+            end={entry.end}
+          />
         )}
-        <ul className="space-y-2.5">
-          {entry.bullets.map((b) => (
-            <li
-              key={b}
-              className="flex gap-3 text-[15px] leading-[1.6] text-fg"
-            >
-              <span aria-hidden="true" className="mt-2 text-accent">
-                *
-              </span>
-              <span>{b}</span>
-            </li>
-          ))}
-        </ul>
       </section>
     </li>
   );
 }
 
-function LogoTile({ entry }: { entry: ExperienceEntry }) {
+function LogoTile({
+  logo,
+  fallback,
+  current,
+  size = "md",
+}: {
+  logo?: string;
+  fallback: string;
+  current?: boolean;
+  size?: "sm" | "md" | "lg";
+}) {
+  const dims =
+    size === "lg"
+      ? { box: "h-14 w-14", text: "text-2xl", px: 56 }
+      : size === "sm"
+        ? { box: "h-9 w-9", text: "text-base", px: 36 }
+        : { box: "h-11 w-11", text: "text-lg", px: 44 };
   return (
-    <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-bg-elevated">
-      <span aria-hidden="true" className="font-serif text-lg text-fg-subtle">
-        {entry.company.slice(0, 1).toUpperCase()}
-      </span>
-      {entry.current && (
+    <div
+      className={`relative ${dims.box} shrink-0 overflow-hidden rounded-lg border border-border bg-bg-elevated`}
+    >
+      {logo ? (
+        <Image
+          src={logo}
+          alt=""
+          width={dims.px}
+          height={dims.px}
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <span
+          aria-hidden="true"
+          className={`flex h-full w-full items-center justify-center font-serif ${dims.text} text-fg-subtle`}
+        >
+          {fallback.slice(0, 1).toUpperCase()}
+        </span>
+      )}
+      {current && (
         <span
           aria-hidden="true"
           className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-accent ring-2 ring-bg"
@@ -226,6 +248,214 @@ function CompanyName({ entry }: { entry: ExperienceEntry }) {
     );
   }
   return <span className={className}>{entry.company}</span>;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Expanded detail — Trackflow-style hierarchy
+// ─────────────────────────────────────────────────────────────
+
+function EntryDetail({
+  role,
+  company,
+  logo,
+  headline,
+  roleChips,
+  narrative,
+  achievements,
+  closer,
+  linkOut,
+  tagline,
+  start,
+  end,
+  current,
+}: {
+  role: string;
+  company?: string;
+  logo?: string;
+  headline?: string;
+  roleChips?: string[];
+  narrative?: string[];
+  achievements?: { intro?: string; items: string[] };
+  closer?: string;
+  linkOut?: { label: string; url: string; display?: string };
+  tagline?: string;
+  start: string;
+  end: string | "present";
+  current?: boolean;
+}) {
+  const dateLabel = formatDateRange({ start, end });
+  const duration = durationLabel(start, end);
+
+  return (
+    <div className="rounded-2xl border border-border bg-bg-elevated p-6 md:p-8">
+      <div className="flex items-start gap-4 md:gap-5">
+        {(logo || company) && (
+          <LogoTile
+            logo={logo}
+            fallback={company ?? role}
+            current={current}
+            size="lg"
+          />
+        )}
+        <div className="min-w-0 flex-1">
+          {company && (
+            <p className="mb-1 font-mono text-xs uppercase tracking-[0.2em] text-fg-subtle">
+              {company}
+            </p>
+          )}
+          <h3 className="font-serif text-3xl leading-[1.05] tracking-tight text-fg md:text-[2.5rem]">
+            {role}
+          </h3>
+        </div>
+      </div>
+
+      <div className="mt-6 space-y-4 text-[15px] leading-[1.7] text-fg-muted md:text-base">
+        <p className="flex flex-wrap items-center gap-2">
+          <span aria-hidden="true">📅</span>
+          <span>
+            {dateLabel} · <span className="text-fg-subtle">{duration}</span>
+          </span>
+        </p>
+
+        {roleChips && roleChips.length > 0 && (
+          <p className="flex flex-wrap items-center gap-2">
+            <span aria-hidden="true">🎖</span>
+            {roleChips.map((c) => (
+              <span
+                key={c}
+                className="rounded-full border border-border bg-bg px-3 py-1 font-mono text-xs uppercase tracking-wider text-fg-muted"
+              >
+                {c}
+              </span>
+            ))}
+          </p>
+        )}
+
+        {headline && (
+          <p className="flex items-start gap-2 text-lg font-semibold leading-[1.4] text-fg md:text-xl">
+            <span aria-hidden="true" className="mt-0.5">
+              📢
+            </span>
+            <span>{headline}</span>
+          </p>
+        )}
+
+        {tagline && !headline && (
+          <p className="flex items-start gap-2 font-serif text-lg italic leading-[1.4] text-fg md:text-xl">
+            <span aria-hidden="true" className="mt-0.5 not-italic">
+              📢
+            </span>
+            <span>{tagline}</span>
+          </p>
+        )}
+
+        {narrative?.map((p) => (
+          <p key={p.slice(0, 40)} className="text-fg-muted">
+            {p}
+          </p>
+        ))}
+
+        {achievements && (
+          <div>
+            {achievements.intro && (
+              <p className="mb-3 text-fg">{achievements.intro}</p>
+            )}
+            <ul className="space-y-2.5">
+              {achievements.items.map((item) => (
+                <li key={item} className="flex gap-3 text-fg">
+                  <span aria-hidden="true" className="mt-2 text-accent">
+                    *
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {closer && <p className="text-fg-muted">{closer}</p>}
+
+        {linkOut && (
+          <p>
+            {linkOut.label}{" "}
+            <a
+              href={linkOut.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
+            >
+              {linkOut.display ?? linkOut.url}
+            </a>
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function TapInvestExpanded({ entry }: { entry: ExperienceEntry }) {
+  const products = entry.products ?? [];
+  // Default to the current product; else last (most recent).
+  const defaultProduct =
+    products.find((p) => p.current)?.name ?? products.at(-1)?.name ?? "";
+  const [activeName, setActiveName] = useState(defaultProduct);
+  const active = products.find((p) => p.name === activeName) ?? products[0];
+
+  return (
+    <div>
+      {/* Sub-toggle: product tabs */}
+      <div className="mb-6 flex items-center gap-3">
+        <div
+          role="tablist"
+          aria-label={`${entry.company} products`}
+          className="inline-flex items-center rounded-full border border-border bg-bg-elevated p-1 font-mono text-xs"
+        >
+          {products.map((p) => {
+            const isActive = p.name === activeName;
+            return (
+              <button
+                key={p.name}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActiveName(p.name)}
+                className={`rounded-full px-3 py-1.5 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${
+                  isActive ? "bg-fg text-bg" : "text-fg-muted hover:text-fg"
+                }`}
+              >
+                {p.name}
+              </button>
+            );
+          })}
+        </div>
+        <a
+          href={active?.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs text-fg-subtle underline decoration-transparent underline-offset-4 hover:decoration-accent hover:text-fg"
+        >
+          {active?.name} ↗
+        </a>
+      </div>
+
+      {active && (
+        <EntryDetail
+          role={active.role ?? entry.role}
+          company={`${entry.company} · ${active.name}`}
+          logo={active.logo ?? entry.logo}
+          headline={active.headline}
+          roleChips={active.roleChips}
+          narrative={active.narrative}
+          achievements={active.achievements}
+          closer={active.closer}
+          linkOut={active.linkOut}
+          start={active.start ?? entry.start}
+          end={active.end ?? entry.end}
+          current={active.current}
+        />
+      )}
+    </div>
+  );
 }
 
 // ─────────────────────────────────────────────────────────────
