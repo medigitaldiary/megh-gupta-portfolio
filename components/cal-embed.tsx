@@ -22,11 +22,11 @@ export function CalEmbed() {
   }, []);
 
   return (
-    <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-xl bg-white shadow-[0_20px_60px_-20px_rgba(0,0,0,0.35)]">
+    <div className="mx-auto w-full overflow-hidden rounded-xl bg-white shadow-[0_20px_60px_-20px_rgba(0,0,0,0.35)]">
       <Cal
         namespace={NAMESPACE}
         calLink={CAL_LINK}
-        style={{ width: "100%", minHeight: 620 }}
+        style={{ width: "100%", minHeight: 560 }}
         config={{
           layout: "month_view",
           theme: "light",

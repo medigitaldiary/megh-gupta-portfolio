@@ -20,7 +20,7 @@ export function Contact() {
           income and financial access, feel free to reach out.
         </p>
 
-        <div className="mt-16 w-full max-w-2xl">
+        <div className="mt-16 w-full">
           <CalEmbed />
         </div>
 
