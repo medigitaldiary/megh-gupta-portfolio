@@ -68,7 +68,7 @@ export const experienceEntries: ExperienceEntry[] = [
       {
         name: "Ultra",
         url: "https://tapinvest.in",
-        logo: "/images/logos/ultra.png",
+        logo: "/images/logos/ultra.webp",
         start: "2025-03",
         end: "2025-10",
         role: "platform product manager",
