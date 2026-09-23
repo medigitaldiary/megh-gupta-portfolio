@@ -1,6 +1,12 @@
 export type ExperienceProduct = {
   name: string;
   url: string;
+  // Optional — if present, the timeline view renders this product as its own
+  // chip in place of the parent entry. List view still shows the parent.
+  start?: string;
+  end?: string | "present";
+  logo?: string;
+  current?: boolean;
 };
 
 export type ExperienceEntry = {
@@ -30,8 +36,19 @@ export const experienceEntries: ExperienceEntry[] = [
     tagline:
       "building bondscanner (0→1 sebi-regulated bond platform) and driving retention on ultra (alternative-investment app).",
     products: [
-      { name: "BondScanner", url: "https://bondscanner.com" },
-      { name: "Ultra", url: "https://tapinvest.in" },
+      {
+        name: "Ultra",
+        url: "https://tapinvest.in",
+        start: "2025-03",
+        end: "2025-10",
+      },
+      {
+        name: "BondScanner",
+        url: "https://bondscanner.com",
+        start: "2025-11",
+        end: "present",
+        current: true,
+      },
     ],
     bullets: [
       "built bondscanner 0→1 as founding pm — web + mobile onboarding live in 2 months.",
@@ -55,19 +72,6 @@ export const experienceEntries: ExperienceEntry[] = [
     bullets: [
       "developed pricing strategies for safety toolkit and dms-adas premium features → presented at chennai prodcon summit, driving upselling with 50+ commute clients.",
       "expanded cross-sell to 50 commute clients via an ets dashboard for transport teams, targeting 15% revenue increase.",
-    ],
-  },
-  {
-    slug: "bits-waves",
-    company: "waves, bits pilani goa",
-    role: "chief coordinator · backstage & infrastructure",
-    start: "2022-05",
-    end: "2023-06",
-    tagline:
-      "one of india's largest college cultural festivals — production, infra, and technical support for 30,000+ attendees.",
-    bullets: [
-      "led a 54-member team across production and infrastructure for two national-level festivals.",
-      "waves 2022 united 6,000+ students nationwide with a ~₹1.25 crore budget, up 25% from the previous offline edition.",
     ],
   },
 ];
