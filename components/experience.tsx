@@ -451,7 +451,7 @@ function TapInvestExpanded({ entry }: { entry: ExperienceEntry }) {
       {active && (
         <EntryDetail
           role={active.role ?? entry.role}
-          company={`${entry.company} · ${active.name}`}
+          company={active.name}
           logo={active.logo ?? entry.logo}
           logoBg={active.logo ? active.logoBg : entry.logoBg}
           headline={active.headline}

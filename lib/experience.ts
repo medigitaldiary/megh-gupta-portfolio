@@ -98,9 +98,8 @@ export const experienceEntries: ExperienceEntry[] = [
         current: true,
         role: "Founding Product Manager",
         roleChips: ["0→1 builder", "Growth PM", "AI/Product Systems"],
-        headline: "Founding PM. There was no product yet.",
         narrative: [
-          "Just a freshly acquired SEBI license, a 2-month deadline, and a bet that India's bond market could be dragged out of the offline HNI world and made retail-friendly. I was one of the three PMs building it.",
+          "Founding PM. There was no product yet. Just a freshly acquired SEBI license, a 2-month deadline, and a bet that India's bond market could be dragged out of the offline HNI world and made retail-friendly. I was one of the three PMs building it.",
           "Shipped the 0→1 onboarding across web and mobile in 2 months. Then took ownership of growth.",
           "Product-led SEO is where I got obsessed. Built the whole engine. 350+ compliance-safe blogs, a 200+ term bond dictionary, 16,000+ programmatic ISIN directory pages. Organic clicks roughly doubled in three months. Turns out if you build enough surface area you can rank for bonds nobody's ever heard of.",
           "Lately I've been living in Claude Code. Built an AI call-analysis pipeline that reviews outbound calls, scores conversations, and auto-generates action items. Also built James, our internal AI copilot, and shipped AI tools across ops, compliance, and marketing.",
