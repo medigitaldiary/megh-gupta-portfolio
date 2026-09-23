@@ -19,6 +19,8 @@ export type ExperienceProduct = {
   // Tailwind bg class to sit behind a transparent-mark logo (e.g. "bg-fg").
   logoBg?: string;
   current?: boolean;
+  // One-line summary shown as a tooltip on hover of the timeline chip.
+  summary?: string;
   // Rich content for the list-view expand (mirrors ExperienceEntry).
   role?: string;
   headline?: string;
@@ -42,6 +44,8 @@ export type ExperienceEntry = {
   products?: ExperienceProduct[];
   current?: boolean;
   order?: number;
+  // One-line summary shown as a tooltip on hover of the timeline chip.
+  summary?: string;
   // Rich content for the list-view expand.
   headline?: string;
   roleChips?: string[];
@@ -54,8 +58,8 @@ export type ExperienceEntry = {
 export const experienceEntries: ExperienceEntry[] = [
   {
     slug: "tap-invest",
-    company: "tap invest",
-    role: "associate product manager",
+    company: "Tap Invest",
+    role: "Associate Product Manager",
     url: "https://tapinvest.in",
     logo: "/images/logos/tap-invest.png",
     logoBg: "bg-fg",
@@ -71,7 +75,9 @@ export const experienceEntries: ExperienceEntry[] = [
         logo: "/images/logos/ultra.webp",
         start: "2025-03",
         end: "2025-10",
-        role: "platform product manager",
+        role: "Platform Product Manager",
+        summary:
+          "Platform & Retention. GIFT City NRI FDs, Flexi Invoice Discounting (~₹50Cr AUM), Ultra web app.",
         roleChips: ["Platform PM", "Retention", "0→1"],
         narrative: [
           "My first PM role. Owned Platform & Retention for Ultra, Tap's alternative-investments app.",
@@ -96,11 +102,12 @@ export const experienceEntries: ExperienceEntry[] = [
         start: "2025-11",
         end: "present",
         current: true,
-        role: "founding product manager",
+        role: "Founding Product Manager",
+        summary:
+          "0→1 founding PM. Onboarding in 2 months, SEO engine (~2× organic clicks), AI ops tools.",
         roleChips: ["0→1 builder", "Growth PM", "AI/Product Systems"],
-        headline: "Founding PM. There was no product yet.",
         narrative: [
-          "Just a freshly acquired SEBI license, a 2-month deadline, and a bet that India's bond market could be dragged out of the offline HNI world and made retail-friendly. I was one of the three PMs building it.",
+          "Founding PM. There was no product yet. Just a freshly acquired SEBI license, a 2-month deadline, and a bet that India's bond market could be dragged out of the offline HNI world and made retail-friendly. I was one of the three PMs building it.",
           "Shipped the 0→1 onboarding across web and mobile in 2 months. Then took ownership of growth.",
           "Product-led SEO is where I got obsessed. Built the whole engine. 350+ compliance-safe blogs, a 200+ term bond dictionary, 16,000+ programmatic ISIN directory pages. Organic clicks roughly doubled in three months. Turns out if you build enough surface area you can rank for bonds nobody's ever heard of.",
           "Lately I've been living in Claude Code. Built an AI call-analysis pipeline that reviews outbound calls, scores conversations, and auto-generates action items. Also built James, our internal AI copilot, and shipped AI tools across ops, compliance, and marketing.",
@@ -116,16 +123,18 @@ export const experienceEntries: ExperienceEntry[] = [
   },
   {
     slug: "moveinsync",
-    company: "moveinsync",
-    role: "product intern",
+    company: "MoveInSync",
+    role: "Product Intern",
     url: "https://www.moveinsync.com",
     logo: "/images/logos/moveinsync.png",
     start: "2024-06",
-    end: "2025-02",
-    tagline:
-      "employee transportation saas — 300k+ commutes daily across 200+ enterprises.",
+    end: "2024-12",
+    tagline: "",
+    summary:
+      "Pricing strategies for premium features + ETS dashboard for transport teams.",
     roleChips: ["Product Intern", "Pricing", "Revenue"],
     narrative: [
+      "Employee transportation SaaS - 300k+ commutes daily across 200+ enterprises.",
       "Developed pricing strategies for Safety Toolkit and DMS-ADAS premium features, presented at the Chennai Prodcon Summit and drove upselling conversations with 50+ commute clients.",
       "Expanded cross-sell to 50 commute clients by shipping an ETS dashboard for transport teams, targeting a 15% revenue increase.",
     ],
