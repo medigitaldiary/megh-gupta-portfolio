@@ -2,10 +2,10 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import {
-  Caveat,
   Instrument_Serif,
   Inter,
   JetBrains_Mono,
+  Kalam,
 } from "next/font/google";
 import "./globals.css";
 
@@ -28,10 +28,10 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const caveat = Caveat({
-  variable: "--font-caveat",
+const kalam = Kalam({
+  variable: "--font-hand",
   subsets: ["latin"],
-  weight: "500",
+  weight: "400",
   display: "swap",
 });
 
@@ -192,7 +192,7 @@ export default function RootLayout({
         {/* discovery:end */}
       </head>
       <body
-        className={`${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable} ${caveat.variable} antialiased bg-bg text-fg`}
+        className={`${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable} ${kalam.variable} antialiased bg-bg text-fg`}
       >
         <a
           href="#main"
