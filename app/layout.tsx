@@ -1,7 +1,12 @@
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { Instrument_Serif, Inter, JetBrains_Mono } from "next/font/google";
+import {
+  Caveat,
+  Instrument_Serif,
+  Inter,
+  JetBrains_Mono,
+} from "next/font/google";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -20,6 +25,13 @@ const inter = Inter({
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin"],
+  weight: "500",
   display: "swap",
 });
 
@@ -180,7 +192,7 @@ export default function RootLayout({
         {/* discovery:end */}
       </head>
       <body
-        className={`${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased bg-bg text-fg`}
+        className={`${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable} ${caveat.variable} antialiased bg-bg text-fg`}
       >
         <a
           href="#main"
