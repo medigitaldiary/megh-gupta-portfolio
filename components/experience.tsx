@@ -232,13 +232,54 @@ function CompanyName({ entry }: { entry: ExperienceEntry }) {
 // Timeline view
 // ─────────────────────────────────────────────────────────────
 
+type TimelineItem = {
+  key: string;
+  label: string;
+  role?: string;
+  url?: string;
+  current?: boolean;
+  start: number;
+  end: number;
+};
+
+function expandToItems(entries: ExperienceEntry[]): TimelineItem[] {
+  const items: TimelineItem[] = [];
+  for (const entry of entries) {
+    const dated = entry.products?.filter((p) => p.start && p.end);
+    if (dated && dated.length > 0) {
+      // Split the parent employer into one chip per dated product.
+      for (const p of dated) {
+        items.push({
+          key: `${entry.slug}-${p.name}`,
+          label: p.name,
+          role: entry.role,
+          url: p.url,
+          current: p.current ?? p.end === "present",
+          start: toDecimalYear(p.start as string),
+          end: toDecimalYear(p.end as string),
+        });
+      }
+    } else {
+      items.push({
+        key: entry.slug,
+        label: entry.company,
+        role: entry.role,
+        url: entry.url,
+        current: entry.current ?? entry.end === "present",
+        start: toDecimalYear(entry.start),
+        end: endAsDecimalYear(entry),
+      });
+    }
+  }
+  return items;
+}
+
 function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
-  // Timeline range: earliest start (floored) → this year + 1
+  const items = expandToItems(entries);
+
   const now = new Date();
   const nowYear = now.getFullYear() + now.getMonth() / 12;
-  const earliest = Math.floor(
-    Math.min(...entries.map((e) => toDecimalYear(e.start))),
-  );
+  const earliest = Math.floor(Math.min(...items.map((i) => i.start)));
   const latest = Math.ceil(nowYear) + 0.25;
   const span = latest - earliest;
   const yearMarkers: number[] = [];
@@ -247,23 +288,19 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
   const pct = (v: number) => ((v - earliest) / span) * 100;
   const nowPct = pct(nowYear);
 
-  // Sort ascending so earliest is left-most; assign lanes to prevent overlap.
-  const ascending = [...entries].sort(
-    (a, b) => toDecimalYear(a.start) - toDecimalYear(b.start),
-  );
-  type Placed = { entry: ExperienceEntry; lane: number };
+  // Sort ascending; greedy lane packing prevents overlaps.
+  const ascending = [...items].sort((a, b) => a.start - b.start);
+  type Placed = { item: TimelineItem; lane: number };
   const laneEnds: number[] = [];
-  const placed: Placed[] = ascending.map((entry) => {
-    const s = toDecimalYear(entry.start);
-    const e = endAsDecimalYear(entry);
-    let lane = laneEnds.findIndex((end) => end <= s - 0.2);
+  const placed: Placed[] = ascending.map((item) => {
+    let lane = laneEnds.findIndex((end) => end <= item.start - 0.2);
     if (lane === -1) {
       lane = laneEnds.length;
-      laneEnds.push(e);
+      laneEnds.push(item.end);
     } else {
-      laneEnds[lane] = e;
+      laneEnds[lane] = item.end;
     }
-    return { entry, lane };
+    return { item, lane };
   });
 
   const numLanes = Math.max(1, laneEnds.length);
@@ -313,15 +350,13 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
           </div>
 
           {/* chips */}
-          {placed.map(({ entry, lane }) => {
-            const s = toDecimalYear(entry.start);
-            const e = endAsDecimalYear(entry);
-            const left = pct(s);
-            const width = Math.max(pct(e) - left, 8);
+          {placed.map(({ item, lane }) => {
+            const left = pct(item.start);
+            const width = Math.max(pct(item.end) - left, 8);
             return (
               <TimelineChip
-                key={entry.slug}
-                entry={entry}
+                key={item.key}
+                item={item}
                 leftPct={left}
                 widthPct={width}
                 topPx={lane * laneHeight + 8}
@@ -352,12 +387,12 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
 }
 
 function TimelineChip({
-  entry,
+  item,
   leftPct,
   widthPct,
   topPx,
 }: {
-  entry: ExperienceEntry;
+  item: TimelineItem;
   leftPct: number;
   widthPct: number;
   topPx: number;
@@ -366,9 +401,9 @@ function TimelineChip({
     <div className="flex h-full items-center gap-2 rounded-xl border border-border bg-bg-elevated px-3 py-2 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:border-accent hover:shadow-md">
       <div className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-bg">
         <span aria-hidden="true" className="font-serif text-sm text-fg-subtle">
-          {entry.company.slice(0, 1).toUpperCase()}
+          {item.label.slice(0, 1).toUpperCase()}
         </span>
-        {entry.current && (
+        {item.current && (
           <span
             aria-hidden="true"
             className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-accent ring-2 ring-bg-elevated"
@@ -376,10 +411,10 @@ function TimelineChip({
         )}
       </div>
       <div className="min-w-0">
-        <p className="truncate text-sm font-semibold text-fg">
-          {entry.company}
-        </p>
-        <p className="truncate text-xs text-fg-muted">{entry.role}</p>
+        <p className="truncate text-sm font-semibold text-fg">{item.label}</p>
+        {item.role && (
+          <p className="truncate text-xs text-fg-muted">{item.role}</p>
+        )}
       </div>
     </div>
   );
@@ -391,13 +426,13 @@ function TimelineChip({
   } as const;
   return (
     <div className="absolute" style={style}>
-      {entry.url ? (
+      {item.url ? (
         <a
-          href={entry.url}
+          href={item.url}
           target="_blank"
           rel="noopener noreferrer"
           className="block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-          aria-label={`${entry.company} — ${entry.role}`}
+          aria-label={item.role ? `${item.label} — ${item.role}` : item.label}
         >
           {content}
         </a>
