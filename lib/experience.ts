@@ -54,8 +54,8 @@ export type ExperienceEntry = {
 export const experienceEntries: ExperienceEntry[] = [
   {
     slug: "tap-invest",
-    company: "tap invest",
-    role: "associate product manager",
+    company: "Tap Invest",
+    role: "Associate Product Manager",
     url: "https://tapinvest.in",
     logo: "/images/logos/tap-invest.png",
     logoBg: "bg-fg",
@@ -71,7 +71,7 @@ export const experienceEntries: ExperienceEntry[] = [
         logo: "/images/logos/ultra.webp",
         start: "2025-03",
         end: "2025-10",
-        role: "platform product manager",
+        role: "Platform Product Manager",
         roleChips: ["Platform PM", "Retention", "0→1"],
         narrative: [
           "My first PM role. Owned Platform & Retention for Ultra, Tap's alternative-investments app.",
@@ -96,7 +96,7 @@ export const experienceEntries: ExperienceEntry[] = [
         start: "2025-11",
         end: "present",
         current: true,
-        role: "founding product manager",
+        role: "Founding Product Manager",
         roleChips: ["0→1 builder", "Growth PM", "AI/Product Systems"],
         headline: "Founding PM. There was no product yet.",
         narrative: [
@@ -116,8 +116,8 @@ export const experienceEntries: ExperienceEntry[] = [
   },
   {
     slug: "moveinsync",
-    company: "moveinsync",
-    role: "product intern",
+    company: "MoveInSync",
+    role: "Product Intern",
     url: "https://www.moveinsync.com",
     logo: "/images/logos/moveinsync.png",
     start: "2024-06",
