@@ -370,10 +370,13 @@ function EntryDetail({
             {achievements.intro && (
               <p className="mb-3 text-fg">{achievements.intro}</p>
             )}
-            <ul className="space-y-2.5">
+            <ul className="mt-1 space-y-1">
               {achievements.items.map((item) => (
-                <li key={item} className="flex gap-3 text-fg">
-                  <span aria-hidden="true" className="mt-2 text-accent">
+                <li
+                  key={item}
+                  className="flex gap-3 leading-[1.5] text-fg"
+                >
+                  <span aria-hidden="true" className="mt-1.5 text-accent">
                     *
                   </span>
                   <span>{item}</span>
