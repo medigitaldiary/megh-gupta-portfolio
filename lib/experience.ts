@@ -120,11 +120,11 @@ export const experienceEntries: ExperienceEntry[] = [
     url: "https://www.moveinsync.com",
     logo: "/images/logos/moveinsync.png",
     start: "2024-06",
-    end: "2025-02",
-    tagline:
-      "employee transportation saas — 300k+ commutes daily across 200+ enterprises.",
+    end: "2024-12",
+    tagline: "",
     roleChips: ["Product Intern", "Pricing", "Revenue"],
     narrative: [
+      "Employee transportation SaaS - 300k+ commutes daily across 200+ enterprises.",
       "Developed pricing strategies for Safety Toolkit and DMS-ADAS premium features, presented at the Chennai Prodcon Summit and drove upselling conversations with 50+ commute clients.",
       "Expanded cross-sell to 50 commute clients by shipping an ETS dashboard for transport teams, targeting a 15% revenue increase.",
     ],

@@ -178,7 +178,6 @@ function ListRow({
             achievements={entry.achievements}
             closer={entry.closer}
             linkOut={entry.linkOut}
-            tagline={entry.tagline}
             start={entry.start}
             end={entry.end}
             current={entry.current}
@@ -272,7 +271,6 @@ function EntryDetail({
   achievements,
   closer,
   linkOut,
-  tagline,
   start,
   end,
   current,
@@ -287,7 +285,6 @@ function EntryDetail({
   achievements?: { intro?: string; items: string[] };
   closer?: string;
   linkOut?: { label: string; url: string; display?: string };
-  tagline?: string;
   start: string;
   end: string | "present";
   current?: boolean;
@@ -350,15 +347,6 @@ function EntryDetail({
           </p>
         )}
 
-        {tagline && !headline && (
-          <p className="flex items-start gap-2 font-serif text-lg italic leading-[1.4] text-fg md:text-xl">
-            <span aria-hidden="true" className="mt-0.5 not-italic">
-              📢
-            </span>
-            <span>{tagline}</span>
-          </p>
-        )}
-
         {narrative?.map((p) => (
           <p key={p.slice(0, 40)} className="text-fg-muted">
             {p}
@@ -372,10 +360,7 @@ function EntryDetail({
             )}
             <ul className="mt-1 space-y-1">
               {achievements.items.map((item) => (
-                <li
-                  key={item}
-                  className="flex gap-3 leading-[1.5] text-fg"
-                >
+                <li key={item} className="flex gap-3 leading-[1.5] text-fg">
                   <span aria-hidden="true" className="mt-1.5 text-accent">
                     *
                   </span>
