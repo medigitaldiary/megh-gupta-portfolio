@@ -16,6 +16,8 @@ export type ExperienceProduct = {
   start?: string;
   end?: string | "present";
   logo?: string;
+  // Tailwind bg class to sit behind a transparent-mark logo (e.g. "bg-fg").
+  logoBg?: string;
   current?: boolean;
   // Rich content for the list-view expand (mirrors ExperienceEntry).
   role?: string;
@@ -32,6 +34,7 @@ export type ExperienceEntry = {
   company: string;
   role: string;
   logo?: string;
+  logoBg?: string;
   url?: string;
   start: string;
   end: string | "present";
@@ -54,7 +57,8 @@ export const experienceEntries: ExperienceEntry[] = [
     company: "tap invest",
     role: "associate product manager",
     url: "https://tapinvest.in",
-    logo: "/images/logos/bondscanner.jpg",
+    logo: "/images/logos/tap-invest.png",
+    logoBg: "bg-fg",
     start: "2025-03",
     end: "present",
     current: true,
@@ -64,7 +68,7 @@ export const experienceEntries: ExperienceEntry[] = [
       {
         name: "Ultra",
         url: "https://tapinvest.in",
-        logo: "/images/logos/ultra.png",
+        logo: "/images/logos/ultra.webp",
         start: "2025-03",
         end: "2025-10",
         role: "platform product manager",

@@ -131,6 +131,7 @@ function ListRow({
       >
         <LogoTile
           logo={entry.logo}
+          logoBg={entry.logoBg}
           fallback={entry.company}
           current={entry.current}
           size="md"
@@ -169,6 +170,8 @@ function ListRow({
           <EntryDetail
             role={entry.role}
             company={entry.company}
+            logo={entry.logo}
+            logoBg={entry.logoBg}
             headline={entry.headline}
             roleChips={entry.roleChips}
             narrative={entry.narrative}
@@ -178,6 +181,7 @@ function ListRow({
             tagline={entry.tagline}
             start={entry.start}
             end={entry.end}
+            current={entry.current}
           />
         )}
       </section>
@@ -187,24 +191,27 @@ function ListRow({
 
 function LogoTile({
   logo,
+  logoBg,
   fallback,
   current,
   size = "md",
 }: {
   logo?: string;
+  logoBg?: string;
   fallback: string;
   current?: boolean;
   size?: "sm" | "md" | "lg";
 }) {
   const dims =
     size === "lg"
-      ? { box: "h-14 w-14", text: "text-2xl", px: 56 }
+      ? { box: "h-14 w-14", text: "text-2xl", px: 56, pad: "p-1.5" }
       : size === "sm"
-        ? { box: "h-9 w-9", text: "text-base", px: 36 }
-        : { box: "h-11 w-11", text: "text-lg", px: 44 };
+        ? { box: "h-9 w-9", text: "text-base", px: 36, pad: "p-1" }
+        : { box: "h-11 w-11", text: "text-lg", px: 44, pad: "p-1" };
+  const bgClass = logoBg ?? "bg-bg-elevated";
   return (
     <div
-      className={`relative ${dims.box} shrink-0 overflow-hidden rounded-lg border border-border bg-bg-elevated`}
+      className={`relative ${dims.box} shrink-0 overflow-hidden rounded-lg border border-border ${bgClass}`}
     >
       {logo ? (
         <Image
@@ -212,12 +219,12 @@ function LogoTile({
           alt=""
           width={dims.px}
           height={dims.px}
-          className="h-full w-full object-cover"
+          className={`h-full w-full ${logoBg ? `${dims.pad} object-contain` : "object-cover"}`}
         />
       ) : (
         <span
           aria-hidden="true"
-          className={`flex h-full w-full items-center justify-center font-serif ${dims.text} text-fg-subtle`}
+          className={`flex h-full w-full items-center justify-center font-serif ${dims.text} ${logoBg ? "text-accent-fg" : "text-fg-subtle"}`}
         >
           {fallback.slice(0, 1).toUpperCase()}
         </span>
@@ -258,6 +265,7 @@ function EntryDetail({
   role,
   company,
   logo,
+  logoBg,
   headline,
   roleChips,
   narrative,
@@ -272,6 +280,7 @@ function EntryDetail({
   role: string;
   company?: string;
   logo?: string;
+  logoBg?: string;
   headline?: string;
   roleChips?: string[];
   narrative?: string[];
@@ -292,6 +301,7 @@ function EntryDetail({
         {(logo || company) && (
           <LogoTile
             logo={logo}
+            logoBg={logoBg}
             fallback={company ?? role}
             current={current}
             size="lg"
@@ -443,6 +453,7 @@ function TapInvestExpanded({ entry }: { entry: ExperienceEntry }) {
           role={active.role ?? entry.role}
           company={`${entry.company} · ${active.name}`}
           logo={active.logo ?? entry.logo}
+          logoBg={active.logo ? active.logoBg : entry.logoBg}
           headline={active.headline}
           roleChips={active.roleChips}
           narrative={active.narrative}
@@ -468,6 +479,8 @@ type TimelineItem = {
   role?: string;
   url?: string;
   current?: boolean;
+  logo?: string;
+  logoBg?: string;
   start: number;
   end: number;
 };
@@ -485,6 +498,8 @@ function expandToItems(entries: ExperienceEntry[]): TimelineItem[] {
           role: entry.role,
           url: p.url,
           current: p.current ?? p.end === "present",
+          logo: p.logo ?? entry.logo,
+          logoBg: p.logo ? p.logoBg : entry.logoBg,
           start: toDecimalYear(p.start as string),
           end: toDecimalYear(p.end as string),
         });
@@ -496,6 +511,8 @@ function expandToItems(entries: ExperienceEntry[]): TimelineItem[] {
         role: entry.role,
         url: entry.url,
         current: entry.current ?? entry.end === "present",
+        logo: entry.logo,
+        logoBg: entry.logoBg,
         start: toDecimalYear(entry.start),
         end: endAsDecimalYear(entry),
       });
@@ -629,17 +646,13 @@ function TimelineChip({
 }) {
   const content = (
     <div className="flex h-full items-center gap-2 rounded-xl border border-border bg-bg-elevated px-3 py-2 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:border-accent hover:shadow-md">
-      <div className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-bg">
-        <span aria-hidden="true" className="font-serif text-sm text-fg-subtle">
-          {item.label.slice(0, 1).toUpperCase()}
-        </span>
-        {item.current && (
-          <span
-            aria-hidden="true"
-            className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-accent ring-2 ring-bg-elevated"
-          />
-        )}
-      </div>
+      <LogoTile
+        logo={item.logo}
+        logoBg={item.logoBg}
+        fallback={item.label}
+        current={item.current}
+        size="sm"
+      />
       <div className="min-w-0">
         <p className="truncate text-sm font-semibold text-fg">{item.label}</p>
         {item.role && (
