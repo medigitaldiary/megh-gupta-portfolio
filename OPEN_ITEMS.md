@@ -26,8 +26,7 @@ Last updated: 2026-09-22 (post PR #18 merge — /preview/v1 shipped).
 ## 3. Open decisions still pending
 
 12. **The Lab: 3-kind taxonomy vs. hostable try-it tools.** Flagged in PRD §0 and §7.4. Current spec (and current build) ships the 3-kind taxonomy (skill-file / personal-tool / github-project) with outbound links. The parallel idea is a Kashwi-style wall of hostable mini-apps (bond decoder, FD-vs-bond, Bonds Wrapped). Different section, different build. Pick one before investing more in Lab.
-13. **CLAUDE.md doc-drift.** `CLAUDE.md §14`'s fold table still describes Experience as timeline-with-toggle in v1. PRD v3 supersedes: v1 ships list-view-only. Reconcile CLAUDE.md so the two docs match — otherwise a future session may re-add the toggle from CLAUDE.md's spec.
-14. **When to promote /preview/v1 → /.** Right now `/` is coming-soon and the real portfolio lives at `/preview/v1` (noindex). Launch = swap `app/page.tsx` to render the v1 folds and remove noindex. Trigger: items 1–8 above are green.
+13. **When to promote /preview/v1 → /.** Right now `/` is coming-soon and the real portfolio lives at `/preview/v1` (noindex). Launch = swap `app/page.tsx` to render the v1 folds and remove noindex. Trigger: items 1–8 above are green.
 
 ## 4. Deferred (parking lot — don't work without asking)
 
@@ -40,7 +39,6 @@ Explicitly out of scope for v1 per PRD §6.4. Not "open" — listed here so nobo
 - Testimonials, newsletter signup, "logos I've worked with" strip, stat-tile rows
 - Case-study detail pages (`/work/[slug]`) — planned, but only after real deck/PRD/dashboard links exist to point at
 - `/lab` index, `/writing` index — planned, but only after homepage folds are validated
-- Experience timeline view + toggle — revisit if analytics show list view isn't answering the "where has this person been" question fast enough
 
 ## How to use this file
 

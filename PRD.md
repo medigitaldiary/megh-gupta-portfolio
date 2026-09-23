@@ -316,7 +316,7 @@ The whole homepage reads as one scroll story, not a stack of tiles. Every fold h
 
 Placement: right after the Hero. Not a résumé block — a scannable trajectory that expands on demand. Fold job: trajectory. Reference screenshots in `docs/references/experience/`.
 
-**v1 decision (locked):** ship the **list view only**. The timeline view + view-toggle from v2 is deferred (see §6 phasing) — it's a lot of interaction for Fold 2 of a 60-second funnel. Add it later only if analytics justify it. This supersedes v2's "do not skip the view toggle in v1."
+**v1 decision (locked, revised 2026-09-23):** ship **both views** with a top-right toggle (list · timeline). **Timeline is the default** on load; recruiters get the "trajectory" answer at a glance, and readers who want detail flip to list. This reverses the earlier "list-only" decision — the timeline reads faster than a stack of rows for a 60-second skimmer.
 
 **Content model (`lib/experience.ts`, TS array — no MDX):**
 
@@ -369,7 +369,7 @@ type ExperienceEntry = {
 
 **Analytics:** `experience_row_expand` / `experience_row_collapse` (property: slug).
 
-**Launch order:** author real entries → ship list view → (later) timeline view + toggle if justified.
+**Launch order:** author real entries from résumé → ship list + timeline + toggle in one commit → later polish (logos, drag-to-scroll gesture, mobile timeline density).
 
 ### 7.4 The Lab (Fold 4)
 
