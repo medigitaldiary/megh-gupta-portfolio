@@ -518,10 +518,12 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
   const now = new Date();
   const nowYear = now.getFullYear() + now.getMonth() / 12;
   const earliest = Math.floor(Math.min(...items.map((i) => i.start)));
-  const latest = Math.ceil(nowYear) + 0.25;
+  // Right edge = end of the current year (start of next year). No
+  // future-year labels floating past the data.
+  const latest = now.getFullYear() + 1;
   const span = latest - earliest;
   const yearMarkers: number[] = [];
-  for (let y = earliest; y <= Math.ceil(latest); y++) yearMarkers.push(y);
+  for (let y = earliest; y < latest; y++) yearMarkers.push(y);
 
   const pct = (v: number) => ((v - earliest) / span) * 100;
   const nowPct = pct(nowYear);
@@ -602,14 +604,32 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
             );
           })}
 
-          {/* year labels */}
+          {/* year labels — absolute-positioned at their real year offset,
+              so a 3-label / 3-year timeline reads 2024 @ 0, 2025 @ 33,
+              2026 @ 67 (not evenly distributed 0/50/100). */}
           <div
-            className="absolute inset-x-0 flex justify-between px-1 font-mono text-xs text-fg-subtle"
+            className="absolute inset-x-0 h-4 font-mono text-xs text-fg-subtle"
             style={{ top: bandHeight + 12 }}
           >
-            {yearMarkers.map((y) => (
-              <span key={y}>{y}</span>
-            ))}
+            {yearMarkers.map((y, i) => {
+              const isFirst = i === 0;
+              const isLast = i === yearMarkers.length - 1;
+              return (
+                <span
+                  key={y}
+                  className={`absolute ${
+                    isFirst
+                      ? "translate-x-0"
+                      : isLast
+                        ? "-translate-x-full"
+                        : "-translate-x-1/2"
+                  }`}
+                  style={{ left: `${pct(y)}%` }}
+                >
+                  {y}
+                </span>
+              );
+            })}
           </div>
         </div>
       </div>
