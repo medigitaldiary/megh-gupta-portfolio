@@ -101,20 +101,25 @@ export function Nav() {
         }
       }}
     >
+      {/* When collapsed there's no bar background — only the pill floats.
+          Before scroll the outer bar carries its own bg + blur + hairline so
+          the full nav still reads as one surface. */}
       <div
-        className={`bg-bg/80 backdrop-blur-md transition-[border-color] duration-150 ${
-          scrolled && !collapsed
-            ? "border-b border-border"
-            : "border-b border-transparent"
+        className={`transition-[background-color,backdrop-filter,border-color] duration-300 ease-out ${
+          scrolled
+            ? "border-b border-transparent bg-transparent"
+            : "border-b border-transparent bg-bg/80 backdrop-blur-md"
         }`}
       >
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 md:h-[72px] md:px-6">
-          {/* Left: avatar + name — collapses when scrolled + not hovered/focused */}
+        <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 md:h-[72px] md:px-6">
+          {/* Left: avatar + name.
+              When collapsed the section is translated INWARD (toward the pill)
+              and faded out, so on hover it slides OUTWARD from behind the pill. */}
           <div
-            className={`flex items-center transition-all duration-300 ease-out motion-reduce:transition-none ${
+            className={`justify-self-start transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none ${
               collapsed
-                ? "pointer-events-none max-w-0 -translate-x-2 overflow-hidden opacity-0"
-                : "max-w-[280px] translate-x-0 opacity-100"
+                ? "pointer-events-none translate-x-[220px] opacity-0"
+                : "translate-x-0 opacity-100"
             }`}
           >
             <button
@@ -141,8 +146,8 @@ export function Nav() {
             </button>
           </div>
 
-          {/* Center: pill nav (desktop) — always visible; gets a softer shadow
-              in collapsed mode so it reads as a floating pill. */}
+          {/* Center pill — always visible. Slightly bumped shadow when floating
+              alone (collapsed) so it reads as a raised capsule. */}
           <div
             role="tablist"
             aria-label="Sections"
@@ -174,12 +179,13 @@ export function Nav() {
             })}
           </div>
 
-          {/* Right: LinkedIn + Resume — collapses when scrolled + not hovered/focused */}
+          {/* Right: LinkedIn + Resume. Same trick: translated INWARD (toward
+              the pill) when collapsed so it emerges from behind on hover. */}
           <div
-            className={`hidden items-center gap-2 transition-all duration-300 ease-out motion-reduce:transition-none md:flex ${
+            className={`hidden items-center justify-end gap-2 justify-self-end transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none md:flex ${
               collapsed
-                ? "pointer-events-none max-w-0 translate-x-2 overflow-hidden opacity-0"
-                : "max-w-[240px] translate-x-0 opacity-100"
+                ? "pointer-events-none -translate-x-[220px] opacity-0"
+                : "translate-x-0 opacity-100"
             }`}
           >
             <a
