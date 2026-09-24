@@ -1,20 +1,35 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import type { WorkCard as WorkCardType } from "@/lib/work";
 
 // A book-shaped project card. The whole card is a link to /work/[slug].
-// On hover the "cover" swings open on a Y-axis rotation (3D transform),
+// At rest each book leans by `leanDeg` (pivoting on its bottom edge) so the
+// shelf reads as a row of books propped against each other. On hover the
+// book straightens up AND the cover swings open on a Y-axis rotation,
 // revealing the CTA underneath. Motion is disabled for reduced-motion users.
 export function WorkCard({ card }: { card: WorkCardType }) {
   const href = `/work/${card.slug}`;
+  const lean = card.leanDeg ?? 0;
+  const leanStyle: CSSProperties = { "--lean": `${lean}deg` } as CSSProperties;
 
   return (
     <Link
       href={href}
       aria-label={`Read the case study: ${card.title}`}
-      className="group block focus-visible:outline-none"
+      className="group relative z-0 block focus-visible:outline-none hover:z-10 focus-visible:z-10"
+      style={leanStyle}
     >
-      {/* 3D perspective wrapper */}
-      <div className="relative aspect-[3/4] w-full [perspective:1200px]">
+      {/* 3D perspective wrapper — also carries the resting lean.
+          transform-origin: bottom keeps the pivot on the shelf line. */}
+      <div
+        className={[
+          "relative aspect-[3/4] w-full [perspective:1200px]",
+          "origin-bottom [transform:rotate(var(--lean))]",
+          "transition-transform duration-500 ease-out",
+          "group-hover:[transform:rotate(0deg)] group-focus-visible:[transform:rotate(0deg)]",
+          "motion-reduce:transition-none",
+        ].join(" ")}
+      >
         {/* Back page — revealed as the cover swings open */}
         <div
           aria-hidden="true"
