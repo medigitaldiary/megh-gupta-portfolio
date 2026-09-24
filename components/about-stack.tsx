@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { SectionHeader } from "@/components/section-header";
 import { StackIcon } from "@/components/stack-icon";
@@ -17,10 +18,15 @@ export function AboutStack() {
         <SectionHeader eyebrow="About" title="A bit about me." />
         <div className="grid gap-10 md:grid-cols-[220px_1fr] md:gap-14">
           <div className="mx-auto md:mx-0">
-            <div className="h-[220px] w-[220px] overflow-hidden rounded-lg bg-accent/10 md:h-[240px] md:w-[240px]">
-              <div className="flex h-full w-full items-center justify-center font-serif text-6xl text-accent/50">
-                MG
-              </div>
+            <div className="relative h-[280px] w-[220px] overflow-hidden rounded-lg bg-accent/10 md:h-[320px] md:w-[240px]">
+              <Image
+                src="/images/about/megh-convocation.webp"
+                alt="Megh at BITS Pilani K.K. Birla Goa Campus convocation"
+                fill
+                sizes="(min-width: 768px) 240px, 220px"
+                className="object-cover"
+                priority
+              />
             </div>
           </div>
           <div className="prose prose-neutral max-w-none">
