@@ -24,7 +24,7 @@ export function AboutStack() {
                 alt="Megh at BITS Pilani K.K. Birla Goa Campus convocation"
                 fill
                 sizes="(min-width: 768px) 240px, 220px"
-                className="object-cover"
+                className="scale-[1.18] object-cover object-[center_72%]"
                 priority
               />
             </div>
