@@ -1,74 +1,104 @@
+export type WorkStatus = "live" | "coming-soon";
+
 export type WorkCard = {
   slug: string;
   title: string;
-  tags: string[];
-  headlineMetric: string;
-  headlineMetricLabel: string;
-  description: string;
+  eyebrow: string;
+  oneLiner: string;
   role: string;
+  company: string;
   timeline: string;
-  externalUrl?: string;
-  status: "live" | "soon";
+  // Tailwind bg class for the book spine; picked from the accent family.
+  spineColor: string;
+  status: WorkStatus;
+  featured?: boolean;
+  order?: number;
 };
 
-// TODO: real link — copy is real (from Megh_Gupta_PM_Case_Studies.docx), but the
-// docx itself only has "[Insert link]" placeholders for every artifact, so
-// externalUrl stays "#" until real decks/PRDs/dashboards are ready to link.
+// Five case studies Megh is writing — the 4 highest-order ones surface on the
+// homepage shelf; the fifth lives at /work/[slug] but is not on the fold yet.
 export const workCards: WorkCard[] = [
   {
-    slug: "seo-engine",
-    title: "How I 2x'd organic traffic at BondScanner in 3 months",
-    tags: ["Growth", "SEO", "Fintech"],
-    headlineMetric: "2x",
-    headlineMetricLabel: "daily organic clicks in 3 months",
-    description:
-      'Built and ran BondScanner\'s product-led SEO engine — 350+ compliance-safe blogs, a 200+ term Bond Dictionary, and 26,000+ programmatic bond pages. Ranked #3 for "hedge funds in india" and captured ISIN-level search intent.',
+    slug: "product-led-seo-engine",
+    title: "Product-led SEO Engine",
+    eyebrow: "Growth · SEO",
+    oneLiner:
+      "How programmatic SEO ~2x'd BondScanner's organic clicks in three months.",
     role: "Growth PM",
-    timeline: "Jan 2026 – Q2 2026",
-    externalUrl: "#",
-    status: "live",
+    company: "BondScanner",
+    timeline: "2026",
+    spineColor: "bg-accent",
+    status: "coming-soon",
+    featured: true,
+    order: 1,
   },
   {
-    slug: "ai-call-analysis",
-    title: "AI call analysis pipeline for BondScanner's RM team",
-    tags: ["AI Tooling", "Ops", "Fintech"],
-    headlineMetric: "5.2 → 6.0",
-    headlineMetricLabel: "call quality score in 30 days",
-    description:
-      "Vibe-coded an end-to-end pipeline — Sarvam speech-to-text plus Claude scoring — to grade 8 hours of daily RM call recordings and auto-extract action items into Radar as tasks.",
-    role: "PM",
-    timeline: "Mar 2026 – present",
-    externalUrl: "#",
-    status: "live",
-  },
-  {
-    slug: "ultra-reinvestment",
-    title: "Lifting payout-to-reinvestment from 55% to 70% at Ultra",
-    tags: ["Growth", "Fintech", "Platform"],
-    headlineMetric: "+15pp",
-    headlineMetricLabel: "retention lift in 30 days",
-    description:
-      "Audited every screen across Ultra's investment flows, fixed hygiene gaps, then shipped lifecycle automations across push, email, and WhatsApp for users sitting on un-reinvested payouts.",
+    slug: "ultra-web-platform",
+    title: "Ultra Web Platform",
+    eyebrow: "Platform · 0→1",
+    oneLiner:
+      "Shipping Ultra's web app across investment, wallet, dashboard, and KYC.",
     role: "Platform PM",
-    timeline: "Jun 2025 – Jul 2025",
-    externalUrl: "#",
-    status: "live",
+    company: "Ultra",
+    timeline: "2025",
+    spineColor: "bg-fg",
+    status: "coming-soon",
+    featured: true,
+    order: 2,
   },
   {
-    slug: "bondscanner-launch",
-    title: "Founding PM: BondScanner 0→1",
-    tags: ["0→1", "Fintech", "Founding PM"],
-    headlineMetric: "2 months",
-    headlineMetricLabel: "regulated platform, sign-up to launch",
-    description:
-      "Founding PM on BondScanner's 0→1 build — owned the sign-up and onboarding funnel and the inbound support system, ran competitive benchmarking, and shipped the MVP across web and mobile to a hard regulatory deadline.",
+    slug: "bond-bytes",
+    title: "Bond Bytes",
+    eyebrow: "Content · Retention",
+    oneLiner:
+      "A daily bite of India's bond market — the retention lever we built into BondScanner.",
+    role: "Growth PM",
+    company: "BondScanner",
+    timeline: "2026",
+    spineColor: "bg-[#8B5E3C]",
+    status: "coming-soon",
+    featured: true,
+    order: 3,
+  },
+  {
+    slug: "deridata-integration",
+    title: "DERIDATA Integration",
+    eyebrow: "Data · Integrations",
+    oneLiner:
+      "Wiring DERIDATA into BondScanner so pricing, yield, and risk stay one source of truth.",
+    role: "Product Manager",
+    company: "BondScanner",
+    timeline: "2026",
+    spineColor: "bg-[#4A5D5A]",
+    status: "coming-soon",
+    featured: true,
+    order: 4,
+  },
+  {
+    slug: "freshdesk-support-stack",
+    title: "Freshdesk · Support Stack",
+    eyebrow: "Ops · Support",
+    oneLiner:
+      "Building the inbound support stack — Freshdesk + workflows + SLAs — from zero.",
     role: "Founding PM",
-    timeline: "Nov 2025 – present",
-    externalUrl: "#",
-    status: "live",
+    company: "BondScanner",
+    timeline: "2025",
+    spineColor: "bg-[#6B4E71]",
+    status: "coming-soon",
+    order: 5,
   },
 ];
 
 export function getAllWorkCards(): WorkCard[] {
-  return workCards;
+  return [...workCards].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+}
+
+export function getShelfWorkCards(n = 4): WorkCard[] {
+  return getAllWorkCards()
+    .filter((c) => c.featured)
+    .slice(0, n);
+}
+
+export function getWorkCardBySlug(slug: string): WorkCard | undefined {
+  return workCards.find((c) => c.slug === slug);
 }
