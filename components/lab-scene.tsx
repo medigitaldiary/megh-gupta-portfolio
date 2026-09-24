@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import {
   getEfficiencyLabCards,
@@ -8,6 +9,13 @@ import {
   type LabCard,
 } from "@/lib/lab";
 import { getFeaturedStack, type StackTool } from "@/lib/stack";
+
+// Three.js portal shader — code-split into its own chunk so the ~600 KB
+// three.js bundle only downloads when the Lab fold is on-screen.
+const LabPortalShader = dynamic(
+  () => import("@/components/lab-portal").then((m) => m.LabPortalShader),
+  { ssr: false },
+);
 
 // Rick's-lab-themed workbench scene — replaces the previous cards fold.
 // Every hoverable object represents a real portfolio piece.
@@ -537,7 +545,10 @@ function PortalZone({
         filter="url(#lab-softHalo)"
       />
 
-      {/* Portal — CSS conic-gradient vortex inside a foreignObject. */}
+      {/* Portal — Three.js WebGL shader (pizza3 port, procedural Perlin noise
+          in place of the artist-authored PNGs). CSS conic-gradient fallback
+          renders underneath and fades out once the shader canvas is ready.
+          See components/lab-portal.tsx and reference/portal-shader/. */}
       <foreignObject
         x="30"
         y="110"
@@ -559,42 +570,35 @@ function PortalZone({
               zIndex: 0,
             }}
           />
-          <div
-            className="lab-portal-swirl-outer absolute rounded-full"
-            style={{
-              inset: 22,
-              background:
-                "conic-gradient(from 0deg, #D8FCE5 0deg, #6EE7A0 40deg, #3E8759 90deg, #0E2A1B 150deg, #4BB77A 200deg, #B8F5C6 260deg, #6EE7A0 310deg, #D8FCE5 360deg)",
-              filter: "blur(3px) saturate(1.15)",
-              mask: "radial-gradient(circle, transparent 5%, #000 22%, #000 92%, transparent 100%)",
-              WebkitMask:
-                "radial-gradient(circle, transparent 5%, #000 22%, #000 92%, transparent 100%)",
-              zIndex: 1,
-            }}
-          />
-          <div
-            className="lab-portal-swirl-inner absolute rounded-full"
-            style={{
-              inset: 62,
-              background:
-                "conic-gradient(from 90deg, #F5FFEB 0deg, #B8F5C6 60deg, #6EE7A0 130deg, #1F4D3A 200deg, #6EE7A0 280deg, #F5FFEB 360deg)",
-              filter: "blur(4px) saturate(1.2)",
-              mask: "radial-gradient(circle, transparent 5%, #000 22%, #000 92%, transparent 100%)",
-              WebkitMask:
-                "radial-gradient(circle, transparent 5%, #000 22%, #000 92%, transparent 100%)",
-              zIndex: 2,
-            }}
-          />
-          <div
-            className="lab-portal-core absolute rounded-full"
-            style={{
-              inset: "42%",
-              background:
-                "radial-gradient(circle, #fff 0%, #F5FFEB 25%, rgba(184,245,198,0.6) 60%, transparent 85%)",
-              filter: "blur(2px)",
-              zIndex: 3,
-            }}
-          />
+          {/* CSS fallback swirl — visible until the WebGL canvas boots. */}
+          <div className="lab-portal-fallback absolute inset-0">
+            <div
+              className="lab-portal-swirl-outer absolute rounded-full"
+              style={{
+                inset: 22,
+                background:
+                  "conic-gradient(from 0deg, #D8FCE5 0deg, #6EE7A0 40deg, #3E8759 90deg, #0E2A1B 150deg, #4BB77A 200deg, #B8F5C6 260deg, #6EE7A0 310deg, #D8FCE5 360deg)",
+                filter: "blur(3px) saturate(1.15)",
+                mask: "radial-gradient(circle, transparent 5%, #000 22%, #000 92%, transparent 100%)",
+                WebkitMask:
+                  "radial-gradient(circle, transparent 5%, #000 22%, #000 92%, transparent 100%)",
+                zIndex: 1,
+              }}
+            />
+            <div
+              className="lab-portal-core absolute rounded-full"
+              style={{
+                inset: "42%",
+                background:
+                  "radial-gradient(circle, #fff 0%, #F5FFEB 25%, rgba(184,245,198,0.6) 60%, transparent 85%)",
+                filter: "blur(2px)",
+                zIndex: 2,
+              }}
+            />
+          </div>
+          {/* The WebGL shader itself. */}
+          <LabPortalShader />
+          {/* Rim on top of everything. */}
           <div
             className="absolute rounded-full"
             style={{
