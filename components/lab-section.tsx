@@ -1,4 +1,5 @@
 import { LabCard } from "@/components/lab-card";
+import { LabScene } from "@/components/lab-scene";
 import { SectionHeader } from "@/components/section-header";
 import {
   getEfficiencyLabCards,
@@ -51,6 +52,9 @@ export function LabSection() {
           eyebrow="The Lab"
           title="Where I test, build, and break things."
         />
+
+        {/* Workbench scene — hover any object for details */}
+        <LabScene />
 
         {/* Fold 4a — Efficiency Tools */}
         <SubsectionLabel
