@@ -2,8 +2,8 @@ import { ProductVenn } from "@/components/product-venn";
 
 export function Hero() {
   return (
-    <section id="hero" className="px-4 pt-20 pb-12 md:px-6 md:pt-28 md:pb-20">
-      <div className="mx-auto grid max-w-6xl items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)]">
+    <section id="hero" className="px-6 py-20 md:px-8 md:py-28">
+      <div className="mx-auto grid max-w-5xl items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         <div className="min-w-0">
           <p
             className="mb-3 text-3xl leading-[1] text-accent md:text-[2.25rem]"

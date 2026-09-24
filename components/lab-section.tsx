@@ -7,7 +7,7 @@ export function LabSection() {
   return (
     <section
       id="lab"
-      className="border-y border-border bg-bg-elevated px-6 py-24 md:px-8 md:py-32"
+      className="px-6 py-24 md:px-8 md:py-32"
     >
       <div className="mx-auto max-w-5xl">
         <SectionHeader
