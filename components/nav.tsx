@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { type ReactElement, useEffect, useState } from "react";
 
 const NAV_ITEMS: {
@@ -97,9 +98,15 @@ export function Nav() {
           >
             <span
               aria-hidden="true"
-              className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-border bg-accent/10 font-serif text-sm text-accent"
+              className="relative h-9 w-9 overflow-hidden rounded-full border border-border bg-accent/10"
             >
-              MG
+              <Image
+                src="/images/about/megh-on-green.png"
+                alt=""
+                fill
+                sizes="36px"
+                className="object-cover"
+              />
             </span>
             <span className="text-base font-semibold text-fg">Megh Gupta</span>
           </button>
