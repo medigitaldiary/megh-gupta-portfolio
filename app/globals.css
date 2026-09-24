@@ -150,3 +150,199 @@ section {
     opacity: 0.5;
   }
 }
+
+/* Rick's Lab scene — production. Scoped to lab-scene* classes. */
+.lab-portal-halo {
+  animation: lab-portal-halo-pulse 3.2s ease-in-out infinite;
+}
+@keyframes lab-portal-halo-pulse {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+.lab-portal-swirl-outer {
+  animation: lab-portal-spin 14s linear infinite;
+}
+.lab-portal-swirl-inner {
+  animation: lab-portal-spin-reverse 8s linear infinite;
+}
+@keyframes lab-portal-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes lab-portal-spin-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.lab-portal-core {
+  animation: lab-portal-core-pulse 2.2s ease-in-out infinite;
+}
+@keyframes lab-portal-core-pulse {
+  0%,
+  100% {
+    transform: scale(0.85);
+    opacity: 0.85;
+    filter: blur(2px);
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 1;
+    filter: blur(1.5px);
+  }
+}
+
+.lab-bulb-swing {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: lab-bulb-sway 6s ease-in-out infinite;
+}
+@keyframes lab-bulb-sway {
+  0%,
+  100% {
+    transform: rotate(-1.2deg);
+  }
+  50% {
+    transform: rotate(1.2deg);
+  }
+}
+.lab-bulb-glow {
+  animation: lab-bulb-flicker 8s ease-in-out infinite;
+}
+@keyframes lab-bulb-flicker {
+  0%,
+  92%,
+  100% {
+    opacity: 0.9;
+  }
+  93% {
+    opacity: 0.4;
+  }
+  94% {
+    opacity: 0.95;
+  }
+}
+
+.lab-spark {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lab-spark-drift 4.5s ease-in-out infinite;
+}
+.lab-spark-2 {
+  animation-delay: 0.8s;
+  animation-duration: 5.2s;
+}
+.lab-spark-3 {
+  animation-delay: 1.6s;
+  animation-duration: 4s;
+}
+.lab-spark-4 {
+  animation-delay: 2.4s;
+  animation-duration: 4.8s;
+}
+.lab-spark-5 {
+  animation-delay: 3.2s;
+  animation-duration: 5.6s;
+}
+@keyframes lab-spark-drift {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: translate(0, 0) scale(0.6);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(4px, -6px) scale(1);
+  }
+}
+
+.lab-flick {
+  animation: lab-flick-anim 6s ease-in-out infinite;
+}
+@keyframes lab-flick-anim {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  47% {
+    opacity: 1;
+  }
+  48% {
+    opacity: 0.4;
+  }
+  49% {
+    opacity: 1;
+  }
+}
+
+/* Smoke rising from flasks on hover. */
+.lab-flask-slot .lab-smoke {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+  pointer-events: none;
+}
+.lab-flask-slot:hover .lab-smoke,
+.lab-flask-slot:focus-visible .lab-smoke {
+  opacity: 1;
+  animation: lab-smoke-rise 3.6s ease-out infinite;
+}
+@keyframes lab-smoke-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.85);
+  }
+  20% {
+    opacity: 0.95;
+  }
+  80% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-24px) scale(1.05);
+  }
+}
+
+/* Per-skill hover tooltip on CRT. */
+.lab-skill-row .lab-skill-tip {
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 140ms ease-out,
+    transform 140ms ease-out;
+  pointer-events: none;
+}
+.lab-skill-row:hover .lab-skill-tip,
+.lab-skill-row:focus-visible .lab-skill-tip {
+  opacity: 1;
+  transform: translateY(0);
+}
+.lab-skill-row:hover .lab-skill-hilite {
+  fill: rgba(110, 231, 160, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-portal-halo,
+  .lab-portal-swirl-outer,
+  .lab-portal-swirl-inner,
+  .lab-portal-core,
+  .lab-bulb-swing,
+  .lab-bulb-glow,
+  .lab-spark,
+  .lab-flick,
+  .lab-flask-slot:hover .lab-smoke {
+    animation: none;
+  }
+  .lab-flask-slot:hover .lab-smoke {
+    opacity: 1;
+  }
+}
