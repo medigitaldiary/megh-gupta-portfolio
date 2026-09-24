@@ -24,8 +24,14 @@ const RESUME_URL = "/resume.pdf";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focusWithin, setFocusWithin] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState<string>("");
+  // Collapse the left (avatar + name) and right (LinkedIn + resume) sections
+  // once the user is past the hero, unless they're hovering or keyboard-
+  // focused inside the nav. The center pill remains anchored in place.
+  const collapsed = scrolled && !hovered && !focusWithin;
 
   useEffect(() => {
     function onScroll() {
@@ -83,39 +89,66 @@ export function Nav() {
   }
 
   return (
-    <nav aria-label="Primary" className="sticky top-0 z-50">
+    <nav
+      aria-label="Primary"
+      className="sticky top-0 z-50"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setFocusWithin(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+          setFocusWithin(false);
+        }
+      }}
+    >
       <div
         className={`bg-bg/80 backdrop-blur-md transition-[border-color] duration-150 ${
-          scrolled ? "border-b border-border" : "border-b border-transparent"
+          scrolled && !collapsed
+            ? "border-b border-border"
+            : "border-b border-transparent"
         }`}
       >
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 md:h-[72px] md:px-6">
-          {/* Left: avatar + name */}
-          <button
-            type="button"
-            onClick={scrollToTop}
-            className="flex items-center gap-3 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+          {/* Left: avatar + name — collapses when scrolled + not hovered/focused */}
+          <div
+            className={`flex items-center transition-all duration-300 ease-out motion-reduce:transition-none ${
+              collapsed
+                ? "pointer-events-none max-w-0 -translate-x-2 overflow-hidden opacity-0"
+                : "max-w-[280px] translate-x-0 opacity-100"
+            }`}
           >
-            <span
-              aria-hidden="true"
-              className="relative h-9 w-9 overflow-hidden rounded-full border border-border bg-accent/10"
+            <button
+              type="button"
+              onClick={scrollToTop}
+              tabIndex={collapsed ? -1 : 0}
+              className="flex items-center gap-3 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             >
-              <Image
-                src="/images/about/megh-on-green.png"
-                alt=""
-                fill
-                sizes="36px"
-                className="object-cover"
-              />
-            </span>
-            <span className="text-base font-semibold text-fg">Megh Gupta</span>
-          </button>
+              <span
+                aria-hidden="true"
+                className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-border bg-accent/10"
+              >
+                <Image
+                  src="/images/about/megh-on-green.png"
+                  alt=""
+                  fill
+                  sizes="36px"
+                  className="object-cover"
+                />
+              </span>
+              <span className="whitespace-nowrap text-base font-semibold text-fg">
+                Megh Gupta
+              </span>
+            </button>
+          </div>
 
-          {/* Center: pill nav (desktop) */}
+          {/* Center: pill nav (desktop) — always visible; gets a softer shadow
+              in collapsed mode so it reads as a floating pill. */}
           <div
             role="tablist"
             aria-label="Sections"
-            className="hidden items-center gap-0.5 rounded-full border border-border bg-bg-elevated p-1 shadow-sm md:flex"
+            className={`hidden items-center gap-0.5 rounded-full border border-border bg-bg-elevated p-1 transition-shadow duration-300 ease-out md:flex ${
+              collapsed ? "shadow-md" : "shadow-sm"
+            }`}
           >
             {NAV_ITEMS.map((item) => {
               const isActive = activeId === item.id;
@@ -141,14 +174,21 @@ export function Nav() {
             })}
           </div>
 
-          {/* Right: LinkedIn + Resume */}
-          <div className="hidden items-center gap-2 md:flex">
+          {/* Right: LinkedIn + Resume — collapses when scrolled + not hovered/focused */}
+          <div
+            className={`hidden items-center gap-2 transition-all duration-300 ease-out motion-reduce:transition-none md:flex ${
+              collapsed
+                ? "pointer-events-none max-w-0 translate-x-2 overflow-hidden opacity-0"
+                : "max-w-[240px] translate-x-0 opacity-100"
+            }`}
+          >
             <a
               href={LINKEDIN_URL}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn profile"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-[#0A66C2] text-white transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A66C2] focus-visible:ring-offset-2"
+              tabIndex={collapsed ? -1 : 0}
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#0A66C2] text-white transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A66C2] focus-visible:ring-offset-2"
             >
               <span className="h-4 w-4">
                 <LinkedInIcon />
@@ -158,7 +198,8 @@ export function Nav() {
               href={RESUME_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm text-accent-fg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              tabIndex={collapsed ? -1 : 0}
+              className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-accent px-4 py-2 text-sm text-accent-fg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             >
               <span>Resume</span>
               <span className="h-3.5 w-3.5">
