@@ -10,13 +10,16 @@ export type WorkCard = {
   timeline: string;
   // Tailwind bg class for the book spine; picked from the accent family.
   spineColor: string;
+  // Resting lean angle in degrees; pivots on the book's bottom edge.
+  // Alternating signs create the "propped against each other" shelf feel.
+  leanDeg?: number;
   status: WorkStatus;
   featured?: boolean;
   order?: number;
 };
 
-// Five case studies Megh is writing — the 4 highest-order ones surface on the
-// homepage shelf; the fifth lives at /work/[slug] but is not on the fold yet.
+// Five case studies Megh is writing. All five surface on the shelf as leaning
+// books; each straightens up and opens its cover on hover.
 export const workCards: WorkCard[] = [
   {
     slug: "product-led-seo-engine",
@@ -28,6 +31,7 @@ export const workCards: WorkCard[] = [
     company: "BondScanner",
     timeline: "2026",
     spineColor: "bg-accent",
+    leanDeg: -4,
     status: "coming-soon",
     featured: true,
     order: 1,
@@ -42,6 +46,7 @@ export const workCards: WorkCard[] = [
     company: "Ultra",
     timeline: "2025",
     spineColor: "bg-fg",
+    leanDeg: 3,
     status: "coming-soon",
     featured: true,
     order: 2,
@@ -56,6 +61,7 @@ export const workCards: WorkCard[] = [
     company: "BondScanner",
     timeline: "2026",
     spineColor: "bg-[#8B5E3C]",
+    leanDeg: -2,
     status: "coming-soon",
     featured: true,
     order: 3,
@@ -70,6 +76,7 @@ export const workCards: WorkCard[] = [
     company: "BondScanner",
     timeline: "2026",
     spineColor: "bg-[#4A5D5A]",
+    leanDeg: 4,
     status: "coming-soon",
     featured: true,
     order: 4,
@@ -84,7 +91,9 @@ export const workCards: WorkCard[] = [
     company: "BondScanner",
     timeline: "2025",
     spineColor: "bg-[#6B4E71]",
+    leanDeg: -3,
     status: "coming-soon",
+    featured: true,
     order: 5,
   },
 ];
@@ -93,7 +102,7 @@ export function getAllWorkCards(): WorkCard[] {
   return [...workCards].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
 }
 
-export function getShelfWorkCards(n = 4): WorkCard[] {
+export function getShelfWorkCards(n = 5): WorkCard[] {
   return getAllWorkCards()
     .filter((c) => c.featured)
     .slice(0, n);
