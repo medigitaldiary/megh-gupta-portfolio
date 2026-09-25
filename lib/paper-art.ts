@@ -76,7 +76,7 @@ export function drawCertToCanvas(cert: Cert, size = 1024): HTMLCanvasElement {
   ctx.fillText(cert.eyebrow.toUpperCase(), W / 2, 140);
 
   ctx.fillStyle = "#111111";
-  ctx.font = "72px 'Instrument Serif', 'Times New Roman', serif";
+  ctx.font = "72px 'Oswald', 'Times New Roman', serif";
   ctx.fillText(cert.title, W / 2, 240);
 
   ctx.strokeStyle = "rgba(17,17,17,0.35)";
@@ -87,7 +87,7 @@ export function drawCertToCanvas(cert: Cert, size = 1024): HTMLCanvasElement {
   ctx.stroke();
 
   ctx.fillStyle = "#555555";
-  ctx.font = "italic 32px 'Instrument Serif', serif";
+  ctx.font = "italic 32px 'Oswald', serif";
   ctx.fillText(cert.subtitle, W / 2, 420);
 
   const seal = { x: W / 2, y: H * 0.66, r: 110 };
@@ -101,7 +101,7 @@ export function drawCertToCanvas(cert: Cert, size = 1024): HTMLCanvasElement {
   ctx.arc(seal.x, seal.y, seal.r + 10, 0, Math.PI * 2);
   ctx.stroke();
   ctx.fillStyle = "#FAFAF7";
-  ctx.font = "96px 'Instrument Serif', serif";
+  ctx.font = "96px 'Oswald', serif";
   ctx.textBaseline = "middle";
   ctx.fillText(cert.seal, seal.x, seal.y + 4);
 
