@@ -27,8 +27,11 @@
   --color-accent: var(--accent);
   --color-accent-fg: var(--accent-fg);
 
-  --font-serif: var(--font-instrument-serif);
-  --font-sans: var(--font-inter);
+  /* Display face: Oswald (was Instrument Serif) — kept as --font-serif for
+     the semantic role, so no consumer needs to change. */
+  --font-serif: var(--font-oswald);
+  /* Body face: Satoshi (was Inter) */
+  --font-sans: var(--font-satoshi);
   --font-mono: var(--font-jetbrains-mono);
   --font-hand: var(--font-caveat);
 
