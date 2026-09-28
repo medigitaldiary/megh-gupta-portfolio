@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { ImageResponse } from "next/og";
 
 export const alt = "Megh Gupta — Product Manager | Fintech";
@@ -28,9 +30,12 @@ async function loadGoogleFont(family: string, weight = 400) {
 }
 
 export default async function Image() {
-  const [instrumentSerif, interMedium] = await Promise.all([
-    loadGoogleFont("Instrument Serif", 400),
-    loadGoogleFont("Inter", 500),
+  // Oswald is on Google Fonts. Satoshi isn't, so we serve it from
+  // /public/fonts/ via a self-fetch to the same origin.
+  const [oswaldDisplay, oswaldMedium, satoshiMedium] = await Promise.all([
+    loadGoogleFont("Oswald", 500),
+    loadGoogleFont("Oswald", 400),
+    loadLocalFont("fonts/Satoshi-Medium.ttf"),
   ]);
 
   return new ImageResponse(
@@ -44,7 +49,7 @@ export default async function Image() {
         padding: "88px",
         backgroundColor: ACCENT,
         color: ACCENT_FG,
-        fontFamily: "Inter",
+        fontFamily: "Satoshi",
       }}
     >
       {/* Top row — small mono/eyebrow label */}
@@ -64,17 +69,19 @@ export default async function Image() {
       <div style={{ display: "flex", flexDirection: "column" }}>
         <div
           style={{
-            fontFamily: "Instrument Serif",
-            fontSize: 168,
+            fontFamily: "Oswald",
+            fontSize: 200,
+            fontWeight: 500,
             lineHeight: 1,
-            letterSpacing: "-0.02em",
+            letterSpacing: "-0.01em",
+            textTransform: "uppercase",
           }}
         >
           Megh Gupta
         </div>
         <div
           style={{
-            fontFamily: "Inter",
+            fontFamily: "Satoshi",
             fontSize: 44,
             fontWeight: 500,
             marginTop: 24,
@@ -104,14 +111,21 @@ export default async function Image() {
     {
       ...size,
       fonts: [
-        {
-          name: "Instrument Serif",
-          data: instrumentSerif,
-          weight: 400,
-          style: "normal",
-        },
-        { name: "Inter", data: interMedium, weight: 500, style: "normal" },
+        { name: "Oswald", data: oswaldDisplay, weight: 500, style: "normal" },
+        { name: "Oswald", data: oswaldMedium, weight: 400, style: "normal" },
+        { name: "Satoshi", data: satoshiMedium, weight: 500, style: "normal" },
       ],
     },
   );
+}
+
+// Read a font file that ships in /public directly from disk. Runs during
+// static prerender, where a self-fetch to localhost isn't available.
+async function loadLocalFont(publicPath: string) {
+  const file = path.join(process.cwd(), "public", publicPath);
+  const buf = await readFile(file);
+  return buf.buffer.slice(
+    buf.byteOffset,
+    buf.byteOffset + buf.byteLength,
+  ) as ArrayBuffer;
 }

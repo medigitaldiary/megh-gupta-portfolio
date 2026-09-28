@@ -30,7 +30,7 @@
 | Hosting | **Vercel** (auto-deploy from `main` branch on GitHub) |
 | Analytics | **Vercel Analytics** + **Vercel Speed Insights** |
 | Email | `mailto:` link first. No form unless explicitly requested. |
-| Fonts | **Instrument Serif** (headlines), **Inter** (body), **JetBrains Mono** (code/tags). Load via `next/font`. |
+| Fonts | **Oswald** (headlines), **Satoshi** (body), **JetBrains Mono** (code/tags). Load via `next/font/local` from `/public/fonts/`. |
 | Package manager | **pnpm** |
 | Linting/formatting | **Biome** (single tool for both) |
 | Node version | 20 LTS or newer |
@@ -60,12 +60,12 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
 **Rule:** No other colors. If a design needs a fifth color, ask first.
 
 ### Type scale
-- `display`: 4rem / 64px, Instrument Serif, line-height 1.05 (hero only)
-- `h1`: 2.5rem / 40px, Instrument Serif, line-height 1.1
-- `h2`: 1.75rem / 28px, Instrument Serif, line-height 1.2
-- `h3`: 1.25rem / 20px, Inter Semibold, line-height 1.3
-- `body`: 1rem / 16px, Inter Regular, line-height 1.6
-- `small`: 0.875rem / 14px, Inter Regular, line-height 1.5
+- `display`: 4rem / 64px, Oswald, line-height 1.05 (hero only)
+- `h1`: 2.5rem / 40px, Oswald, line-height 1.1
+- `h2`: 1.75rem / 28px, Oswald, line-height 1.2
+- `h3`: 1.25rem / 20px, Satoshi Semibold, line-height 1.3
+- `body`: 1rem / 16px, Satoshi Regular, line-height 1.6
+- `small`: 0.875rem / 14px, Satoshi Regular, line-height 1.5
 - `mono`: 0.875rem / 14px, JetBrains Mono (tags, metrics annotations)
 
 ### Spacing
@@ -198,7 +198,7 @@ This is the most important section. Megh speaks like a PM. You translate to code
 | "Make the hero pop more" | Default move: increase display type size by one step AND add the accent color to one element (e.g. underline a key word). Do NOT add motion or images without asking. |
 | "The cards feel cramped" | Increase `gap-` on the grid by one Tailwind step and `p-` on the card by one step. Show before/after. |
 | "It feels too plain" | Add one of: (a) a subtle background texture/gradient on the hero, (b) accent-colored underlines on key headline words, (c) a small monospace label above each section header. Pick one, not three. |
-| "Make it more editorial" | Tighten body line-height to 1.5, increase paragraph margin-bottom, switch H1/H2 to Instrument Serif if not already. |
+| "Make it more editorial" | Tighten body line-height to 1.5, increase paragraph margin-bottom, switch H1/H2 to Oswald if not already. |
 | "Make it look more like a dev/builder" | Apply only inside `/lab` — add JetBrains Mono tags, terminal-style code blocks, a hairline border treatment. Do not change the homepage. |
 | "Mobile looks bad" | First check container padding, font-size scaling, and image overflow. Run `npm run dev` and check at 375px width. Don't redesign — fix breakpoints. |
 | "Add an accent color" | Refuse softly. Point at the locked single-accent rule in Section 3. If he insists, ask which existing accent role it should replace. |

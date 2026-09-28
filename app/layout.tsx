@@ -1,24 +1,35 @@
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import {
-  Instrument_Serif,
-  Inter,
-  JetBrains_Mono,
-  Kalam,
-} from "next/font/google";
+import { JetBrains_Mono, Kalam } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  subsets: ["latin"],
-  weight: "400",
+// Oswald — display / headline face. Variable woff2 covers all weights.
+// CSS variable name kept generic (--font-serif is a role, not a face).
+const oswald = localFont({
+  src: "../public/fonts/Oswald-Variable.woff2",
+  variable: "--font-oswald",
+  weight: "200 700",
+  style: "normal",
   display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+// Satoshi — body face. Ships the italic axis in its own file.
+const satoshi = localFont({
+  src: [
+    {
+      path: "../public/fonts/Satoshi-Variable.woff2",
+      weight: "300 900",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/Satoshi-VariableItalic.woff2",
+      weight: "300 900",
+      style: "italic",
+    },
+  ],
+  variable: "--font-satoshi",
   display: "swap",
 });
 
@@ -192,7 +203,7 @@ export default function RootLayout({
         {/* discovery:end */}
       </head>
       <body
-        className={`${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable} ${kalam.variable} antialiased bg-bg text-fg`}
+        className={`${oswald.variable} ${satoshi.variable} ${jetbrainsMono.variable} ${kalam.variable} antialiased bg-bg text-fg`}
       >
         <a
           href="#main"
