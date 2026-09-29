@@ -96,11 +96,11 @@ Voice guide in §10. Specific over vague, active verbs, honest attribution, shor
 ### 3.1 Hero (Fold 1)
 
 - **Eyebrow (mono, uppercase):** `Megh Gupta · Product Manager`
-- **Headline (Instrument Serif, ~72px desktop):**
+- **Headline (Oswald, ~72px desktop):**
   > I turn ideas into features,
   > features into products,
   > products into systems.
-- **Intro (Inter, muted):**
+- **Intro (Satoshi, muted):**
   > I'm a product manager at BondScanner, a SEBI-registered online bond platform, making bond investing as simple as it should be. BITS Goa grad, a couple of years into fintech, and lately I've been building with voice AI and agentic systems.
 - **CTA (one only):** `Let's connect →` — smooth-scrolls to `#connect`. No second button. LinkedIn / résumé live inside the Let's-connect fold, not the hero; the hero pulls the reader down the page, not off it.
 
@@ -164,9 +164,11 @@ Editorial, quiet, numbers-forward. Reference vibe: kashwiaggarwal.com.
 
 ### 4.2 Type
 
-- **Instrument Serif** — display, all H1/H2, headline metrics.
-- **Inter** — body, nav, buttons, sub-heads.
+- **Oswald** — display, all H1/H2, headline metrics. Variable woff2 shipped from `/public/fonts/`, loaded via `next/font/local` as `--font-oswald` (aliased to `--font-serif`).
+- **Satoshi** — body, nav, buttons, sub-heads. Variable woff2 (upright + italic axes) shipped from `/public/fonts/`, loaded via `next/font/local` as `--font-satoshi` (aliased to `--font-sans`).
 - **JetBrains Mono** — eyebrows, stack tags, work-card category tags.
+
+Both display and body faces are self-hosted rather than pulled from Google Fonts: Oswald is available on Google Fonts but Satoshi isn't, so we load both locally for consistency and to remove one third-party network hop.
 
 Type scale (Tailwind tokens): display 64 / h1 40 / h2 28 / h3 20 / body 16 / small 14. Body line-height 1.6, headlines 1.05–1.2.
 
@@ -496,7 +498,7 @@ Domain is `meghgupta.in`; every canonical, OG URL, and JSON-LD `@id` uses `https
 - **`/work/[slug]` (future):** headline title; OG `type article` from `/api/og/[slug]`; JSON-LD `Article` → `author {@id: Person}`, `headline`, `datePublished`, `image`, `about`. Canonical `https://www.meghgupta.in/work/[slug]`; if cross-posted, canonical points at the original and this one adds `rel="alternate"`. `.md` alternate; sitemap via `getAllCaseStudies()`.
 - **`/lab`, `/lab/[slug]` (future):** `CollectionPage` + `CreativeWork` nodes (name, description, external url, keywords, `creator {@id: Person}`).
 - **`/writing`, `/writing/[slug]` (future):** `BlogPosting` nodes; same discovery + `.md` alternate.
-- **`/api/og/[slug]` (future):** `next/og` `ImageResponse` 1200×630, cream bg, metric in Instrument Serif, favicon corner; no auth/cookies/user data.
+- **`/api/og/[slug]` (future):** `next/og` `ImageResponse` 1200×630, cream bg, metric in Oswald, favicon corner; no auth/cookies/user data. Note that Satori (behind `next/og`) rejects `.woff2`, so the OG route reads a companion `Satoshi-Medium.ttf` off disk for the body face.
 - **Discovery files (living):** `public/llms.txt`, `public/AGENTS.md`, `public/index.md`, per-page `.md` alternates (generated from MDX at build).
 
 **Validation checklist (per launch / new page type):** view-source has the full discovery block · Rich Results Test renders the card · LinkedIn Post Inspector shows the right OG · route in `sitemap.xml` · not disallowed in `robots.ts` · all `.md` alternates return 200 · no URL on any domain other than `meghgupta.in`.
