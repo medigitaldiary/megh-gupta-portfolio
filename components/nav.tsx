@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { type ReactElement, useEffect, useState } from "react";
 
 const NAV_ITEMS: {
@@ -112,13 +111,14 @@ export function Nav() {
         }`}
       >
         <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 md:h-[72px] md:px-6">
-          {/* Left: avatar + name.
-              When collapsed the section is translated INWARD (toward the pill)
-              and faded out, so on hover it slides OUTWARD from behind the pill. */}
+          {/* Left: wordmark. When collapsed we fade + slide a short distance
+              toward the pill so it reads as tucking under; the small distance
+              and ease-out curve keep the motion from "shooting" across the
+              layout. */}
           <div
-            className={`justify-self-start transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none ${
+            className={`justify-self-start will-change-[transform,opacity] transition-[transform,opacity] duration-[400ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] motion-reduce:transition-none ${
               collapsed
-                ? "pointer-events-none translate-x-[220px] opacity-0"
+                ? "pointer-events-none translate-x-10 opacity-0"
                 : "translate-x-0 opacity-100"
             }`}
           >
@@ -126,20 +126,8 @@ export function Nav() {
               type="button"
               onClick={scrollToTop}
               tabIndex={collapsed ? -1 : 0}
-              className="flex items-center gap-3 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             >
-              <span
-                aria-hidden="true"
-                className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-border bg-accent/10"
-              >
-                <Image
-                  src="/images/about/megh-on-green.png"
-                  alt=""
-                  fill
-                  sizes="36px"
-                  className="object-cover"
-                />
-              </span>
               <span className="whitespace-nowrap text-base font-semibold text-fg">
                 Megh Gupta
               </span>
@@ -179,12 +167,12 @@ export function Nav() {
             })}
           </div>
 
-          {/* Right: LinkedIn + Resume. Same trick: translated INWARD (toward
-              the pill) when collapsed so it emerges from behind on hover. */}
+          {/* Right: LinkedIn + Resume. Same gentle fade + short slide inward
+              so the pair reads as tucking behind the pill. */}
           <div
-            className={`hidden items-center justify-end gap-2 justify-self-end transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none md:flex ${
+            className={`hidden items-center justify-end gap-2 justify-self-end will-change-[transform,opacity] transition-[transform,opacity] duration-[400ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] motion-reduce:transition-none md:flex ${
               collapsed
-                ? "pointer-events-none -translate-x-[220px] opacity-0"
+                ? "pointer-events-none -translate-x-10 opacity-0"
                 : "translate-x-0 opacity-100"
             }`}
           >
@@ -194,9 +182,9 @@ export function Nav() {
               rel="noopener noreferrer"
               aria-label="LinkedIn profile"
               tabIndex={collapsed ? -1 : 0}
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#0A66C2] text-white transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A66C2] focus-visible:ring-offset-2"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-bg-elevated text-fg-muted transition-colors duration-150 hover:border-[#0A66C2] hover:text-[#0A66C2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             >
-              <span className="h-4 w-4">
+              <span className="h-[18px] w-[18px]">
                 <LinkedInIcon />
               </span>
             </a>
@@ -254,7 +242,7 @@ export function Nav() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn profile"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-md bg-[#0A66C2] text-white"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-bg-elevated text-fg-muted hover:border-[#0A66C2] hover:text-[#0A66C2]"
             >
               <span className="h-5 w-5">
                 <LinkedInIcon />
