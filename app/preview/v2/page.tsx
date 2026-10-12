@@ -19,7 +19,9 @@ export const metadata: Metadata = {
 export default function PortfolioV2Preview() {
   return (
     <>
-      <Nav />
+      {/* v2 hides Lab + Writing from the pill while those folds get
+          polished. The sections still render below so direct anchors work. */}
+      <Nav hide={["lab", "writing"]} />
       <main>
         <Hero />
         <Experience />

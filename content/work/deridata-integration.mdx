@@ -1,0 +1,68 @@
+---
+title: "Wiring DERIDATA into BondScanner: a data layer for the deal creation flow"
+slug: "deridata-integration"
+role: "PM (end-to-end)"
+timeline: "Q1 – Q2 2026"
+team: "Me + TODO: backend engineer count + designer + compliance review"
+stack: ["Deridata REST API (JSON)", "HMAC-SHA256 auth", "IP whitelisting", "TypeScript MCP server", "20-ISIN HTML mockup set"]
+tags: ["Data", "Integrations", "Fintech", "Vendor"]
+headline_metric: "80% of deal creation fields auto-populated"
+supporting_metrics:
+  - "35+ previously manual deal fields reduced to ~7 remaining"
+  - "7 covenant shapes classified and templated across 20 reference ISINs"
+  - "Flat-fee vendor contract (TODO: confirm public figure) replacing per-call risk"
+featured: true
+order: 4
+hero_image: "/images/work/deridata-integration/hero.png"
+published: true
+---
+
+## TL;DR
+
+- Led the end-to-end vendor evaluation and API integration (Deridata, with Harmoney as primary) into BondScanner's backend as a data layer for deal creation.
+- Automated 80% of previously manual deal creation fields, cutting ops typing time and eliminating a class of mis-selling risk in a SEBI-regulated space.
+- Powered a Deal Detail page revamp with secondary market activity and financial covenant data no other retail bond platform in India surfaces.
+
+## Context
+
+Every new bond deal going live on BondScanner required ops to fill 35+ fields by hand. ISIN, issuer name, coupon rate, maturity, credit rating, covenants, security cover, secondary market activity. All of it pulled from PDFs, RBI filings, and rating agency reports, then typed into the deal creation form.
+
+Two problems. It was slow: a deal took hours to publish. It was error-prone: one wrong digit on a coupon mis-sells to an investor. In a regulated space, that's a real risk, not a hypothetical one.
+
+## Approach
+
+Vendor evaluation, not just vendor selection. I scored vendors on coverage (how many of our 35+ fields they could give us), data freshness (ratings and market activity change, static fields don't), API quality (REST vs SOAP, documentation quality), and commercial model (flat fee vs per-call pricing).
+
+Final recommendation: Harmoney as primary source, Deridata as supplemental for EBP and covenant fields. Deridata had the harder integration and the more differentiated data.
+
+Data pulling: poll-on-demand, not batch sync or real-time page load. Ops knows exactly when a deal is about to go live, so batch sync wastes API calls on ISINs we never publish. Real-time page-load fires calls on previews. On-demand aligns the API cost with the actual business event.
+
+The sharpest product decision was the "gym card rule" on covenant data. Deridata gives contractual rules, not live compliance status. Earlier designs had pass/fail green checkmarks. I killed those. Rule: neutral grey chips only, never checkmarks, never gauges, never progress bars. Because if we showed a green tick and the issuer breached the covenant tomorrow, we'd have implicitly certified something we don't monitor.
+
+## Execution
+
+- Built a TypeScript MCP server for the Deridata API, working through HMAC-SHA256 auth and IP-whitelisting constraints.
+- Classified Financial Covenants into 7 distinct shapes and built HTML mockups across a 20-ISIN reference set.
+- Shipped Deal Detail page revamp on App, Web, and Mweb with Secondary Market Activity, Financial Covenants, and Security Cover tooltip sections.
+- Moved Deal Detail from box/card layout to config-driven accordion so default states are per-section, not hardcoded.
+- Education layer: single ⓘ on the covenants section opens a scrollable bottom sheet (modal on web) explaining every covenant the bond has, in plain non-advisory language. Copy templated per category and reused across all bonds.
+- Built an internal QC tool for deal detail verification using Anthropic's document URL source type.
+
+{/* TODO: Figma frames link for Deal Detail revamp */}
+{/* TODO: Loom walkthrough of the covenant education layer */}
+{/* TODO: Deridata PRD link (v0.8 at handover) */}
+
+## Outcome
+
+80% of deal creation fields auto-populated. Manual data entry portion of deal publishing effectively eliminated. Flat-fee vendor contract gave predictable annual cost with no per-call surprises as volume grew.
+
+Downstream, the integration became the foundation for a public-facing differentiation story. BondScanner now shows secondary market activity, financial covenants, and security cover data that no other retail bond platform in India surfaces. Investors can evaluate bonds at institutional depth before they commit money.
+
+## Reflection
+
+Two things. I'd set up the data freshness re-fetch policy in v1 instead of deferring it. Static fields like coupon and maturity don't change, but ratings and secondary market yields do. Some deals today carry rating data that's a few months old. Not a live problem yet, but it will be. And I'd instrument every API call from day one with volume, latency, and error rate. When Deridata changes something on their end, I want our dashboards to see it before ops does.
+
+## What I owned vs. team owned
+
+- **I owned:** Vendor discovery and scoring, commercial negotiation, PRD, poll-on-demand design, field mapping between Deridata and BondScanner schemas, 7-shape covenant classification, "gym card rule" and all pass/fail design calls, covenant education copy, QC tool spec.
+- **Team owned:** Backend engineering build, MCP server implementation (I spec'd, engineering built), Deal Detail page front-end build across App, Web, and Mweb, final compliance review on covenant copy.
