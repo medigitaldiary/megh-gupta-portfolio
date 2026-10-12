@@ -14,7 +14,9 @@
     "@calcom/embed-react": "^1.5.3",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
+    "gray-matter": "^4.0.3",
     "next": "15.5.20",
+    "next-mdx-remote": "^6.0.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "three": "^0.155.0"

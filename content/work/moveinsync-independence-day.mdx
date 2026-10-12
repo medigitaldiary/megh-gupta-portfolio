@@ -1,0 +1,73 @@
+---
+title: "Independence Day traffic analysis for a founder-brand LinkedIn post"
+slug: "moveinsync-independence-day"
+role: "Product Intern (PMM track, analysis for VP – Product & Head of Growth)"
+timeline: "Aug 2024"
+team: "Me + Ujjwal Trivedi (VP – Product & Head of Growth) + Deepesh Agarwal (CEO, published the post)"
+stack: ["Internal trip-duration data", "Google Sheets", "Weighted-average baseline methodology", "LinkedIn (publishing surface)"]
+tags: ["Analytics", "Content", "Campaign", "B2B"]
+headline_metric: "17.4% faster traffic on Aug 15 in Bangalore vs 3-month baseline"
+supporting_metrics:
+  - "14.9% slower Mon–Tue peak-hour traffic in BLR the same week"
+  - "48% slower in specific Delhi areas, flagged as likely I-Day restrictions"
+  - "~16% more sluggishness in Hyderabad; Mumbai and NCR saw no material change"
+featured: true
+order: 6
+hero_image: "/images/work/moveinsync-independence-day/hero.png"
+published: true
+---
+
+## TL;DR
+
+- Ran a multi-city traffic analysis using MoveInSync's trip data to quantify how the Independence Day long weekend reshaped commute patterns across Bangalore, Hyderabad, Mumbai, NCR, and Delhi.
+- Built a 3-month weighted-average baseline methodology (May–Jul 2024) so the festive-week comparison was defensible, not just directional.
+- Analysis fed directly into a public LinkedIn post from the CEO, giving MoveInSync a data-backed observation about Indian commute behaviour that no competitor could produce.
+
+## Context
+
+MoveInSync runs cab and commute operations for large enterprises across Indian metros. Every trip is logged with timestamps, origin, destination, and city, which means at any point there's a running record of how long trips are actually taking in each city.
+
+Ujjwal Trivedi (VP – Product & Head of Growth) occasionally pulled interns in on quick analytical asks that could feed founder-brand content. The CEO, Deepesh Agarwal, posts data-backed observations about Indian commute patterns. The Independence Day long weekend felt like a natural moment: Rakshabandhan was coming up a few days later, and everyone intuitively knew traffic would behave differently. No one had quantified it.
+
+{/* TODO: confirm whether a specific pricing change or campaign shipped on/around Aug 15, or if the activity was purely the analysis + LinkedIn post */}
+{/* TODO: confirm primary customer frame for this specific activity (enterprise transport team vs end commuter) */}
+
+## Approach
+
+The core question: were cab trips faster or slower during Independence Day week compared to a normal period, and how did that vary by city?
+
+Baseline design was the call that mattered. A single 30-day window right before IDay has a problem, it might itself be affected by festive run-up. Going back 3 months (May, June, July) gave a cleaner reference for what "truly normal" Delhi, BLR, and Hyderabad commute conditions actually look like, and it exposed any month-over-month drift so I could spot it instead of mistaking a trend for a festive effect.
+
+Combining the 3 months: weighted by trip volume, not simple average, so months with more trips counted appropriately in the baseline.
+
+## Execution
+
+- Pulled trip-level data per city for May, June, July 2024 as the baseline window.
+- Computed monthly averages, then combined into a weighted-average baseline per city.
+- Computed the same metric for Independence Day week (Mon-Tue peak hours) and for August 15 itself.
+- Produced the comparison deltas: Bangalore 14.9% slower on Mon-Tue peak, 17.4% faster on Aug 15 itself.
+- Ran the same calculation across Hyderabad, Mumbai, NCR, and Delhi. Hyderabad came in ~16% slower. Mumbai and NCR showed no material change. Specific Delhi areas were 48% slower, flagged as likely I-Day restrictions rather than organic traffic.
+- Delivered findings to Ujjwal in a format usable for the LinkedIn post.
+- Deepesh published the post publicly, citing the city-level numbers.
+
+{/* TODO: screenshot of the LinkedIn post */}
+{/* TODO: link to the LinkedIn post */}
+
+## Outcome
+
+The post went live on LinkedIn and landed well with the Indian product and startup audience. It framed MoveInSync as a company that genuinely understands how Indian cities move, which is the kind of brand signal paid content can't buy.
+
+Specific numbers that made it into the published post: Bangalore Mon–Tue 14.9% slower during peak hours despite over 60% of commuters being off, Aug 15 itself 17.4% faster, Hyderabad ~16% more sluggish, Mumbai and NCR no material impact, Delhi specific areas 48% slower attributed to I-Day restrictions, and an expectation of congestion on the 19th as residents returned.
+
+{/* TODO: confirm engagement numbers on the LinkedIn post if available */}
+
+## Reflection
+
+Three things I'd do differently. Build this as a reusable analysis template, not an ad-hoc exercise, so every long weekend and major festival becomes a founder-brand post candidate with almost no incremental effort. Pair top 50 most-frequent routes per city and compare duration deltas on those specifically, instead of averaging across all routes. Pull public weather data for each city for the baseline and festive windows, so I could isolate the festive effect from monsoon-driven slowdowns in August.
+
+## What I owned vs. team owned
+
+- **I owned:** Baseline methodology, 3-month lookback decision, per-city calculation, delta framing for the published post.
+- **Ujjwal owned:** The ask, final sign-off on the numbers, hand-off to the CEO for publishing.
+- **Deepesh owned:** The published LinkedIn post itself and its editorial framing.
+- TODO: confirm whether any PMM collateral or campaign asset was built around the analysis beyond the LinkedIn post

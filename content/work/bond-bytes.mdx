@@ -1,0 +1,65 @@
+---
+title: "Bond Bytes: a daily digest that turned bond content into a habit"
+slug: "bond-bytes"
+role: "Growth PM (end-to-end)"
+timeline: "Feb 2026 – Sep 2026"
+team: "Me + 1 engineer + TODO: content writer count"
+stack: ["MoEngage", "Push notifications", "Deep-linking", "Explore tab home screen components"]
+tags: ["Retention", "Content", "Growth", "Fintech"]
+headline_metric: "3.5x MoM reach growth (176 → 637 users, Feb → May 2026)"
+supporting_metrics:
+  - "102 editions shipped across 3.5 months, 1,879 unique users"
+  - "6.5% blended PN-to-conversion rate towards KYC and payment actions in May 2026"
+  - "89% of same-day digest views were PN-attributable"
+featured: true
+order: 3
+hero_image: "/images/work/bond-bytes/hero.png"
+published: true
+---
+
+## TL;DR
+
+- Launched Bond Bytes as a daily bond-market digest, delivered via push notification at 9 AM sharp before the bond market opens.
+- Reached 20% of total sign-ups across 102 editions in 3.5 months, with 3.5x MoM reach growth.
+- Hit a 6.5% blended PN-to-conversion rate towards KYC and payment actions in May 2026.
+
+## Context
+
+Bond investing in India has a serious awareness gap. Most retail investors either don't know bonds exist as an asset class or know them only through the FD lens. Even when they come to BondScanner, they don't have a reason to come back tomorrow unless they're already looking to invest.
+
+The question was simple. Can we give investors one useful, digestible thing every day that builds habit, and surfaces investment opportunities as a side effect?
+
+## Approach
+
+Daily, not weekly. Weekly newsletters compete with every other weekly newsletter in a user's inbox. A daily PN at a fixed time before the market opens becomes part of the morning routine instead.
+
+Email pilot first, product build second. I ran it as an email pilot to a small investor list before putting any engineering time into the in-app version. Open rates and inbound demand validated the bet. Then it got built into the app.
+
+Each edition had the same shape: plain-English market update, investment angle tied to a live deal with reasoning, and a CTA that deep-links into the relevant deal or KYC flow.
+
+## Execution
+
+- Owned MoEngage template architecture end-to-end, with parameterised content blocks so the editorial team could ship a daily edition without engineering help.
+- 9 AM PN with deep-link into the day's digest.
+- Explore tab home surface: today's edition as a large banner, yesterday as a card, full archive numbered chronologically.
+- Section labels per edition: Macro-economic news, Bond issuer updates, International news. Each item: headline + two-line plain-English summary with opening phrase hyperlinked to source.
+- Share button on every edition.
+
+{/* TODO: screenshot of Bond Bytes home surface */}
+{/* TODO: sample edition deep-link */}
+{/* TODO: MoEngage PN dashboard screenshot */}
+
+## Outcome
+
+102 editions over 3.5 months. 1,879 unique users. 3.5x monthly reach growth from February (176 users) to May (637). 89% of same-day digest views PN-attributable, so the PN is doing the habit-building work. 10.7% article CTR, 8.5% WhatsApp CTA click rate among readers. Reached 20% of total sign-ups. 6.5% blended PN-to-conversion rate toward KYC and payment actions in May 2026.
+
+Qualitatively, the biggest shift was that Bond Bytes became an education channel, not just a digest. Reader inbound was increasingly "how do bonds work" rather than "which bond should I buy." That reframes what Bond Bytes actually is inside the product strategy.
+
+## Reflection
+
+72% of users read Bond Bytes exactly once and never come back. The first-read experience didn't do enough work. If I was doing this again, I'd invest much earlier in the first-read hook. Scroll depth was defined as an instrumentation event but fired zero events in production, which I only caught when building the Month 2 report. I'd lock analytics instrumentation into the PRD before the build starts, not after.
+
+## What I owned vs. team owned
+
+- **I owned:** Product concept, email pilot design, MoEngage template architecture, PN strategy and timing, in-app surface design, editorial section structure, performance measurement.
+- **Team owned:** Daily content writing and editorial production, engineering build for the in-app Explore tab components, PN delivery infra.

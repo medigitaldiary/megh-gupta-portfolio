@@ -1,0 +1,64 @@
+---
+title: "Building BondScanner's inbound support stack from zero"
+slug: "freshdesk-support-stack"
+role: "PM (end-to-end)"
+timeline: "Dec 2025 – Mar 2026"
+team: "Me + TODO: engineer count + support team lead"
+stack: ["Freshdesk", "Radar (in-house CRM)", "Lovable/Bubble (prototyping)", "Next.js", "ISR", "JSON-LD"]
+tags: ["Ops", "Support", "Fintech", "Infrastructure"]
+headline_metric: "40% reduction in manual support effort as volume scaled"
+supporting_metrics:
+  - "6 top-category queries automated after 3 months of ticket analysis"
+  - "SEBI SLA adherence maintained under load, no compliance escalations"
+  - "Multi-channel inbound unified: WhatsApp, email, in-app, direct call"
+featured: true
+order: 5
+hero_image: "/images/work/freshdesk-support-stack/hero.png"
+published: true
+---
+
+## TL;DR
+
+- Built BondScanner's support stack from scratch in 4 sequenced phases, each phase solving the next-most-painful bottleneck instead of designing an ideal end state.
+- Cut manual support effort by 40% while meeting SEBI ticket SLA requirements under growing volume.
+- Shipped Freshdesk integration, Radar CRM workflows, a Request a Callback flow, and ticket automation for the top 6 recurring queries.
+
+## Context
+
+At platform launch, support was one person handling email, WhatsApp, and direct calls from a mobile number. That worked at 50 tickets a week. It stopped working as sign-ups scaled.
+
+The constraint that mattered wasn't operational, it was regulatory. SEBI requires ticket SLAs with resolution windows that have to be met or risk escalation. So support couldn't just scale with headcount. The function had to industrialise.
+
+## Approach
+
+Four phases, each solving the next-most-painful bottleneck. Phase 1 for compliance baseline. Phase 2 for workflow unification. Phase 3 for the voice-preference minority. Phase 4 for volume via automation. Every phase shipped before the next started, so support was never mid-migration during a ticket spike.
+
+Deliberate design choice: make the "call us" option less visible in the UI. Reasoning is simple. Ticketing scales gracefully, calls don't. 100 tickets with 2 people is manageable, 100 calls isn't. Pushing adoption of ticketing by making it the path of least resistance protected the SLA under load.
+
+## Execution
+
+- **Phase 1 — Freshdesk integration:** Freshdesk as the primary ticketing system, email as the pilot channel because it was highest-volume inbound. Defined ticket taxonomy and issue categories. Built SLA tracking aligned to SEBI requirements. Expanded to multi-channel inbound: WhatsApp, email, in-app, direct call.
+- **Phase 2 — Radar Inbound Channel 1.0:** Built support workflows into Radar (in-house CRM) so support stopped context-switching between tools. Wrote the Radar Inbound Channel PRD. Prototyped flows in Lovable/Bubble for review before dev build. Scope: Freshdesk integration, WhatsApp inbound, SLA reporting, user-level support history, task management.
+- **Phase 3 — Request a Callback:** Designed and launched the flow for users who genuinely needed voice. UX, confirmation screens, optional time-slot configuration, multi-entry-point rollout across the app.
+- **Phase 4 — Ticket automations:** Analysed 3 months of ticket data to identify the most frequent query types. Six common queries ("why is my KYC pending", "how do I withdraw", "what's the tax on this bond", etc.) covered a large chunk of volume. Built automated resolution workflows for each top category.
+- Wrote a Freshdesk FAQ landing page tech spec using Next.js with ISR and JSON-LD structured data, so FAQ answers would be Google-indexable, not just in-app.
+- Underway at handover: Freshdesk taxonomy restructure as product surface area grew.
+
+{/* TODO: Freshdesk dashboard screenshot */}
+{/* TODO: Radar Inbound Channel 1.0 PRD link */}
+{/* TODO: Request a Callback flow Figma frames */}
+
+## Outcome
+
+40% reduction in manual support effort as ticket volume continued to scale. SLA adherence maintained under load with no SEBI compliance escalations. Support team freed from the repetitive queries that previously ate their day, now focused on complex ones that actually need human judgment.
+
+Qualitatively, support stopped being seen as a reactive function that just absorbed tickets. The automation layer and the Freshdesk-indexed FAQ shifted it toward proactive deflection, which freed hiring budget for other roles.
+
+## Reflection
+
+I underestimated how long compliance review on new ticket categories would take. Each new automated-reply template needed a sign-off I treated as a last-step formality. If I was starting over, I'd build the compliance approval loop into the ticketing taxonomy spec itself, so review happens in parallel with the category definition instead of as a blocker at the end.
+
+## What I owned vs. team owned
+
+- **I owned:** 4-phase stack design, Freshdesk integration scope, Radar Inbound Channel 1.0 PRD, Request a Callback flow design, ticket automation logic for the top 6 categories, FAQ landing page tech spec, SEBI SLA alignment, taxonomy structure.
+- **Team owned:** Freshdesk configuration and workflow execution, Radar engineering build, support operations day-to-day, compliance sign-off on reply templates.

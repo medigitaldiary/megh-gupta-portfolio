@@ -1,0 +1,67 @@
+---
+title: "A product-led SEO engine for a bond category with no incumbent"
+slug: "product-led-seo-engine"
+role: "Growth PM"
+timeline: "Jan 2026 – Q2 2026"
+team: "Me + TODO: engineer count + content team + performance marketing"
+stack: ["Claude API", "Google Search Console", "Schema.org markup", "Next.js", "JSON-LD", "custom compliance agent"]
+tags: ["Growth", "SEO", "Fintech", "Content"]
+headline_metric: "~2x daily organic clicks in 3 months"
+supporting_metrics:
+  - "350+ compliance-reviewed blogs published since Jan 2026"
+  - "200+ Bond Dictionary entries indexed to high-intent keywords"
+  - "26,000+ programmatic bond pages, one per ISIN"
+featured: true
+order: 1
+hero_image: "/images/work/product-led-seo-engine/hero.png"
+published: true
+---
+
+## TL;DR
+
+- Built SEO as a product workstream, not a marketing function, across three pillars that each needed the others to work: editorial blogs, Bond Dictionary, and programmatic ISIN pages.
+- Shipped 350+ blogs, 200+ dictionary terms, and 26,000+ programmatic pages inside 3 months by removing the SEBI compliance bottleneck with a Claude-powered review agent.
+- Grew daily organic clicks ~2x in 3 months and started ranking for ISIN-level and high-intent non-brand queries like "hedge funds in india" at #3.
+
+## Context
+
+Performance ads were doing the bulk of acquisition at BondScanner. Expensive, non-compounding, and tied to monthly spend. Organic was the obvious lever, but no retail bond platform in India had built real SEO depth in this category.
+
+The pitch to the founder was simple. Every blog, dictionary term, and programmatic page we publish today keeps working for years. Ads stop the moment we stop paying. SEO is a moat if we commit to it.
+
+## Approach
+
+I ran it as a three-pillar product, because any single pillar on its own wouldn't have worked.
+
+Editorial content gives you the E-E-A-T authority Google needs to trust the domain. The Bond Dictionary is Investopedia-style, anchored to the high-intent keywords retail investors actually search. Programmatic ISIN pages give you scale: one page per bond, each targeting long-tail bond-specific queries.
+
+Programmatic alone would've looked like thin content. Dictionary alone wouldn't scale. Editorial alone wouldn't compound fast enough. The three together is what made it a moat.
+
+The hard constraint was SEBI. Every public word on a bond platform has to clear compliance. At 4 blogs a day, manual review was going to be the bottleneck that killed the whole plan.
+
+## Execution
+
+- Published 350+ blogs at a 4-a-day cadence from January 2026, enabled by an AI compliance agent I built on Claude that automated the SEBI review before publish.
+- Shipped 200+ Bond Dictionary entries, each anchored to a high-intent search term and cross-linked back to related bonds and categories.
+- Launched 26,000+ programmatic bond detail pages, one per ISIN, templated so each page carried genuinely unique data: issuer, coupon, maturity, rating, secondary market activity.
+- Technical SEO work: schema.org markup across all page types, JavaScript rendering audits for crawlability, sitemap architecture, GSC setup from scratch.
+- Set up a daily performance feedback loop specifically for deal detail pages, so we could see which bonds were pulling traffic and reinforce them.
+
+{/* TODO: screenshot of Google Search Console clicks and impressions curve */}
+{/* TODO: sample Bond Dictionary entry page */}
+{/* TODO: sample programmatic ISIN page */}
+
+## Outcome
+
+Daily organic clicks roughly doubled in 3 months. The site started ranking for high-intent non-brand queries that typically go to legacy platforms, including "hedge funds in india" at #3. ISIN-level queries, which usually only show up in institutional research, started pulling retail traffic.
+
+Qualitatively, the engine shifted internal belief. Marketing stopped treating SEO as a side project and started treating it as a channel with its own roadmap. The founder now talks about SEO as part of BondScanner's defensibility, not just a traffic source.
+
+## Reflection
+
+I'd set up a page-level freshness re-fetch policy in v1. Right now some programmatic pages carry rating data that's months old. It isn't a live SEO problem yet, but it will be once Google's quality signals catch up. Also, I'd instrument crawl budget and per-page click yield from day one. We were flying on headline metrics for the first two months when per-page economics would have told us earlier which pillars to double down on.
+
+## What I owned vs. team owned
+
+- **I owned:** The three-pillar strategy, compliance AI agent spec and build, programmatic page templating logic, technical SEO scope, measurement setup, founder narrative.
+- **Team owned:** Content writing (blogs and dictionary), engineering build for programmatic pages, performance marketing coordination.

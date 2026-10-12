@@ -2,15 +2,19 @@
 
 import { type ReactElement, useEffect, useState } from "react";
 
-// Nav mirrors the 7-fold storyboard in CLAUDE.md §14 — "the map should not
-// contradict the territory." Hero is the home anchor (click the wordmark),
-// so the pill carries the six scrollable sections after it.
-const NAV_ITEMS: {
+export type NavItem = {
   id: string;
   label: string;
   href: string;
   Icon: () => ReactElement;
-}[] = [
+};
+
+// Nav mirrors the 7-fold storyboard in CLAUDE.md §14 — "the map should not
+// contradict the territory." Hero is the home anchor (click the wordmark),
+// so the pill carries the scrollable sections after it. Pages that want
+// a subset (e.g. v2 while Lab + Writing are being finalised) pass their
+// own `items` prop.
+export const DEFAULT_NAV_ITEMS: NavItem[] = [
   {
     id: "experience",
     label: "Experience",
@@ -27,31 +31,52 @@ const NAV_ITEMS: {
 const LINKEDIN_URL = "https://www.linkedin.com/in/megh-gupta-917280200";
 const RESUME_URL = "/resume.pdf";
 
-export function Nav() {
+export function Nav({ hide }: { hide?: string[] } = {}) {
+  // `hide` is a list of nav ids to drop (e.g. `["lab", "writing"]`). Keeping
+  // the filter here, not at the call site, means callers can be server
+  // components without having to serialise the icon refs on NavItem.
+  const navItems = hide?.length
+    ? DEFAULT_NAV_ITEMS.filter((i) => !hide.includes(i.id))
+    : DEFAULT_NAV_ITEMS;
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [focusWithin, setFocusWithin] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState<string>("");
-  // Collapse the left (avatar + name) and right (LinkedIn + resume) sections
-  // once the user is past the hero, unless they're hovering or keyboard-
-  // focused inside the nav. The center pill remains anchored in place.
+  // Collapse the wordmark + right CTAs once past the hero, unless the viewer
+  // is hovering or keyboard-focused in the nav. The pill stays anchored.
   const collapsed = scrolled && !hovered && !focusWithin;
 
+  // rAF-throttle the scroll handler so the state flip lands on a frame
+  // boundary — otherwise React can commit mid-frame and the CSS transition
+  // picks up partway through, which reads as the small jerk on first
+  // collapse.
   useEffect(() => {
+    let raf = 0;
     function onScroll() {
-      setScrolled(window.scrollY > 80);
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        setScrolled(window.scrollY > 80);
+      });
     }
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
-  // Scroll spy — mark the closest section as active.
+  // Scroll spy — mark the closest section as active. Depending on a joined
+  // id string keeps the effect from re-running on every render while still
+  // re-subscribing if the id set actually changes.
+  const navIdKey = navItems.map((i) => i.id).join(",");
   useEffect(() => {
-    const sections = NAV_ITEMS.map((i) => document.getElementById(i.id)).filter(
-      (s): s is HTMLElement => s !== null,
-    );
+    const sections = navIdKey
+      .split(",")
+      .map((id) => document.getElementById(id))
+      .filter((s): s is HTMLElement => s !== null);
     if (sections.length === 0) return;
 
     const observer = new IntersectionObserver(
@@ -66,7 +91,7 @@ export function Nav() {
     );
     for (const s of sections) observer.observe(s);
     return () => observer.disconnect();
-  }, []);
+  }, [navIdKey]);
 
   useEffect(() => {
     if (menuOpen) {
@@ -106,16 +131,10 @@ export function Nav() {
         }
       }}
     >
-      {/* When collapsed there's no bar background — only the pill floats.
-          Before scroll the outer bar carries its own bg + blur + hairline so
-          the full nav still reads as one surface. */}
-      <div
-        className={`transition-[background-color,backdrop-filter,border-color] duration-300 ease-out ${
-          scrolled
-            ? "border-b border-transparent bg-transparent"
-            : "border-b border-transparent bg-bg/80 backdrop-blur-md"
-        }`}
-      >
+      {/* Outer bar is always transparent — the pill carries its own weight,
+          and keeping a single surface across the scroll threshold removes the
+          backdrop-filter transition that was causing the collapse jerk. */}
+      <div>
         <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 md:h-[72px] md:px-6">
           {/* Left: wordmark. When collapsed we fade + slide a short distance
               toward the pill so it reads as tucking under; the small distance
@@ -149,7 +168,7 @@ export function Nav() {
               collapsed ? "shadow-md" : "shadow-sm"
             }`}
           >
-            {NAV_ITEMS.map((item) => {
+            {navItems.map((item) => {
               const isActive = activeId === item.id;
               const { Icon } = item;
               return (
@@ -229,7 +248,7 @@ export function Nav() {
           id="mobile-menu"
           className="fixed inset-x-0 top-16 bottom-0 z-40 flex flex-col items-center justify-center gap-6 bg-bg md:hidden"
         >
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <a
               key={item.id}
               href={item.href}

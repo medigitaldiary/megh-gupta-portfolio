@@ -32,7 +32,7 @@ export const workCards: WorkCard[] = [
     timeline: "2026",
     spineColor: "bg-accent",
     leanDeg: -4,
-    status: "coming-soon",
+    status: "live",
     featured: true,
     order: 1,
   },
@@ -47,7 +47,7 @@ export const workCards: WorkCard[] = [
     timeline: "2025",
     spineColor: "bg-fg",
     leanDeg: 3,
-    status: "coming-soon",
+    status: "live",
     featured: true,
     order: 2,
   },
@@ -62,7 +62,7 @@ export const workCards: WorkCard[] = [
     timeline: "2026",
     spineColor: "bg-[#8B5E3C]",
     leanDeg: -2,
-    status: "coming-soon",
+    status: "live",
     featured: true,
     order: 3,
   },
@@ -77,7 +77,7 @@ export const workCards: WorkCard[] = [
     timeline: "2026",
     spineColor: "bg-[#4A5D5A]",
     leanDeg: 4,
-    status: "coming-soon",
+    status: "live",
     featured: true,
     order: 4,
   },
@@ -92,28 +92,26 @@ export const workCards: WorkCard[] = [
     timeline: "2025",
     spineColor: "bg-[#6B4E71]",
     leanDeg: -3,
-    status: "coming-soon",
+    status: "live",
     featured: true,
     order: 5,
   },
-  // Scaffolded Oct 2026 — the shelf shows the top five featured, so this
-  // card lives off-shelf (featured: false) until the real narrative and
-  // metrics land; promote by flipping featured + demoting one of the
-  // five above. Waiting on: headline metric, 2-3 supporting numbers,
-  // timeline (presumably Aug 2024), team, what Megh owned vs. team.
+  // Promoted Oct 2026 after the full narrative landed — a traffic-analysis
+  // + founder-brand LinkedIn play, not a pricing campaign as initially
+  // scaffolded. Full story in content/work/moveinsync-independence-day.mdx.
   {
     slug: "moveinsync-independence-day",
     title: "MoveInSync Independence Day",
-    eyebrow: "Pricing · Campaign",
+    eyebrow: "Analytics · Content",
     oneLiner:
-      "Independence Day pricing + campaign play on India's largest employee transportation platform (~300k daily commutes).",
+      "An Independence Day traffic analysis across 5 Indian metros that fed a founder-brand LinkedIn post.",
     role: "Product Intern",
     company: "MoveInSync",
-    timeline: "2024",
+    timeline: "Aug 2024",
     spineColor: "bg-[#A66B2A]",
     leanDeg: 2,
-    status: "coming-soon",
-    featured: false,
+    status: "live",
+    featured: true,
     order: 6,
   },
 ];
