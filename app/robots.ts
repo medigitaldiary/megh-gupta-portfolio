@@ -5,6 +5,11 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      // Preview routes are design-system experiments and should not
+      // compete with the canonical homepage in search. Each route also
+      // ships `robots: { index: false, follow: false }` via its page
+      // metadata — this is the belt alongside those braces.
+      disallow: ["/preview/v2.1"],
     },
     sitemap: "https://www.meghgupta.in/sitemap.xml",
   };

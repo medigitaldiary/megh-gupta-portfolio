@@ -1,0 +1,118 @@
+/* ============================================================
+ * Preview v2.1 — scoped visual override layer
+ * ============================================================
+ *
+ * Everything in this file targets `.v21-scope` only. Nothing here
+ * leaks to /preview/v1, the production homepage, or /work/[slug]
+ * case study pages (those render outside this wrapper and keep the
+ * current Oswald + Satoshi stack — see drift report item 1 for the
+ * follow-up).
+ *
+ * Values trace back to DESIGN_SYSTEM_v1.md:
+ *   §3 Typography — Geist one-font system
+ *   §4 Spacing — p-5 / p-6 card scale
+ *   §5 Radii — 16px cards
+ */
+
+/* ---- Font remap --------------------------------------------
+ * The root :root block defines --font-serif/sans/mono/hand to
+ * Oswald/Satoshi/JetBrains/Kalam. We redefine those variables
+ * on .v21-scope so every Tailwind utility (font-serif, font-sans,
+ * font-mono) resolves to Geist inside the scope without any
+ * component class string having to change.
+ *
+ * Product Venn's --font-hand (Kalam → Geist) follows DS v1 §7.1
+ * default; the handwritten feel is a pending Decision 11.
+ * -------------------------------------------------------------- */
+.v21-scope {
+  --font-serif: var(--font-geist-sans);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-sans);
+  --font-hand: var(--font-geist-sans);
+}
+
+/* ---- Type scale (DS v1 §3) ---------------------------------
+ * Tailwind's text-* utilities compile to `font-size + line-height`
+ * declarations. We override them inside the scope. Letter-spacing
+ * and weight join the same rule so the headline Geist look lands
+ * without components having to add tracking-* classes.
+ *
+ * Display and h1 merge: DS v1 lists one display row covering both.
+ * -------------------------------------------------------------- */
+.v21-scope .text-display,
+.v21-scope .text-h1 {
+  font-size: 72px !important;
+  line-height: 72px !important;
+  letter-spacing: -3.6px !important;
+  font-weight: 500 !important;
+}
+
+.v21-scope .text-h2 {
+  font-size: 30px !important;
+  line-height: 36px !important;
+  letter-spacing: -0.75px !important;
+  font-weight: 500 !important;
+}
+
+.v21-scope .text-h3 {
+  font-size: 18px !important;
+  line-height: 28px !important;
+  letter-spacing: -0.45px !important;
+  font-weight: 500 !important;
+}
+
+.v21-scope .text-body {
+  font-size: 15px !important;
+  line-height: 24px !important;
+  font-weight: 400;
+}
+
+.v21-scope .text-small {
+  font-size: 13px !important;
+  line-height: 20px !important;
+  font-weight: 400;
+}
+
+/* ---- Eyebrow helper (DS v1 §3) ----------------------------
+ * Every eyebrow in the codebase today reads as
+ *   `font-mono text-xs uppercase tracking-wider ...`
+ * Inside the scope, --font-mono already resolves to Geist. We
+ * additionally bump tracking to 0.14em and weight to 500 so the
+ * one-font eyebrow lands the DS v1 §3 shape without component
+ * edits.
+ * -------------------------------------------------------------- */
+.v21-scope .font-mono.uppercase {
+  letter-spacing: 0.14em !important;
+  font-weight: 500 !important;
+}
+
+/* ---- Card radii (DS v1 §5) ---------------------------------
+ * rounded-xl → 16px. Base Tailwind rounded-xl is 0.75rem (12px);
+ * DS v1 says cards sit at 16px (rounded-2xl). Promote in scope.
+ * rounded-md stays at 8px (DS v1 small-inputs value).
+ * -------------------------------------------------------------- */
+.v21-scope .rounded-xl {
+  border-radius: 16px !important;
+}
+
+.v21-scope .rounded-md {
+  border-radius: 8px !important;
+}
+
+/* ---- Card padding (DS v1 §4.2) -----------------------------
+ * `p-6 md:p-8` cards (24 / 32 px) → `p-5 md:p-6` (20 / 24 px).
+ * Need to split by breakpoint since Tailwind emits a media query
+ * for `md:p-8`.
+ * -------------------------------------------------------------- */
+.v21-scope .p-6 {
+  padding: 20px !important;
+}
+
+@media (min-width: 768px) {
+  .v21-scope .md\:p-6 {
+    padding: 24px !important;
+  }
+  .v21-scope .md\:p-8 {
+    padding: 24px !important;
+  }
+}
