@@ -2,6 +2,9 @@
 
 import { type ReactElement, useEffect, useState } from "react";
 
+// Nav mirrors the 7-fold storyboard in CLAUDE.md §14 — "the map should not
+// contradict the territory." Hero is the home anchor (click the wordmark),
+// so the pill carries the six scrollable sections after it.
 const NAV_ITEMS: {
   id: string;
   label: string;
@@ -14,7 +17,10 @@ const NAV_ITEMS: {
     href: "#experience",
     Icon: BriefcaseIcon,
   },
+  { id: "work", label: "Work", href: "#work", Icon: BookIcon },
   { id: "lab", label: "Lab", href: "#lab", Icon: FlaskIcon },
+  { id: "writing", label: "Writing", href: "#writing", Icon: PenIcon },
+  { id: "about", label: "About", href: "#about", Icon: UserIcon },
   { id: "connect", label: "Contact", href: "#connect", Icon: MailIcon },
 ];
 
@@ -270,6 +276,61 @@ export function Nav() {
 // ─────────────────────────────────────────────────────────────
 // Icons
 // ─────────────────────────────────────────────────────────────
+
+function BookIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-full w-full"
+      aria-hidden="true"
+    >
+      <path d="M4 4h7a3 3 0 0 1 3 3v13" />
+      <path d="M20 4h-7a3 3 0 0 0-3 3v13" />
+      <path d="M4 4v16h16V4" />
+    </svg>
+  );
+}
+
+function PenIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-full w-full"
+      aria-hidden="true"
+    >
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+    </svg>
+  );
+}
+
+function UserIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-full w-full"
+      aria-hidden="true"
+    >
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  );
+}
 
 function BriefcaseIcon() {
   return (

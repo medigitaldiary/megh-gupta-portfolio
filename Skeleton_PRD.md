@@ -122,8 +122,8 @@ Hamburger opens full-screen overlay with the 4 nav links + the CTA, vertically s
 **Specs:**
 - Height: 64px desktop, 56px mobile.
 - Horizontal padding: matches section container (`px-6 md:px-8`).
-- Logo/name: Inter SemiBold, 1rem.
-- Nav links: Inter Regular, 0.875rem, muted color (`--fg-muted`), hover → `--fg`.
+- Logo/name: Satoshi Semibold, 1rem.
+- Nav links: Satoshi Regular, 0.875rem, muted color (`--fg-muted`), hover → `--fg`.
 - CTA button: small, accent-colored, rounded-md, opens `mailto:` link.
 - Active section indicator: optional in v1, not required in v0.
 
@@ -166,8 +166,8 @@ Hamburger opens full-screen overlay with the 4 nav links + the CTA, vertically s
 
 **Specs:**
 - Eyebrow: JetBrains Mono, 0.75rem, uppercase, letter-spacing wide, muted color. Optional, can omit in v0.
-- Headline: Instrument Serif (or fallback), 3rem mobile / 4.5rem desktop, line-height 1.05.
-- Sub-line: Inter Regular, 1.125rem, muted color, max-width 32rem.
+- Headline: Oswald (or fallback), 3rem mobile / 4.5rem desktop, line-height 1.05.
+- Sub-line: Satoshi Regular, 1.125rem, muted color, max-width 32rem.
 - Primary CTA: solid accent background, `Get in touch` semantics → `mailto:`.
 - Secondary CTA: ghost button (border only), `See selected work` semantics → smooth-scroll to `#work`.
 - Gap between elements: 1.5rem vertical rhythm.
@@ -212,9 +212,9 @@ Hamburger opens full-screen overlay with the 4 nav links + the CTA, vertically s
 
 **Card content (top to bottom):**
 1. **Tags row** — 2-3 mono chips (`Fintech`, `Growth`, `0→1`).
-2. **Title** — Instrument Serif, 1.5rem, 2 lines max.
+2. **Title** — Oswald, 1.5rem, 2 lines max.
 3. **Headline metric** — large display number + label below in small text. E.g. `2x organic clicks · 3 months`.
-4. **Description** — Inter Regular, 1rem, muted, 3-4 lines.
+4. **Description** — Satoshi Regular, 1rem, muted, 3-4 lines.
 5. **Footer row** — `Role · Timeline` on left, external link icon on right (if applicable).
 
 **Data shape (TypeScript):**
@@ -277,8 +277,8 @@ export const workCards: WorkCard[] = [
 - Hover (if clickable): border becomes solid, accent color.
 
 **Card content (top to bottom):**
-1. **Title** — Inter SemiBold, 1.125rem.
-2. **One-line description** — Inter Regular, 0.875rem, muted.
+1. **Title** — Satoshi Semibold, 1.125rem.
+2. **One-line description** — Satoshi Regular, 0.875rem, muted.
 3. **Stack tags row** — JetBrains Mono, 0.75rem, e.g. `claude-api · supabase · next.js`.
 4. **External link** (optional) — small icon bottom-right.
 
@@ -335,7 +335,7 @@ export type LabCard = {
 
 **Specs:**
 - Photo: square, 240px desktop / 200px mobile, `rounded-2xl`. Casual headshot, not corporate.
-- Prose: Inter Regular, 1.125rem, line-height 1.6, max-width 36rem.
+- Prose: Satoshi Regular, 1.125rem, line-height 1.6, max-width 36rem.
 - Paragraph spacing: 1rem vertical gap.
 - Last paragraph (the "currently interviewing" line) gets slight emphasis — `font-medium` or accent-colored.
 
@@ -367,10 +367,10 @@ export type LabCard = {
 ```
 
 **Specs:**
-- Heading: Instrument Serif, 3rem mobile / 4rem desktop.
-- Email text: Inter Regular, 1.25rem, optionally underlined with accent color.
+- Heading: Oswald, 3rem mobile / 4rem desktop.
+- Email text: Satoshi Regular, 1.25rem, optionally underlined with accent color.
 - CTA button: large, solid accent, opens `mailto:hi@meghgupta.com?subject=Hello%20from%20[name]`.
-- Social links row: Inter Regular, 0.875rem, muted with separator dots.
+- Social links row: Satoshi Regular, 0.875rem, muted with separator dots.
 - Section padding: `py-32 md:py-48` (more breathing room than other sections).
 
 ---
@@ -389,7 +389,7 @@ export type LabCard = {
 ```
 
 **Specs:**
-- Inter Regular, 0.75rem, muted color.
+- Satoshi Regular, 0.75rem, muted color.
 - Padding: `py-8`.
 - `Source` link → GitHub repo (or omitted in v0 if repo isn't public).
 - No newsletter, no extra nav, no sitemap. Single line.

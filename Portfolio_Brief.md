@@ -157,7 +157,7 @@ Darker, monospace accents, terminal-inspired touches in the Lab section. Closer 
 I'd recommend **Option A with subtle builder touches** — editorial 80% of the time, monospace tags + terminal-style code blocks in the Lab section only. Best of both.
 
 **Type & color (starting point):**
-- Headlines: a strong editorial serif (e.g. Instrument Serif, Fraunces) or a clean geometric sans (e.g. Inter Display, General Sans).
+- Headlines: a strong display face (shipped choice: Oswald; close alternatives for the same mood include Fraunces or a condensed sans).
 - Body: Inter or Geist.
 - Code/tags: JetBrains Mono or Geist Mono.
 - Palette: off-white background (#FAFAF7), near-black text (#111), one accent color — I'd suggest a muted bond-paper green (#1F4D3A) or a deep terracotta (#B5503C) to differentiate from the default fintech blue.
