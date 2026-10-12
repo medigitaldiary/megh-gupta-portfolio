@@ -57,7 +57,11 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
-        setScrolled(window.scrollY > 80);
+        const past = window.scrollY > 80;
+        setScrolled(past);
+        // On the hero fold, clear any active tab the IntersectionObserver
+        // may have latched onto when the page first loaded with a short hero.
+        if (!past) setActiveId("");
       });
     }
     onScroll();
@@ -207,7 +211,7 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
               rel="noopener noreferrer"
               aria-label="LinkedIn profile"
               tabIndex={collapsed ? -1 : 0}
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-bg-elevated text-fg-muted transition-colors duration-150 hover:border-[#0A66C2] hover:text-[#0A66C2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#0A66C2]/30 bg-bg-elevated text-[#0A66C2] transition-colors duration-150 hover:border-[#0A66C2] hover:bg-[#0A66C2] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A66C2] focus-visible:ring-offset-2"
             >
               <span className="h-[18px] w-[18px]">
                 <LinkedInIcon />
@@ -267,7 +271,7 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn profile"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-bg-elevated text-fg-muted hover:border-[#0A66C2] hover:text-[#0A66C2]"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#0A66C2]/30 bg-bg-elevated text-[#0A66C2] hover:border-[#0A66C2] hover:bg-[#0A66C2] hover:text-white"
             >
               <span className="h-5 w-5">
                 <LinkedInIcon />
