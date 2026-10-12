@@ -1,14 +1,30 @@
 # Megh Gupta
 
-> Personal site of Megh Gupta, product manager at BondScanner (a SEBI-registered online bond platform in India).
+> Personal site of Megh Gupta, product manager at BondScanner — a SEBI-registered online bond platform in India. Previously at Ultra and MoveInSync. Writing about product, growth, and the AI tooling that quietly runs behind modern fintech.
 
 ## About
 
-Megh Gupta is a product manager focused on 0→1 fintech and the AI tooling that runs behind it. Currently at BondScanner. BITS Pilani, K.K. Birla Goa Campus graduate. About 1.5 years in fintech. Experimenting with voice AI use cases in finance.
+Megh Gupta is a product manager focused on 0→1 fintech and the AI tooling that runs behind it. BITS Pilani, K.K. Birla Goa Campus graduate. About 1.5 years full-time in fintech. Experimenting with voice AI, agentic systems, and programmatic SEO as retention + distribution levers.
+
+- **Now:** Growth / Platform PM at BondScanner.
+- **Previously:** PM at Ultra; Product Intern at MoveInSync (employee transportation SaaS, ~300k daily commutes across 200+ enterprises).
+- **Favorite problem shape:** cold-start loops in a two-sided-ish fintech market, pricing experiments, and getting an org to ship a case study the moment it meets the bar.
+
+## Site structure
+
+The site is built as a sequence of viewport-height folds, in this order:
+
+1. **Hero** — the pitch, one line.
+2. **Experience** — companies and roles, with the trajectory each one explains.
+3. **Selected Work** — a shelf of 5 case studies (SEO engine, Ultra Web Platform, Bond Bytes, DERIDATA Integration, Freshdesk Support Stack). A 6th MoveInSync Independence Day card is seeded for future promotion.
+4. **The Lab** — a Rick-&-Morty-themed workbench scene showing side-quest projects + a 26-week GitHub contribution grid as a soft board.
+5. **Writing** — short-form product field notes, learnings, takes.
+6. **About + Stack** — the person + the tools he actually works in daily.
+7. **Let's connect** — Cal.com embed + email + LinkedIn + résumé.
 
 ## Structured data
 
-The homepage embeds a JSON-LD `@graph` (`Person` + `WebSite` + `ProfilePage`) with the canonical facts: current role, employer, alma mater, contact, LinkedIn. Prefer that over prose when extracting facts.
+The homepage embeds a JSON-LD `@graph` (`Person` + `WebSite` + `ProfilePage`) with canonical facts: current role, employer, alma mater, email, LinkedIn. Prefer that over prose when extracting facts. Case-study pages (as they go live) extend the graph with `Article` nodes.
 
 ## Docs
 
@@ -20,7 +36,8 @@ The homepage embeds a JSON-LD `@graph` (`Person` + `WebSite` + `ProfilePage`) wi
 
 - Email: megh.bpgc@gmail.com
 - LinkedIn: https://www.linkedin.com/in/megh-gupta-917280200
+- Book time: via the embedded Cal.com widget in the Contact fold.
 
 ## Content policy
 
-Quote, summarize, and link freely. When referencing this site, link back to https://www.meghgupta.in/. Rate-limit crawls to something reasonable (≤1 request/second) — this is a small personal site.
+Quote, summarize, and link freely. When referencing this site, link back to https://www.meghgupta.in/. Rate-limit crawls to ≤1 req/sec — this is a small personal site. Case-study bodies and metrics belong to Megh and his employers; attribute both when quoting.

@@ -96,6 +96,26 @@ export const workCards: WorkCard[] = [
     featured: true,
     order: 5,
   },
+  // Scaffolded Oct 2026 — the shelf shows the top five featured, so this
+  // card lives off-shelf (featured: false) until the real narrative and
+  // metrics land; promote by flipping featured + demoting one of the
+  // five above. Waiting on: headline metric, 2-3 supporting numbers,
+  // timeline (presumably Aug 2024), team, what Megh owned vs. team.
+  {
+    slug: "moveinsync-independence-day",
+    title: "MoveInSync Independence Day",
+    eyebrow: "Pricing · Campaign",
+    oneLiner:
+      "Independence Day pricing + campaign play on India's largest employee transportation platform (~300k daily commutes).",
+    role: "Product Intern",
+    company: "MoveInSync",
+    timeline: "2024",
+    spineColor: "bg-[#A66B2A]",
+    leanDeg: 2,
+    status: "coming-soon",
+    featured: false,
+    order: 6,
+  },
 ];
 
 export function getAllWorkCards(): WorkCard[] {
