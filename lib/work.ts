@@ -13,6 +13,8 @@ export type WorkCard = {
   // Resting lean angle in degrees; pivots on the book's bottom edge.
   // Alternating signs create the "propped against each other" shelf feel.
   leanDeg?: number;
+  // Path to the editorial cover art for the shelf. 2:3 portrait webp.
+  coverImage?: string;
   status: WorkStatus;
   featured?: boolean;
   order?: number;
@@ -31,6 +33,7 @@ export const workCards: WorkCard[] = [
     company: "BondScanner",
     timeline: "2026",
     spineColor: "bg-accent",
+    coverImage: "/images/work/product-led-seo-engine/cover.webp",
     leanDeg: -4,
     status: "live",
     featured: true,
@@ -46,6 +49,7 @@ export const workCards: WorkCard[] = [
     company: "Ultra",
     timeline: "2025",
     spineColor: "bg-fg",
+    coverImage: "/images/work/ultra-web-platform/cover.webp",
     leanDeg: 3,
     status: "live",
     featured: true,
@@ -61,6 +65,7 @@ export const workCards: WorkCard[] = [
     company: "BondScanner",
     timeline: "2026",
     spineColor: "bg-[#8B5E3C]",
+    coverImage: "/images/work/bond-bytes/cover.webp",
     leanDeg: -2,
     status: "live",
     featured: true,
@@ -76,6 +81,7 @@ export const workCards: WorkCard[] = [
     company: "BondScanner",
     timeline: "2026",
     spineColor: "bg-[#4A5D5A]",
+    coverImage: "/images/work/deridata-integration/cover.webp",
     leanDeg: 4,
     status: "live",
     featured: true,
@@ -91,6 +97,7 @@ export const workCards: WorkCard[] = [
     company: "BondScanner",
     timeline: "2025",
     spineColor: "bg-[#6B4E71]",
+    coverImage: "/images/work/freshdesk-support-stack/cover.webp",
     leanDeg: -3,
     status: "live",
     featured: true,
@@ -109,6 +116,7 @@ export const workCards: WorkCard[] = [
     company: "MoveInSync",
     timeline: "Aug 2024",
     spineColor: "bg-[#A66B2A]",
+    coverImage: "/images/work/moveinsync-independence-day/cover.webp",
     leanDeg: 2,
     status: "live",
     featured: true,
