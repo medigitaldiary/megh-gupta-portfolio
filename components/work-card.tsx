@@ -1,15 +1,20 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { WorkCard as WorkCardType } from "@/lib/work";
 
-// A book-shaped project card. The whole card is a link to /work/[slug].
-// At rest each book leans by `leanDeg` (pivoting on its bottom edge) so the
-// shelf reads as a row of books propped against each other. On hover the
-// book straightens up AND the cover swings open on a Y-axis rotation,
-// revealing the CTA underneath. Motion is disabled for reduced-motion users.
+// A book-shaped case-study card. The cover art is the entire resting face;
+// the book leans very slightly (±1.5° max to prevent neighbor-leakage at
+// 3-across), sits on the shelf with a soft drop shadow underneath. On
+// hover the book straightens, lifts off the shelf, the shadow deepens,
+// and a title + role overlay slides up from the bottom edge. Motion is
+// disabled for reduced-motion viewers; the overlay still shows them.
 export function WorkCard({ card }: { card: WorkCardType }) {
   const href = `/work/${card.slug}`;
-  const lean = card.leanDeg ?? 0;
+  // Clamp the lean so a 3-column shelf at ~300px per book never has
+  // a book's top corner overhanging into its neighbor.
+  const rawLean = card.leanDeg ?? 0;
+  const lean = Math.max(-1.5, Math.min(1.5, rawLean));
   const leanStyle: CSSProperties = { "--lean": `${lean}deg` } as CSSProperties;
 
   return (
@@ -19,94 +24,77 @@ export function WorkCard({ card }: { card: WorkCardType }) {
       className="group relative z-0 block focus-visible:outline-none hover:z-10 focus-visible:z-10"
       style={leanStyle}
     >
-      {/* 3D perspective wrapper — also carries the resting lean.
-          transform-origin: bottom keeps the pivot on the shelf line. */}
+      {/* Book body: aspect-ratio portrait, holds the cover art + overlay */}
       <div
         className={[
-          "relative aspect-[3/4] w-full [perspective:1200px]",
-          "origin-bottom [transform:rotate(var(--lean))]",
-          "transition-transform duration-500 ease-out",
-          "group-hover:[transform:rotate(0deg)] group-focus-visible:[transform:rotate(0deg)]",
-          "motion-reduce:transition-none",
+          "relative aspect-[3/4] w-full",
+          "origin-bottom-left [transform:rotate(var(--lean))]",
+          "transition-[transform,box-shadow] duration-300 ease-out",
+          "shadow-[0_4px_12px_-6px_rgba(17,17,17,0.25)]",
+          "group-hover:[transform:translateY(-10px)_rotate(0deg)]",
+          "group-hover:shadow-[0_18px_30px_-12px_rgba(17,17,17,0.4)]",
+          "group-focus-visible:[transform:translateY(-10px)_rotate(0deg)]",
+          "group-focus-visible:shadow-[0_18px_30px_-12px_rgba(17,17,17,0.4)]",
+          "motion-reduce:transition-none motion-reduce:group-hover:[transform:rotate(var(--lean))]",
+          "motion-reduce:group-focus-visible:[transform:rotate(var(--lean))]",
+          "rounded-r-md rounded-l-sm overflow-hidden border border-border bg-bg-elevated",
         ].join(" ")}
       >
-        {/* Back page — revealed as the cover swings open */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 flex flex-col justify-between rounded-r-md rounded-l-sm border border-border bg-bg-elevated p-5 md:p-6"
-        >
-          <span className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
-            {card.company}
-          </span>
-          <div>
-            <p className="font-serif text-lg leading-snug text-fg md:text-xl">
-              {card.oneLiner}
-            </p>
-            <p className="mt-4 inline-flex items-center gap-2 text-sm text-accent">
-              Read the case study
-              <span aria-hidden="true" className="font-mono">
-                →
-              </span>
-            </p>
-          </div>
-        </div>
-
-        {/* Front cover — swings open on hover */}
-        <div
-          className={[
-            "absolute inset-0 flex flex-col justify-between overflow-hidden rounded-r-md rounded-l-sm border border-border bg-bg shadow-sm",
-            "[transform-origin:left_center] [backface-visibility:hidden]",
-            "transition-transform duration-500 ease-out",
-            "group-hover:[transform:rotateY(-32deg)] group-focus-visible:[transform:rotateY(-32deg)]",
-            "motion-reduce:transition-none motion-reduce:group-hover:[transform:none] motion-reduce:group-focus-visible:[transform:none]",
-          ].join(" ")}
-        >
-          {/* Spine strip on the left edge */}
-          <span
-            aria-hidden="true"
-            className={`absolute inset-y-0 left-0 w-1.5 ${card.spineColor}`}
+        {/* Cover art — fills the book face */}
+        {card.coverImage ? (
+          <Image
+            src={card.coverImage}
+            alt=""
+            fill
+            sizes="(min-width: 768px) 320px, 90vw"
+            className="object-cover"
+            priority={false}
           />
-          {/* Subtle inner-page hint on the right edge of the cover */}
-          <span
-            aria-hidden="true"
-            className="absolute inset-y-2 right-0 w-px bg-border/70"
-          />
-
-          <div className="relative flex h-full flex-col p-5 pl-6 md:p-6 md:pl-7">
-            <div className="flex items-center justify-between gap-3">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
-                {card.eyebrow}
-              </span>
-              {card.status === "coming-soon" && (
-                <span className="rounded-full border border-border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
-                  Soon
-                </span>
-              )}
-            </div>
-
-            <h3 className="mt-6 font-serif text-2xl leading-[1.15] text-fg md:text-[1.6rem]">
+        ) : (
+          // Fallback for a card without cover art yet
+          <div className="absolute inset-0 flex items-end bg-bg-elevated p-5">
+            <h3 className="font-serif text-xl leading-snug text-fg">
               {card.title}
             </h3>
-
-            <div className="mt-auto flex items-end justify-between pt-6 text-xs text-fg-subtle">
-              <span className="font-mono">
-                {card.role} · {card.timeline}
-              </span>
-              <span
-                aria-hidden="true"
-                className="font-mono transition-opacity duration-200 ease-out group-hover:opacity-0 motion-reduce:group-hover:opacity-100"
-              >
-                ↗
-              </span>
-            </div>
           </div>
+        )}
+
+        {/* Spine strip on the left edge — grounds the "book" idiom */}
+        <span
+          aria-hidden="true"
+          className={`absolute inset-y-0 left-0 w-1.5 ${card.spineColor}`}
+        />
+
+        {/* Info overlay — slides up from the bottom on hover / focus */}
+        <div
+          className={[
+            "absolute inset-x-0 bottom-0 translate-y-full",
+            "bg-gradient-to-t from-fg/95 via-fg/85 to-fg/0",
+            "p-4 pt-10 text-accent-fg",
+            "transition-transform duration-300 ease-out",
+            "group-hover:translate-y-0 group-focus-visible:translate-y-0",
+            "motion-reduce:translate-y-0 motion-reduce:bg-fg/90",
+          ].join(" ")}
+        >
+          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-fg/70">
+            {card.eyebrow} · {card.company}
+          </p>
+          <h3 className="mt-1 font-serif text-base leading-snug text-accent-fg md:text-lg">
+            {card.title}
+          </h3>
+          <p className="mt-2 flex items-center gap-2 text-xs text-accent-fg/80">
+            {card.role} · {card.timeline}
+            <span aria-hidden="true" className="ml-auto font-mono">
+              Read →
+            </span>
+          </p>
         </div>
       </div>
 
-      {/* Focus ring outside the perspective wrapper so it renders flat */}
+      {/* Focus ring, outside the transformed book so it renders flat */}
       <span
         aria-hidden="true"
-        className="pointer-events-none block h-0 w-full rounded-md ring-2 ring-transparent ring-offset-2 transition-shadow group-focus-visible:ring-accent"
+        className="pointer-events-none absolute inset-0 rounded-md ring-2 ring-transparent ring-offset-2 transition-shadow group-focus-visible:ring-accent"
       />
     </Link>
   );
