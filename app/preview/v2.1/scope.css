@@ -4,9 +4,7 @@
  *
  * Everything in this file targets `.v21-scope` only. Nothing here
  * leaks to /preview/v1, the production homepage, or /work/[slug]
- * case study pages (those render outside this wrapper and keep the
- * current Oswald + Satoshi stack — see drift report item 1 for the
- * follow-up).
+ * case study pages.
  *
  * Values trace back to DESIGN_SYSTEM_v1.md:
  *   §3 Typography — Geist one-font system
@@ -14,81 +12,88 @@
  *   §5 Radii — 16px cards
  */
 
-/* ---- Font remap --------------------------------------------
- * The root :root block defines --font-serif/sans/mono/hand to
- * Oswald/Satoshi/JetBrains/Kalam. We redefine those variables
- * on .v21-scope so every Tailwind utility (font-serif, font-sans,
- * font-mono) resolves to Geist inside the scope without any
- * component class string having to change.
+/* ---- Font remap (leaf-variable override) -------------------
+ * globals.css uses `@theme inline`, which in Tailwind v4 inlines
+ * each theme token's *value* into the utility class and strips the
+ * --font-serif / --font-sans / --font-mono variables themselves.
+ * So Tailwind utilities compile to e.g. `font-family: var(--font-oswald)`,
+ * not `font-family: var(--font-serif)`.
  *
- * Product Venn's --font-hand (Kalam → Geist) follows DS v1 §7.1
- * default; the handwritten feel is a pending Decision 11.
+ * Which means the only reliable override is on the leaf variables
+ * that next/font/local sets on <body>: --font-oswald, --font-satoshi,
+ * --font-jetbrains-mono, --font-hand. Redefining each one on
+ * .v21-scope flips every utility and every inherited font reference
+ * inside the subtree to Geist without touching any component.
  * -------------------------------------------------------------- */
 .v21-scope {
-  --font-serif: var(--font-geist-sans);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-sans);
+  --font-oswald: var(--font-geist-sans);
+  --font-satoshi: var(--font-geist-sans);
+  --font-jetbrains-mono: var(--font-geist-sans);
   --font-hand: var(--font-geist-sans);
+  --font-caveat: var(--font-geist-sans);
+
+  /* Belt-and-braces: anything that inherits a font-family through
+   * the body's default or an unutility'd element picks up Geist too. */
+  font-family: var(--font-geist-sans);
 }
 
-/* ---- Type scale (DS v1 §3) ---------------------------------
- * Tailwind's text-* utilities compile to `font-size + line-height`
- * declarations. We override them inside the scope. Letter-spacing
- * and weight join the same rule so the headline Geist look lands
- * without components having to add tracking-* classes.
- *
- * Display and h1 merge: DS v1 lists one display row covering both.
+/* ---- Type scale by semantic tag ----------------------------
+ * Components use a mix of arbitrary Tailwind values (text-[2.25rem]),
+ * default-scale utilities (text-3xl, text-5xl), and custom tokens
+ * (text-display, text-h1). Targeting the semantic HTML tags is the
+ * one place that catches all three, since every heading lands on
+ * h1/h2/h3 regardless of which classname is layered on top.
  * -------------------------------------------------------------- */
-.v21-scope .text-display,
-.v21-scope .text-h1 {
+.v21-scope h1 {
   font-size: 72px !important;
   line-height: 72px !important;
   letter-spacing: -3.6px !important;
   font-weight: 500 !important;
 }
 
-.v21-scope .text-h2 {
+.v21-scope h2 {
   font-size: 30px !important;
   line-height: 36px !important;
   letter-spacing: -0.75px !important;
   font-weight: 500 !important;
 }
 
-.v21-scope .text-h3 {
+.v21-scope h3 {
   font-size: 18px !important;
   line-height: 28px !important;
   letter-spacing: -0.45px !important;
   font-weight: 500 !important;
 }
 
-.v21-scope .text-body {
+/* ---- Body + small via Tailwind size utilities --------------
+ * Keep text-xs reserved for captions / chips at 12-13px. Only
+ * promote the standard body sizes to the DS v1 baseline.
+ * -------------------------------------------------------------- */
+.v21-scope .text-base {
   font-size: 15px !important;
   line-height: 24px !important;
-  font-weight: 400;
 }
 
-.v21-scope .text-small {
+.v21-scope .text-sm {
   font-size: 13px !important;
   line-height: 20px !important;
-  font-weight: 400;
 }
 
-/* ---- Eyebrow helper (DS v1 §3) ----------------------------
+/* ---- Eyebrow helper (DS v1 §3) -----------------------------
  * Every eyebrow in the codebase today reads as
  *   `font-mono text-xs uppercase tracking-wider ...`
- * Inside the scope, --font-mono already resolves to Geist. We
- * additionally bump tracking to 0.14em and weight to 500 so the
- * one-font eyebrow lands the DS v1 §3 shape without component
- * edits.
+ * Inside the scope, --font-jetbrains-mono now points to Geist, so
+ * the face already flipped. Add DS v1 tracking + weight here.
  * -------------------------------------------------------------- */
 .v21-scope .font-mono.uppercase {
+  font-size: 12px !important;
+  line-height: 16px !important;
   letter-spacing: 0.14em !important;
   font-weight: 500 !important;
 }
 
 /* ---- Card radii (DS v1 §5) ---------------------------------
- * rounded-xl → 16px. Base Tailwind rounded-xl is 0.75rem (12px);
- * DS v1 says cards sit at 16px (rounded-2xl). Promote in scope.
+ * rounded-xl promoted from 12px to 16px for the DS v1 card radius.
  * rounded-md stays at 8px (DS v1 small-inputs value).
  * -------------------------------------------------------------- */
 .v21-scope .rounded-xl {
@@ -101,8 +106,6 @@
 
 /* ---- Card padding (DS v1 §4.2) -----------------------------
  * `p-6 md:p-8` cards (24 / 32 px) → `p-5 md:p-6` (20 / 24 px).
- * Need to split by breakpoint since Tailwind emits a media query
- * for `md:p-8`.
  * -------------------------------------------------------------- */
 .v21-scope .p-6 {
   padding: 20px !important;
