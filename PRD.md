@@ -1,28 +1,29 @@
-# PRD — Megh Gupta Portfolio Site (v3, reconciled)
+# PRD — Megh Gupta Portfolio Site (v4)
 
 Owner: Megh Gupta
-Last updated: 2026-09-22
+Last updated: 2026-10-12
 Branch of truth: `main` (deployed on Vercel)
 Repo: `medigitaldiary/megh-gupta-portfolio`
-Canonical domain: **`meghgupta.in`** (see §0 changelog — `.com` fully retired)
+Canonical domain: **`meghgupta.in`**
+Current preview URLs: `/preview/v1` (all seven folds), `/preview/v2` (Hero · Experience · Work · About · Connect — Lab + Writing hidden while being finalised).
 
-This version reconciles v2. v2 had grown three different fold orders, two Stack specs, three Contact specs, two Lab specs, and a domain that flipped between `.com` and `.in`. Nothing substantive was cut. Where two specs described the same thing, the newer/locked one won, per the markers already in v2. Copy strings were rewritten to the voice rules in §10.
+v4 is a state refresh, not a redesign. The storyboard, the design system, and the voice rules from v3 are locked. What changed: six case studies now carry real narratives, Lab + Writing folds shipped, Oswald + Satoshi replaced Instrument Serif + Inter, nav mirrors the full storyboard, and the shelf grew to six books.
 
 ---
 
-## 0. What changed from v2 (reconciliation log)
+## 0. What changed from v3 (reconciliation log)
 
-Read this once, then delete it in v4. It exists so nothing looks like it vanished by accident.
+Read this once, then delete it in v5. Keeps the diff visible so nothing feels like it vanished.
 
-- **Domain settled: `meghgupta.in` only.** Every `meghgupta.com` reference (§3.5 email, §5.8 deploy, old SEO strings) is now `.in`. Canonical is `https://www.meghgupta.in`. Branded email is now `hi@meghgupta.in` — *open item: confirm that mailbox actually exists, else fall back to `megh.bpgc@gmail.com` everywhere.*
-- **One fold order, locked (§7).** v2 disagreed with itself across §7.1, §7.4, §7.6, §7.7, §7.8. The reconciled order is: Hero → Experience → Selected Work → The Lab → Writing → About (Stack lives inside it) → Let's connect. That's 7 folds, which matches §7.1's "8 → 7" note. This also resolves the "Lab is Fold 3 vs Fold 4" clash — with Experience as Fold 2, the Lab is Fold 4.
-- **Stack de-duplicated.** The card-grid spec (old §7.1a) is deleted. The icon-row-inside-About spec is the only one left (§7.6 here).
-- **Contact de-duplicated.** The "no form" rule is gone. "Let's connect" (form) is the spec; the mailto is now only the fallback. The embed-vs-custom options survive as a decision appendix (§A). Heading is "Let's connect." everywhere ("Let's talk." retired).
-- **Lab de-duplicated.** The three-kind taxonomy (skill-file / personal-tool / github-project) is the spec. The old stack-chip-only card is retired. *Open item flagged in §7.4 — whether the Lab should instead hold hostable, try-it tools; not decided, so v2's taxonomy stands for now.*
-- **Non-goals rewritten (§1).** v2 locked "not a blog" and "not multi-page" while §7 fully specced a blog and four routes. The non-goals now say what's actually still true, and phasing moved to §6.
-- **Hero CTA settled.** One primary CTA, "Let's connect →", scrolling to `#connect`. The old second CTA is gone.
-- **Current live state settled.** The single-page homepage (Hero + Work + Lab + About + Contact) is what's live. `coming-soon.tsx` is legacy; its intro copy moved into the Hero spec.
-- **Writing filter labels fixed** to match the six locked kinds.
+- **Fonts settled.** Instrument Serif → **Oswald** (display, variable woff2, self-hosted), Inter → **Satoshi** (body, variable woff2 + italic axis, self-hosted). Loaded via `next/font/local` from `/public/fonts/`. OG route additionally ships `Satoshi-Medium.ttf` because Satori (`next/og`) rejects WOFF2. CSS variables kept their semantic names (`--font-serif`, `--font-sans`) so no component consumer had to change.
+- **All six case studies live.** `/content/work/<slug>.mdx` landed for all six: `product-led-seo-engine`, `ultra-web-platform`, `bond-bytes`, `deridata-integration`, `freshdesk-support-stack`, `moveinsync-independence-day`. `/work/[slug]` renders via `next-mdx-remote`, with a headline-metric strip at the top, prose body, and a stack-chip strip at the bottom. Routes without an MDX file still fall back to the coming-soon card.
+- **Shelf: 5 → 6 books.** `getShelfWorkCards(6)` on `components/selected-work.tsx`, grid `sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6`.
+- **MoveInSync re-scoped.** Was scaffolded as "Pricing · Campaign" (an invented frame). Correct frame: "Analytics · Content" — an Independence Day traffic analysis fed into a CEO LinkedIn post.
+- **Writing fold shipped.** `components/writing-section.tsx` + `lib/writing.ts`. Six-kind taxonomy stayed as locked in v3.
+- **Nav mirrors the full storyboard.** Six pill entries (Experience · Work · Lab · Writing · About · Contact) instead of three. `/preview/v2` passes `hide={["lab","writing"]}` while those two folds get finalised; `/preview/v1` shows all six.
+- **Nav polish.** Avatar removed from the left slot; LinkedIn in brand `#0A66C2`; collapse motion is 40px + 400ms cubic-bezier(0.22, 0.61, 0.36, 1) with rAF-throttled scroll handler, no outer-bar background transition. Active-tab `activeId` clears while `scrollY ≤ 80` so no tab is highlighted on the hero fold.
+- **Design system doc.** Tokens live in `DESIGN_SYSTEM.md` at the repo root. §4 here keeps the fold-level rules; the token hexes and loader paths live there to avoid two sources of truth.
+- **Discovery files refreshed.** `public/llms.txt`, `public/AGENTS.md`, `public/index.md` describe the full seven-fold site and the three employers.
 
 ---
 
@@ -42,14 +43,14 @@ A single-page personal portfolio for **Megh Gupta**, Product Manager (fintech + 
 2. Show he's technical enough to build without engineers (The Lab).
 3. Give one obvious way to reach him (the Let's-connect fold).
 
-**Non-goals (locked, still true after v3)**
+**Non-goals (locked, still true)**
 
 - Not a CMS-driven marketing site.
 - Not multi-tenant, not internationalized.
-- No dark mode. The site stays one quiet editorial system, one accent.
+- No dark mode. One quiet editorial system, one accent.
 - No feature added because "the page felt short."
 
-**Phased, not v1 (moved here from the old non-goals — these are planned, just later; see §6):** case-study detail pages, the Writing surface, `/lab` and `/writing` indexes, the Experience timeline view. The homepage ships first; routes follow.
+**Phased, planned (see §6):** per-case-study OG images, Lab + Writing finalisation, launch flip from coming-soon to full portfolio at `/`.
 
 ---
 
@@ -58,137 +59,123 @@ A single-page personal portfolio for **Megh Gupta**, Product Manager (fintech + 
 ### 2.1 The recruiter (60-second skim)
 
 1. Lands on `/` from LinkedIn / email signature.
-2. Reads the hero: name, one-line identity, the intro, one CTA.
-3. Skims Experience for trajectory, then Selected Work for the headline metric on each card ("2×", "+15pp", "2 months", "5.2 → 6.0").
-4. Clicks `Let's connect →`.
+2. Hero establishes identity and promise (one line).
+3. Experience shows the trajectory — three employers, roles, dates.
+4. Shelf of six case studies, each carrying a headline number on hover.
+5. Either books time via the Cal.com embed or saves the résumé.
 
-**Success:** a message or email reaches Megh within 60 seconds of first load.
+Exit criteria: "I want to talk to this person."
 
 ### 2.2 The hiring PM (5-minute deep read)
 
-1. Reads the hero, scans Experience.
-2. Reads all Work cards in full — role, timeline, description, metric.
-3. Scrolls The Lab to gauge technical range, reads a Writing entry or two.
-4. Reads About (and the Stack row inside it), then hits Let's connect.
-
-**Success:** a first-round conversation booked.
+1. Opens one case study (likely SEO engine, Bond Bytes, or DERIDATA).
+2. Reads TL;DR, scans for the metric, reads the Approach paragraph.
+3. Decides whether the person thinks in trade-offs or in activity logs.
+4. Scrolls back to the shelf, picks a second case study to triangulate.
+5. Clicks LinkedIn or books time.
 
 ### 2.3 The warm intro (name-drop check)
 
-Lands, confirms it looks credible (design, real numbers, real logos — BondScanner, Ultra), forwards it on. **Success:** the site doesn't embarrass the intro.
+Someone from LinkedIn / X / an inbox referral opens the site to confirm Megh is for real before replying.
+
+- First-screen checks: real name, real company, specific numbers.
+- JSON-LD graph in `<head>` means Claude / Perplexity / ChatGPT also get a clean read.
 
 ### 2.4 The mobile scroller (~60% of traffic)
 
-Same as above on a phone. Nav collapses to a hamburger, folds stack, cards go single-column, no horizontal scroll at 375px.
+Every fold reflows to a single column. Nav collapses to a hamburger. Shelf stacks. OG card renders cleanly in LinkedIn / Slack previews via the `/opengraph-image` route.
 
 ### 2.5 Journeys not yet supported (see §6)
 
-- Deep-dive on a specific case study (`/work/[slug]` not built).
-- Reading the archive (`/writing` not built).
-- Booking a call (no Calendly/Cal.com wired — decision open, §A).
+- Reading long-form writing (Writing fold ships cards, no per-entry route yet).
+- Browsing the Lab's github-project or personal-tool kinds in isolation (hover-only on the workbench today).
 
 ---
 
 ## 3. Messaging, copy, content
 
-Voice guide in §10. Specific over vague, active verbs, honest attribution, short sentences, numbers as evidence. No "passionate about," no "leverage."
+The homepage is seven viewport-height folds. Each fold has one job, pinned in a code comment above its `<section>`.
 
 ### 3.1 Hero (Fold 1)
 
 - **Eyebrow (mono, uppercase):** `Megh Gupta · Product Manager`
-- **Headline (Instrument Serif, ~72px desktop):**
+- **Headline (Oswald display):**
   > I turn ideas into features,
   > features into products,
   > products into systems.
-- **Intro (Inter, muted):**
+- **Intro (Satoshi body, muted):**
   > I'm a product manager at BondScanner, a SEBI-registered online bond platform, making bond investing as simple as it should be. BITS Goa grad, a couple of years into fintech, and lately I've been building with voice AI and agentic systems.
-- **CTA (one only):** `Let's connect →` — smooth-scrolls to `#connect`. No second button. LinkedIn / résumé live inside the Let's-connect fold, not the hero; the hero pulls the reader down the page, not off it.
+- **One primary CTA:** `Let's connect →` smooth-scrolls to `#connect`. No second button; LinkedIn / résumé live inside the Let's-connect fold.
+- **Visual anchor:** 2-column grid with a Product Venn (user × tech × business) on the right.
 
 ### 3.2 Experience (Fold 2) — full spec §7.3
 
-Section eyebrow: `EXPERIENCE`. Heading: `Where I've been.`
+Three cards: BondScanner (current) · Ultra · MoveInSync. Each card carries role, dates, one-line summary, and a tooltip with the longer narrative. Timeline-with-toggle view optional, deferred until it earns its weight.
 
-### 3.3 Selected Work (Fold 3)
+### 3.3 Selected Work (Fold 3) — the shelf
 
-Section eyebrow: `SELECTED WORK`. Heading: `What I've shipped, with numbers.`
-
-Four cards, in order:
-
-| # | Title | Headline metric | Role · Timeline |
-|---|---|---|---|
-| 1 | How I 2×'d organic traffic at BondScanner in 3 months | **2×** daily organic clicks in 3 months | Growth PM · Jan 2026 – Q2 2026 |
-| 2 | AI call analysis pipeline for BondScanner's RM team | **5.2 → 6.0** call quality score in 30 days | PM · Mar 2026 – present |
-| 3 | Lifting payout-to-reinvestment from 55% to 70% at Ultra | **+15pp** retention lift in 30 days | Platform PM · Jun 2025 – Jul 2025 |
-| 4 | Founding PM: BondScanner 0→1 | **2 months** sign-up to launch, regulated platform | Founding PM · Nov 2025 – present |
-
-Every card: tag row (Growth / SEO / Fintech / AI Tooling / Ops / Platform / 0→1 / Founding PM), one-paragraph description, headline metric (serif, accent green), role + timeline meta strip. Cards link to `/work/[slug]` once those exist; until then, to a deck / Notion / Loom (no `#`).
+- Six leaning books on a shelf, alternating leans.
+- Each book carries: spine color, eyebrow (category · subcategory), title, one-liner, role + company + timeline.
+- Hover: book straightens, cover opens, headline metric appears.
+- Click → `/work/<slug>` renders the full case study from `/content/work/<slug>.mdx` via `next-mdx-remote`.
+- Six slugs: `product-led-seo-engine`, `ultra-web-platform`, `bond-bytes`, `deridata-integration`, `freshdesk-support-stack`, `moveinsync-independence-day`.
 
 ### 3.4 The Lab (Fold 4) — full spec §7.4
 
-Section eyebrow: `THE LAB`. Heading: `Things I built when a tool didn't exist or moved too slow.`
+A full-width Rick & Morty-themed workbench scene. On the workbench: a real WebGL portal (pizza3 shader port), skill files (CRT), flasks for side-quest projects (hover for chemistry smoke tooltips), and a GitHub soft-board with the last 26 weeks of contributions.
 
 ### 3.5 Writing (Fold 5) — full spec §7.5
 
-Section eyebrow: `WRITING`. Heading: `Notes on product and building.`
+A grid of writing cards. Each card has a kind badge (field-note / learning / take / idea / mini-case / teardown), title, excerpt, date, reading time. The index is browse-only today; per-entry routes come later.
 
 ### 3.6 About + Stack (Fold 6) — full spec §7.6
 
-Section eyebrow: `ABOUT`. Heading: `A bit about me.` The Stack icon row lives at the bottom of this fold. About's job is now Person + Craft.
+Personal context + the tools Megh works in daily (icon row, not a card grid). Convocation photo on one side, prose + stack on the other.
 
 ### 3.7 Let's connect (Fold 7) — full spec §7.7
 
-Full-bleed accent-green section. Heading: `Let's connect.` A short form (or a hosted embed, §A) plus the socials row (LinkedIn · X · GitHub · Read.cv) and `hi@meghgupta.in` as the visible fallback.
+Primary surface: an embedded Cal.com widget for booking time. Supporting rails: email (as selectable text, not just a mailto), LinkedIn in brand blue, résumé PDF button.
 
 ### 3.8 Footer
 
-`© 2026 Megh Gupta · Built with Claude Code · Source` (Source → GitHub repo).
+Compact. Three columns: Mentions / Resources / Site; a monoline attribution row ("Megh Gupta · 2026 · built in public").
 
 ---
 
 ## 4. Design style
 
-Editorial, quiet, numbers-forward. Reference vibe: kashwiaggarwal.com.
+The locked token values live in `DESIGN_SYSTEM.md`. This section keeps the design *rules* that bind this site specifically.
 
-### 4.1 Color (locked — one accent only)
+### 4.1 Color
 
-| Token | Value | Usage |
-|---|---|---|
-| `--bg` | `#FAFAF7` | Page background (off-white) |
-| `--bg-elevated` | `#FFFFFF` | Cards, Lab section background |
-| `--fg` | `#111111` | Primary text, headlines |
-| `--fg-muted` | `#555555` | Body copy, secondary text |
-| `--fg-subtle` | `#999999` | Meta strip, eyebrows, captions |
-| `--border` | `#E8E6E0` | Hairlines, card outlines |
-| `--accent` | `#1F4D3A` | Bond-paper green — headline metric, primary button, Contact bg |
-| `--accent-fg` | `#FAFAF7` | Text on accent backgrounds |
+One accent — bond-paper green `--accent` `#1F4D3A`. Everything else is neutrals. Two sub-palettes are allowed, each scoped to one component: the Product Venn hues (hero), and the Rick & Morty green/amber system (Lab). Nothing else introduces a new color without a locked decision.
 
 ### 4.2 Type
 
-- **Instrument Serif** — display, all H1/H2, headline metrics.
-- **Inter** — body, nav, buttons, sub-heads.
+- **Oswald** — display, all H1 / H2, headline metrics. Variable woff2, self-hosted.
+- **Satoshi** — body, nav, buttons, sub-heads. Variable woff2 (upright + italic), self-hosted.
 - **JetBrains Mono** — eyebrows, stack tags, work-card category tags.
 
-Type scale (Tailwind tokens): display 64 / h1 40 / h2 28 / h3 20 / body 16 / small 14. Body line-height 1.6, headlines 1.05–1.2.
+Type scale (tokens in `globals.css`): display 64 / h1 40 / h2 28 / h3 20 / body 16 / small 14. Body line-height 1.6, headlines 1.05–1.2.
 
 ### 4.3 Spacing & layout
 
-- Section padding `py-24 md:py-32`; Let's-connect bigger (`py-32 md:py-48`) as the closing beat.
-- Content width `max-w-5xl` centered.
-- Work grid 1→2 col. Lab grid 1→2→3 col. Card padding `p-6 md:p-8`, `rounded-xl`.
+Tailwind defaults. Section padding `py-24 md:py-32`, horizontal `px-6 md:px-8`. Max-widths: `max-w-5xl` on home sections, `max-w-6xl` on nav, `max-w-2xl` on case-study prose. Nav height `h-16 md:h-[72px]`. `scroll-margin-top: 80px` on every section so hash anchors clear the nav.
 
 ### 4.4 Motion (sparing)
 
-- 150ms ease-out hover on cards, links, buttons.
-- Work card hover: slight translate-up + border → accent.
-- Smooth in-page scroll, disabled under `prefers-reduced-motion`.
-- **No** parallax, scroll-jacking, cursor effects, page transitions, Framer Motion.
+- Allowed: hover color shifts (150ms ease-out), fade-up on scroll, nav collapse (40px / 400ms cubic-bezier(0.22, 0.61, 0.36, 1)), scoped Lab animations (bubbles, bulb flicker, portal swirl).
+- Everything respects `prefers-reduced-motion: reduce`.
+- Not allowed without explicit ask: parallax, scroll-jacking, cursor glow, animated gradients, animated `backdrop-filter` toggles.
 
 ### 4.5 Component patterns
 
-- **Nav:** sticky, translucent white + backdrop blur; borderless at top, hairline after 80px; hamburger + full-screen menu on mobile.
-- **Work card:** tag pills · title · metric (serif, green) · description · meta strip.
-- **Lab card:** kind badge · title · description · mono stack chips · outbound arrow.
-- **CTA hierarchy:** primary = filled accent green; secondary = outline → accent on hover.
+See `DESIGN_SYSTEM.md §5` for the real class strings. Highlights:
+
+- Primary CTA: `rounded-full bg-accent px-5 py-2.5 text-sm text-accent-fg hover:opacity-90`.
+- Secondary icon chip: `rounded-full border border-border bg-bg-elevated`; LinkedIn is the one brand-colored exception (`text-[#0A66C2]`).
+- Card: `rounded-xl border border-border bg-bg-elevated p-6 md:p-8`.
+- Nav pill: `rounded-full border border-border bg-bg-elevated p-1`; outer bar always transparent.
 
 ---
 
@@ -196,349 +183,234 @@ Type scale (Tailwind tokens): display 64 / h1 40 / h2 28 / h3 20 / body 16 / sma
 
 ### 5.1 Pages & routes
 
-| Route | Status | Notes |
+| Route | Status | Purpose |
 |---|---|---|
-| `/` | ✅ Shipped | Hero + Work + Lab + About + Contact, single page (live state) |
-| `/work/[slug]` | ❌ Not built | §6.2 |
-| `/lab` | ❌ Not built | §7.4 index |
-| `/writing`, `/writing/[slug]` | ❌ Not built | §7.5 |
-| `/about` | ❌ Optional | Only if split from the homepage fold |
-| `/api/og/[slug]` | ❌ Not built | Per-entry OG images |
-| `sitemap.xml`, `robots.txt`, favicon, site OG image | ✅ Shipped | via `app/*` |
+| `/` | Live — coming-soon page | Flips to the full portfolio on launch (`components/coming-soon.tsx` → `/preview/v1`'s layout). |
+| `/preview/v1` | Live, `noindex` | Full seven-fold portfolio for ongoing review. |
+| `/preview/v2` | Live, `noindex` | Five folds (Lab + Writing hidden) for focused review while those two get finalised. |
+| `/work/[slug]` | Live, `index` on routes with an MDX body | Case study pages. Six routes generated from `/content/work/*.mdx`. |
+| `/opengraph-image` | Live | Dynamic OG card for `/` (Oswald + Satoshi, bond-paper green). |
+| `/sitemap.xml`, `/robots.txt` | Live | Standard. |
+
+Deferred: `/lab`, `/lab/[slug]`, `/writing`, `/writing/[slug]`, `/api/og/[slug]`.
 
 ### 5.2 Navigation & interaction
 
-- Sticky nav, smooth-scroll anchors (Experience / Work / Lab / Writing / About / Connect) + `Let's connect →`.
-- Mobile menu: hamburger → full-screen overlay, body-scroll lock, closes on Esc or tap.
-- Visible focus ring on every focusable element. External links `target="_blank" rel="noopener noreferrer"`.
+- Nav mirrors the storyboard order (CLAUDE.md §14). Full pill: Experience · Work · Lab · Writing · About · Contact.
+- Nav accepts a `hide: string[]` prop so preview routes can slim the pill without a second component.
+- On scroll past 80px, the left (wordmark) and right (LinkedIn + résumé) sections collapse via a 40px slide + fade (400ms, cubic-bezier(0.22, 0.61, 0.36, 1)). Pill stays anchored. Hover re-expands.
+- Active-tab highlight clears while `scrollY ≤ 80` so no tab is active on the hero fold.
+- Outer bar is always transparent; the pill carries its own border + fill.
+- Mobile: hamburger menu, full-height overlay.
 
 ### 5.3 Content model
 
-- Work: `lib/work.ts` (`WorkCard[]`). Lab: `lib/lab.ts` (`LabEntry[]`, §7.4 schema). Experience: `lib/experience.ts` (§7.3). Stack: `lib/stack.ts` (§7.6). Writing: MDX in `/content/writing/` (§7.5).
+- **Case studies:** MDX files in `/content/work/`. Frontmatter schema in CLAUDE.md §5. Loader in `lib/case-study.ts` (parses via `gray-matter`, body rendered via `next-mdx-remote`).
+- **Experience:** inline data array in `lib/experience.ts`.
+- **Work shelf cards:** inline data array in `lib/work.ts` (title, eyebrow, oneLiner, spineColor, leanDeg, featured, order). MoveInSync is `featured: true` as of v4.
+- **Writing entries:** inline data array in `lib/writing.ts`.
+- **Lab entries:** three kinds hard-coded in `components/lab-scene.tsx` (skill files on CRT, flasks for side-quest, github grid on softboard).
 
 ### 5.4 Contact
 
-- Branded email `hi@meghgupta.in` (confirm mailbox — §0), real fallback `megh.bpgc@gmail.com`.
-- The Let's-connect fold is the primary surface (form or embed, §A). Mailto stays as fallback until that ships.
+- Primary: Cal.com embed via `@calcom/embed-react` inside the Let's-connect fold.
+- Supporting: email as selectable text (`megh.bpgc@gmail.com`), LinkedIn, résumé PDF.
+- No form submission. The brand email `hi@meghgupta.in` is still an open item (see §6).
 
 ### 5.5 Analytics & SEO
 
-- Vercel Analytics + Speed Insights (verify mounted in `app/layout.tsx` — §6.1).
-- Per-page `metadata`. Sitemap + robots + OG shipped. JSON-LD baseline per §8.
+- `@vercel/analytics` + `@vercel/speed-insights` wired in root layout.
+- Full head spec in CLAUDE.md §15 and §8 below. Case study pages extend the baseline JSON-LD with `Article` nodes.
 
-### 5.6 Accessibility
+### 5.6 Performance
 
-- Semantic landmarks, keyboard-navigable throughout, `alt` on all images, `prefers-reduced-motion` respected. Target Lighthouse ≥ 95 on all four categories.
+- Fonts self-hosted, variable WOFF2, `display: swap`.
+- Images via `next/image` (AVIF/WebP, `alt` required).
+- Heavy components (Lab shader) lazy-loaded via `next/dynamic` with `ssr: false`.
+- Lighthouse gates: Performance ≥ 95, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 95 on the homepage. Case study pages: ≥ 90 on all four.
 
-### 5.7 Performance
+### 5.7 Deployment
 
-- Next.js 15 App Router, server components by default; client islands only where interaction needs them (nav, experience toggle, any Lab/Stack interactivity). Fonts via `next/font` `display: swap`. `next/image`. No third-party scripts beyond Vercel + any chosen form embed.
-
-### 5.8 Deployment
-
-- GitHub `main` → Vercel auto-deploy, preview per PR.
-- Custom domain: **`meghgupta.in`** (confirm DNS live on Vercel; update any lingering string that isn't `.in`).
+- Vercel, auto-deploy from `main`. Previews from `dev` and feature branches.
+- Branch protection on `main` — merge-via-PR only. Feature branches merge into `dev` first; `dev` → `main` is the launch flip.
 
 ---
 
 ## 6. What is pending
 
-### 6.1 Blockers before public launch
+### 6.1 Blockers before public launch flip (coming-soon → full portfolio)
 
-- [ ] Real social URLs in the Let's-connect fold (LinkedIn / X / GitHub / Read.cv are `#`).
-- [ ] Real external URLs on Work cards (every `↗` is `#` — deck / PRD / dashboard / Loom, or the detail pages in §6.2).
-- [ ] `meghgupta.in` live on Vercel; confirm `hi@meghgupta.in` mailbox or switch to gmail everywhere.
-- [ ] Verify `@vercel/analytics` + `@vercel/speed-insights` are actually mounted.
+- **Visual QA on prod at 1440 and 375.** Font swap + 6-book shelf + nav polish all compound; eye on real devices before the launch flip.
+- **Figma design system — install Satoshi locally.** The `portfolio/h3`, `portfolio/body`, `portfolio/small` text styles in Figma file `AJ64jdtTSo68rHp2yBE7iv` are still on Inter because Satoshi isn't in the Figma font library. One-time install on the desktop app unblocks the final 3 styles.
 
 ### 6.2 High-value, not yet built
 
-- [ ] Case-study detail pages (`/work/[slug]`) + the MDX pipeline (§8).
-- [ ] Real screenshots / artifacts per case study (currently only the About portrait).
-- [ ] Per-entry OG images (`/api/og/[slug]`).
-- [ ] Lab links out — every entry needs a real `url` (§7.4).
+- **`/api/og/[slug]`** — per-case-study OG cards. Case study bodies now exist, so this is unblocked.
+- **Lab + Writing finalisation.** Both hidden on `/preview/v2` while they get polish (user flagged them as distracting mid-review). Finalisation covers both visual edge cases and copy.
+- **Explicit Experience timeline view with toggle.** Currently cards; the timeline alternate is specced in §7.3 but not shipped.
 
 ### 6.3 Copy still placeholder
 
-- [ ] About prose (real copy, structure locked in §7.6).
-- [ ] Lab entries `job-search-os`, `interview-prep-system` flagged placeholder.
-- [ ] Experience bullets — `TODO:` stubs in the seed data (§7.3).
+- MoveInSync case study carries `TODO:` markers inside the MDX for a confirmed engagement number on the LinkedIn post, a screenshot link, and whether any PMM collateral shipped beyond the post.
+- Four other case studies carry smaller `TODO:` lines for screenshot links / Loom URLs / Figma frames — invisible to readers (MDX comments) but visible in the source.
 
 ### 6.4 Explicitly deferred (do NOT build without asking)
 
-- ❌ Dark mode.
-- ❌ CMS.
-- ❌ On-site search (revisit only past ~15–20 entries in a surface).
-- ❌ Heavy animation / Framer Motion.
-- ❌ Testimonials, newsletter signup, "logos I've worked with" strip, stat-tile rows.
+- `/lab` and `/writing` indexes with per-entry routes.
+- Dark mode variant.
+- A real contact form (mailto fallback is enough; Cal.com embed covers scheduled time).
+- A CMS. MDX in the repo IS the CMS at this scale.
 
-### 6.5 Quality gates before "done"
+### 6.5 Quality gates before "done" on launch
 
-- [ ] `pnpm build` clean · `pnpm check` (Biome) clean.
-- [ ] Lighthouse ≥ 95 on all four categories on `/`.
-- [ ] Renders at 375 / 768 / 1440, no horizontal scroll at 375.
-- [ ] No console errors in dev.
-- [ ] No hardcoded hex outside `globals.css`.
-- [ ] No hardcoded URL on any domain other than `meghgupta.in`.
+- `pnpm build` clean.
+- `pnpm exec biome check` clean on touched files.
+- Lighthouse per §5.6 on the homepage + two sampled case studies.
+- View-source on `/` and `/work/<slug>` contains: `canonical`, `og:type`, `og:image`, `twitter:card`, JSON-LD `@graph`, discovery block.
+- Google Rich Results Test renders `Person` and `Article` cards.
+- LinkedIn Post Inspector renders the OG card cleanly.
 
 ---
 
 ## 7. Section specs (in fold order)
 
-**Locked fold order (single source of truth):**
-
-1. Hero
-2. Experience
-3. Selected Work
-4. The Lab
-5. Writing
-6. About (Stack icon row lives inside this fold)
-7. Let's connect
-
-The whole homepage reads as one scroll story, not a stack of tiles. Every fold has a job, answers one question, and hands off to the next with a hook.
-
 ### 7.0 Fold-by-fold storyboard
 
-| Fold | Section | Job | Question it answers | Lead-out hook |
-|---|---|---|---|---|
-| 1 | Hero | Stop the skim in 3 seconds | Who is this, why keep scrolling? | Ends on "building with voice AI / agentic systems" → sets up the work |
-| 2 | Experience | Trajectory | Where has this person been? | Current role promises "here's what I built there" |
-| 3 | Selected Work | Proof | What have they shipped, with numbers? | "there's more to how I build" → Lab |
-| 4 | The Lab | Range | Do they build outside the day job? | "and here's how I think" → Writing |
-| 5 | Writing | Thinking | How do they think about product? | "who's behind all this" → About |
-| 6 | About + Stack | Person + craft | Would I want to work with them, and what do they build with? | "here's how to reach me" → Connect |
-| 7 | Let's connect | Action | How do I reach out? | terminal fold; quiet footer only |
+| Fold | Job | Question it answers | Status |
+|---|---|---|---|
+| 1 · Hero | Hook | "Who is this and why should I keep scrolling?" | Shipped |
+| 2 · Experience | Trajectory | "Where has this person been?" | Shipped |
+| 3 · Selected Work | Proof | "What have they actually shipped, with numbers?" | Shipped; 6 case studies live |
+| 4 · The Lab | Range | "Do they build outside their day job?" | Shipped; hidden on v2 for finalisation |
+| 5 · Writing | Thought | "How do they think about product?" | Shipped; hidden on v2 for finalisation |
+| 6 · About + Stack | Person + Craft | "Would I want to work with them, and what do they build with?" | Shipped |
+| 7 · Let's connect | Action | "Okay, how do I reach them?" | Shipped |
 
-**Anti-patterns for launch (do not add without asking):** a testimonials fold without real attributed quotes; a newsletter signup between Work and About; a logos strip duplicating Work; a stats-tile row; any fold that exists because the page felt short.
+Nav mirrors this exact order. Mobile stacks the same sequence into one column; order never reorders by breakpoint.
 
-**Pre-launch review:** before merging the launch PR, write the storyboard as seven bullets (headline + job + hook) in the PR body. If a bullet feels weak, cut or redesign the fold before it ships.
+### 7.1 Hero (Fold 1)
 
-### 7.3 Experience (Fold 2)
+- 2-column grid: left column carries eyebrow + headline + intro + Product Venn label; right column renders the Product Venn.
+- Product Venn uses its scoped sub-palette (`--venn-user` / `--venn-tech` / `--venn-biz` / `--venn-cream`).
+- One primary CTA (`Let's connect →` → `#connect`). No LinkedIn / résumé here — they live in Fold 7.
+- Mobile: Venn drops below the text block, same copy.
 
-Placement: right after the Hero. Not a résumé block — a scannable trajectory that expands on demand. Fold job: trajectory. Reference screenshots in `docs/references/experience/`.
+### 7.2 Experience (Fold 2)
 
-**v1 decision (locked, revised 2026-09-23):** ship **both views** with a top-right toggle (list · timeline). **Timeline is the default** on load; recruiters get the "trajectory" answer at a glance, and readers who want detail flip to list. This reverses the earlier "list-only" decision — the timeline reads faster than a stack of rows for a 60-second skimmer.
+- Three employer cards: BondScanner (current, Growth / Platform PM), Ultra (Platform PM), MoveInSync (Product Intern).
+- Each card: logo, company, role, dates, one-liner summary, 2–3 narrative bullets revealed on expand.
+- Deferred: timeline view with Current / Full-time / All toggle (specced in v3 §7.3, not yet shipped).
+- Data lives in `lib/experience.ts`.
 
-**Content model (`lib/experience.ts`, TS array — no MDX):**
+### 7.3 Selected Work (Fold 3)
 
-```ts
-type ExperienceEntry = {
-  slug: string;                 // "bondscanner", "ultra"
-  company: string;              // lowercase display ("bondscanner")
-  role: string;                 // lowercase ("product manager")
-  logo: string;                 // "/images/experience/bondscanner.svg"
-  start: string;                // "2025-11" (YYYY-MM)
-  end: string | "present";
-  tagline: string;              // one line: what the company does
-  bullets: string[];            // 2–4, verb-first, numbers-forward
-  current?: boolean;            // green dot; defaults from end === "present"
-  nda?: boolean;                // adds an NDA affordance in the expand
-  order?: number;               // default reverse-chron by start
-};
-```
-
-**List view:** logo tile (44×44, green dot if current) · company (semibold) + role (muted) · date range (mono, right-aligned) · chevron. A vertical hairline gutter connects entries into one history. Row is a `<button>` (`aria-expanded`, `aria-controls`); expand reveals an italic company tagline then 2–4 accent-asterisk bullets. 220ms ease-out, instant under reduced-motion. One row open at a time on mobile; desktop allows multiple.
-
-**Voice:** lowercase company + role (editorial choice). Tagline = what the company does. Bullets = what *you* shipped, verb-first, numbers-forward. Present tense only for the current role. NDA: one honest bullet — "recent work is under NDA, happy to walk through it on a call."
-
-**Seed (draft — fill from résumé, never invent):**
-
-```ts
-[
-  { slug: "bondscanner", company: "bondscanner", role: "product manager",
-    logo: "/images/experience/bondscanner.svg",
-    start: "2025-11", end: "present", current: true,
-    tagline: "sebi-registered online bond platform making bond investing simple for retail investors.",
-    bullets: [
-      "built bondscanner 0→1 as founding pm — web + mobile onboarding live in 2 months.",
-      "shipped a product-led seo engine: 350+ blogs, 200+ dictionary terms, 26,000+ programmatic pages → ~2× daily organic clicks in 3 months.",
-      "built an ai call-analysis pipeline (sarvam stt + claude) → team call-quality 5.2 → 6.0 in 30 days.",
-    ] },
-  { slug: "ultra", company: "ultra", role: "platform product manager",
-    logo: "/images/experience/ultra.svg",
-    start: "2025-03", end: "2025-10",
-    tagline: "alternative-investment app (tap invest) across invoice discounting, fds, and more.",
-    bullets: [
-      "drove lifecycle automations across push, whatsapp, email, in-app → +15pp retention in 30 days.",
-      "launched flexi invoice discounting → ~₹50cr additional aum in 3 months.",
-    ] },
-  // earlier roles (MoveInSync intern, etc.) in the same shape.
-]
-```
-
-**Anti-patterns:** no stat-tile row; no "responsibilities included"; no filler roles; no unverified logos.
-
-**Analytics:** `experience_row_expand` / `experience_row_collapse` (property: slug).
-
-**Launch order:** author real entries from résumé → ship list + timeline + toggle in one commit → later polish (logos, drag-to-scroll gesture, mobile timeline density).
+- Shelf of 6 leaning books on a horizontal shelf (hairline + 2px rounded strip).
+- Grid: `sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6`, `lg:gap-2`.
+- Book spine carries: title, eyebrow (category · subcategory), lean angle, spine color.
+- Hover: book straightens, cover flips open, headline metric fades in from frontmatter.
+- Click → `/work/<slug>`.
+- Six case studies live:
+  - `product-led-seo-engine` — Growth · SEO · 2026 · ~2x daily organic clicks in 3 months
+  - `ultra-web-platform` — Platform · 0→1 · 2025 · 15–20% True AUM growth from web, Q3 2025
+  - `bond-bytes` — Content · Retention · 2026 · 3.5x MoM reach growth
+  - `deridata-integration` — Data · Integrations · 2026 · 80% of deal creation fields auto-populated
+  - `freshdesk-support-stack` — Ops · Support · 2025 · 40% reduction in manual support effort
+  - `moveinsync-independence-day` — Analytics · Content · 2024 · 17.4% faster BLR traffic on Aug 15 vs 3-month baseline
 
 ### 7.4 The Lab (Fold 4)
 
-Job: range. Reference the current headline in `app/page.tsx` — keep or replace, Megh's call.
+Full-width, bleeds to the edges. Rick & Morty workbench scene composed in SVG + a WebGL portal canvas.
 
-**What lives here — three kinds (locked):**
+- **Portal (center).** Three.js + custom fragment shader (pizza3 port). Fallback: CSS conic-gradient until the shader boots. `prefers-reduced-motion` pauses the animation loop.
+- **Skill files (CRT, left).** Hover on each file reveals a tooltip with a one-line description of the skill.
+- **Flasks (right).** Three side-quest projects. Hover reveals a tooltip in chemistry framing and animates smoke rising from the flask.
+- **GitHub softboard (back).** Last 26 weeks of contribution grid, pseudo-random intensities. Legend: "GitHub · last 26 weeks."
+- **Stack row (below).** Mono-cased list — Claude · Cursor · Figma · Notion · GitHub · Linear · Vercel · Slack. This is the Stack surface; it does not render as a card grid.
 
-| Kind (slug) | Label | What it is | Signal |
-|---|---|---|---|
-| `skill-file` | Skill File | A `.md` instruction file authored for an AI agent — a repeatable playbook a model runs on demand. | "I write for agents, not just humans." |
-| `personal-tool` | Personal Tool | A self-built utility that solves a real problem — CLI, web app, extension, script. Must run for someone other than you. | "I build to solve my own problems." |
-| `github-project` | GitHub Project | A public, functional repo. | "I build in public." |
-
-No other kinds. If a build doesn't fit, reshape it or leave it out.
-
-> **Open decision (not resolved — flagged in §0).** A parallel direction discussed separately: make the Lab a wall of *hostable, try-it-out* tools (a bond decoder, FD-vs-bond, "Bonds Wrapped"), Kashwi-style, rather than outbound links to files and repos. That's a different section (playable apps vs. artifacts you link to) and a different build. Until decided, the three-kind taxonomy above stands. If the hostable direction wins, this whole section gets rewritten and the aesthetic locks in §4 (no dark mode, sparing motion) need a conscious exception for that one surface.
-
-**Content model (`lib/lab.ts`):**
-
-```ts
-type LabEntry = {
-  slug: string;
-  title: string;                                       // sentence case
-  kind: "skill-file" | "personal-tool" | "github-project";
-  description: string;                                 // 1–2 sentences, verb-first, ≤25 words
-  stack: string[];                                     // mono tags
-  url: string;                                         // required — a link, not a claim
-  featured?: boolean;                                  // homepage fold vs /lab only
-  order?: number;
-  published?: boolean;                                 // default true
-};
-```
-
-Migrate the current six: add `kind` to each; rename `externalUrl` → `url`, make it required (no `#`). Suggested mapping — `job-search-os` → personal-tool, `bond-dictionary` → personal-tool, `compliance-content-reviewer` → skill-file or personal-tool (Megh's call), `call-analysis-pipeline` → personal-tool, `interview-prep-system` → skill-file, `moengage-mcp-workflows` → skill-file.
-
-**Homepage fold:** 3/2/1-col grid, max 6 featured cards. Card: kind badge (mono, top-right) · title (semibold) · description (2 lines, `…`) · stack chips (2–4, `+N` overflow) · outbound `↗`. Whole card is an `<a target="_blank" rel="noopener noreferrer">`. Bottom: `all builds →` → `/lab`.
-
-**`/lab` index (later):** same grammar, filter chips `All / Skill files / Personal tools / GitHub`, no cap.
-
-**Anti-patterns:** no private repos as `github-project`; no broken links (add a build-time fetch check that fails on non-2xx); no tutorial follow-alongs; no one-PR contributions; monochrome icons only.
-
-**Analytics:** `lab_card_click` (slug, kind), `lab_all_click`, `lab_filter_apply` (kind).
+Status: shipped, hidden on `/preview/v2` while being finalised.
 
 ### 7.5 Writing (Fold 5)
 
-Placement: between the Lab and About. Also its own surface at `/writing` and `/writing/[slug]`. Why it exists: most PM portfolios stop at case studies; a writing surface shows Megh reflects on the work, compounds as crawlable pages, and sits one click from Work and the reach-out.
+- Grid of writing cards, 3-across on desktop, 1 on mobile.
+- Each card: kind badge, title, excerpt (≤140 chars), date, reading time, tags.
+- Six kinds locked: field-note, learning, take, idea, mini-case, teardown.
+- Filter row above the grid; the index is browse-only today, no per-entry routes.
+- Thumbnails rendered by `components/writing/thumbnail.tsx` from entry kind + accent.
 
-**Six kinds (locked):** `field-note` (Field Note), `learning` (Learning), `take` (Take), `idea` (Idea), `mini-case` (Mini Case), `teardown` (Teardown). Kind names the *shape of thought*; tags stay open for topics. New kinds need an explicit ask + a thumbnail glyph + a `lib/writing.ts` update.
-
-**Content model — MDX frontmatter (`/content/writing/[slug].mdx`):** `title, slug, date, updated?, kind, tags[], excerpt, reading_time?, featured?, order?, published, canonical?`.
-
-**Procedural thumbnails (locked — no hand-authored art):** deterministic inline SVG from `kind` + `slug`. Frame `aspect-ratio 3/2`, bg `#0E1622`, 1px inner border `rgba(245,235,212,0.08)`. Center glyph (cream `#F5EBD4`, ~2px, single stroke) by kind — field-note: map pin; learning: circular retry arrow; take: oversized quote mark; idea: lightbulb; mini-case: 3×2 grid, one filled; teardown: four squares, one dashed with ✕. Subtle background pattern from `hash(slug) % 4`. No text, no per-entry color. Built in `components/writing/thumbnail.tsx` with pure `getGlyph(kind)` / `getPattern(slug)`.
-
-**Homepage fold:** three cards (featured by `order`, then most-recent), same grammar as the index card. If fewer than 3 published entries exist, hide the fold entirely. `view all →` to `/writing`. No filter chips on the homepage.
-
-**`/writing` index:** reverse-chron, grouped by month. Filter chips (client-side): `All / Field Notes / Learnings / Takes / Ideas / Mini Cases / Teardowns`. RSS at `/writing/rss.xml`. On-site search deferred.
-
-**`/writing/[slug]`:** ~640px reading column, `← all posts` breadcrumb, serif title + meta strip (date · read time · kind), sans body (16–18px, 1.65). Prev/next links. `@type: BlogPosting` in JSON-LD (§8). `.md` alternate at `/writing/[slug].md`.
-
-**Voice:** first person, present tense unless retelling. One-sentence hook, then the story. Numbers when real. Name what you critique directly. Active close.
-
-**Anti-patterns:** no reviews of tools used < 30 min / one week; no rewrites of AI summaries; no entries duplicating a `/work/[slug]`; no published drafts (`published: false`); no SEO chasing.
-
-**Storage:** MDX; `lib/writing.ts` exports `getAllWriting()`, `getWritingBySlug()`, `getRecent(n)`, `getByKind(kind)`. RSS from the same array at build.
-
-**Analytics:** `writing_index_view`, `writing_entry_view` (slug, kind), `writing_filter_apply` (kind), `writing_all_click`.
-
-**Launch order:** author 4–6 entries first (an empty section reads worse than none) → ship `/writing/[slug]` → `/writing` index → homepage fold → RSS last.
+Status: shipped, hidden on `/preview/v2` while being finalised.
 
 ### 7.6 About + Stack (Fold 6)
 
-**About:** portrait (250px square, off-white bg, `/images/about/megh-on-green.png`) + 3–4 short paragraphs: identity (PM at the fintech × AI-tooling intersection) · current (founding PM at BondScanner, retail bond market) · prior (platform PM at Ultra, growth loops + reinvestment) · one lightly personal line. Warm, still specific. "I got into fintech because…" not "passionate about finance."
-
-**Stack (icon row inside the About fold — no separate fold):** a small italic-serif `my stack` label, then a single row of circular tool icons (~48px, `--bg-elevated`, 1px `--border`, monochrome glyph in `currentColor`), wrapping on mobile, ending in a `+ more` toggle. Hover / focus / long-press shows a dark pill tooltip above the icon: line 1 tool name (semibold ~14px), line 2 the one-line "how I use it" (~12px, opacity 0.75, 2 lines max). Flips below at the viewport edge. 100ms fade, instant under reduced-motion. Announced via `aria-describedby`.
-
-**Content model (`lib/stack.ts`):**
-
-```ts
-type StackTool = {
-  slug: string;         // "figma", "cursor", "mixpanel"
-  name: string;         // lowercase display
-  icon: string;         // monochrome SVG, viewBox 24x24
-  one_liner: string;    // "funnel + retention analytics on the growth loops"
-  featured?: boolean;   // true = default row; false = behind "+ more"
-  order?: number;
-};
-```
-
-Author 6–10 featured tools; the rest behind `+ more`. No categories, no `since`, no prose paragraphs — the one-liner is the whole story.
-
-**Voice for `one_liner`:** verb-first, present tense; name the actual use, not the category; under 12 words (cap 18); no adjective stacks.
-
-**Anti-patterns:** no "since 2024" badge; no filter chips; no categories; no brand-color icons; no `/stack` subpage — if `+ more` isn't enough, cut tools.
-
-**Analytics:** `stack_tool_hover` (slug), `stack_more_toggle` (to = open|closed).
-
-**Launch order:** populate `lib/stack.ts` with real tools + PM-voice one-liners (no stubs) → ship icon row + tooltip in one commit → wire analytics → `+ more` in a follow-up if the row proves tight.
+- 2-column layout: convocation photo (zoomed, less sky) + personal prose.
+- Prose: 2–3 short paragraphs; voice per §10.
+- Stack row inside the fold: icon row of the tools Megh actually works in daily. Not a card grid.
+- Mobile: photo above prose, stack row below.
 
 ### 7.7 Let's connect (Fold 7)
 
-Placement: bottom of the homepage, `id="connect"`, terminal fold. Why a real surface over a bare mailto: a mailto breaks on mobile and loses anyone without a mail client set up; an on-page surface keeps intent warm and gives Megh a structured inbox.
-
-**Copy:** heading `Let's connect.` Description: a first-person line (contractions, no résumé voice) — *TODO: paste final copy.*
-
-**Delivery — pick one at build time (decision open, options in §A):**
-1. Hosted form embed (Tally / Fillout / Youform) — fastest, matches editorial, one-line iframe.
-2. Booking (Cal.com) — if the goal is meetings over messages; higher intent per click.
-3. Custom form + Resend server action — full control of the pixels, most upkeep.
-
-If a custom form: fields `email` (autofocus, validated), `subject` (~80 char), `message` (~1500 char), `honeypot` (hidden). Submit `Send →`; loading `Sending…`; success replaces the form ("Got it. I'll reply from `hi@meghgupta.in` within a couple of days."); failure shows an inline error + the gmail fallback, never the raw error. Anti-abuse: honeypot + server-side rate limit (3/IP/hour) + server-side email check. Every field has a real `<label>`; errors via `aria-live="polite"`. Secrets in Vercel env, `.env.example` committed.
-
-**Fallback:** mailto + `hi@meghgupta.in` stay until this ships (mailto is the fallback if the form 500s).
-
-**Analytics:** form view, submit-attempt, submit-success, submit-error (no PII, no field contents).
+- Primary surface: embedded Cal.com widget via `@calcom/embed-react`.
+- Supporting rails below the embed:
+  - Email as selectable text with a copy button.
+  - LinkedIn chip (brand `#0A66C2`).
+  - Résumé PDF button.
+- No form. No "send message" field.
+- Section id: `#connect` (the Hero CTA scrolls here).
 
 ---
 
 ## 8. SEO & head-tag spec
 
-Domain is `meghgupta.in`; every canonical, OG URL, and JSON-LD `@id` uses `https://www.meghgupta.in`. The baseline never gets simplified out; new page types only add.
+Full baseline in CLAUDE.md §15. Summary:
 
-- **Root (`app/layout.tsx`, shipped):** `Person + WebSite + ProfilePage` graph, discovery block, canonical, OG profile, Twitter card, favicon. Bump `TITLE`, `DESCRIPTION`, `public/index.md`, `public/llms.txt` together when the pitch changes.
-- **`/work` index (future):** `title "Selected work"`; OG `type website` with a generated grid image; JSON-LD `CollectionPage` → `ItemList`; `.md` alternate; sitemap same PR.
-- **`/work/[slug]` (future):** headline title; OG `type article` from `/api/og/[slug]`; JSON-LD `Article` → `author {@id: Person}`, `headline`, `datePublished`, `image`, `about`. Canonical `https://www.meghgupta.in/work/[slug]`; if cross-posted, canonical points at the original and this one adds `rel="alternate"`. `.md` alternate; sitemap via `getAllCaseStudies()`.
-- **`/lab`, `/lab/[slug]` (future):** `CollectionPage` + `CreativeWork` nodes (name, description, external url, keywords, `creator {@id: Person}`).
-- **`/writing`, `/writing/[slug]` (future):** `BlogPosting` nodes; same discovery + `.md` alternate.
-- **`/api/og/[slug]` (future):** `next/og` `ImageResponse` 1200×630, cream bg, metric in Instrument Serif, favicon corner; no auth/cookies/user data.
-- **Discovery files (living):** `public/llms.txt`, `public/AGENTS.md`, `public/index.md`, per-page `.md` alternates (generated from MDX at build).
+- Shared `TITLE` / `DESCRIPTION` on `/`; child pages override via `metadata.title.template = "%s | Megh Gupta"`.
+- Canonical URL on every page, absolute.
+- `robots: index, follow`, `max-image-preview: large`, `googleBot` directives.
+- OpenGraph: `type: profile` on `/`, `type: article` on `/work/[slug]`, `type: website` elsewhere.
+- Twitter: `summary_large_image`.
+- JSON-LD `@graph`: `Person` + `WebSite` + `ProfilePage` on `/`; `Article` extension on case study pages.
+- Discovery block in `<head>`: `rel="alternate" type="text/markdown"` for per-page `.md`, `rel="help"` for `/llms.txt` and `/AGENTS.md`, `rel="sitemap"` for `/sitemap.xml`.
+- `theme-color: #FAFAF7`.
+- Favicon: `app/icon.svg`.
 
-**Validation checklist (per launch / new page type):** view-source has the full discovery block · Rich Results Test renders the card · LinkedIn Post Inspector shows the right OG · route in `sitemap.xml` · not disallowed in `robots.ts` · all `.md` alternates return 200 · no URL on any domain other than `meghgupta.in`.
+Per-page type overrides (case study specific):
+
+- `openGraph.type: "article"`.
+- Per-case-study OG image (deferred to `/api/og/[slug]`).
+- `Article` + `Person(author)` JSON-LD extension.
+- `.md` alternate reachable at `/work/<slug>.md` (generated from MDX at build — deferred).
 
 ---
 
-## 9. MDX / case-study system (future — §6.2)
+## 9. MDX case-study system (live)
 
-Case studies and Writing both render from MDX. Schema and components (`Metric`, `Callout`, `Figure`, `LoomEmbed`, `FigmaEmbed`) live in `CLAUDE.md §5`. Build the pipeline only when there's real case-study content to put in it — don't ship the conveyor belt before the product.
+- Files live in `/content/work/<slug>.mdx`.
+- Loader: `lib/case-study.ts` → `getCaseStudy(slug)` reads the file, parses frontmatter via `gray-matter`, returns `{ frontmatter, body }`.
+- Renderer: `app/work/[slug]/page.tsx` uses `MDXRemote` from `next-mdx-remote/rsc`. Routes without a corresponding MDX file fall back to the coming-soon card.
+- Frontmatter schema and body section structure in CLAUDE.md §5.
+- Supported body shapes today: standard markdown (headings, paragraphs, lists, bold, links). Custom MDX components (`Metric`, `Figure`, `Callout`, `LoomEmbed`, `FigmaEmbed`) are planned per CLAUDE.md but not yet wired — introduce them the first time a case study body actually needs one.
 
 ---
 
 ## 10. Voice rules (content language — locked)
 
-Applies to every string on the site and in this doc.
+Any copy generated for the site matches this voice. Case studies get it strictly. Component copy and nav labels too.
 
-- Sound naturally human-written. No AI giveaways.
-- Specific over vague — say what you did, with the number, not what you are.
-- Active verbs, first person, contractions. Past tense for shipped work, present for current.
-- No robotic transitions (moreover, furthermore, additionally). No cliché AI vocab (delve, leverage, tapestry, robust, seamless, unlock, elevate). No "passionate about."
-- Avoid unnecessary em dashes, stiff openers, rule-of-three padding, and false-balance hedging. Take the position.
-- Vary sentence length and rhythm. A fragment for emphasis is fine.
-- Honest attribution — "I built / grew / scoped / ran," not "responsible for," and not claiming a team's work as solo.
+- **Specific over vague.** "₹50Cr AUM in 3 months" not "significant growth."
+- **Active verbs.** "Shipped," "designed," "scoped." Not "was responsible for."
+- **Honest attribution.** "Contributed to" is fine. Don't claim team work as solo.
+- **Short sentences.** Average 15 words. Split anything over 25.
+- **No filler.** Cut "in order to," "it is important to note," "leverage," "synergy," "passionate."
+- **One idea per paragraph.** No walls of text.
+- **Numbers earn their place.** Every number should change what the reader believes.
+- **No AI tells.** No em-dash asides, no "not X but Y" framing, no "worth noting."
+
+If something you drafted might miss the voice, mark it `[draft — please review tone]` so Megh knows to check.
 
 ---
 
-## Appendix A — Let's-connect delivery options (decision needed)
+## Appendix A — Let's-connect delivery options (settled)
 
-Message-shaped surface or meeting-shaped surface? That's the fork.
-
-| Option | Type | Free tier | Fit for editorial | Notes |
-|---|---|---|---|---|
-| **Tally** | Form | Generous | ★★★★★ | Default answer for personal-site forms. One-line iframe, Notion/Airtable webhooks, looks native with almost no theming. |
-| **Cal.com** | Booking | Yes | ★★★★★ | "Book 20 min" beats a form on intent per click; excludes async messages. Pair with a small mailto fallback. |
-| **Fillout** | Form | Yes | ★★★★☆ | Tally-adjacent, stronger logic; overkill for a contact form but no worse-looking. |
-| **Youform** | Form | Yes | ★★★★☆ | Minimal, monochrome by default. |
-| **Formspark / Basin / Formspree** | Backend only | Yes | You style it | You keep your own React form; they handle submit + spam + delivery. Middle ground, avoids Resend setup. |
-| **Resend + server action** | Custom | ~free | Own the pixels | Full control, most upkeep (spam, delivery ops). |
-
-Skip Typeform (over-produced), HubSpot (CRM baggage), Google Forms (ugly), Airtable/NotionForms (utilitarian / branded free tier) for this use.
-
-**Recommendation:** **Cal.com if the goal is meetings, Tally if the goal is messages.** Resend only if owning the pixels matters more than the two days of setup + ongoing ops. Whichever you pick, the fold's copy and the mailto fallback stay the same — only the delivery swaps.
+v3 left this as an open decision. v4 settles: Cal.com embed is the primary surface, with email + LinkedIn + résumé as supporting rails. No custom form, no third-party scheduling SaaS beyond Cal. Revisit only if Cal.com's embed stops meeting the brief.
 
 ---
 
@@ -546,15 +418,64 @@ Skip Typeform (over-produced), HubSpot (CRM baggage), Google Forms (ugly), Airta
 
 ```
 app/
-  layout.tsx            # root layout, fonts, metadata, JSON-LD baseline
-  page.tsx              # homepage (Hero + Work + Lab + About + Contact today)
-  globals.css           # design tokens
-  icon.tsx · opengraph-image.tsx · robots.ts · sitemap.ts
+  layout.tsx              # root metadata, fonts (Oswald + Satoshi via localFont), analytics
+  page.tsx                # coming-soon on prod; flips to /preview/v1 layout on launch
+  globals.css             # color tokens, type scale, scoped Lab animations
+  opengraph-image.tsx     # dynamic OG card (Oswald + Satoshi)
+  icon.svg                # favicon
+  work/
+    [slug]/page.tsx       # MDX-rendered case study
+  preview/
+    v1/page.tsx           # full 7-fold portfolio (ongoing review)
+    v2/page.tsx           # 5-fold portfolio (Lab + Writing hidden)
+
 components/
-  nav.tsx · hero.tsx · work-card.tsx · lab-card.tsx · contact.tsx
+  nav.tsx                 # pill nav with hide prop, rAF-throttled scroll
+  hero.tsx                # Fold 1 — 2-col with Product Venn
+  product-venn.tsx        # Hero visual anchor
+  experience.tsx          # Fold 2
+  selected-work.tsx       # Fold 3 — 6-book shelf
+  work-card.tsx           # Shelf book
+  lab-section.tsx         # Fold 4 wrapper
+  lab-scene.tsx           # Workbench scene (CRT, flasks, GitHub softboard)
+  lab-portal.tsx          # WebGL portal shader
+  writing-section.tsx     # Fold 5
+  writing/thumbnail.tsx   # Writing card art
+  about-stack.tsx         # Fold 6
+  contact.tsx             # Fold 7 — Cal.com embed
+  cal-embed.tsx           # @calcom/embed-react wrapper
+  site-footer.tsx         # Shahroz-style footer
+  coming-soon.tsx         # Legacy / toggle-back
+
+content/
+  work/
+    product-led-seo-engine.mdx
+    ultra-web-platform.mdx
+    bond-bytes.mdx
+    deridata-integration.mdx
+    freshdesk-support-stack.mdx
+    moveinsync-independence-day.mdx
+
 lib/
-  work.ts (4) · lab.ts (6)
-public/images/about/megh-on-green.png
+  case-study.ts           # MDX loader + frontmatter parser
+  work.ts                 # Shelf card data
+  experience.ts           # Experience fold data
+  writing.ts              # Writing fold data
+  lab.ts                  # Lab helpers
+  paper-art.ts            # Canvas certificate art (Oswald)
+
+public/
+  fonts/                  # Oswald-Variable.woff2, Satoshi-Variable.woff2, Satoshi-VariableItalic.woff2, Satoshi-Medium.ttf
+  images/work/            # Case study hero images (placeholders today)
+  llms.txt, AGENTS.md, index.md  # Discovery files
+  resume.pdf
+
+CLAUDE.md                 # Rules — read fully on every session
+PRD.md                    # This file
+DESIGN_SYSTEM.md          # Token source of truth
+Portfolio_Brief.md        # Original brief (archive)
+Skeleton_PRD.md           # Early skeleton (archive)
+OPEN_ITEMS.md             # Rolling open items
 ```
 
-Not yet on disk: `/content`, `/app/work`, `/app/lab`, `/app/writing`, `lib/experience.ts`, `lib/stack.ts`, `lib/writing.ts` — all §6 / §7 work.
+End of file.
