@@ -519,11 +519,13 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
   const now = new Date();
   const nowYear = now.getFullYear() + now.getMonth() / 12;
   const earliest = Math.floor(Math.min(...items.map((i) => i.start)));
-  // Right edge extends one year past the current year, so the "near
-  // future" is visible on the timeline. For today (2026) this surfaces
-  // 2027 as the far-right label, giving upcoming entries a lane to land
-  // on without the layout flipping once new work starts.
-  const latest = now.getFullYear() + 2;
+  // Right edge sits just past the far-right year label, so the band
+  // doesn't trail off into a large empty strip after the last marker.
+  // The far-right year is `currentYear + 1` (today: 2027); +0.3 gives
+  // the label a touch of right-side breathing room that visually
+  // matches the small offset before the 2024 label on the left.
+  const latestYear = now.getFullYear() + 1;
+  const latest = latestYear + 0.3;
   const span = latest - earliest;
   const yearMarkers: number[] = [];
   for (let y = earliest; y < latest; y++) yearMarkers.push(y);
