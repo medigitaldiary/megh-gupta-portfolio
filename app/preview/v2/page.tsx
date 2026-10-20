@@ -4,13 +4,13 @@ import { Contact } from "@/components/contact";
 import { Experience } from "@/components/experience";
 import { Hero } from "@/components/hero";
 import { Nav } from "@/components/nav";
-import { SelectedWork } from "@/components/selected-work";
+import { SelectedWorkShelf } from "@/components/selected-work-shelf";
 import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
   title: "Portfolio v2 preview — Megh Gupta",
   description:
-    "Second preview of the portfolio with Lab and Writing hidden, and the About fold rebuilt as a horizontal personal-storytelling experience.",
+    "Second preview of the portfolio with Lab and Writing hidden, the About fold as horizontal personal-storytelling, and Selected Work as an interactive bookshelf.",
   robots: { index: false, follow: false },
 };
 
@@ -21,7 +21,7 @@ export default function PortfolioV2Preview() {
       <main>
         <Hero />
         <Experience />
-        <SelectedWork />
+        <SelectedWorkShelf />
         <AboutMe />
         <Contact />
       </main>
