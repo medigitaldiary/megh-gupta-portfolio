@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { SectionHeader } from "@/components/section-header";
 import {
   durationLabel,
@@ -518,12 +519,13 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
   const now = new Date();
   const nowYear = now.getFullYear() + now.getMonth() / 12;
   const earliest = Math.floor(Math.min(...items.map((i) => i.start)));
-  // Right edge = end of the current year (start of next year). No
-  // future-year labels floating past the data.
+  // Right edge = end of currentYear + 1 (today: 2027). "now" lands at
+  // ~92% of the band and the far-right year label anchors flush with
+  // the right edge via the -translate-x-full on the last marker.
   const latest = now.getFullYear() + 1;
   const span = latest - earliest;
   const yearMarkers: number[] = [];
-  for (let y = earliest; y < latest; y++) yearMarkers.push(y);
+  for (let y = earliest; y <= latest; y++) yearMarkers.push(y);
 
   const pct = (v: number) => ((v - earliest) / span) * 100;
   const nowPct = pct(nowYear);
@@ -679,17 +681,9 @@ function TimelineChip({
     top: `${topPx}px`,
     height: "52px",
   } as const;
-  const tooltip = item.summary ? (
-    <div
-      id={tipId}
-      role="tooltip"
-      className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 hidden w-max max-w-[280px] -translate-x-1/2 rounded-md bg-fg px-3 py-2 text-left text-xs leading-[1.4] text-accent-fg opacity-0 shadow-lg transition-opacity duration-100 group-hover:block group-hover:opacity-100 group-focus-within:block group-focus-within:opacity-100"
-    >
-      {item.summary}
-    </div>
-  ) : null;
+
   return (
-    <div className="group absolute" style={style}>
+    <ChipWithTooltip tipId={tipId} item={item} style={style}>
       {item.url ? (
         <a
           href={item.url}
@@ -704,7 +698,179 @@ function TimelineChip({
       ) : (
         chipInner
       )}
-      {tooltip}
+    </ChipWithTooltip>
+  );
+}
+
+// Chip wrapper + portal-rendered tooltip.
+//
+// The timeline band sits inside an `overflow-x-auto` scroller to allow
+// horizontal scroll on narrow screens; that scroller clips absolute
+// children on BOTH axes (an unavoidable CSS consequence of setting
+// overflow on either axis), which is why the old inline tooltip was
+// disappearing behind the folder. Portal-ing the tooltip to document.body
+// escapes the clip entirely. Position is measured from the chip's
+// bounding rect on each show + on scroll/resize while visible.
+function ChipWithTooltip({
+  tipId,
+  item,
+  style,
+  children,
+}: {
+  tipId: string;
+  item: TimelineItem;
+  style: React.CSSProperties;
+  children: React.ReactNode;
+}) {
+  const chipRef = useRef<HTMLDivElement | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [rect, setRect] = useState<DOMRect | null>(null);
+
+  useEffect(() => setMounted(true), []);
+
+  const show = () => {
+    const r = chipRef.current?.getBoundingClientRect();
+    if (!r) return;
+    setRect(r);
+    setOpen(true);
+  };
+  const hide = () => setOpen(false);
+
+  // Keep the tooltip glued to the chip while it's open (user may scroll
+  // or resize mid-hover).
+  useEffect(() => {
+    if (!open) return;
+    const update = () => {
+      const r = chipRef.current?.getBoundingClientRect();
+      if (r) setRect(r);
+    };
+    window.addEventListener("scroll", update, { capture: true, passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update, { capture: true });
+      window.removeEventListener("resize", update);
+    };
+  }, [open]);
+
+  return (
+    // The wrapper div only exists to catch hover/focus for tooltip
+    // positioning; the interactive child (the <a>) carries the semantic
+    // role.
+    // biome-ignore lint/a11y/noStaticElementInteractions: wrapper is non-interactive by design
+    <div
+      ref={chipRef}
+      className="absolute"
+      style={style}
+      onMouseEnter={show}
+      onMouseLeave={hide}
+      onFocusCapture={show}
+      onBlurCapture={hide}
+    >
+      {children}
+      {mounted && open && item.summary && rect
+        ? createPortal(
+            <TimelineTooltip tipId={tipId} item={item} chipRect={rect} />,
+            document.body,
+          )
+        : null}
     </div>
   );
+}
+
+function TimelineTooltip({
+  tipId,
+  item,
+  chipRect,
+}: {
+  tipId: string;
+  item: TimelineItem;
+  chipRect: DOMRect;
+}) {
+  // Tooltip visual size and gap from the chip. Width stays fixed so copy
+  // wraps consistently; height is content-driven.
+  const TIP_WIDTH = 280;
+  const GAP = 12;
+  const EDGE_PAD = 12;
+
+  const chipCenterX = chipRect.left + chipRect.width / 2;
+  const desiredLeft = chipCenterX - TIP_WIDTH / 2;
+  const maxLeft = window.innerWidth - TIP_WIDTH - EDGE_PAD;
+  const left = Math.max(EDGE_PAD, Math.min(desiredLeft, maxLeft));
+  // Notch stays under the chip even if the tooltip shifts to avoid an
+  // edge clip; clamp inside the tooltip body so it never pokes outside.
+  const notchLeftWithinTip = Math.max(
+    16,
+    Math.min(chipCenterX - left, TIP_WIDTH - 16),
+  );
+
+  const dateRange = formatTimelineRange(item);
+
+  return (
+    <div
+      id={tipId}
+      role="tooltip"
+      className="pointer-events-none fixed z-[70] motion-reduce:transition-none"
+      style={{
+        left,
+        top: chipRect.top - GAP,
+        width: TIP_WIDTH,
+        transform: "translateY(-100%)",
+        animation: "tl-tip-in 160ms ease-out both",
+      }}
+    >
+      <div className="rounded-[18px] border border-slate-200/70 bg-white/95 p-4 shadow-[0_12px_28px_-10px_rgba(15,23,42,0.18)] backdrop-blur-sm">
+        <p className="text-[15px] leading-relaxed text-slate-600">
+          {item.summary}
+        </p>
+        <div className="mt-3 border-slate-200/80 border-t pt-3">
+          <p className="font-mono text-[12px] tracking-wide text-slate-500">
+            {dateRange}
+          </p>
+        </div>
+      </div>
+
+      {/* Notch — a 10x10 rotated square clipped to its upper half, so it
+          reads as a downward-pointing arrow coming out of the tooltip's
+          bottom edge and aligned with the chip center. */}
+      <span
+        aria-hidden="true"
+        className="absolute block h-[10px] w-[10px] rotate-45 border-slate-200/70 border-right border-bottom bg-white/95"
+        style={{
+          left: notchLeftWithinTip - 5,
+          bottom: -5,
+          borderRightWidth: 1,
+          borderBottomWidth: 1,
+        }}
+      />
+      <style>{`
+        @keyframes tl-tip-in {
+          from { opacity: 0; transform: translateY(calc(-100% + 4px)); }
+          to   { opacity: 1; transform: translateY(-100%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          [role="tooltip"] { animation: none !important; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// Format a TimelineItem's decimal-year start/end into a readable range
+// like "Jun 2024 – Dec 2024" or "Jan 2026 – Present" (for the current
+// entry). Separate from the lib's formatDateRange because that one
+// takes string YYYY-MM inputs and we work in decimal-year here.
+function formatTimelineRange(item: TimelineItem): string {
+  const start = decimalYearToMonthYear(item.start);
+  const end = item.current ? "Present" : decimalYearToMonthYear(item.end);
+  return `${start} – ${end}`;
+}
+
+function decimalYearToMonthYear(decimal: number): string {
+  const year = Math.floor(decimal);
+  const monthIdx = Math.min(11, Math.max(0, Math.floor((decimal - year) * 12)));
+  const month = new Date(year, monthIdx).toLocaleString("en-US", {
+    month: "short",
+  });
+  return `${month} ${year}`;
 }
