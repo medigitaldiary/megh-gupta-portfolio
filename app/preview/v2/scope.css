@@ -16,8 +16,9 @@
   --font-oswald: var(--font-geist-sans);
   --font-satoshi: var(--font-geist-sans);
   --font-jetbrains-mono: var(--font-geist-sans);
-  --font-hand: var(--font-geist-sans);
-  --font-caveat: var(--font-geist-sans);
+  /* --font-hand intentionally NOT overridden — the Hero's "Hi, I am Megh"
+     greeting uses it via an inline style and should stay on Kalam. Same
+     reservation applies to any future scoped handwritten accent. */
 
   font-family: var(--font-geist-sans);
 }
