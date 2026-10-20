@@ -1,0 +1,24 @@
+/* ============================================================
+ * Preview v2 — font override layer
+ * ============================================================
+ *
+ * Scoped to .v2-scope. Flips the four leaf font variables that
+ * next/font/local sets on <body> (--font-oswald, --font-satoshi,
+ * --font-jetbrains-mono, --font-hand) so every Tailwind utility
+ * compiled against them (font-serif, font-sans, font-mono) resolves
+ * to Geist inside this subtree.
+ *
+ * Fonts only. Type scale, radii, and padding stay unchanged — this
+ * is a straight face swap, not the broader DS v1 experiment /preview/v2.1
+ * carries.
+ * -------------------------------------------------------------- */
+.v2-scope {
+  --font-oswald: var(--font-geist-sans);
+  --font-satoshi: var(--font-geist-sans);
+  --font-jetbrains-mono: var(--font-geist-sans);
+  /* --font-hand intentionally NOT overridden — the Hero's "Hi, I am Megh"
+     greeting uses it via an inline style and should stay on Kalam. Same
+     reservation applies to any future scoped handwritten accent. */
+
+  font-family: var(--font-geist-sans);
+}
