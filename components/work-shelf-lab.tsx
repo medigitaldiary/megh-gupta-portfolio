@@ -86,11 +86,21 @@ export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
         </div>
       </div>
 
-      {/* PREVIEW — AnimatePresence crossfade on active-book change */}
-      <div className="mt-12 md:mt-16">
-        <AnimatePresence mode="wait" initial={false}>
-          {active ? <ExpandedPreview key={active.slug} book={active} /> : null}
-        </AnimatePresence>
+      {/* PREVIEW — stable outer shell + inner crossfade.
+          - The outer panel mounts once (synced with the first book's
+            300ms lift) and NEVER unmounts, so switching books cannot
+            cause the layout to collapse/reopen.
+          - The inner content is keyed by slug inside AnimatePresence,
+            so title / description / metrics / cover crossfade in place
+            without the surrounding card moving. */}
+      <div className="relative z-20 mt-12 md:mt-16">
+        {active ? (
+          <PreviewShell>
+            <AnimatePresence mode="wait" initial={false}>
+              <PreviewContent key={active.slug} book={active} />
+            </AnimatePresence>
+          </PreviewShell>
+        ) : null}
       </div>
     </div>
   );
@@ -190,80 +200,100 @@ function Book({
   );
 }
 
-function ExpandedPreview({ book }: { book: ShelfBook }) {
+// Outer panel shell — mounts once, animates in from (opacity:0, y:20,
+// scale:0.95) at 300ms easeOut, perfectly syncing with the first book's
+// lift. Never unmounts while a book is active, so switching books
+// doesn't collapse the layout. shadow-xl matches the depth of the
+// lifted book.
+function PreviewShell({ children }: { children: React.ReactNode }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="mx-auto max-w-5xl rounded-3xl border border-border bg-[#F7F1E6] p-6 shadow-xl md:p-10"
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// Inner content — swaps when the slug changes. mode="wait" is set on
+// the parent AnimatePresence so the outgoing content finishes fading
+// before the incoming one begins, keeping the position stable.
+function PreviewContent({ book }: { book: ShelfBook }) {
   const metrics = book.supportingMetrics.slice(0, 3);
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 6 }}
-      transition={{ duration: 0.28, ease: [0.22, 0.61, 0.36, 1] }}
-      className="mx-auto max-w-5xl rounded-3xl border border-border bg-[#F7F1E6] p-6 shadow-[0_28px_55px_-24px_rgba(17,17,17,0.28)] md:p-10"
+      exit={{ opacity: 0, y: -4 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="grid gap-6 md:grid-cols-[220px_minmax(0,1fr)] md:gap-10"
     >
-      <div className="grid gap-6 md:grid-cols-[220px_minmax(0,1fr)] md:gap-10">
-        <div
-          className="relative mx-auto w-full max-w-[220px] overflow-hidden rounded-r-[4px] rounded-l-[2px] border border-border bg-bg-elevated shadow-[0_18px_30px_-14px_rgba(17,17,17,0.4)]"
-          style={{ aspectRatio: "2 / 3" }}
-        >
-          {book.coverImage ? (
-            <Image
-              src={book.coverImage}
-              alt=""
-              fill
-              sizes="220px"
-              className="object-cover"
-            />
-          ) : null}
-          <span
-            aria-hidden="true"
-            className={`absolute inset-y-0 left-0 w-2 ${book.spineColor}`}
-            style={{ boxShadow: "inset -2px 0 3px rgba(0,0,0,0.15)" }}
+      <div
+        className="relative mx-auto w-full max-w-[220px] overflow-hidden rounded-r-[4px] rounded-l-[2px] border border-border bg-bg-elevated shadow-[0_18px_30px_-14px_rgba(17,17,17,0.4)]"
+        style={{ aspectRatio: "2 / 3" }}
+      >
+        {book.coverImage ? (
+          <Image
+            src={book.coverImage}
+            alt=""
+            fill
+            sizes="220px"
+            className="object-cover"
           />
-          <span
-            aria-hidden="true"
-            className="absolute inset-y-0 right-0 w-[3px] bg-[#F3EBD9]"
-          />
-        </div>
+        ) : null}
+        <span
+          aria-hidden="true"
+          className={`absolute inset-y-0 left-0 w-2 ${book.spineColor}`}
+          style={{ boxShadow: "inset -2px 0 3px rgba(0,0,0,0.15)" }}
+        />
+        <span
+          aria-hidden="true"
+          className="absolute inset-y-0 right-0 w-[3px] bg-[#F3EBD9]"
+        />
+      </div>
 
-        <div className="min-w-0">
-          <p className="font-mono text-xs uppercase tracking-[0.14em] text-accent">
-            {book.eyebrow} · {book.company}
-          </p>
-          <h3 className="mt-3 font-serif text-2xl leading-tight text-fg md:text-[2rem]">
-            {book.title}
-          </h3>
-          <p className="mt-3 text-base leading-relaxed text-fg-muted md:text-lg">
-            {book.oneLiner}
-          </p>
+      <div className="min-w-0">
+        <p className="font-mono text-xs uppercase tracking-[0.14em] text-accent">
+          {book.eyebrow} · {book.company}
+        </p>
+        <h3 className="mt-3 font-serif text-2xl leading-tight text-fg md:text-[2rem]">
+          {book.title}
+        </h3>
+        <p className="mt-3 text-base leading-relaxed text-fg-muted md:text-lg">
+          {book.oneLiner}
+        </p>
 
-          {metrics.length ? (
-            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {metrics.map((m) => (
-                <MetricTile key={m} raw={m} />
-              ))}
-            </div>
-          ) : book.headlineMetric ? (
-            <div className="mt-6 rounded-xl border border-border bg-bg-elevated p-4">
-              <p className="font-serif text-xl leading-snug text-fg md:text-2xl">
-                {book.headlineMetric}
-              </p>
-            </div>
-          ) : null}
-
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-            <span className="font-mono text-xs text-fg-subtle">
-              {book.role} · {book.timeline}
-            </span>
-            <Link
-              href={`/work/${book.slug}`}
-              className="inline-flex items-center gap-2 rounded-full bg-fg px-5 py-2.5 text-sm font-medium text-bg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-2"
-            >
-              View case study
-              <span aria-hidden="true" className="font-mono">
-                →
-              </span>
-            </Link>
+        {metrics.length ? (
+          <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {metrics.map((m) => (
+              <MetricTile key={m} raw={m} />
+            ))}
           </div>
+        ) : book.headlineMetric ? (
+          <div className="mt-6 rounded-xl border border-border bg-bg-elevated p-4">
+            <p className="font-serif text-xl leading-snug text-fg md:text-2xl">
+              {book.headlineMetric}
+            </p>
+          </div>
+        ) : null}
+
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+          <span className="font-mono text-xs text-fg-subtle">
+            {book.role} · {book.timeline}
+          </span>
+          <Link
+            href={`/work/${book.slug}`}
+            className="inline-flex items-center gap-2 rounded-full bg-fg px-5 py-2.5 text-sm font-medium text-bg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-2"
+          >
+            View case study
+            <span aria-hidden="true" className="font-mono">
+              →
+            </span>
+          </Link>
         </div>
       </div>
     </motion.div>
