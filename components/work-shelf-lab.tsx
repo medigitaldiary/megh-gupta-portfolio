@@ -175,15 +175,21 @@ export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
           })}
         </div>
 
-        {/* Shelf — three-layer wooden plank directly under the books */}
-        <div aria-hidden="true" className="relative z-0 w-full">
-          {/* top surface — where books rest */}
-          <div className="h-4 w-full bg-[#D4B895]" />
-          {/* front edge */}
-          <div className="h-3 w-full bg-[#A67B5B] shadow-md" />
-          {/* ambient wall shadow (reaches upward with a negative margin
-              so it doesn't push following content down) */}
-          <div className="mt-[-10px] h-10 w-full bg-black/15 blur-xl" />
+        {/* Shelf — photorealistic wood plank asset. Pulled up with a
+            negative margin so the top wood edge sits just under the
+            books' baseline (they overlap it, reads as resting on it).
+            -z-10 keeps the books in front. The image carries its own
+            baked-in wall shadow, so no stacked blur layers needed. */}
+        <div aria-hidden="true" className="relative -z-10 -mt-3 w-full">
+          <Image
+            src="/images/shelf/wood-shelf.webp"
+            alt=""
+            width={1600}
+            height={240}
+            sizes="100vw"
+            className="h-auto w-full select-none"
+            priority={false}
+          />
         </div>
 
         {/* Preview — absolutely positioned over the stage, anchored to
