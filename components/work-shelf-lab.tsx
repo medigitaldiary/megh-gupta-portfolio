@@ -1,8 +1,9 @@
 "use client";
 
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { WorkCard } from "@/lib/work";
 
 export type ShelfBook = WorkCard & {
@@ -12,39 +13,47 @@ export type ShelfBook = WorkCard & {
 };
 
 // =====================================================================
-// Fold 3 — Editorial bookshelf (LAB)
+// Fold 3 — Editorial bookshelf (LAB · motion-driven)
 // =====================================================================
-// Architectural rules this version enforces (why the previous attempts
-// looked messy):
+// Interaction contract
+// --------------------
+//  - Default state: books rest on a wooden shelf with a small randomized
+//    tilt. Each book is a physical object with a visible spine.
+//  - Hover (desktop) / Tap (mobile) activates a book: it lifts, scales,
+//    straightens to exactly 0°, and gets a deeper shadow. Neighbors stay
+//    on the shelf but dim.
+//  - A connected preview panel sits below the shelf and transitions its
+//    content between active books via AnimatePresence crossfade.
+//  - Sticky-active (first book) so the preview is always present and
+//    pointing at it never collapses the state.
 //
-//  R1. NEVER put overflow:auto on a container that holds 3D transforms.
-//      Any overflow other than visible flattens preserve-3d and clips
-//      translateZ. On desktop we fit 6 books natively; on mobile we
-//      switch to a wrap/stack, not a scroll.
-//
-//  R2. Perspective lives on the .stage element, which has NO overflow
-//      and NO transforms of its own, so the vanishing point is honored
-//      and children with translateZ don't get clipped.
-//
-//  R3. Books physically overlap (negative margin between neighbours),
-//      so they lean into each other like real books on a shelf. The
-//      active book lifts out of the row and the gap closes behind it
-//      from the neighbours already touching.
-//
-//  R4. The preview is a separate section BELOW the shelf. It does NOT
-//      negative-margin into the shelf (that was collapsing onto the
-//      lifted book). The connection is purely visual: the panel's left
-//      column is a 2× cover echo with the same spine color + paper
-//      strip as the shelf book.
-//
-//  R5. Sticky-active state. Default to the first book. Hovering the
-//      preview can't collapse it (there's no pointer dependency on the
-//      panel). Zero flicker.
+// Architectural rules (same as the previous lab commit — these ARE the
+// fixes to the "it's messy" problem):
+//  R1. Perspective lives on a container with NO overflow and NO
+//      transforms, so translateZ isn't clipped and preserve-3d holds.
+//  R2. Books physically overlap via negative margin on the row items
+//      themselves (not the stage), so leaning behaves like a shelf.
+//  R3. Horizontal scroll is on the OUTER container only, which has no
+//      3D context — the inner row never clips the lifted book.
 // =====================================================================
 
 const BOOK_W = 170;
 const BOOK_H = 255;
-const BOOK_OVERLAP = 18; // px of negative margin — books lean into each other
+const BOOK_OVERLAP = 18;
+
+// Deterministic tilt per book so SSR hydration matches client render.
+function restTilt(seedKey: string, provided?: number): number {
+  if (typeof provided === "number") {
+    return Math.max(-6, Math.min(6, provided * 4));
+  }
+  // Simple string hash → [-6°, +6°]
+  let h = 0;
+  for (let i = 0; i < seedKey.length; i++) {
+    h = (h * 31 + seedKey.charCodeAt(i)) | 0;
+  }
+  const v = ((h % 1000) / 1000) * 12 - 6;
+  return Math.round(v * 10) / 10;
+}
 
 export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
   const [activeIdx, setActiveIdx] = useState(0);
@@ -61,86 +70,77 @@ export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
   const activate = useCallback((i: number) => setActiveIdx(i), []);
   const active = books[activeIdx] ?? null;
 
+  const tilts = useMemo(
+    () => books.map((b) => restTilt(b.slug, b.leanDeg)),
+    [books],
+  );
+
   return (
     <div className="mt-12 md:mt-16">
-      <style>{`
-        @keyframes shelf-lab-preview-in {
-          from { opacity: 0; transform: translateY(6px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          [data-shelf-lab-book], [data-shelf-lab-preview] {
-            transition: none !important;
-            animation: none !important;
-            transform: none !important;
-          }
-        }
-      `}</style>
-
-      {/* STAGE — perspective lives here. No overflow, no transforms.
-          Padding gives the lifted book room to rise + cast shadow. */}
-      <div
-        className="stage relative"
-        style={{
-          perspective: "1600px",
-          perspectiveOrigin: "50% 80%",
-          paddingTop: 56,
-          paddingBottom: 0,
-        }}
-      >
-        {/* ROW — flex, centered, no scroll. Books overlap via negative
-            margin on each sibling except the first. On mobile we switch
-            to a wrap grid so nothing overflows. */}
+      {/* OUTER scroll container. Horizontal overflow is here, where there
+          are no 3D transforms, so it cannot flatten the stage. */}
+      <div className="shelf-scroll relative overflow-x-auto overflow-y-visible pb-3">
+        {/* STAGE — perspective + preserve-3d. NO overflow of its own.
+            min-width so narrower viewports engage the scroll on the
+            outer wrapper rather than squeezing the books. */}
         <div
-          className={
-            isMobile
-              ? "flex flex-wrap justify-center gap-3"
-              : "flex justify-center items-end"
-          }
+          className="stage relative mx-auto"
+          style={{
+            perspective: "1600px",
+            perspectiveOrigin: "50% 80%",
+            paddingTop: 72,
+            paddingBottom: 2,
+            minWidth: isMobile
+              ? undefined
+              : BOOK_W * books.length - BOOK_OVERLAP * (books.length - 1) + 80,
+            width: "fit-content",
+          }}
         >
-          {books.map((book, i) => (
-            <div
-              key={book.slug}
-              className="relative"
-              style={{
-                marginLeft: !isMobile && i > 0 ? -BOOK_OVERLAP : undefined,
-                zIndex: i === activeIdx ? 30 : books.length - i,
-              }}
-            >
-              <Book
-                book={book}
-                active={i === activeIdx}
-                dim={activeIdx !== i}
-                onHover={() => !isMobile && activate(i)}
-                onFocus={() => activate(i)}
-                onTap={() => isMobile && activate(i)}
-              />
-            </div>
-          ))}
-        </div>
+          <div className="flex items-end justify-center">
+            {books.map((book, i) => (
+              <div
+                key={book.slug}
+                className="relative"
+                style={{
+                  marginLeft: i > 0 ? -BOOK_OVERLAP : undefined,
+                  zIndex: i === activeIdx ? 30 : books.length - i,
+                }}
+              >
+                <Book
+                  book={book}
+                  tilt={tilts[i]}
+                  active={i === activeIdx}
+                  dim={activeIdx !== i}
+                  onHover={() => !isMobile && activate(i)}
+                  onFocus={() => activate(i)}
+                  onTap={() => isMobile && activate(i)}
+                />
+              </div>
+            ))}
+          </div>
 
-        {/* SHELF — hairline + wooden strip grounds the row */}
-        <div aria-hidden="true" className="mt-2 h-px w-full bg-fg/70" />
-        <div
-          aria-hidden="true"
-          className="mx-auto h-3 w-[98%] rounded-b-md bg-gradient-to-b from-[#C9A979] to-[#8E6B3D] shadow-[0_8px_18px_-10px_rgba(17,17,17,0.4)]"
-        />
+          {/* SHELF LINE + WOODEN STRIP */}
+          <div aria-hidden="true" className="mt-2 h-px w-full bg-fg/70" />
+          <div
+            aria-hidden="true"
+            className="mx-auto h-3 w-full rounded-b-md bg-gradient-to-b from-[#C9A979] to-[#8E6B3D] shadow-[0_10px_20px_-10px_rgba(17,17,17,0.4)]"
+          />
+        </div>
       </div>
 
-      {/* PREVIEW — docked beneath the shelf with normal spacing. The
-          connection to the shelf is the cover echo on the left, not an
-          overlapping position. */}
-      {active ? (
-        <div className="mt-10 md:mt-14">
-          <ExpandedPreview key={active.slug} book={active} />
-        </div>
-      ) : null}
+      {/* PREVIEW — docked below. Content crossfades across active books. */}
+      <div className="mt-10 md:mt-14">
+        <AnimatePresence mode="wait" initial={false}>
+          {active ? <ExpandedPreview key={active.slug} book={active} /> : null}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
 
 function Book({
   book,
+  tilt,
   active,
   dim,
   onHover,
@@ -148,23 +148,17 @@ function Book({
   onTap,
 }: {
   book: ShelfBook;
+  tilt: number;
   active: boolean;
   dim: boolean;
   onHover: () => void;
   onFocus: () => void;
   onTap: () => void;
 }) {
-  // At rest: ~10° rotateY so each book shows a sliver of its side face
-  // (physical object), with a hint of Z rotation for human-irregularity.
-  const rawLean = book.leanDeg ?? 0;
-  const restRotY = Math.max(-10, Math.min(10, rawLean * 5));
-  const restRotZ = Math.max(-1, Math.min(1, rawLean * 0.5));
-
-  const rotY = active ? 0 : restRotY;
-  const rotZ = active ? 0 : restRotZ;
-  const translateZ = active ? 70 : 0;
-  const translateY = active ? -22 : 0;
-  const scale = active ? 1.05 : 1;
+  // Convert the rest tilt into rotateY (showing a side face) + a touch of
+  // rotateZ for human-irregularity. Active book straightens to 0 on both.
+  const restRotY = tilt;
+  const restRotZ = tilt * 0.15;
 
   return (
     <Link
@@ -179,27 +173,34 @@ function Book({
           onTap();
         }
       }}
-      style={{
-        width: BOOK_W,
-        transition: "opacity 240ms ease-out, filter 240ms ease-out",
-        opacity: dim ? 0.78 : 1,
-        filter: dim ? "saturate(0.9) brightness(0.97)" : "none",
-      }}
+      style={{ width: BOOK_W }}
     >
-      <div
-        data-shelf-lab-book
+      <motion.div
+        animate={{
+          rotateY: active ? 0 : restRotY,
+          rotateZ: active ? 0 : restRotZ,
+          y: active ? -24 : 0,
+          z: active ? 80 : 0,
+          scale: active ? 1.06 : 1,
+          opacity: dim ? 0.78 : 1,
+          filter: dim ? "saturate(0.9) brightness(0.97)" : "saturate(1)",
+          boxShadow: active
+            ? "0 36px 56px -22px rgba(17,17,17,0.5), 0 10px 16px -8px rgba(17,17,17,0.3)"
+            : "0 14px 22px -14px rgba(17,17,17,0.5), 0 2px 4px -2px rgba(17,17,17,0.25)",
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 260,
+          damping: 26,
+          mass: 0.8,
+        }}
         className="relative overflow-hidden rounded-r-[3px] rounded-l-[1px] border border-border bg-bg-elevated"
         style={{
           width: BOOK_W,
           height: BOOK_H,
           transformStyle: "preserve-3d",
-          transform: `translateY(${translateY}px) translateZ(${translateZ}px) rotateY(${rotY}deg) rotateZ(${rotZ}deg) scale(${scale})`,
           transformOrigin: "bottom center",
-          transition:
-            "transform 360ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 360ms ease-out",
-          boxShadow: active
-            ? "0 32px 50px -22px rgba(17,17,17,0.5), 0 10px 16px -8px rgba(17,17,17,0.3)"
-            : "0 14px 22px -14px rgba(17,17,17,0.5), 0 2px 4px -2px rgba(17,17,17,0.25)",
+          willChange: "transform",
         }}
       >
         {book.coverImage ? (
@@ -227,7 +228,7 @@ function Book({
           aria-hidden="true"
           className="absolute inset-y-0 right-0 w-[3px] bg-[#F3EBD9]"
         />
-      </div>
+      </motion.div>
       <span
         aria-hidden="true"
         className="pointer-events-none mt-2 block h-0.5 w-full rounded-full bg-transparent transition-colors duration-150 group-focus-visible:bg-accent"
@@ -239,10 +240,12 @@ function Book({
 function ExpandedPreview({ book }: { book: ShelfBook }) {
   const metrics = book.supportingMetrics.slice(0, 3);
   return (
-    <div
-      data-shelf-lab-preview
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      transition={{ duration: 0.24, ease: [0.22, 0.61, 0.36, 1] }}
       className="mx-auto max-w-5xl rounded-3xl border border-border bg-[#F7F1E6] p-6 shadow-[0_28px_55px_-24px_rgba(17,17,17,0.28)] md:p-10"
-      style={{ animation: "shelf-lab-preview-in 260ms ease-out both" }}
     >
       <div className="grid gap-6 md:grid-cols-[220px_minmax(0,1fr)] md:gap-10">
         <div
@@ -310,7 +313,7 @@ function ExpandedPreview({ book }: { book: ShelfBook }) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
