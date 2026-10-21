@@ -3,7 +3,13 @@
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import type { WorkCard } from "@/lib/work";
 
 export type ShelfBook = WorkCard & {
@@ -15,38 +21,60 @@ export type ShelfBook = WorkCard & {
 // =====================================================================
 // Fold 3 — Editorial bookshelf (LAB)
 // =====================================================================
+// Geometry
+// --------
+//  Each "book" is a real 3D object with four faces:
+//    front cover   → artwork, translateZ(+10)
+//    back cover    → dark, translateZ(-10)
+//    spine         → left edge, rotateY(-90), width 20
+//    pages         → right edge, rotateY(+90), width 20
+//  The whole thing has transformStyle: preserve-3d, and the parent
+//  container defines a shared perspective (1200px) so every book sits
+//  in the same viewing plane.
+//
+// Shelf
+// -----
+//  Three-layer wooden plank directly beneath the books' baseline:
+//    top surface  #D4B895 (h-4)
+//    front edge   #A67B5B (h-3, shadow)
+//    wall shadow  black/15 blur-xl (h-10, overlaps upward)
+//
+// Preview
+// -------
+//  The preview is ABSOLUTELY positioned relative to the stage, not a
+//  sibling below. We measure the active book's bounding rect, place
+//  the preview so it slides out from behind the book's right edge:
+//    initial { opacity:0, x:-50, scale:0.9 }
+//    animate { opacity:1, x:+20, scale:1   }
+//  It overlaps the muted background books and never affects document
+//  flow — so no vertical layout shift when it appears / disappears.
+//
 // Interaction
 // -----------
-//  Default (no hover): all books tilted on the shelf, no preview card.
-//  Hover a book        -> that book straightens to 0°, lifts, scales up;
-//                         neighbours dim to 0.5 + scale 0.95; preview
-//                         card animates in beneath the shelf.
-//  Move between books  -> row-level hover state cancels the dismiss, so
-//                         gliding book → book never collapses the panel;
-//                         inner content crossfades, outer card stays.
-//  Mouse leaves row    -> after a short grace, dismiss both the lift and
-//                         the preview card.
-//  Tap (mobile)        -> toggles active for that book.
-//
-// Layout stability
-// ----------------
-//  The outer container reserves a stable min-height so mounting /
-//  unmounting the preview never shifts the page below. Horizontal
-//  padding on the row prevents edge books from being clipped when
-//  they scale up on hover.
+//  Default: no active book → shelf shows all books tilted on their
+//  spines, no preview.
+//  Hover (desktop) / tap (mobile): active book straightens + lifts +
+//  pulls forward (translateZ 50), neighbours dim to 0.4 and recede
+//  (translateZ -20, scale 0.9), preview emerges.
+//  Dismiss timer with cancel-on-enter prevents flicker.
 // =====================================================================
 
-const BOOK_W = 160;
-const BOOK_H = 240;
-const DISMISS_MS = 160;
+const BOOK_W = 150;
+const BOOK_H = 230;
+const BOOK_DEPTH = 20; // spine + pages width
+const PREVIEW_W = 480;
+const DISMISS_MS = 180;
 
-// Alternating default tilts (used if a book has no leanDeg).
-const TILT_PATTERN = [-4, 3, -3, 4, -4, 2, -3, 3, -4, 2];
+const TILT_PATTERN = [-10, 8, -8, 10, -9, 7, -10, 8];
+const EASE = [0.25, 1, 0.5, 1] as const;
 
 export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [previewLeft, setPreviewLeft] = useState<number | null>(null);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const bookRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const stageRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
@@ -63,6 +91,11 @@ export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
     }
   }, []);
 
+  const scheduleDismiss = useCallback(() => {
+    clearDismiss();
+    dismissTimer.current = setTimeout(() => setActiveIdx(null), DISMISS_MS);
+  }, [clearDismiss]);
+
   const activate = useCallback(
     (i: number) => {
       clearDismiss();
@@ -71,41 +104,63 @@ export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
     [clearDismiss],
   );
 
-  const scheduleDismiss = useCallback(() => {
-    clearDismiss();
-    dismissTimer.current = setTimeout(() => setActiveIdx(null), DISMISS_MS);
-  }, [clearDismiss]);
-
   const toggleMobile = useCallback((i: number) => {
     setActiveIdx((cur) => (cur === i ? null : i));
   }, []);
 
   useEffect(() => () => clearDismiss(), [clearDismiss]);
 
+  // Measure the active book's right edge within the stage so the
+  // preview can anchor to it (no layout shift, no document flow).
+  useLayoutEffect(() => {
+    if (activeIdx == null || !stageRef.current) {
+      setPreviewLeft(null);
+      return;
+    }
+    const bookEl = bookRefs.current[activeIdx];
+    if (!bookEl) return;
+    const stageRect = stageRef.current.getBoundingClientRect();
+    const bookRect = bookEl.getBoundingClientRect();
+    // Right edge of the book, relative to the stage.
+    let left = bookRect.right - stageRect.left;
+    // If the preview would overflow the right side of the stage, flip
+    // it to the LEFT of the book instead.
+    if (left + PREVIEW_W > stageRect.width) {
+      left = bookRect.left - stageRect.left - PREVIEW_W;
+    }
+    setPreviewLeft(left);
+  }, [activeIdx]);
+
   const active = activeIdx != null ? (books[activeIdx] ?? null) : null;
 
   return (
-    // Wrapper reserves vertical room so preview mount/unmount cannot
-    // shift the folds below. min-height = shelf stage + preview card.
-    <div className="mt-12 md:mt-16" style={{ minHeight: 760 }}>
-      {/* Shelf + books */}
-      <div className="relative flex w-full flex-col pt-20">
-        {/* Books row — items-end so bottoms align with shelf top.
-            px-12 keeps edge books from clipping when they scale up on
-            hover. onMouseLeave on the row (not per-book) schedules the
-            dismiss, so gliding between neighbours never flickers. */}
+    // Stable min-height so preview mount/unmount cannot shift the
+    // folds below.
+    <div className="mt-12 md:mt-16" style={{ minHeight: 560 }}>
+      <div
+        ref={stageRef}
+        className="relative mx-auto w-full max-w-6xl"
+        style={{ perspective: "1200px" }}
+      >
+        {/* Books row — items-end aligns bottoms with shelf top.
+            px-12 keeps edge books from clipping on scale.
+            Row-level onMouseLeave schedules dismiss once the pointer
+            exits BOTH the books and the preview area. */}
         {/* biome-ignore lint/a11y/noStaticElementInteractions: pointer-leave on the shelf row is purely decorative; keyboard dismissal is handled per-book via onBlur. */}
         <div
-          className="relative z-10 mx-auto flex w-full max-w-6xl flex-row items-end justify-center gap-2 overflow-visible px-12 pb-0 md:gap-4"
+          className="relative z-10 flex w-full flex-row items-end justify-center gap-6 px-12 pt-24 pb-0"
           onMouseLeave={() => !isMobile && scheduleDismiss()}
         >
           {books.map((book, i) => {
             const tilt =
               typeof book.leanDeg === "number"
-                ? Math.max(-6, Math.min(6, book.leanDeg * 1.5))
+                ? Math.max(-12, Math.min(12, book.leanDeg * 2.5))
                 : TILT_PATTERN[i % TILT_PATTERN.length];
             return (
               <Book
+                ref={(el) => {
+                  bookRefs.current[i] = el;
+                }}
                 key={book.slug}
                 book={book}
                 tilt={tilt}
@@ -120,30 +175,57 @@ export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
           })}
         </div>
 
-        {/* Shelf — three-layer plank directly under the books' baseline */}
-        <div aria-hidden="true" className="relative z-0 h-12 w-full">
-          <div className="absolute top-0 h-4 w-full bg-[#C19A6B]" />
-          <div className="absolute top-4 h-3 w-full border-t border-[#5C3A21]/30 bg-[#8B5A2B]" />
-          <div className="absolute top-7 h-8 w-full bg-black/10 blur-md" />
+        {/* Shelf — three-layer wooden plank directly under the books */}
+        <div aria-hidden="true" className="relative z-0 w-full">
+          {/* top surface — where books rest */}
+          <div className="h-4 w-full bg-[#D4B895]" />
+          {/* front edge */}
+          <div className="h-3 w-full bg-[#A67B5B] shadow-md" />
+          {/* ambient wall shadow (reaches upward with a negative margin
+              so it doesn't push following content down) */}
+          <div className="mt-[-10px] h-10 w-full bg-black/15 blur-xl" />
         </div>
-      </div>
 
-      {/* Preview — only present when a book is active. */}
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: pointer-enter on the preview container keeps the dismiss timer paused so the panel stays open while hovered; keyboard dismissal is handled per-book via onBlur. */}
-      <div
-        className="relative z-20 mt-10 md:mt-12"
-        onMouseEnter={clearDismiss}
-        onMouseLeave={() => !isMobile && scheduleDismiss()}
-      >
-        <AnimatePresence mode="wait" initial={false}>
-          {active ? <PreviewCard key={active.slug} book={active} /> : null}
-        </AnimatePresence>
+        {/* Preview — absolutely positioned over the stage, anchored to
+            the active book's right edge. z-40 so it floats above the
+            dimmed neighbours. No effect on document flow. */}
+        {/* biome-ignore lint/a11y/noStaticElementInteractions: pointer-enter cancels the dismiss timer so the panel stays open while hovered; keyboard dismissal is handled per-book via onBlur. */}
+        <div
+          className="pointer-events-none absolute inset-0 z-40"
+          onMouseEnter={clearDismiss}
+          onMouseLeave={() => !isMobile && scheduleDismiss()}
+        >
+          <AnimatePresence>
+            {active && previewLeft != null ? (
+              <motion.div
+                key={active.slug}
+                className="pointer-events-auto absolute"
+                style={{
+                  top: 80, // starts just below the stage's top padding
+                  left: previewLeft,
+                  width: PREVIEW_W,
+                  zIndex: 40,
+                }}
+                initial={{ opacity: 0, x: -50, scale: 0.9 }}
+                animate={{ opacity: 1, x: 20, scale: 1 }}
+                exit={{ opacity: 0, x: -30, scale: 0.9 }}
+                transition={{ duration: 0.35, ease: EASE }}
+              >
+                <PreviewCard book={active} />
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
 }
 
+// ---------------------------------------------------------------------
+// 3D HARDCOVER BOOK — four faces composed in preserve-3d
+// ---------------------------------------------------------------------
 function Book({
+  ref,
   book,
   tilt,
   active,
@@ -153,6 +235,7 @@ function Book({
   onBlur,
   onTap,
 }: {
+  ref: (el: HTMLDivElement | null) => void;
   book: ShelfBook;
   tilt: number;
   active: boolean;
@@ -181,134 +264,132 @@ function Book({
       style={{ width: BOOK_W, zIndex: active ? 50 : 1 }}
     >
       <motion.div
-        className="relative overflow-hidden rounded-r-[3px] rounded-l-[1px] border border-border bg-bg-elevated"
+        ref={ref}
+        className="relative"
         initial={false}
         animate={{
-          rotate: active ? 0 : tilt,
-          y: active ? -20 : 0,
-          scale: active ? 1.05 : isDim ? 0.95 : 1,
-          opacity: isDim ? 0.5 : 1,
-          boxShadow: active
-            ? "0 25px 50px -12px rgba(0,0,0,0.35), 0 10px 20px -8px rgba(0,0,0,0.25)"
-            : "0 10px 20px -10px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.2)",
+          rotateY: active ? 0 : tilt,
+          y: active ? -30 : 0,
+          z: active ? 50 : isDim ? -20 : 0,
+          scale: active ? 1.1 : isDim ? 0.9 : 1,
+          opacity: isDim ? 0.4 : 1,
         }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
+        transition={{ duration: 0.4, ease: EASE }}
         style={{
           width: BOOK_W,
           height: BOOK_H,
+          transformStyle: "preserve-3d",
           transformOrigin: "bottom center",
           willChange: "transform",
+          filter: active
+            ? "drop-shadow(0 25px 25px rgba(0,0,0,0.25)) drop-shadow(0 10px 10px rgba(0,0,0,0.15))"
+            : "drop-shadow(0 8px 10px rgba(0,0,0,0.25))",
         }}
       >
-        {book.coverImage ? (
-          <Image
-            src={book.coverImage}
-            alt=""
-            fill
-            sizes="160px"
-            className="object-cover"
-            priority={false}
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-end p-3">
-            <h3 className="font-serif text-base leading-tight text-fg">
-              {book.title}
-            </h3>
-          </div>
-        )}
-        {/* Spine */}
-        <span
-          aria-hidden="true"
-          className={`absolute inset-y-0 left-0 w-2 ${book.spineColor}`}
-          style={{ boxShadow: "inset -2px 0 3px rgba(0,0,0,0.15)" }}
-        />
-        {/* Paper block hint */}
-        <span
-          aria-hidden="true"
-          className="absolute inset-y-0 right-0 w-[3px] bg-[#F3EBD9]"
-        />
-      </motion.div>
-    </Link>
-  );
-}
-
-function PreviewCard({ book }: { book: ShelfBook }) {
-  const metrics = book.supportingMetrics.slice(0, 3);
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-      className="mx-auto max-w-5xl rounded-3xl border border-border bg-[#F7F1E6] p-6 shadow-xl md:p-10"
-    >
-      <div className="grid gap-6 md:grid-cols-[220px_minmax(0,1fr)] md:gap-10">
+        {/* FRONT COVER */}
         <div
-          className="relative mx-auto w-full max-w-[220px] overflow-hidden rounded-r-[4px] rounded-l-[2px] border border-border bg-bg-elevated shadow-[0_18px_30px_-14px_rgba(17,17,17,0.4)]"
-          style={{ aspectRatio: "2 / 3" }}
+          className="absolute inset-0 overflow-hidden rounded-r-[3px] rounded-l-[1px] border border-border bg-bg-elevated"
+          style={{ zIndex: 10, transform: "translateZ(10px)" }}
         >
           {book.coverImage ? (
             <Image
               src={book.coverImage}
               alt=""
               fill
-              sizes="220px"
+              sizes="150px"
               className="object-cover"
+              priority={false}
             />
-          ) : null}
-          <span
-            aria-hidden="true"
-            className={`absolute inset-y-0 left-0 w-2 ${book.spineColor}`}
-            style={{ boxShadow: "inset -2px 0 3px rgba(0,0,0,0.15)" }}
-          />
-          <span
-            aria-hidden="true"
-            className="absolute inset-y-0 right-0 w-[3px] bg-[#F3EBD9]"
-          />
+          ) : (
+            <div className="absolute inset-0 flex items-end p-3">
+              <h3 className="font-serif text-base leading-tight text-fg">
+                {book.title}
+              </h3>
+            </div>
+          )}
         </div>
 
-        <div className="min-w-0">
-          <p className="font-mono text-xs uppercase tracking-[0.14em] text-accent">
-            {book.eyebrow} · {book.company}
-          </p>
-          <h3 className="mt-3 font-serif text-2xl leading-tight text-fg md:text-[2rem]">
-            {book.title}
-          </h3>
-          <p className="mt-3 text-base leading-relaxed text-fg-muted md:text-lg">
-            {book.oneLiner}
-          </p>
+        {/* SPINE (left edge, rotated out of the plane) */}
+        <div
+          aria-hidden="true"
+          className={`absolute left-0 top-0 h-full ${book.spineColor}`}
+          style={{
+            width: BOOK_DEPTH,
+            transformOrigin: "left center",
+            transform: `rotateY(-90deg) translateX(-${BOOK_DEPTH / 2}px)`,
+            boxShadow: "inset -2px 0 4px rgba(0,0,0,0.3)",
+          }}
+        />
 
-          {metrics.length ? (
-            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {metrics.map((m) => (
-                <MetricTile key={m} raw={m} />
-              ))}
-            </div>
-          ) : book.headlineMetric ? (
-            <div className="mt-6 rounded-xl border border-border bg-bg-elevated p-4">
-              <p className="font-serif text-xl leading-snug text-fg md:text-2xl">
-                {book.headlineMetric}
-              </p>
-            </div>
-          ) : null}
+        {/* PAGES (right edge) */}
+        <div
+          aria-hidden="true"
+          className="absolute right-0 top-0 h-full bg-[#F4F4F0]"
+          style={{
+            width: BOOK_DEPTH,
+            transformOrigin: "right center",
+            transform: `rotateY(90deg) translateX(${BOOK_DEPTH / 2}px)`,
+            boxShadow: "inset 2px 0 4px rgba(0,0,0,0.1)",
+          }}
+        />
 
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-            <span className="font-mono text-xs text-fg-subtle">
-              {book.role} · {book.timeline}
-            </span>
-            <Link
-              href={`/work/${book.slug}`}
-              className="inline-flex items-center gap-2 rounded-full bg-fg px-5 py-2.5 text-sm font-medium text-bg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-2"
-            >
-              View case study
-              <span aria-hidden="true" className="font-mono">
-                →
-              </span>
-            </Link>
-          </div>
+        {/* BACK COVER */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 rounded-r-[3px] rounded-l-[1px] bg-[#2a2521]"
+          style={{ zIndex: 0, transform: "translateZ(-10px)" }}
+        />
+      </motion.div>
+    </Link>
+  );
+}
+
+// ---------------------------------------------------------------------
+// PREVIEW CARD — content shown when a book is active
+// ---------------------------------------------------------------------
+function PreviewCard({ book }: { book: ShelfBook }) {
+  const metrics = book.supportingMetrics.slice(0, 3);
+  return (
+    <div className="rounded-2xl border border-border bg-[#F7F1E6] p-5 shadow-2xl md:p-6">
+      <p className="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-accent">
+        {book.eyebrow} · {book.company}
+      </p>
+      <h3 className="mt-2 font-serif text-xl leading-tight text-fg md:text-2xl">
+        {book.title}
+      </h3>
+      <p className="mt-2 text-sm leading-relaxed text-fg-muted">
+        {book.oneLiner}
+      </p>
+
+      {metrics.length ? (
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          {metrics.map((m) => (
+            <MetricTile key={m} raw={m} />
+          ))}
         </div>
+      ) : book.headlineMetric ? (
+        <div className="mt-4 rounded-lg border border-border bg-bg-elevated p-3">
+          <p className="font-serif text-base leading-snug text-fg">
+            {book.headlineMetric}
+          </p>
+        </div>
+      ) : null}
+
+      <div className="mt-5 flex items-center justify-between gap-4">
+        <span className="font-mono text-[0.7rem] text-fg-subtle">
+          {book.role} · {book.timeline}
+        </span>
+        <Link
+          href={`/work/${book.slug}`}
+          className="inline-flex items-center gap-2 rounded-full bg-fg px-4 py-2 text-xs font-medium text-bg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-2"
+        >
+          View case study
+          <span aria-hidden="true" className="font-mono">
+            →
+          </span>
+        </Link>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -317,12 +398,12 @@ function MetricTile({ raw }: { raw: string }) {
   const value = match ? match[1] : raw;
   const label = match ? match[2] : "";
   return (
-    <div className="rounded-xl border border-border bg-bg-elevated p-3 text-center">
-      <p className="font-serif text-xl leading-none text-fg md:text-2xl">
-        {value}
-      </p>
+    <div className="rounded-lg border border-border bg-bg-elevated p-2 text-center">
+      <p className="font-serif text-base leading-none text-fg">{value}</p>
       {label ? (
-        <p className="mt-1 text-xs leading-snug text-fg-muted">{label}</p>
+        <p className="mt-1 text-[0.65rem] leading-snug text-fg-muted">
+          {label}
+        </p>
       ) : null}
     </div>
   );
