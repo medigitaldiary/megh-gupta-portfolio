@@ -77,9 +77,11 @@ export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
 
   return (
     <div className="mt-12 md:mt-16">
-      {/* OUTER scroll container. Horizontal overflow is here, where there
-          are no 3D transforms, so it cannot flatten the stage. */}
-      <div className="shelf-scroll relative overflow-x-auto overflow-y-visible pb-3">
+      {/* OUTER scroll container (position:relative + z-10 so books sit
+          above the wooden plank below). Horizontal overflow is here,
+          where there are no 3D transforms, so it cannot flatten the
+          stage. */}
+      <div className="shelf-scroll relative z-10 overflow-x-auto overflow-y-visible">
         {/* STAGE — perspective + preserve-3d. NO overflow of its own.
             min-width so narrower viewports engage the scroll on the
             outer wrapper rather than squeezing the books. */}
@@ -89,7 +91,7 @@ export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
             perspective: "1600px",
             perspectiveOrigin: "50% 80%",
             paddingTop: 72,
-            paddingBottom: 2,
+            paddingBottom: 0,
             minWidth: isMobile
               ? undefined
               : BOOK_W * books.length - BOOK_OVERLAP * (books.length - 1) + 80,
@@ -118,14 +120,19 @@ export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
               </div>
             ))}
           </div>
-
-          {/* SHELF LINE + WOODEN STRIP */}
-          <div aria-hidden="true" className="mt-2 h-px w-full bg-fg/70" />
-          <div
-            aria-hidden="true"
-            className="mx-auto h-3 w-full rounded-b-md bg-gradient-to-b from-[#C9A979] to-[#8E6B3D] shadow-[0_10px_20px_-10px_rgba(17,17,17,0.4)]"
-          />
         </div>
+      </div>
+
+      {/* WOODEN SHELF PLANK — spans the full container width edge-to-edge.
+          Pulled up 10px so books visually sit ON the top surface rather
+          than hover above it. z-0 keeps it behind the books. */}
+      <div aria-hidden="true" className="relative z-0 mt-[-10px] h-12 w-full">
+        {/* Top surface (where books rest) */}
+        <div className="absolute inset-x-0 top-0 h-6 bg-[#C19A6B]" />
+        {/* Front edge */}
+        <div className="absolute inset-x-0 top-6 h-4 border-t border-[#5C3A21]/30 bg-[#8B5A2B]" />
+        {/* Drop shadow on the wall below */}
+        <div className="absolute inset-x-0 top-10 h-8 bg-black/10 blur-md" />
       </div>
 
       {/* PREVIEW — docked below. Content crossfades across active books. */}
