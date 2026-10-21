@@ -290,10 +290,16 @@ function Book({
             : "drop-shadow(0 8px 10px rgba(0,0,0,0.25))",
         }}
       >
-        {/* FRONT COVER */}
+        {/* FRONT COVER — artwork + inner hinge crease shadow on the
+            left edge where a hardcover physically bends against the
+            spine. */}
         <div
-          className="absolute inset-0 overflow-hidden rounded-r-[3px] rounded-l-[1px] border border-border bg-bg-elevated"
-          style={{ zIndex: 10, transform: "translateZ(10px)" }}
+          className="absolute inset-0 overflow-hidden rounded-r-md rounded-l-[3px] border border-border bg-bg-elevated"
+          style={{
+            zIndex: 10,
+            transform: "translateZ(10px)",
+            boxShadow: "inset 4px 0 10px rgba(0,0,0,0.1)",
+          }}
         >
           {book.coverImage ? (
             <Image
@@ -313,35 +319,76 @@ function Book({
           )}
         </div>
 
-        {/* SPINE (left edge, rotated out of the plane) */}
+        {/* SPINE — left face, rotated 90° out of plane. Base colour =
+            per-book brand hex. Over it: a white→transparent gradient
+            that makes the binding look slightly curved and catches
+            the light. */}
         <div
           aria-hidden="true"
-          className={`absolute left-0 top-0 h-full ${book.spineColor}`}
+          className="absolute left-0 top-0 h-full"
           style={{
             width: BOOK_DEPTH,
+            backgroundColor: book.spineHex,
             transformOrigin: "left center",
             transform: `rotateY(-90deg) translateX(-${BOOK_DEPTH / 2}px)`,
             boxShadow: "inset -2px 0 4px rgba(0,0,0,0.3)",
           }}
-        />
+        >
+          {/* Spine highlight — thin cylinder-light illusion */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to right, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 35%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.15) 100%)",
+            }}
+          />
+        </div>
 
-        {/* PAGES (right edge) */}
+        {/* RIGHT PAGES — the stack of paper viewed edge-on, with
+            repeating vertical ridges to simulate individual sheets. */}
         <div
           aria-hidden="true"
-          className="absolute right-0 top-0 h-full bg-[#F4F4F0]"
+          className="absolute right-0 top-0 h-full"
           style={{
             width: BOOK_DEPTH,
+            backgroundColor: "#F5F5F0",
+            backgroundImage:
+              "repeating-linear-gradient(to bottom, rgba(0,0,0,0.07) 0px, rgba(0,0,0,0.07) 1px, transparent 1px, transparent 3px)",
             transformOrigin: "right center",
             transform: `rotateY(90deg) translateX(${BOOK_DEPTH / 2}px)`,
-            boxShadow: "inset 2px 0 4px rgba(0,0,0,0.1)",
+            boxShadow: "inset 2px 0 4px rgba(0,0,0,0.12)",
           }}
         />
 
-        {/* BACK COVER */}
+        {/* TOP PAGES — top view of the paper stack. Same cream + ridge
+            gradient as the right edge, rotated into the horizontal
+            plane. Visible when the book tilts. */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 rounded-r-[3px] rounded-l-[1px] bg-[#2a2521]"
-          style={{ zIndex: 0, transform: "translateZ(-10px)" }}
+          className="absolute left-0 top-0 w-full"
+          style={{
+            height: BOOK_DEPTH,
+            backgroundColor: "#F5F5F0",
+            backgroundImage:
+              "repeating-linear-gradient(to right, rgba(0,0,0,0.07) 0px, rgba(0,0,0,0.07) 1px, transparent 1px, transparent 3px)",
+            transformOrigin: "top center",
+            transform: `rotateX(90deg) translateY(-${BOOK_DEPTH / 2}px)`,
+            boxShadow: "inset 0 2px 4px rgba(0,0,0,0.15)",
+          }}
+        />
+
+        {/* BACK COVER — darker tone of the spine colour so the book
+            looks like one bound object instead of a cover slapped on
+            a generic block. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 rounded-r-md rounded-l-[3px]"
+          style={{
+            zIndex: 0,
+            transform: "translateZ(-10px)",
+            backgroundColor: book.spineHex,
+            filter: "brightness(0.6)",
+          }}
         />
       </motion.div>
     </Link>
