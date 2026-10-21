@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { WorkCard } from "@/lib/work";
 
 export type ShelfBook = WorkCard & {
@@ -13,47 +13,29 @@ export type ShelfBook = WorkCard & {
 };
 
 // =====================================================================
-// Fold 3 — Editorial bookshelf (LAB · motion-driven)
+// Fold 3 — Editorial bookshelf (LAB)
 // =====================================================================
-// Interaction contract
-// --------------------
-//  - Default state: books rest on a wooden shelf with a small randomized
-//    tilt. Each book is a physical object with a visible spine.
-//  - Hover (desktop) / Tap (mobile) activates a book: it lifts, scales,
-//    straightens to exactly 0°, and gets a deeper shadow. Neighbors stay
-//    on the shelf but dim.
-//  - A connected preview panel sits below the shelf and transitions its
-//    content between active books via AnimatePresence crossfade.
-//  - Sticky-active (first book) so the preview is always present and
-//    pointing at it never collapses the state.
+// Structure (locked):
+//   <wrapper flex-col pt-20>
+//     <books items-end justify-center>           — bottoms align
+//     <shelf 3-layer plank: surface | edge | drop-shadow>
+//   </wrapper>
 //
-// Architectural rules (same as the previous lab commit — these ARE the
-// fixes to the "it's messy" problem):
-//  R1. Perspective lives on a container with NO overflow and NO
-//      transforms, so translateZ isn't clipped and preserve-3d holds.
-//  R2. Books physically overlap via negative margin on the row items
-//      themselves (not the stage), so leaning behaves like a shelf.
-//  R3. Horizontal scroll is on the OUTER container only, which has no
-//      3D context — the inner row never clips the lifted book.
+// Books use `origin-bottom` so rotation + scale pivot from the shelf
+// line. Default state: static alternating tilt (−4, +2, −3, +3, …).
+// Hover (desktop) / tap (mobile) straightens to 0°, lifts −20px,
+// scales 1.05, deepens shadow, z-50. Neighbours dim to 0.5 and
+// shrink to 0.95.
+//
+// Preview panel sits below with AnimatePresence crossfade.
+// Sticky-active (first book) so there's always a preview.
 // =====================================================================
 
-const BOOK_W = 170;
-const BOOK_H = 255;
-const BOOK_OVERLAP = 18;
+const BOOK_W = 160;
+const BOOK_H = 240;
 
-// Deterministic tilt per book so SSR hydration matches client render.
-function restTilt(seedKey: string, provided?: number): number {
-  if (typeof provided === "number") {
-    return Math.max(-6, Math.min(6, provided * 4));
-  }
-  // Simple string hash → [-6°, +6°]
-  let h = 0;
-  for (let i = 0; i < seedKey.length; i++) {
-    h = (h * 31 + seedKey.charCodeAt(i)) | 0;
-  }
-  const v = ((h % 1000) / 1000) * 12 - 6;
-  return Math.round(v * 10) / 10;
-}
+// Alternating tilt pattern. Index-based so SSR == CSR.
+const TILT_PATTERN = [-4, 2, -3, 3, -4, 2, -3, 3, -4, 2];
 
 export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
   const [activeIdx, setActiveIdx] = useState(0);
@@ -70,73 +52,42 @@ export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
   const activate = useCallback((i: number) => setActiveIdx(i), []);
   const active = books[activeIdx] ?? null;
 
-  const tilts = useMemo(
-    () => books.map((b) => restTilt(b.slug, b.leanDeg)),
-    [books],
-  );
-
   return (
     <div className="mt-12 md:mt-16">
-      {/* OUTER scroll container (position:relative + z-10 so books sit
-          above the wooden plank below). Horizontal overflow is here,
-          where there are no 3D transforms, so it cannot flatten the
-          stage. */}
-      <div className="shelf-scroll relative z-10 overflow-x-auto overflow-y-visible">
-        {/* STAGE — perspective + preserve-3d. NO overflow of its own.
-            min-width so narrower viewports engage the scroll on the
-            outer wrapper rather than squeezing the books. */}
-        <div
-          className="stage relative mx-auto"
-          style={{
-            perspective: "1600px",
-            perspectiveOrigin: "50% 80%",
-            paddingTop: 72,
-            paddingBottom: 0,
-            minWidth: isMobile
-              ? undefined
-              : BOOK_W * books.length - BOOK_OVERLAP * (books.length - 1) + 80,
-            width: "fit-content",
-          }}
-        >
-          <div className="flex items-end justify-center">
-            {books.map((book, i) => (
-              <div
+      {/* WRAPPER */}
+      <div className="relative flex w-full flex-col pt-20">
+        {/* BOOKS — items-end so bottoms align with the shelf top */}
+        <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-row items-end justify-center gap-2 overflow-x-auto px-4 pb-0 md:gap-4">
+          {books.map((book, i) => {
+            const tilt =
+              typeof book.leanDeg === "number"
+                ? Math.max(-6, Math.min(6, book.leanDeg * 2))
+                : TILT_PATTERN[i % TILT_PATTERN.length];
+            return (
+              <Book
                 key={book.slug}
-                className="relative"
-                style={{
-                  marginLeft: i > 0 ? -BOOK_OVERLAP : undefined,
-                  zIndex: i === activeIdx ? 30 : books.length - i,
-                }}
-              >
-                <Book
-                  book={book}
-                  tilt={tilts[i]}
-                  active={i === activeIdx}
-                  dim={activeIdx !== i}
-                  onHover={() => !isMobile && activate(i)}
-                  onFocus={() => activate(i)}
-                  onTap={() => isMobile && activate(i)}
-                />
-              </div>
-            ))}
-          </div>
+                book={book}
+                tilt={tilt}
+                active={i === activeIdx}
+                anyActive={activeIdx != null}
+                onHover={() => !isMobile && activate(i)}
+                onFocus={() => activate(i)}
+                onTap={() => isMobile && activate(i)}
+              />
+            );
+          })}
+        </div>
+
+        {/* SHELF — three-layer plank directly under the books' baseline */}
+        <div aria-hidden="true" className="relative z-0 h-12 w-full">
+          <div className="absolute top-0 h-4 w-full bg-[#C19A6B]" />
+          <div className="absolute top-4 h-3 w-full border-t border-[#5C3A21]/30 bg-[#8B5A2B]" />
+          <div className="absolute top-7 h-8 w-full bg-black/10 blur-md" />
         </div>
       </div>
 
-      {/* WOODEN SHELF PLANK — spans the full container width edge-to-edge.
-          Pulled up 10px so books visually sit ON the top surface rather
-          than hover above it. z-0 keeps it behind the books. */}
-      <div aria-hidden="true" className="relative z-0 mt-[-10px] h-12 w-full">
-        {/* Top surface (where books rest) */}
-        <div className="absolute inset-x-0 top-0 h-6 bg-[#C19A6B]" />
-        {/* Front edge */}
-        <div className="absolute inset-x-0 top-6 h-4 border-t border-[#5C3A21]/30 bg-[#8B5A2B]" />
-        {/* Drop shadow on the wall below */}
-        <div className="absolute inset-x-0 top-10 h-8 bg-black/10 blur-md" />
-      </div>
-
-      {/* PREVIEW — docked below. Content crossfades across active books. */}
-      <div className="mt-10 md:mt-14">
+      {/* PREVIEW — AnimatePresence crossfade on active-book change */}
+      <div className="mt-12 md:mt-16">
         <AnimatePresence mode="wait" initial={false}>
           {active ? <ExpandedPreview key={active.slug} book={active} /> : null}
         </AnimatePresence>
@@ -149,7 +100,7 @@ function Book({
   book,
   tilt,
   active,
-  dim,
+  anyActive,
   onHover,
   onFocus,
   onTap,
@@ -157,21 +108,21 @@ function Book({
   book: ShelfBook;
   tilt: number;
   active: boolean;
-  dim: boolean;
+  anyActive: boolean;
   onHover: () => void;
   onFocus: () => void;
   onTap: () => void;
 }) {
-  // Convert the rest tilt into rotateY (showing a side face) + a touch of
-  // rotateZ for human-irregularity. Active book straightens to 0 on both.
-  const restRotY = tilt;
-  const restRotZ = tilt * 0.15;
+  // Default: tilted at `tilt` deg, resting on shelf.
+  // Active:  straightens to 0°, lifts -20, scales 1.05, strong shadow.
+  // Neighbour (anyActive && !active): dims to 0.5, scales to 0.95.
+  const isDim = anyActive && !active;
 
   return (
     <Link
       href={`/work/${book.slug}`}
       aria-label={`Open case study: ${book.title}`}
-      className="group block focus-visible:outline-none"
+      className="group block shrink-0 focus-visible:outline-none"
       onMouseEnter={onHover}
       onFocus={onFocus}
       onClick={(e) => {
@@ -180,32 +131,29 @@ function Book({
           onTap();
         }
       }}
-      style={{ width: BOOK_W }}
+      style={{ width: BOOK_W, zIndex: active ? 50 : 1 }}
     >
       <motion.div
+        className="origin-bottom relative overflow-hidden rounded-r-[3px] rounded-l-[1px] border border-border bg-bg-elevated"
+        initial={false}
         animate={{
-          rotateY: active ? 0 : restRotY,
-          rotateZ: active ? 0 : restRotZ,
-          y: active ? -24 : 0,
-          z: active ? 80 : 0,
-          scale: active ? 1.06 : 1,
-          opacity: dim ? 0.78 : 1,
-          filter: dim ? "saturate(0.9) brightness(0.97)" : "saturate(1)",
+          rotate: active ? 0 : tilt,
+          y: active ? -20 : 0,
+          scale: active ? 1.05 : isDim ? 0.95 : 1,
+          opacity: isDim ? 0.5 : 1,
           boxShadow: active
-            ? "0 36px 56px -22px rgba(17,17,17,0.5), 0 10px 16px -8px rgba(17,17,17,0.3)"
-            : "0 14px 22px -14px rgba(17,17,17,0.5), 0 2px 4px -2px rgba(17,17,17,0.25)",
+            ? "0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 10px 20px -8px rgba(0,0,0,0.25)"
+            : "0 10px 20px -10px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.2)",
         }}
         transition={{
           type: "spring",
-          stiffness: 260,
-          damping: 26,
-          mass: 0.8,
+          stiffness: 240,
+          damping: 24,
+          mass: 0.7,
         }}
-        className="relative overflow-hidden rounded-r-[3px] rounded-l-[1px] border border-border bg-bg-elevated"
         style={{
           width: BOOK_W,
           height: BOOK_H,
-          transformStyle: "preserve-3d",
           transformOrigin: "bottom center",
           willChange: "transform",
         }}
@@ -215,7 +163,7 @@ function Book({
             src={book.coverImage}
             alt=""
             fill
-            sizes="170px"
+            sizes="160px"
             className="object-cover"
             priority={false}
           />
@@ -226,20 +174,18 @@ function Book({
             </h3>
           </div>
         )}
+        {/* Spine */}
         <span
           aria-hidden="true"
           className={`absolute inset-y-0 left-0 w-2 ${book.spineColor}`}
           style={{ boxShadow: "inset -2px 0 3px rgba(0,0,0,0.15)" }}
         />
+        {/* Paper block hint */}
         <span
           aria-hidden="true"
           className="absolute inset-y-0 right-0 w-[3px] bg-[#F3EBD9]"
         />
       </motion.div>
-      <span
-        aria-hidden="true"
-        className="pointer-events-none mt-2 block h-0.5 w-full rounded-full bg-transparent transition-colors duration-150 group-focus-visible:bg-accent"
-      />
     </Link>
   );
 }
@@ -248,10 +194,10 @@ function ExpandedPreview({ book }: { book: ShelfBook }) {
   const metrics = book.supportingMetrics.slice(0, 3);
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -4 }}
-      transition={{ duration: 0.24, ease: [0.22, 0.61, 0.36, 1] }}
+      exit={{ opacity: 0, y: 6 }}
+      transition={{ duration: 0.28, ease: [0.22, 0.61, 0.36, 1] }}
       className="mx-auto max-w-5xl rounded-3xl border border-border bg-[#F7F1E6] p-6 shadow-[0_28px_55px_-24px_rgba(17,17,17,0.28)] md:p-10"
     >
       <div className="grid gap-6 md:grid-cols-[220px_minmax(0,1fr)] md:gap-10">
