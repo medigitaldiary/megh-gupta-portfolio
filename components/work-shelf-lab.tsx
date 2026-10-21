@@ -175,21 +175,19 @@ export function WorkShelfLab({ books }: { books: ShelfBook[] }) {
           })}
         </div>
 
-        {/* Shelf — photorealistic wood plank asset. Pulled up with a
-            negative margin so the top wood edge sits just under the
-            books' baseline (they overlap it, reads as resting on it).
-            -z-10 keeps the books in front. The image carries its own
-            baked-in wall shadow, so no stacked blur layers needed. */}
-        <div aria-hidden="true" className="relative -z-10 -mt-3 w-full">
-          <Image
-            src="/images/shelf/wood-shelf.webp"
-            alt=""
-            width={1600}
-            height={240}
-            sizes="100vw"
-            className="h-auto w-full select-none"
-            priority={false}
-          />
+        {/* Shelf — CSS-only realistic wood plank. Sits directly beneath
+            the books' baseline at z-0 (books are z-10 so they overlap).
+            Four stacked layers simulate: top surface + front edge +
+            bottom lip shadow + ambient wall shadow. */}
+        <div aria-hidden="true" className="relative z-0 mt-[-2px] h-16 w-full">
+          {/* Top surface — wood grain via horizontal gradient */}
+          <div className="absolute top-0 h-5 w-full border-t border-[#d4b092] bg-gradient-to-r from-[#b38b6d] via-[#c29b7a] to-[#b38b6d] shadow-sm" />
+          {/* Front thick edge — darker wood with top-to-bottom lighting */}
+          <div className="absolute top-5 h-6 w-full border-t border-[#5c3a21]/50 bg-gradient-to-b from-[#8c5e3c] to-[#6a4226]" />
+          {/* Bottom lip — hairline shadow line */}
+          <div className="absolute top-11 h-1 w-full bg-[#3a2212] blur-[1px]" />
+          {/* Ambient cast shadow on the wall below */}
+          <div className="absolute top-12 h-12 w-full bg-black/20 blur-xl" />
         </div>
 
         {/* Preview — absolutely positioned over the stage, anchored to
