@@ -1,5 +1,5 @@
 import { SectionHeader } from "@/components/section-header";
-import { type ShelfBook, WorkShelf } from "@/components/work-shelf";
+import { type ShelfBook, WorkShelfLab } from "@/components/work-shelf-lab";
 import { getCaseStudy } from "@/lib/case-study";
 import { getShelfWorkCards } from "@/lib/work";
 
@@ -29,7 +29,7 @@ export async function SelectedWorkShelf() {
           eyebrow="Selected Work"
           title="A shelf of things I've built and shipped."
         />
-        <WorkShelf books={books} />
+        <WorkShelfLab books={books} />
       </div>
     </section>
   );
