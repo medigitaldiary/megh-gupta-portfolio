@@ -51,11 +51,6 @@
   inset: 0;
   background:
     radial-gradient(
-      ellipse 70% 55% at 85% 10%,
-      rgba(203, 179, 232, 0.45),
-      rgba(203, 179, 232, 0) 70%
-    ),
-    radial-gradient(
       ellipse 55% 40% at 8% 42%,
       rgba(203, 179, 232, 0.22),
       rgba(203, 179, 232, 0) 70%
@@ -67,6 +62,27 @@
     );
   pointer-events: none;
   z-index: -1;
+}
+
+/* -----------------------------------------------------------
+ * 1b · HERO WORD HIGHLIGHTS
+ * The three concept words in the hero headline ("features",
+ * "products", "systems") get a soft lilac pill behind them —
+ * highlighter-pen vibe but as a rounded fill instead of a
+ * stripe, since the display face is large.
+ *
+ * data-hl-word is a plain attribute so the markup is a no-op
+ * on /preview/v2 (production green theme); only the oatmeal
+ * scope paints the pill.
+ * -----------------------------------------------------------*/
+.oatmeal-scope [data-hl-word] {
+  background: rgba(203, 179, 232, 0.55);
+  padding: 0.02em 0.22em;
+  margin: 0 0.02em;
+  border-radius: 6px;
+  /* Keep the pill rendering per-line when the headline wraps */
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 /* =============================================================
@@ -137,20 +153,63 @@
 }
 
 /* =============================================================
- * 7 · EYEBROW DECORATION
- * SectionHeader eyebrows (text-accent) get a tiny lilac marker
- * right before them — a decorative square the eye registers
- * before the Pine label. The text itself stays Pine.
+ * 7 · HERO GREETING SPARKLE
+ * The handwritten "Hi, I am Megh." greeting carries a small
+ * animated lilac sparkle — a 4-point star (unicode ✦) that
+ * rotates and breathes in / out, with a soft lilac halo behind
+ * it. Hand-drawn flourish next to a cursive line.
+ *
+ * Narrowly scoped via [data-hero-greeting] so the sparkle only
+ * appears here, not on every text-accent surface across the
+ * page (previously the square decoration spread to Experience
+ * timeline markers and other text-accent spots).
  * ============================================================= */
-.oatmeal-scope .text-accent::before {
-  content: "";
+.oatmeal-scope [data-hero-greeting]::before {
+  content: "✦";
   display: inline-block;
-  width: 0.5em;
-  height: 0.5em;
-  margin-right: 0.5em;
-  background: var(--highlight-strong);
-  border-radius: 1px;
-  vertical-align: 0.1em;
+  margin-right: 0.3em;
+  color: var(--highlight-strong);
+  font-size: 0.72em;
+  vertical-align: 0.18em;
+  text-shadow:
+    0 0 10px rgba(203, 179, 232, 0.65),
+    0 0 20px rgba(203, 179, 232, 0.35);
+  animation: hero-sparkle 2.6s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Trailing sparkle for symmetry — same twinkle, offset half a
+ * cycle so the two feel independent rather than synced. */
+.oatmeal-scope [data-hero-greeting]::after {
+  content: "✧";
+  display: inline-block;
+  margin-left: 0.35em;
+  color: var(--highlight-strong);
+  font-size: 0.55em;
+  vertical-align: 0.5em;
+  text-shadow: 0 0 8px rgba(203, 179, 232, 0.55);
+  animation: hero-sparkle 2.6s ease-in-out infinite -1.3s;
+  transform-origin: center;
+}
+
+@keyframes hero-sparkle {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(0.85);
+    opacity: 0.45;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.25);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oatmeal-scope [data-hero-greeting]::before,
+  .oatmeal-scope [data-hero-greeting]::after {
+    animation: none;
+    opacity: 0.85;
+  }
 }
 
 /* =============================================================
