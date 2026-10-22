@@ -3,8 +3,8 @@ title: "A product-led SEO engine for a bond category with no incumbent"
 slug: "product-led-seo-engine"
 role: "Growth PM"
 timeline: "Jan 2026 – Q2 2026"
-team: "Me + TODO: engineer count + content team + performance marketing"
-stack: ["Claude API", "Google Search Console", "Schema.org markup", "Next.js", "JSON-LD", "custom compliance agent"]
+team: "Me + 2 engineers (Aman, Anand) + content team + Rehana on compliance + performance marketing coordination"
+stack: ["Claude API", "Google Search Console", "Schema.org", "Next.js", "JSON-LD", "custom compliance agent"]
 tags: ["Growth", "SEO", "Fintech", "Content"]
 headline_metric: "~2x daily organic clicks in 3 months"
 supporting_metrics:
@@ -13,55 +13,291 @@ supporting_metrics:
   - "26,000+ programmatic bond pages, one per ISIN"
 featured: true
 order: 1
-hero_image: "/images/work/product-led-seo-engine/hero.png"
+hero_image: "/images/work/product-led-seo-engine/cover.webp"
 published: true
 ---
 
-## TL;DR
+<Section variant="narrative" eyebrow="The problem" heading="SEO couldn't scale on content alone">
 
-- Built SEO as a product workstream, not a marketing function, across three pillars that each needed the others to work: editorial blogs, Bond Dictionary, and programmatic ISIN pages.
-- Shipped 350+ blogs, 200+ dictionary terms, and 26,000+ programmatic pages inside 3 months by removing the SEBI compliance bottleneck with a Claude-powered review agent.
-- Grew daily organic clicks ~2x in 3 months and started ranking for ISIN-level and high-intent non-brand queries like "hedge funds in india" at #3.
+Performance ads were doing the acquisition work. Expensive, non-compounding, tied to monthly spend.
 
-## Context
+A content-only approach would have hit three structural problems. Google couldn't discover most of the site (crawlability). Publishing was gated behind SEBI review (bottleneck). And there was no mechanism for SEO to enter engineering tickets as a requirement (governance).
 
-Performance ads were doing the bulk of acquisition at BondScanner. Expensive, non-compounding, and tied to monthly spend. Organic was the obvious lever, but no retail bond platform in India had built real SEO depth in this category.
+Hiring more writers wouldn't fix any of those.
 
-The pitch to the founder was simple. Every blog, dictionary term, and programmatic page we publish today keeps working for years. Ads stop the moment we stop paying. SEO is a moat if we commit to it.
+<Callout variant="insight">
+SEO had to be built as a product workstream, not a marketing function. Three problems, three different kinds of fix.
+</Callout>
 
-## Approach
+</Section>
 
-I ran it as a three-pillar product, because any single pillar on its own wouldn't have worked.
+<Section variant="narrative" eyebrow="The strategy" heading="Five connected workstreams">
 
-Editorial content gives you the E-E-A-T authority Google needs to trust the domain. The Bond Dictionary is Investopedia-style, anchored to the high-intent keywords retail investors actually search. Programmatic ISIN pages give you scale: one page per bond, each targeting long-tail bond-specific queries.
+The strategy sat on five pillars, each of which needed the others to work.
 
-Programmatic alone would've looked like thin content. Dictionary alone wouldn't scale. Editorial alone wouldn't compound fast enough. The three together is what made it a moat.
+<StepGrid variant="parallel" numbered>
+  <StepGrid.Cell title="Technical foundations" eyebrow="Workstream">
+    Mapped the site graph, fixed crawlability, shipped schema and sitemap. The whole engine fails if Google can't see the site.
+  </StepGrid.Cell>
+  <StepGrid.Cell title="Self-serve publishing" eyebrow="Workstream">
+    Built an AI compliance agent on top of Strapi so blogs ship at 4-a-day without a manual review queue.
+  </StepGrid.Cell>
+  <StepGrid.Cell title="Governance" eyebrow="Workstream">
+    Made SEO requirements part of the PRD, review, and verify stages for every product ticket.
+  </StepGrid.Cell>
+  <StepGrid.Cell title="Editorial content" eyebrow="Workstream">
+    350+ compliance-reviewed blogs targeting the keywords retail bond investors actually search.
+  </StepGrid.Cell>
+  <StepGrid.Cell title="Programmatic depth" eyebrow="Workstream">
+    26,000+ ISIN-level pages + 200+ Bond Dictionary entries for long-tail and definitional queries.
+  </StepGrid.Cell>
+</StepGrid>
 
-The hard constraint was SEBI. Every public word on a bond platform has to clear compliance. At 4 blogs a day, manual review was going to be the bottleneck that killed the whole plan.
+<Callout variant="insight">
+Programmatic alone would've looked like thin content. Dictionary alone wouldn't scale. Editorial alone wouldn't compound fast enough. The three together, held up by foundations and governance, is what made it a moat.
+</Callout>
 
-## Execution
+</Section>
 
-- Published 350+ blogs at a 4-a-day cadence from January 2026, enabled by an AI compliance agent I built on Claude that automated the SEBI review before publish.
-- Shipped 200+ Bond Dictionary entries, each anchored to a high-intent search term and cross-linked back to related bonds and categories.
-- Launched 26,000+ programmatic bond detail pages, one per ISIN, templated so each page carried genuinely unique data: issuer, coupon, maturity, rating, secondary market activity.
-- Technical SEO work: schema.org markup across all page types, JavaScript rendering audits for crawlability, sitemap architecture, GSC setup from scratch.
-- Set up a daily performance feedback loop specifically for deal detail pages, so we could see which bonds were pulling traffic and reinforce them.
+<Section variant="deepDive" eyebrow="Workstream 01" heading="Understanding the site graph">
 
-{/* TODO: screenshot of Google Search Console clicks and impressions curve */}
-{/* TODO: sample Bond Dictionary entry page */}
-{/* TODO: sample programmatic ISIN page */}
+Before anything shipped, I ran a crawl of all 372 blog posts and mapped internal linking across them. The point was to see what Google would actually see.
 
-## Outcome
+The structural finding: the hub and archive pages used JavaScript-only pagination, which Google can't crawl. 230+ posts were invisible. 67% of blog posts were orphaned.
 
-Daily organic clicks roughly doubled in 3 months. The site started ranking for high-intent non-brand queries that typically go to legacy platforms, including "hedge funds in india" at #3. ISIN-level queries, which usually only show up in institutional research, started pulling retail traffic.
+<Figure
+  variant="wide"
+  src="/images/work/product-led-seo-engine/nodal-diagram.webp"
+  alt="Interactive nodal diagram of 372 BondScanner blog posts. A dense cluster of connected posts sits on the right; a large sparse cluster of orphaned posts on the lower-left is highlighted in muted red."
+  caption="The nodal diagram from the audit. The red cluster is the 230+ posts invisible to Google because the archive pages paginate with JavaScript only."
+  eyebrow="Fig. 1 — Site graph audit"
+  isPlaceholder
+/>
 
-Qualitatively, the engine shifted internal belief. Marketing stopped treating SEO as a side project and started treating it as a channel with its own roadmap. The founder now talks about SEO as part of BondScanner's defensibility, not just a traffic source.
+What shipped to fix it:
 
-## Reflection
+- Static archive pagination (replaced the JS-only pagination).
+- Footer sitemap links to hub pages (short path from homepage to every post).
+- schema.org markup across page types.
+- A proper sitemap.xml architecture + a sitemap directory page.
+- GSC set up from scratch; llms.txt for AI crawlers.
 
-I'd set up a page-level freshness re-fetch policy in v1. Right now some programmatic pages carry rating data that's months old. It isn't a live SEO problem yet, but it will be once Google's quality signals catch up. Also, I'd instrument crawl budget and per-page click yield from day one. We were flying on headline metrics for the first two months when per-page economics would have told us earlier which pillars to double down on.
+<Callout variant="result">
+Internal linking depth improved ~50–60% after the fixes shipped. That's a structural measure of how reachable the catalog is to a crawler, not a traffic number — the traffic effect compounded over the following weeks.
+</Callout>
 
-## What I owned vs. team owned
+</Section>
 
-- **I owned:** The three-pillar strategy, compliance AI agent spec and build, programmatic page templating logic, technical SEO scope, measurement setup, founder narrative.
-- **Team owned:** Content writing (blogs and dictionary), engineering build for programmatic pages, performance marketing coordination.
+<Section variant="deepDive" eyebrow="Workstream 02" heading="Removing manual bottlenecks">
+
+Every public word on a bond platform has to clear compliance review. That isn't a nice-to-have on an OBPP — SEBI's rules on claims, disclaimers, and factual constraints apply to every blog, every landing page, every programmatic field label.
+
+At 4 blogs a day, manual review was the ceiling. Writers queued, reviewers saturated, the publishing calendar slipped.
+
+<StepGrid variant="compare">
+  <StepGrid.Cell title="Manual compliance review" eyebrow="Before">
+    Each blog waited 2–3 days in the reviewer's queue. A SEBI-sensitive line would come back marked for a rewrite; the writer rewrote; the blog went back to the queue. Four blogs a day was aspirational.
+  </StepGrid.Cell>
+  <StepGrid.Cell title="Claude compliance agent + Strapi auto-publish" eyebrow="After">
+    A compliance agent trained on SEBI OBPP guidelines reviews each blog before publish, flags lines that need rewriting, and lets clean copy move to Strapi for scheduled publication. Four blogs a day became the sustained cadence.
+  </StepGrid.Cell>
+</StepGrid>
+
+What the Claude agent actually does. It reads the blog draft against a corpus of SEBI compliance rules — prohibited claims, mandatory disclaimers, factual constraints — and returns a line-level diff with suggested rewrites, not a pass/fail. Final sign-off stays with Rehana on anything the agent flags as ambiguous.
+
+I don't have verified CMS time-savings numbers, so I'm not claiming any. What I can claim is the publishing cadence we hit, which we couldn't hit before.
+
+</Section>
+
+<Section variant="narrative" eyebrow="Workstream 03" heading="Making SEO part of product delivery">
+
+Before this, SEO lived with marketing. Product tickets got sized without SEO requirements, and shipped features would quietly break canonical URLs, pagination, or crawl paths. The fix wasn't a new team — it was putting SEO into the three gates every product ticket already goes through.
+
+<StepGrid variant="sequence">
+  <StepGrid.Cell title="SEO requirements enter the PRD" eyebrow="Specify">
+    Every product ticket's PRD carries an SEO section: canonical URL pattern, pagination behavior, sitemap entry, schema markup, meta/OG. If the section is blank, the ticket isn't sized.
+  </StepGrid.Cell>
+  <StepGrid.Cell title="SEO is a line-item in design and tech review" eyebrow="Review">
+    Design review flags any pattern that would hide content from a crawler. Tech review flags any route that would 404, 302, or render client-side-only.
+  </StepGrid.Cell>
+  <StepGrid.Cell title="QA includes an SEO pass" eyebrow="Verify">
+    View-source check for canonical, OG, JSON-LD, discovery block. Rich Results Test on the live preview URL. Sitemap updated in the same PR, or the PR doesn't merge.
+  </StepGrid.Cell>
+</StepGrid>
+
+SEO stopped being a thing marketing asked for after the fact. Engineering started catching their own breakages at review time.
+
+</Section>
+
+<Section variant="deepDive" eyebrow="Workstreams 04 and 05" heading="How the three content types reinforce each other">
+
+Three content types, each targeting a different kind of query, each linking into the others. Blogs for authority, Dictionary for definitional intent, programmatic ISIN pages for the long tail. The ecosystem is the point — any one of them alone wouldn't rank.
+
+<Figure
+  variant="svg"
+  eyebrow="Fig. 2 — Content ecosystem"
+  caption="Each page type links into the other two. A reader landing on an ISIN page can read the definitional term, and a reader landing on a blog can land on a specific ISIN. Crawlers follow the same paths."
+>
+  <svg viewBox="0 0 600 320" role="img" aria-labelledby="ecosystem-title" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "auto" }}>
+    <title id="ecosystem-title">Content ecosystem: Blogs, Bond Dictionary, and ISIN pages reinforcing each other.</title>
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="var(--fg-muted)" />
+      </marker>
+    </defs>
+    {/* Connecting lines */}
+    <line x1="180" y1="80" x2="420" y2="80" stroke="var(--border)" strokeWidth="1.5" markerEnd="url(#arrow)" />
+    <line x1="420" y1="110" x2="180" y2="110" stroke="var(--border)" strokeWidth="1.5" markerEnd="url(#arrow)" />
+    <line x1="150" y1="110" x2="290" y2="240" stroke="var(--border)" strokeWidth="1.5" markerEnd="url(#arrow)" />
+    <line x1="310" y1="240" x2="170" y2="110" stroke="var(--border)" strokeWidth="1.5" markerEnd="url(#arrow)" />
+    <line x1="450" y1="110" x2="310" y2="240" stroke="var(--border)" strokeWidth="1.5" markerEnd="url(#arrow)" />
+    <line x1="290" y1="240" x2="430" y2="110" stroke="var(--border)" strokeWidth="1.5" markerEnd="url(#arrow)" />
+    {/* Central site-graph marker */}
+    <circle cx="300" cy="160" r="4" fill="var(--fg-muted)" />
+    <text x="310" y="164" fontSize="11" fill="var(--fg-muted)" style={{ fontFamily: "var(--font-mono), monospace", textTransform: "uppercase", letterSpacing: "0.14em" }}>
+      Site graph
+    </text>
+    {/* Nodes */}
+    <g>
+      <circle cx="150" cy="80" r="40" fill="var(--bg)" stroke="var(--accent)" strokeWidth="2" />
+      <text x="150" y="78" textAnchor="middle" fontSize="13" fill="var(--fg)" style={{ fontFamily: "var(--font-mono), monospace" }}>Blogs</text>
+      <text x="150" y="94" textAnchor="middle" fontSize="10" fill="var(--fg-muted)" style={{ fontFamily: "var(--font-mono), monospace" }}>Authority</text>
+    </g>
+    <g>
+      <circle cx="450" cy="80" r="40" fill="var(--bg)" stroke="var(--fg)" strokeWidth="1.5" />
+      <text x="450" y="78" textAnchor="middle" fontSize="13" fill="var(--fg)" style={{ fontFamily: "var(--font-mono), monospace" }}>Dictionary</text>
+      <text x="450" y="94" textAnchor="middle" fontSize="10" fill="var(--fg-muted)" style={{ fontFamily: "var(--font-mono), monospace" }}>Definitional</text>
+    </g>
+    <g>
+      <circle cx="300" cy="260" r="40" fill="var(--bg)" stroke="var(--fg)" strokeWidth="1.5" />
+      <text x="300" y="258" textAnchor="middle" fontSize="13" fill="var(--fg)" style={{ fontFamily: "var(--font-mono), monospace" }}>ISIN pages</text>
+      <text x="300" y="274" textAnchor="middle" fontSize="10" fill="var(--fg-muted)" style={{ fontFamily: "var(--font-mono), monospace" }}>Long tail</text>
+    </g>
+  </svg>
+</Figure>
+
+### Blogs
+
+350+ blogs published since January 2026. Topic selection driven by keyword research and the question logs from support. Every blog gets internal links to any Dictionary term it mentions and any ISIN pages for bonds it references.
+
+<Figure
+  variant="prose"
+  src="/images/work/product-led-seo-engine/sample-blog.webp"
+  alt="A representative BondScanner blog post rendered on a mobile viewport, showing the compliance-reviewed body and internal links to Dictionary terms."
+  caption="A representative blog, mobile viewport. Links to Dictionary terms and specific ISIN pages are inline in the body."
+  eyebrow="Fig. 3 — Sample blog"
+  aspectRatio="4/5"
+  isPlaceholder
+/>
+
+### Bond Dictionary
+
+200+ definitional entries, Investopedia-style. Each entry targets exactly one high-intent search term — *what is a hedge fund in india*, *AT1 bonds explained*, *difference between NCD and bond*. Each links out to the blogs that use the term and the ISIN pages that are examples of the thing.
+
+<Figure
+  variant="prose"
+  src="/images/work/product-led-seo-engine/sample-dictionary.webp"
+  alt="A Bond Dictionary entry page showing a definitional article anchored to a single high-intent search term."
+  caption="A Bond Dictionary entry — one high-intent term per page, linked to related blogs and ISINs."
+  eyebrow="Fig. 4 — Sample Dictionary entry"
+  aspectRatio="4/5"
+  isPlaceholder
+/>
+
+### Programmatic ISIN pages
+
+26,000+ pages, one per ISIN. Templated but not thin — each carries genuinely unique data: issuer, coupon, maturity, rating, secondary market activity. Templating logic was mine; the data integration was DERIDATA, which has its own case study.
+
+<Figure
+  variant="prose"
+  src="/images/work/product-led-seo-engine/sample-isin.webp"
+  alt="A programmatic ISIN page showing templated fields for issuer, coupon, maturity, rating, and secondary-market activity."
+  caption="A programmatic ISIN page. One page per bond; each page's data is genuinely unique."
+  eyebrow="Fig. 5 — Sample ISIN page"
+  aspectRatio="4/5"
+  isPlaceholder
+/>
+
+### Masterclass
+
+A separate workstream fed this one: recorded Masterclass sessions were transcribed, chunked by topic, and used to seed Dictionary entries and blog outlines. It is its own project; here it mattered because it lowered the research cost per article.
+
+</Section>
+
+<Section variant="narrative" eyebrow="What we stopped" heading="The Framer landing pages we stopped shipping">
+
+We tried shipping fast-iteration landing pages in Framer. Marketing could spin up a page in an afternoon; the design felt crisper than our own stack; the publishing loop felt right.
+
+Two things broke it. Framer pages lived outside the compliance review path. And they used client-side rendering in ways our main stack had just finished moving away from — the exact mistake the technical foundations work was meant to fix. We killed the experiment after three landing pages.
+
+<Callout variant="caution">
+The lesson wasn't that Framer is wrong. It was that quality gates — compliance, crawlability, canonical — belong upstream of the publishing tool, not inside it. A tool that lets you ship around the gates isn't a faster tool; it's a slower one with the slowness hidden until the next quarter.
+</Callout>
+
+</Section>
+
+<Section variant="metrics" eyebrow="Results" heading="Traffic, structure, and team independence">
+
+Three months after the engine shipped, these are the numbers we have confidence in.
+
+<MetricRow>
+  <Metric variant="inline" value="~2x" label="daily organic clicks" caption="3 months" />
+  <Metric variant="inline" value="#3" label="rank for ‘hedge funds in india’" caption="non-brand" />
+  <Metric variant="inline" value="26,000+" label="ISIN pages pulling long-tail queries" caption="first retail traffic" />
+</MetricRow>
+
+Separate from the traffic, these are the things that are now true about the site that weren't before:
+
+- Internal linking depth improved ~50–60% (a structural measure of crawlability, not a traffic number).
+- 230+ previously orphaned posts are now reachable through static pagination and footer sitemap links.
+- Every ISIN page carries schema.org Product + PriceSpecification markup.
+- `llms.txt` and the discovery block in the head serve AI crawlers correctly.
+- The sitemap directory page is published and auto-updates.
+
+Marketing stopped treating SEO as a side project and started treating it as a channel with its own roadmap. Engineering catches canonical and schema issues at review time without me flagging them. The founder now talks about SEO as part of BondScanner's defensibility, not a traffic source. That's the shift that matters most.
+
+</Section>
+
+<Section variant="reflection" eyebrow="Reflection" heading="What I'd improve next">
+
+Three things I'd do differently if I were starting again.
+
+- **Data freshness.** Some ISIN pages carry rating data months old. Not an SEO problem yet, but it will be once Google's quality signals catch up. A page-level freshness refetch policy belongs in v1, not v2.
+- **Per-page instrumentation.** We flew on headline metrics for the first two months. Crawl budget per page type and click yield per page would have told us earlier which pillar to double down on.
+- **Governance for experiments.** The Framer episode was one exception that slipped through. A "compliance + crawlability acceptance" checklist for every new publishing surface, baked into Specify-Review-Verify, would catch the next one before it ships.
+
+<Callout variant="learning">
+Each one of these isn't a mistake I made. They are the things I'd build earlier — the kind of "earlier is cheaper" learnings you can only see once the engine is actually running.
+</Callout>
+
+</Section>
+
+<Section variant="ownership" eyebrow="Attribution" heading="Ownership and collaboration">
+
+Honest about who did what.
+
+<DataTable variant="ownership">
+  <DataTable.Column label="I owned">
+    <ul>
+      <li>The three-pillar strategy and the case for SEO as a product workstream.</li>
+      <li>The compliance AI agent: spec, prompt, evaluation harness.</li>
+      <li>Programmatic ISIN page templating logic and the data model it reads from.</li>
+      <li>Technical SEO scope — crawlability audit, nodal diagram, schema plan, sitemap architecture, GSC setup.</li>
+      <li>The governance model (Specify / Review / Verify) and getting it adopted.</li>
+      <li>Measurement setup and the founder narrative.</li>
+    </ul>
+  </DataTable.Column>
+  <DataTable.Column label="Team owned">
+    <ul>
+      <li>Engineering: the build for programmatic pages, the Strapi integration, and the fixes for the crawlability findings. Aman Singh, Anand Kumar.</li>
+      <li>Content: writing blogs and Dictionary entries at the 4-a-day cadence.</li>
+      <li>Compliance: Rehana on ambiguous flags and the final SEBI sign-off that the agent couldn't replace.</li>
+      <li>Performance marketing: the coordination between organic and paid so we weren't buying our own ranking terms.</li>
+      <li>Design: page templates for the Dictionary and ISIN pages.</li>
+    </ul>
+  </DataTable.Column>
+</DataTable>
+
+None of the three pillars would have shipped without the team — what I owned was the shape, the hard constraints, and the parts of the stack that needed a product-first answer.
+
+</Section>
