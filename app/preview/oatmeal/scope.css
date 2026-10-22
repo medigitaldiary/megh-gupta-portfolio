@@ -185,27 +185,41 @@
  * timeline markers and other text-accent spots).
  * ============================================================= */
 .oatmeal-scope [data-hero-greeting]::before {
-  content: "✦";
+  content: "";
   display: inline-block;
-  margin-right: 0.3em;
-  color: var(--highlight-strong);
-  font-size: 0.72em;
-  vertical-align: 0.18em;
-  text-shadow:
-    0 0 10px rgba(203, 179, 232, 0.65),
-    0 0 20px rgba(203, 179, 232, 0.35);
-  animation: hero-sparkle 2.6s ease-in-out infinite;
+  width: 0.85em;
+  height: 0.85em;
+  margin-right: 0.35em;
+  vertical-align: -0.04em;
+  background-image: url("/images/oatmeal/hero-sun.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  /* Soft lilac halo behind the sun. drop-shadow on the pseudo
+     mirrors the glow we had on the ✦ unicode star. */
+  filter: drop-shadow(0 0 6px rgba(203, 179, 232, 0.55))
+    drop-shadow(0 0 12px rgba(203, 179, 232, 0.3));
+  animation:
+    hero-sun-spin 10s linear infinite,
+    hero-sun-pulse 3s ease-in-out infinite;
   transform-origin: center;
 }
 
-@keyframes hero-sparkle {
+@keyframes hero-sun-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hero-sun-pulse {
   0%,
   100% {
-    transform: rotate(0deg) scale(0.85);
-    opacity: 0.45;
+    opacity: 0.7;
   }
   50% {
-    transform: rotate(180deg) scale(1.25);
     opacity: 1;
   }
 }
@@ -213,7 +227,7 @@
 @media (prefers-reduced-motion: reduce) {
   .oatmeal-scope [data-hero-greeting]::before {
     animation: none;
-    opacity: 0.85;
+    opacity: 0.9;
   }
 }
 
