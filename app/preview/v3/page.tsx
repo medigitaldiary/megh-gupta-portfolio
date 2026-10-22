@@ -8,13 +8,13 @@ import { SelectedWorkShelf } from "@/components/selected-work-shelf";
 import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
-  title: "Oatmeal palette preview — Megh Gupta",
+  title: "Portfolio v3 preview — Megh Gupta",
   description:
-    "The /preview/v2 homepage rendered under an Oatmeal / Pine Green / Soft Lilac palette experiment. Colour-only override.",
+    "Third preview of the portfolio under an Oatmeal / Pine Green / Soft Lilac palette, Geist typography inherited from v2, with hero word highlights, a lilac sun greeting, and ambient lavender tints.",
   robots: { index: false, follow: false },
 };
 
-export default function OatmealPreviewPage() {
+export default function PortfolioV3Preview() {
   return (
     <>
       <Nav hide={["lab", "writing"]} />

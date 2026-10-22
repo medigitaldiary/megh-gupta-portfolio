@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./scope.css";
 
-// Oatmeal palette experiment — colour + font override, scoped to
-// .oatmeal-scope. Fonts match /preview/v2 (Geist) so the palette
-// is evaluated against the finalised font direction, not the
-// production Oswald/Satoshi.
+// Preview v3 — Oatmeal / Pine Green / Soft Lilac palette on top of
+// the full portfolio folds. Inherits Geist fonts from the v2 direction
+// so the colour palette is evaluated against the finalised typeface,
+// not the production Oswald/Satoshi stack. Everything else is scoped
+// through .v3-scope + ./scope.css — zero component edits.
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -22,15 +23,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function OatmealPreviewLayout({
+export default function PortfolioV3Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={`oatmeal-scope ${geistSans.variable} ${geistMono.variable}`}
-    >
+    <div className={`v3-scope ${geistSans.variable} ${geistMono.variable}`}>
       {children}
     </div>
   );

@@ -1,6 +1,7 @@
 /* ============================================================
- * Preview — Oatmeal / Pine / Lilac palette
- * Lilac expanded as atmospheric tint
+ * Preview v3 — Oatmeal / Pine Green / Soft Lilac palette
+ * Promoted from the /preview/oatmeal sandbox; v3 is the full
+ * portfolio under this palette direction. Lilac stays atmospheric.
  * ============================================================
  *
  * Base roles (unchanged — Pine carries the whole brand):
@@ -19,7 +20,7 @@
  * It never becomes a text colour, a CTA fill, or anything the
  * reader has to parse for meaning.
  * -------------------------------------------------------------- */
-.oatmeal-scope {
+.v3-scope {
   /* Palette */
   --bg: #e8dcc6;
   --bg-elevated: #f3ebd9;
@@ -58,7 +59,7 @@
  * one deep bottom to tie the fold off. Low opacity, no pointer
  * events, sits beneath content via z-index -1.
  * ============================================================= */
-.oatmeal-scope::before {
+.v3-scope::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -88,7 +89,7 @@
  * on /preview/v2 (production green theme); only the oatmeal
  * scope paints the pill.
  * -----------------------------------------------------------*/
-.oatmeal-scope [data-hl-word] {
+.v3-scope [data-hl-word] {
   /* True pill: inline-block gives us control over the vertical
      bounds (so no line-box bleed) AND lets border-radius actually
      carve rounded corners on all four sides. line-height: 1
@@ -111,7 +112,7 @@
  * (with Pine foreground kept for legibility). Tiny delight;
  * consistent brand moment the user triggers themselves.
  * ============================================================= */
-.oatmeal-scope ::selection {
+.v3-scope ::selection {
   background: var(--highlight);
   color: var(--fg);
 }
@@ -122,7 +123,7 @@
  * (with a soft outer glow) instead of the default Pine ring,
  * so keyboard navigation gets its own distinct accent.
  * ============================================================= */
-.oatmeal-scope *:focus-visible {
+.v3-scope *:focus-visible {
   outline: 2px solid var(--highlight-strong);
   outline-offset: 2px;
   box-shadow: 0 0 0 4px rgba(203, 179, 232, 0.3);
@@ -135,9 +136,9 @@
  * that fills in from left to right. Pine text stays; lilac
  * is just the moving decoration.
  * ============================================================= */
-.oatmeal-scope main a:not(.group):hover,
-.oatmeal-scope nav a:hover,
-.oatmeal-scope footer a:hover {
+.v3-scope main a:not(.group):hover,
+.v3-scope nav a:hover,
+.v3-scope footer a:hover {
   text-decoration-color: var(--highlight-strong);
   text-decoration-thickness: 2px;
   text-underline-offset: 4px;
@@ -151,7 +152,7 @@
  * active book (data-shelf-book) so the "lift" moment is a
  * decorative lilac flare.
  * ============================================================= */
-.oatmeal-scope [data-shelf-book] {
+.v3-scope [data-shelf-book] {
   box-shadow:
     0 14px 22px -14px rgba(31, 59, 46, 0.4),
     0 2px 4px -2px rgba(31, 59, 46, 0.2),
@@ -164,7 +165,7 @@
  * lilac rim shadow and a thin lilac top border — the "page from
  * the opened book" feels like it was tinted by the lavender halo.
  * ============================================================= */
-.oatmeal-scope [class*="bg-\\[\\#F7F1E6\\]"] {
+.v3-scope [class*="bg-\\[\\#F7F1E6\\]"] {
   background-color: #ede4d9 !important;
   box-shadow:
     0 32px 60px -22px rgba(31, 59, 46, 0.22),
@@ -184,14 +185,14 @@
  * page (previously the square decoration spread to Experience
  * timeline markers and other text-accent spots).
  * ============================================================= */
-.oatmeal-scope [data-hero-greeting]::before {
+.v3-scope [data-hero-greeting]::before {
   content: "";
   display: inline-block;
   width: 0.85em;
   height: 0.85em;
   margin-right: 0.35em;
   vertical-align: -0.04em;
-  background-image: url("/images/oatmeal/hero-sun.svg");
+  background-image: url("/images/v3/hero-sun.svg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -225,7 +226,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .oatmeal-scope [data-hero-greeting]::before {
+  .v3-scope [data-hero-greeting]::before {
     animation: none;
     opacity: 0.9;
   }
@@ -237,6 +238,6 @@
  * blended into their border — subtle but perceptible when the
  * eye drifts across a card edge.
  * ============================================================= */
-.oatmeal-scope [class*="border-border"]:not(button):not(a) {
+.v3-scope [class*="border-border"]:not(button):not(a) {
   border-color: color-mix(in oklab, var(--border) 70%, var(--highlight) 30%);
 }
