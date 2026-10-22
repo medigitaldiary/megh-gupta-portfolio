@@ -198,20 +198,6 @@
   transform-origin: center;
 }
 
-/* Trailing sparkle for symmetry — same twinkle, offset half a
- * cycle so the two feel independent rather than synced. */
-.oatmeal-scope [data-hero-greeting]::after {
-  content: "✧";
-  display: inline-block;
-  margin-left: 0.35em;
-  color: var(--highlight-strong);
-  font-size: 0.55em;
-  vertical-align: 0.5em;
-  text-shadow: 0 0 8px rgba(203, 179, 232, 0.55);
-  animation: hero-sparkle 2.6s ease-in-out infinite -1.3s;
-  transform-origin: center;
-}
-
 @keyframes hero-sparkle {
   0%,
   100% {
@@ -225,8 +211,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .oatmeal-scope [data-hero-greeting]::before,
-  .oatmeal-scope [data-hero-greeting]::after {
+  .oatmeal-scope [data-hero-greeting]::before {
     animation: none;
     opacity: 0.85;
   }
