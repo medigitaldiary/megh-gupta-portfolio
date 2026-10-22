@@ -145,11 +145,22 @@ export function WorkShelf({ books }: { books: ShelfBook[] }) {
         {/* Books row — items-end aligns bottoms with shelf top.
             px-12 keeps edge books from clipping on scale.
             Row-level onMouseLeave schedules dismiss once the pointer
-            exits BOTH the books and the preview area. */}
+            exits BOTH the books and the preview area.
+            On scroll-into-view, children stagger-drop onto the shelf
+            via Motion's whileInView + variants (runs once). */}
         {/* biome-ignore lint/a11y/noStaticElementInteractions: pointer-leave on the shelf row is purely decorative; keyboard dismissal is handled per-book via onBlur. */}
-        <div
+        <motion.div
           className="relative z-10 flex w-full flex-row items-end justify-center gap-6 px-12 pt-24 pb-0"
           onMouseLeave={() => !isMobile && scheduleDismiss()}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={{
+            hidden: {},
+            show: {
+              transition: { staggerChildren: 0.1, delayChildren: 0.4 },
+            },
+          }}
         >
           {books.map((book, i) => {
             const tilt =
@@ -157,29 +168,48 @@ export function WorkShelf({ books }: { books: ShelfBook[] }) {
                 ? Math.max(-12, Math.min(12, book.leanDeg * 2.5))
                 : TILT_PATTERN[i % TILT_PATTERN.length];
             return (
-              <Book
-                ref={(el) => {
-                  bookRefs.current[i] = el;
-                }}
+              <motion.div
                 key={book.slug}
-                book={book}
-                tilt={tilt}
-                active={i === activeIdx}
-                anyActive={activeIdx != null}
-                onHover={() => !isMobile && activate(i)}
-                onFocus={() => activate(i)}
-                onBlur={() => scheduleDismiss()}
-                onTap={() => isMobile && toggleMobile(i)}
-              />
+                variants={{
+                  hidden: { opacity: 0, y: -60, scale: 0.9 },
+                  show: { opacity: 1, y: 0, scale: 1 },
+                }}
+                transition={{ duration: 0.6, ease: EASE }}
+              >
+                <Book
+                  ref={(el) => {
+                    bookRefs.current[i] = el;
+                  }}
+                  book={book}
+                  tilt={tilt}
+                  active={i === activeIdx}
+                  anyActive={activeIdx != null}
+                  onHover={() => !isMobile && activate(i)}
+                  onFocus={() => activate(i)}
+                  onBlur={() => scheduleDismiss()}
+                  onTap={() => isMobile && toggleMobile(i)}
+                />
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Shelf — CSS-only realistic wood plank. Sits directly beneath
             the books' baseline at z-0 (books are z-10 so they overlap).
             Four stacked layers simulate: top surface + front edge +
-            bottom lip shadow + ambient wall shadow. */}
-        <div aria-hidden="true" className="relative z-0 mt-[-2px] h-16 w-full">
+            bottom lip shadow + ambient wall shadow.
+            On scroll-into-view, the plank sweeps in from the left
+            (scaleX 0 → 1) so the shelf is "placed" before the books
+            cascade onto it. */}
+        <motion.div
+          aria-hidden="true"
+          className="relative z-0 mt-[-2px] h-16 w-full"
+          initial={{ scaleX: 0, opacity: 0 }}
+          whileInView={{ scaleX: 1, opacity: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.55, ease: EASE, delay: 0.05 }}
+          style={{ transformOrigin: "left center" }}
+        >
           {/* Top surface — wood grain via horizontal gradient */}
           <div className="absolute top-0 h-5 w-full border-t border-[#d4b092] bg-gradient-to-r from-[#b38b6d] via-[#c29b7a] to-[#b38b6d] shadow-sm" />
           {/* Front thick edge — darker wood with top-to-bottom lighting */}
@@ -188,7 +218,7 @@ export function WorkShelf({ books }: { books: ShelfBook[] }) {
           <div className="absolute top-11 h-1 w-full bg-[#3a2212] blur-[1px]" />
           {/* Ambient cast shadow on the wall below */}
           <div className="absolute top-12 h-12 w-full bg-black/20 blur-xl" />
-        </div>
+        </motion.div>
 
         {/* Preview — absolutely positioned over the stage, anchored to
             the active book's right edge. z-40 so it floats above the
