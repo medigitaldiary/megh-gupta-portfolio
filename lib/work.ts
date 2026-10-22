@@ -8,8 +8,12 @@ export type WorkCard = {
   role: string;
   company: string;
   timeline: string;
-  // Tailwind bg class for the book spine; picked from the accent family.
+  // Tailwind bg class for the book spine (used by work-card / work-shelf).
   spineColor: string;
+  // Hex form of the spine color used by the 3D hardcover faces on the
+  // bookshelf lab (spine, back cover, hinge crease). Picked per project
+  // brand so each book reads as its own cover.
+  spineHex: string;
   // Resting lean angle in degrees; pivots on the book's bottom edge.
   // Alternating signs create the "propped against each other" shelf feel.
   leanDeg?: number;
@@ -33,6 +37,7 @@ export const workCards: WorkCard[] = [
     company: "BondScanner",
     timeline: "2026",
     spineColor: "bg-accent",
+    spineHex: "#1F4D3A",
     coverImage: "/images/work/product-led-seo-engine/cover.webp",
     leanDeg: -4,
     status: "live",
@@ -49,6 +54,7 @@ export const workCards: WorkCard[] = [
     company: "Ultra",
     timeline: "2025",
     spineColor: "bg-fg",
+    spineHex: "#1E3A8A",
     coverImage: "/images/work/ultra-web-platform/cover.webp",
     leanDeg: 3,
     status: "live",
@@ -65,6 +71,7 @@ export const workCards: WorkCard[] = [
     company: "BondScanner",
     timeline: "2026",
     spineColor: "bg-[#8B5E3C]",
+    spineHex: "#C2410C",
     coverImage: "/images/work/bond-bytes/cover.webp",
     leanDeg: -2,
     status: "live",
@@ -81,6 +88,7 @@ export const workCards: WorkCard[] = [
     company: "BondScanner",
     timeline: "2026",
     spineColor: "bg-[#4A5D5A]",
+    spineHex: "#0F4C3A",
     coverImage: "/images/work/deridata-integration/cover.webp",
     leanDeg: 4,
     status: "live",
@@ -97,6 +105,7 @@ export const workCards: WorkCard[] = [
     company: "BondScanner",
     timeline: "2025",
     spineColor: "bg-[#6B4E71]",
+    spineHex: "#701A2F",
     coverImage: "/images/work/freshdesk-support-stack/cover.webp",
     leanDeg: -3,
     status: "live",
@@ -116,6 +125,7 @@ export const workCards: WorkCard[] = [
     company: "MoveInSync",
     timeline: "Aug 2024",
     spineColor: "bg-[#A66B2A]",
+    spineHex: "#D97706",
     coverImage: "/images/work/moveinsync-independence-day/cover.webp",
     leanDeg: 2,
     status: "live",
