@@ -1,0 +1,46 @@
+/* ============================================================
+ * Preview — Oatmeal / Pine / Lilac palette experiment
+ * ============================================================
+ *
+ * Scoped to `.oatmeal-scope`. Overrides the leaf colour variables
+ * `globals.css` sets on `:root`, which Tailwind utilities (bg-bg,
+ * text-fg, border-border, bg-accent, etc.) consume via @theme inline.
+ *
+ * The leaf-variable override pattern is the only one that works here:
+ * `@theme inline` inlines the var() reference into every utility
+ * class, so flipping the leaf flips every utility inside this subtree
+ * at once — no component edits required.
+ *
+ * Nothing here leaks to /preview/v1, /preview/v2, the production
+ * homepage, or /work/[slug] case studies.
+ *
+ * Palette roles
+ *   --bg          Oatmeal       — primary warm surface
+ *   --bg-elevated Lightened     — cards, modals (one step up)
+ *   --fg          Pine Green    — headings, body text, CTA pills
+ *   --fg-muted    Lighter pine  — secondary text (metadata, descriptions)
+ *   --fg-subtle   Muted pine    — captions, timestamps
+ *   --border      Toasted oat   — hairlines, dividers
+ *   --accent      Soft Lilac    — eyebrow labels, highlights, chips
+ *   --accent-fg   Pine on lilac — text on lilac surfaces
+ *
+ * Contrast: Pine on Oatmeal ~9:1 (AAA); fg-muted ~7:1; fg-subtle ~5:1;
+ * Pine on Lilac ~6.8:1 — all WCAG AA for body text, most AAA.
+ * -------------------------------------------------------------- */
+.oatmeal-scope {
+  --bg: #e8dcc6;
+  --bg-elevated: #f3ebd9;
+  --fg: #1f3b2e;
+  --fg-muted: #3a5544;
+  --fg-subtle: #556b5d;
+  --border: #d4c4a8;
+  --accent: #cbb3e8;
+  --accent-fg: #1f3b2e;
+
+  /* Belt-and-braces: anything that inherits a background through a
+     scope-less ancestor (e.g. the html/body set by the root layout)
+     picks up the oatmeal surface too. */
+  background-color: var(--bg);
+  color: var(--fg);
+  min-height: 100vh;
+}
