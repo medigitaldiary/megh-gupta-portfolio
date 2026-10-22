@@ -76,10 +76,23 @@
  * scope paints the pill.
  * -----------------------------------------------------------*/
 .oatmeal-scope [data-hl-word] {
-  background: rgba(203, 179, 232, 0.55);
-  padding: 0.02em 0.22em;
-  margin: 0 0.02em;
-  border-radius: 6px;
+  /* The hero headline uses leading-[1.08], so a plain inline
+     background expands to fill the full line-box and bleeds onto
+     the lines above and below. We paint the lilac with a linear
+     gradient clamped to the vertical slice the glyphs actually
+     occupy (18% → 92%) — top and bottom of the inline box stay
+     transparent, so adjacent lines stay clean. */
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 18%,
+    rgba(203, 179, 232, 0.6) 18%,
+    rgba(203, 179, 232, 0.6) 92%,
+    transparent 92%,
+    transparent 100%
+  );
+  padding: 0 0.18em;
+  border-radius: 4px;
   /* Keep the pill rendering per-line when the headline wraps */
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
