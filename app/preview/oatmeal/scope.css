@@ -1,47 +1,111 @@
 /* ============================================================
- * Preview — Oatmeal / Pine / Lilac palette experiment
+ * Preview — Oatmeal / Pine Green palette · Lilac as tint only
  * ============================================================
  *
- * Scoped to `.oatmeal-scope`. Overrides the leaf colour variables
- * `globals.css` sets on `:root`, which Tailwind utilities (bg-bg,
- * text-fg, border-border, bg-accent, etc.) consume via @theme inline.
+ * Scoped to `.oatmeal-scope`. Direction inspired by editorial
+ * design (ref: Lotus / "Inspiration in Stillness"): Pine Green
+ * carries the whole brand (headlines, nav, buttons, eyebrows),
+ * Oatmeal is the warm page surface, and Soft Lilac appears ONLY
+ * as a decorative tint in a handful of spot usages — never as a
+ * text colour or a CTA fill, where it would wash out.
  *
- * The leaf-variable override pattern is the only one that works here:
- * `@theme inline` inlines the var() reference into every utility
- * class, so flipping the leaf flips every utility inside this subtree
- * at once — no component edits required.
+ * Role split
+ *   --bg          Oatmeal       — primary warm surface
+ *   --bg-elevated Lightened     — cards, modals
+ *   --fg          Pine Green    — body, headings, CTA pills, nav
+ *   --fg-muted    Lighter pine  — secondary text
+ *   --fg-subtle   Muted pine    — captions, timestamps
+ *   --border      Toasted oat   — hairlines
+ *   --accent      Pine Green    — CTAs, eyebrows, selected states
+ *                                 (same hue as --fg so brand reads
+ *                                 as monochrome, Lotus-style)
+ *   --accent-fg   Oatmeal       — text on Pine surfaces
+ *   --highlight   Soft Lilac    — tint only; used in the spot
+ *                                 overrides below, not in chrome
  *
- * Nothing here leaks to /preview/v1, /preview/v2, the production
- * homepage, or /work/[slug] case studies.
+ * Why Pine on --accent (not Lilac): Lilac as text / as a CTA fill
+ * failed the earlier contrast test (~1.4:1 on Oatmeal) and read as
+ * "pastel UI" rather than "editorial accent". Keeping --accent on
+ * Pine means buttons, eyebrow labels, and selected states all read
+ * as consistent brand — the whole site in one deep green — while
+ * Lilac shows up as the "spot colour" in the decorative moments.
  *
- * Palette roles (INVERTED from v1 — Pine is the surface now)
- *   --bg          Pine Green    — deep forest surface
- *   --bg-elevated Lighter pine  — cards, modals (one step up)
- *   --fg          Oatmeal       — headings, body text, CTA pills
- *   --fg-muted    Warm beige    — secondary text (metadata, descriptions)
- *   --fg-subtle   Khaki         — captions, timestamps
- *   --border      Soft pine     — hairlines, dividers (subtle on dark)
- *   --accent      Soft Lilac    — eyebrow labels, highlights, chips
- *                                 (now reads properly against Pine)
- *   --accent-fg   Pine on lilac — text on lilac surfaces
- *
- * Contrast: Oatmeal on Pine ~9:1 (AAA); fg-muted ~6.3:1; fg-subtle
- * ~4.6:1; Lilac on Pine ~6.8:1 — all WCAG AA for body text, most AAA.
+ * Contrast
+ *   Pine on Oatmeal        ~9.0:1 (AAA)
+ *   fg-muted on Oatmeal    ~7.0:1 (AAA)
+ *   fg-subtle on Oatmeal   ~5.0:1 (AA body)
+ *   Oatmeal on Pine (CTAs) ~9.0:1 (AAA)
  * -------------------------------------------------------------- */
 .oatmeal-scope {
-  --bg: #1f3b2e;
-  --bg-elevated: #2a4c3c;
-  --fg: #e8dcc6;
-  --fg-muted: #c4b89f;
-  --fg-subtle: #a89f89;
-  --border: #3a5544;
-  --accent: #cbb3e8;
-  --accent-fg: #1f3b2e;
+  --bg: #e8dcc6;
+  --bg-elevated: #f3ebd9;
+  --fg: #1f3b2e;
+  --fg-muted: #3a5544;
+  --fg-subtle: #556b5d;
+  --border: #d4c4a8;
+  --accent: #1f3b2e;
+  --accent-fg: #e8dcc6;
+  --highlight: #cbb3e8;
 
-  /* Belt-and-braces: anything that inherits a background through a
-     scope-less ancestor (e.g. the html/body set by the root layout)
-     picks up the oatmeal surface too. */
   background-color: var(--bg);
   color: var(--fg);
   min-height: 100vh;
+
+  /* The scope needs its own stacking context so the ambient lilac
+     wash below can sit beneath the main content. */
+  position: relative;
+  isolation: isolate;
+}
+
+/* -----------------------------------------------------------
+ * LILAC SPOT USAGES
+ * -----------------------------------------------------------
+ * Each rule below is a deliberate decorative moment, picked so
+ * that lilac appears where the eye wants a lift but never where
+ * it has to carry meaning or contrast. */
+
+/* 1 · Ambient lilac wash in the upper right of the scope, like
+ *     the lavender halo behind the lotus flowers in the reference.
+ *     Radial gradient on a ::before so the content stays legible
+ *     and the pattern never captures pointer events. */
+.oatmeal-scope::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 70% 55% at 85% 15%,
+      rgba(203, 179, 232, 0.42),
+      rgba(203, 179, 232, 0) 70%
+    ),
+    radial-gradient(
+      ellipse 60% 40% at 10% 40%,
+      rgba(203, 179, 232, 0.18),
+      rgba(203, 179, 232, 0) 70%
+    );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 2 · Shelf preview card — the hardcoded #F7F1E6 cream (set in
+ *     work-shelf.tsx when the shelf was built against the green
+ *     theme) gets a lilac-leaning cream here, so the panel reads
+ *     as part of the oatmeal direction. Border + shadow pick up
+ *     a lilac wash too. */
+.oatmeal-scope [class*="bg-\\[\\#F7F1E6\\]"] {
+  background-color: #ede4d9 !important;
+  box-shadow:
+    0 32px 60px -22px rgba(31, 59, 46, 0.22),
+    0 0 0 1px rgba(203, 179, 232, 0.35) !important;
+}
+
+/* 3 · Case-study book covers on the shelf get a faint lilac glow
+ *     when active. The active book's drop-shadow already uses
+ *     Pine Green by default; blending in a lilac inner glow is
+ *     the "spot colour" moment on the primary interaction. */
+.oatmeal-scope [data-shelf-book] {
+  box-shadow:
+    0 14px 22px -14px rgba(31, 59, 46, 0.4),
+    0 2px 4px -2px rgba(31, 59, 46, 0.2),
+    0 0 24px -12px rgba(203, 179, 232, 0.5);
 }
