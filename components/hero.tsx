@@ -6,6 +6,7 @@ export function Hero() {
       <div className="mx-auto grid max-w-5xl items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         <div className="min-w-0">
           <p
+            data-hero-greeting
             className="mb-3 text-3xl leading-[1] text-accent md:text-[2.25rem]"
             style={{ fontFamily: "var(--font-hand), cursive" }}
           >
@@ -13,9 +14,15 @@ export function Hero() {
           </p>
 
           <h1 className="font-serif text-[2.25rem] leading-[1.08] tracking-tight text-fg md:text-[3rem] lg:text-[3.25rem]">
-            <span className="block">I turn ideas into features,</span>
-            <span className="block">features into products,</span>
-            <span className="block">products into systems.</span>
+            <span className="block">
+              I turn ideas into <span data-hl-word>features</span>,
+            </span>
+            <span className="block">
+              features into <span data-hl-word>products</span>,
+            </span>
+            <span className="block">
+              products into <span data-hl-word>systems</span>.
+            </span>
           </h1>
 
           <div className="mt-8">
