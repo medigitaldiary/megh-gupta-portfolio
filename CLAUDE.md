@@ -30,7 +30,7 @@
 | Hosting | **Vercel** (auto-deploy from `main` branch on GitHub) |
 | Analytics | **Vercel Analytics** + **Vercel Speed Insights** |
 | Email | `mailto:` link first. No form unless explicitly requested. |
-| Fonts | **Oswald** (headlines), **Satoshi** (body), **JetBrains Mono** (code/tags). Load via `next/font/local` from `/public/fonts/`. |
+| Fonts | **Geist Sans** (display + body), **Geist Mono** (code/tags), **Kalam** (handwritten greeting only). Load via `next/font/google`. Earlier Oswald + Satoshi + JetBrains Mono stack is retired. |
 | Package manager | **pnpm** |
 | Linting/formatting | **Biome** (single tool for both) |
 | Node version | 20 LTS or newer |
@@ -46,18 +46,19 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
 
 ```css
 :root {
-  --bg: #FAFAF7;          /* off-white, not pure white */
-  --bg-elevated: #FFFFFF; /* cards, modals */
-  --fg: #111111;          /* primary text */
-  --fg-muted: #555555;    /* secondary text */
-  --fg-subtle: #999999;   /* tertiary, captions */
-  --border: #E8E6E0;      /* hairlines */
-  --accent: #1F4D3A;      /* muted bond-paper green — the ONE accent */
-  --accent-fg: #FAFAF7;   /* text on accent backgrounds */
+  --bg: #E8DCC6;          /* Oatmeal — primary warm surface */
+  --bg-elevated: #F3EBD9; /* lightened oatmeal — cards, modals */
+  --fg: #1F3B2E;          /* Pine Green — body, headings, CTA fill */
+  --fg-muted: #3A5544;    /* lighter pine — secondary text */
+  --fg-subtle: #556B5D;   /* muted pine — captions */
+  --border: #D4C4A8;      /* toasted oat — hairlines */
+  --accent: #1F3B2E;      /* same hue as --fg: monochrome brand */
+  --accent-fg: #E8DCC6;   /* Oatmeal — text on Pine buttons */
+  --highlight: #CBB3E8;   /* Soft Lilac — decorative tint, never chrome */
 }
 ```
 
-**Rule:** No other colors. If a design needs a fifth color, ask first.
+**Rule:** No other colors. If a design needs a fifth family, ask first. The Oatmeal / Pine / Lilac palette was promoted from the `/preview/v3` experiment, so earlier commits may still show the retired `#FAFAF7 / #111111 / #1F4D3A` stack. Treat the values here as the source of truth. Lilac stays decorative (highlighter marks, focus rings, hover washes); never as text that carries meaning.
 
 ### Type scale
 - `display`: 4rem / 64px, Oswald, line-height 1.05 (hero only)
