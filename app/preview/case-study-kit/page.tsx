@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
 import {
+  AnalysisIcon,
   Callout,
   DataTable,
+  DeliverIcon,
   Eyebrow,
   Figure,
+  HumanIcon,
   Metric,
   MetricRow,
   Pill,
+  Pipeline,
   Quote,
   ScreenshotStack,
   Section,
   StepGrid,
   Timeline,
+  TranscriptIcon,
+  WaveformIcon,
 } from "@/components/case-study";
 
 // /preview/case-study-kit — a visual regression target. Renders every
@@ -398,6 +404,60 @@ export default function CaseStudyKitPage() {
             <Timeline.Event date="Mar 2026" title="Rollout" />
             <Timeline.Event date="Apr 2026" title="Measure" />
           </Timeline>
+        </Section>
+
+        <Section variant="narrative" eyebrow="Patterns" heading="Pipeline">
+          <p>
+            Interactive 5-stage pipeline — Play walks through the sequence, or
+            hover / tap any stage to inspect it. Mobile stacks the stages
+            vertically; `prefers-reduced-motion` disables the auto-sequence and
+            transitions.
+          </p>
+          <Pipeline
+            footnote="Interactive demo — try hover, tap, or Play"
+            stages={[
+              {
+                id: "ingest",
+                label: "01 · Ingest",
+                title: "Nightly job",
+                description: "A scheduled batch identifies new recordings.",
+                icon: <WaveformIcon />,
+                preview: <p>Dequeue call recordings for the day.</p>,
+              },
+              {
+                id: "transcribe",
+                label: "02 · Transcribe",
+                title: "Sarvam STT",
+                description: "Hindi / English / Hinglish speech-to-text.",
+                icon: <TranscriptIcon />,
+                preview: <p>Convert audio to text.</p>,
+              },
+              {
+                id: "analyse",
+                label: "03 · Analyse",
+                title: "Claude Sonnet",
+                description: "Structured scoring against the rubric.",
+                icon: <AnalysisIcon />,
+                preview: <p>Score + action items as JSON.</p>,
+              },
+              {
+                id: "deliver",
+                label: "04 · Deliver",
+                title: "Radar integration",
+                description: "Scores + tasks land in the CRM.",
+                icon: <DeliverIcon />,
+                preview: <p>Scores attach to profiles; tasks to RMs.</p>,
+              },
+              {
+                id: "act",
+                label: "05 · Act",
+                title: "Human review",
+                description: "RMs act; managers coach.",
+                icon: <HumanIcon />,
+                preview: <p>Human follow-up on the structured output.</p>,
+              },
+            ]}
+          />
         </Section>
 
         <Section

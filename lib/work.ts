@@ -132,6 +132,25 @@ export const workCards: WorkCard[] = [
     featured: true,
     order: 6,
   },
+  // Internal AI tooling — nightly batch pipeline turning BondScanner's
+  // call recordings into coaching scores + Radar follow-up tasks.
+  {
+    slug: "ai-call-analysis-pipeline",
+    title: "AI Call Analysis Pipeline",
+    eyebrow: "Internal AI tooling",
+    oneLiner:
+      "Turning BondScanner's call recordings into coaching scores and Radar follow-up tasks — a nightly LLM workflow.",
+    role: "Product Manager",
+    company: "BondScanner",
+    timeline: "Mar 2026 →",
+    spineColor: "bg-[#2A4D5C]",
+    spineHex: "#2A4D5C",
+    coverImage: "/images/work/ai-call-analysis-pipeline/cover.webp",
+    leanDeg: -1,
+    status: "live",
+    featured: true,
+    order: 7,
+  },
 ];
 
 export function getAllWorkCards(): WorkCard[] {
