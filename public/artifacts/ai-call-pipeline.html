@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI Call Analysis Pipeline · BondScanner</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --surface: #fafafa;
+  --surface-2: #ffffff;
+  --surface-3: #f3f3f5;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.22);
+  --text: #0a0a0a;
+  --text-muted: #666666;
+  --text-faint: #999999;
+  --accent: #635bff;
+  --accent-soft: rgba(99, 91, 255, 0.12);
+  --accent-glow: rgba(99, 91, 255, 0.3);
+  --warning: #d97706;
+  --warning-soft: rgba(217, 119, 6, 0.14);
+  --warning-glow: rgba(217, 119, 6, 0.35);
+  --success: #16a34a;
+  --node-bg: #ffffff;
+  --node-active-bg: rgba(99, 91, 255, 0.06);
+  --node-dim: rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0a0b;
+    --surface: #141418;
+    --surface-2: #1b1b20;
+    --surface-3: #22222a;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.22);
+    --text: #fafafa;
+    --text-muted: #9a9aa2;
+    --text-faint: #666672;
+    --accent: #8b7cff;
+    --accent-soft: rgba(139, 124, 255, 0.14);
+    --accent-glow: rgba(139, 124, 255, 0.4);
+    --warning: #f59e0b;
+    --warning-soft: rgba(245, 158, 11, 0.14);
+    --warning-glow: rgba(245, 158, 11, 0.4);
+    --success: #22c55e;
+    --node-bg: #17171b;
+    --node-active-bg: rgba(139, 124, 255, 0.1);
+    --node-dim: rgba(255, 255, 255, 0.03);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0a0a0b;
+  --surface: #141418;
+  --surface-2: #1b1b20;
+  --surface-3: #22222a;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.22);
+  --text: #fafafa;
+  --text-muted: #9a9aa2;
+  --text-faint: #666672;
+  --accent: #8b7cff;
+  --accent-soft: rgba(139, 124, 255, 0.14);
+  --accent-glow: rgba(139, 124, 255, 0.4);
+  --warning: #f59e0b;
+  --warning-soft: rgba(245, 158, 11, 0.14);
+  --warning-glow: rgba(245, 158, 11, 0.4);
+  --success: #22c55e;
+  --node-bg: #17171b;
+  --node-active-bg: rgba(139, 124, 255, 0.1);
+  --node-dim: rgba(255, 255, 255, 0.03);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 40px 24px 48px;
+}
+
+header {
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin: 0 0 10px;
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  margin: 0 0 12px;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 15px;
+  margin: 0 0 10px;
+  max-width: 760px;
+}
+
+.hint {
+  color: var(--text-faint);
+  font-size: 13px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hint svg { opacity: 0.7; }
+
+.controls {
+  margin: 28px 0 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+button {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: all 0.15s ease;
+}
+
+button:hover {
+  border-color: var(--border-strong);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button.primary {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+button.primary:hover {
+  opacity: 0.92;
+}
+
+button svg { flex-shrink: 0; }
+
+.legend {
+  display: flex;
+  gap: 20px;
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.diagram-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px 24px;
+  overflow-x: auto;
+  position: relative;
+}
+
+#diagram {
+  width: 100%;
+  min-width: 1200px;
+  height: auto;
+  display: block;
+}
+
+/* SVG node styles */
+.node rect {
+  fill: var(--node-bg);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+  transition: all 0.35s ease;
+}
+
+.node.active rect {
+  fill: var(--node-active-bg);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  filter: drop-shadow(0 0 14px var(--accent-glow));
+}
+
+.node.selected rect {
+  fill: var(--node-active-bg);
+  stroke: var(--accent);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 16px var(--accent-glow));
+}
+
+.node { cursor: pointer; outline: none; }
+.node:hover rect { stroke: var(--accent); }
+.node:focus-visible rect {
+  stroke: var(--accent);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 10px var(--accent-glow));
+}
+
+.node text {
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+}
+
+.node-title {
+  fill: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.node-subtitle {
+  fill: var(--text-muted);
+  font-size: 11px;
+}
+
+.node-badge {
+  fill: var(--text-muted);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.node-badge.external { fill: var(--accent); }
+.node-badge.destination { fill: var(--success); }
+.node-badge.warning { fill: var(--warning); }
+
+.connector {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  color: var(--border-strong);
+  transition: stroke 0.3s ease, color 0.3s ease, filter 0.3s ease;
+}
+
+.connector.active {
+  stroke: var(--accent);
+  color: var(--accent);
+}
+
+.connector.related {
+  stroke: var(--accent);
+  color: var(--accent);
+}
+
+.connector.warning {
+  stroke: var(--warning);
+  stroke-dasharray: 5 4;
+  color: var(--warning);
+}
+
+.connector.warning.active,
+.connector.warning.related {
+  color: var(--warning);
+  filter: drop-shadow(0 0 6px var(--warning-glow));
+}
+
+.particle { opacity: 0; }
+
+/* Walkthrough-step highlighting on diagram */
+.walkthrough-active .node { opacity: 0.4; }
+.walkthrough-active .node.step-active { opacity: 1; }
+.walkthrough-active .node.step-active rect {
+  fill: var(--node-active-bg);
+  stroke: var(--accent);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 16px var(--accent-glow));
+}
+.walkthrough-active .connector { opacity: 0.3; }
+.walkthrough-active .connector.step-active {
+  opacity: 1;
+  stroke: var(--accent);
+  color: var(--accent);
+}
+/* Panel */
+.panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 15;
+}
+
+.panel-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 440px;
+  max-width: 100%;
+  height: 100%;
+  background: var(--surface-2);
+  border-left: 1px solid var(--border);
+  padding: 24px 28px;
+  padding-top: calc(24px + env(safe-area-inset-top, 0));
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0));
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 16;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.14);
+}
+
+.panel.open { transform: translateX(0); }
+
+.panel-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.panel-close:hover {
+  background: var(--node-active-bg);
+  color: var(--text);
+}
+
+.panel-badge {
+  display: inline-block;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 14px;
+}
+
+.panel-badge.warning {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.panel-badge.destination {
+  background: rgba(22, 163, 74, 0.12);
+  color: var(--success);
+}
+
+.panel h3 {
+  margin: 0 0 16px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.panel-section {
+  margin-top: 20px;
+}
+
+.panel-section:first-of-type { margin-top: 0; }
+
+.panel-section h4 {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.panel-section h4 svg { opacity: 0.6; }
+
+.panel-section p {
+  margin: 0 0 4px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.panel-section + .panel-section {
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.io-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 10px 12px;
+  font-family: "SF Mono", "JetBrains Mono", Consolas, Monaco, monospace;
+  font-size: 12px;
+  color: var(--text);
+  margin: 4px 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Walkthrough bottom panel */
+.walkthrough {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%) translateY(140%);
+  width: 100%;
+  max-width: 860px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.18);
+  z-index: 12;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.walkthrough.open { transform: translateX(-50%) translateY(0); }
+
+.walkthrough-header {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.walkthrough-title {
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.walkthrough-title svg { color: var(--accent); }
+
+.illustrative-badge {
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.walkthrough-step-counter {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.walkthrough-exit {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 4px;
+}
+
+.walkthrough-exit:hover {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.walkthrough-body {
+  padding: 20px;
+  min-height: 220px;
+}
+
+.step-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin: 0 0 10px;
+}
+
+.step-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 10px;
+  letter-spacing: -0.01em;
+}
+
+.step-caption {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 16px;
+}
+
+.step-visual {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: "SF Mono", "JetBrains Mono", Consolas, Monaco, monospace;
+  font-size: 12.5px;
+  color: var(--text);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+.step-visual .data-label {
+  color: var(--text-faint);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: block;
+  margin: 10px 0 4px;
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  font-weight: 700;
+}
+
+.step-visual .data-label:first-child { margin-top: 0; }
+
+.step-visual .highlight { color: var(--accent); font-weight: 600; }
+.step-visual .warning-text { color: var(--warning); font-weight: 600; }
+.step-visual .success-text { color: var(--success); font-weight: 600; }
+
+.branch-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 6px 10px;
+  background: var(--warning-soft);
+  color: var(--warning);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.branch-toggle:hover { border-color: var(--warning); }
+
+.walkthrough-controls {
+  padding: 12px 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.walkthrough-controls .spacer { flex: 1; }
+
+.walkthrough-controls button {
+  font-size: 12px;
+  padding: 7px 12px;
+}
+
+.walkthrough-progress {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border-strong);
+  transition: all 0.2s ease;
+}
+
+.progress-dot.filled { background: var(--accent); }
+.progress-dot.current {
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+footer {
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Hover tooltip */
+.tooltip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  max-width: 300px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 12px 14px 10px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 20;
+  font-family: inherit;
+}
+
+.tooltip.open { opacity: 1; }
+
+.tooltip-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.tooltip-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 6px;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.tooltip-body {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0 0 8px;
+}
+
+.tooltip-hint {
+  font-size: 11px;
+  color: var(--text-faint);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (hover: none) {
+  .tooltip { display: none !important; }
+}
+
+@media (max-width: 780px) {
+  .container { padding: 24px 16px 32px; }
+  h1 { font-size: 24px; }
+  .subtitle { font-size: 14px; }
+  .controls { gap: 8px; }
+  .legend {
+    font-size: 11px;
+    gap: 12px;
+    width: 100%;
+    margin-left: 0;
+    margin-top: 4px;
+  }
+  .diagram-wrapper { padding: 16px 12px; }
+  .panel { width: 100%; padding: 20px; }
+  .walkthrough {
+    bottom: 0;
+    border-radius: 14px 14px 0 0;
+    max-width: 100%;
+  }
+  .step-visual { font-size: 11.5px; }
+}
+
+/* Prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .particle { display: none; }
+  .connector, .node rect, .panel, .walkthrough { transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <p class="eyebrow">Workflow architecture</p>
+    <h1>AI Call Analysis Pipeline</h1>
+    <p class="subtitle">A nightly batch pipeline I built at BondScanner that turns ~8 hours of daily sales-call recordings into structured scores, auto-assigned tasks for the sales team, and feedback for marketing. Click any step to see what it does, or follow an example end-to-end.</p>
+    <p class="hint">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      Tip: new here? Click <strong>Follow an example</strong> below.
+    </p>
+  </header>
+
+  <div class="controls">
+    <button class="primary" id="walkthroughBtn" aria-label="Follow an example walkthrough">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      Follow an example
+    </button>
+    <button id="playBtn" aria-label="Replay the animation">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      Replay animation
+    </button>
+    <button id="pauseBtn" aria-label="Pause the animation">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+      Pause
+    </button>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background: var(--border-strong)"></div> Input &amp; processing</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--accent)"></div> External service</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--warning)"></div> Fallback branch</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--success)"></div> Destination</div>
+    </div>
+  </div>
+
+  <div class="diagram-wrapper">
+    <svg id="diagram" viewBox="0 0 1480 640" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+        </marker>
+      </defs>
+
+      <!-- Connectors (behind nodes) -->
+      <path id="conn-1" class="connector" d="M 200 250 L 240 250" marker-end="url(#arrow)"/>
+      <path id="conn-2" class="connector" d="M 400 250 L 440 250" marker-end="url(#arrow)"/>
+      <path id="conn-3" class="connector" d="M 600 250 L 640 250" marker-end="url(#arrow)"/>
+      <path id="conn-4" class="connector" d="M 800 250 L 840 250" marker-end="url(#arrow)"/>
+      <path id="conn-5" class="connector" d="M 1000 250 L 1040 250" marker-end="url(#arrow)"/>
+      <path id="conn-fail" class="connector warning" d="M 520 310 L 520 440" marker-end="url(#arrow)"/>
+      <path id="conn-branch-1" class="connector" d="M 1200 230 Q 1240 230 1240 150 L 1240 120" marker-end="url(#arrow)"/>
+      <path id="conn-branch-2" class="connector" d="M 1200 250 L 1240 250" marker-end="url(#arrow)"/>
+      <path id="conn-branch-3" class="connector" d="M 1200 270 Q 1240 270 1240 350 L 1240 380" marker-end="url(#arrow)"/>
+
+      <!-- Nodes -->
+      <g class="node" data-id="recordings" transform="translate(40, 210)" tabindex="0" role="button" aria-label="Call Recordings. Click for details.">
+        <rect width="160" height="80" rx="10"/>
+        <text class="node-badge" x="16" y="24">Input</text>
+        <text class="node-title" x="16" y="48">Call Recordings</text>
+        <text class="node-subtitle" x="16" y="66">~8 hrs/day · 8 RMs</text>
+      </g>
+
+      <g class="node" data-id="trigger" transform="translate(240, 210)" tabindex="0" role="button" aria-label="Nightly Batch trigger. Click for details.">
+        <rect width="160" height="80" rx="10"/>
+        <text class="node-badge" x="16" y="24">Trigger</text>
+        <text class="node-title" x="16" y="48">Nightly Batch</text>
+        <text class="node-subtitle" x="16" y="66">cron · end of day</text>
+      </g>
+
+      <g class="node" data-id="sarvam" transform="translate(440, 210)" tabindex="0" role="button" aria-label="Sarvam STT external service. Click for details.">
+        <rect width="160" height="80" rx="10"/>
+        <text class="node-badge external" x="16" y="24">External</text>
+        <text class="node-title" x="16" y="48">Sarvam STT</text>
+        <text class="node-subtitle" x="16" y="66">Hinglish transcription</text>
+      </g>
+
+      <g class="node" data-id="optimizer" transform="translate(640, 210)" tabindex="0" role="button" aria-label="Token Optimizer processing step. Click for details.">
+        <rect width="160" height="80" rx="10"/>
+        <text class="node-badge" x="16" y="24">Processing</text>
+        <text class="node-title" x="16" y="48">Token Optimizer</text>
+        <text class="node-subtitle" x="16" y="66">Trims silence · fillers</text>
+      </g>
+
+      <g class="node" data-id="claude" transform="translate(840, 210)" tabindex="0" role="button" aria-label="Claude Sonnet external service. Click for details.">
+        <rect width="160" height="80" rx="10"/>
+        <text class="node-badge external" x="16" y="24">External</text>
+        <text class="node-title" x="16" y="48">Claude Sonnet</text>
+        <text class="node-subtitle" x="16" y="66">Score + action items</text>
+      </g>
+
+      <g class="node" data-id="json" transform="translate(1040, 210)" tabindex="0" role="button" aria-label="Structured JSON output. Click for details.">
+        <rect width="160" height="80" rx="10"/>
+        <text class="node-badge" x="16" y="24">Output</text>
+        <text class="node-title" x="16" y="48">Structured JSON</text>
+        <text class="node-subtitle" x="16" y="66">Fanned to 3 consumers</text>
+      </g>
+
+      <g class="node" data-id="unscoreable" transform="translate(440, 440)" tabindex="0" role="button" aria-label="Unscoreable Tag fallback branch. Click for details.">
+        <rect width="160" height="80" rx="10"/>
+        <text class="node-badge warning" x="16" y="24">Fallback</text>
+        <text class="node-title" x="16" y="48">Unscoreable Tag</text>
+        <text class="node-subtitle" x="16" y="66">Manual review queue</text>
+      </g>
+
+      <g class="node" data-id="radar-profile" transform="translate(1240, 80)" tabindex="0" role="button" aria-label="Radar User Profile destination. Click for details.">
+        <rect width="200" height="80" rx="10"/>
+        <text class="node-badge destination" x="16" y="24">Destination</text>
+        <text class="node-title" x="16" y="48">Radar · User Profile</text>
+        <text class="node-subtitle" x="16" y="66">Call score attached</text>
+      </g>
+
+      <g class="node" data-id="radar-tasks" transform="translate(1240, 210)" tabindex="0" role="button" aria-label="Radar RM Tasks destination. Click for details.">
+        <rect width="200" height="80" rx="10"/>
+        <text class="node-badge destination" x="16" y="24">Destination</text>
+        <text class="node-title" x="16" y="48">Radar · RM Tasks</text>
+        <text class="node-subtitle" x="16" y="66">Action items + deadlines</text>
+      </g>
+
+      <g class="node" data-id="marketing" transform="translate(1240, 340)" tabindex="0" role="button" aria-label="Performance Marketing destination. Click for details.">
+        <rect width="200" height="80" rx="10"/>
+        <text class="node-badge destination" x="16" y="24">Destination</text>
+        <text class="node-title" x="16" y="48">Perf Marketing</text>
+        <text class="node-subtitle" x="16" y="66">Objection feedback loop</text>
+      </g>
+
+      <!-- Animated particles -->
+      <circle id="particle-1" class="particle" r="5" fill="var(--accent)"/>
+      <circle id="particle-2" class="particle" r="5" fill="var(--warning)"/>
+      <circle id="particle-3" class="particle" r="5" fill="var(--accent)"/>
+      <circle id="particle-4" class="particle" r="5" fill="var(--accent)"/>
+    </svg>
+  </div>
+
+  <footer>
+    Nightly batch pipeline · Sarvam STT → Claude Sonnet → Radar CRM · BondScanner, 2026
+  </footer>
+</div>
+
+<div class="panel-backdrop" id="backdrop"></div>
+<div class="tooltip" id="tooltip" role="tooltip" aria-hidden="true"></div>
+
+<aside class="panel" id="panel" aria-hidden="true" aria-labelledby="panelHeading">
+  <button class="panel-close" id="panelClose" aria-label="Close details">×</button>
+  <div id="panelContent"></div>
+</aside>
+
+<!-- Walkthrough bottom panel -->
+<div class="walkthrough" id="walkthrough" aria-hidden="true" aria-live="polite">
+  <div class="walkthrough-header">
+    <div class="walkthrough-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Follow an example
+    </div>
+    <span class="illustrative-badge" title="This walkthrough uses fictional names and data for illustration only.">Illustrative</span>
+    <span class="walkthrough-step-counter" id="stepCounter">Step 1 of 9</span>
+    <button class="walkthrough-exit" id="walkthroughExit" aria-label="Exit walkthrough">Exit</button>
+  </div>
+  <div class="walkthrough-body" id="walkthroughBody">
+    <!-- Populated by JS -->
+  </div>
+  <div class="walkthrough-controls">
+    <button id="walkthroughPrev" aria-label="Previous step">← Prev</button>
+    <button id="walkthroughNext" class="primary" aria-label="Next step">Next →</button>
+    <div class="spacer"></div>
+    <div class="walkthrough-progress" id="walkthroughProgress" aria-hidden="true"></div>
+  </div>
+</div>
+
+<script>
+// ========== Node details with 5 sections ==========
+const nodeDetails = {
+  recordings: {
+    badge: "Input Source",
+    badgeClass: "",
+    title: "Call Recordings",
+    whatHappens: "Every outbound call that your sales reps (we call them RMs) make with a prospective investor gets recorded automatically by the telephony provider. The recording file lands in a cloud storage bucket.",
+    input: "Live phone call between RM and prospect",
+    processing: "Audio recorded and uploaded to cloud storage with metadata (RM ID, user ID, timestamp)",
+    output: "Audio file (.mp3) in cloud storage",
+    why: "Without a persistent recording, every call is lost the second it ends. Recording is the raw material that makes everything downstream possible."
+  },
+  trigger: {
+    badge: "Workflow Trigger",
+    badgeClass: "",
+    title: "Nightly Batch Job",
+    whatHappens: "At the end of each day, a scheduled job (a cron) wakes up, scans the storage bucket, and picks up every new recording that landed during the day.",
+    input: "Date range · list of new files since last run",
+    processing: "Queries storage for recordings uploaded today and queues them for processing one by one",
+    output: "A processing queue of audio files",
+    why: "Batching at end-of-day instead of processing calls in real-time keeps API costs predictable and matches the natural rhythm of when managers review team performance (morning after)."
+  },
+  sarvam: {
+    badge: "External Service",
+    badgeClass: "",
+    title: "Sarvam STT",
+    whatHappens: "Each audio file is sent to Sarvam, a speech-to-text service built for Indian languages. Sarvam listens to the call and returns the words spoken as text.",
+    input: "Audio file (one call recording)",
+    processing: "Sarvam's speech-to-text model transcribes the audio, keeping the mixed Hindi-English (Hinglish) exactly as spoken",
+    output: "Full text transcript with timestamps per speaker turn",
+    why: "Our RMs and prospects talk in Hinglish with Indian accents. Whisper and Google Speech had noticeably worse accuracy on our sample calls. Sarvam was built for this, costs less per minute, and the batch use case didn't need Sarvam's lowest latency tier."
+  },
+  optimizer: {
+    badge: "Processing Step",
+    badgeClass: "",
+    title: "Token Optimizer",
+    whatHappens: "The raw transcript is cleaned up before being sent to Claude. We strip filler words, long silences, repeated acknowledgements, and hold-music indicators that don't add meaning but do add cost.",
+    input: "Raw Sarvam transcript",
+    processing: "Regex and rule-based pass to remove non-signal segments (umm, pauses >3s, repeated 'haan haan haan', hold-music markers)",
+    output: "A shorter, signal-dense version of the transcript",
+    why: "A single call transcript can be several thousand tokens. Across 8 hours of daily audio, Claude API costs would spiral. This step cuts token count by roughly 30% without losing anything that matters for scoring."
+  },
+  claude: {
+    badge: "External Service",
+    badgeClass: "",
+    title: "Claude Sonnet",
+    whatHappens: "The cleaned transcript is sent to Claude Sonnet with a scoring prompt. Claude reads the full call and returns a structured response: an overall call score, per-parameter ratings against the rubric, action items the RM promised, and user objections raised.",
+    input: "Cleaned transcript + scoring prompt",
+    processing: "One API call. Claude scores against the propensity model (parameters: discovery questions, risk-return clarity, objection handling, next-step commitments, empathy, pace), extracts action items with deadlines, and flags objections",
+    output: "Structured JSON response",
+    why: "This is the brain of the pipeline. Doing scoring, action-item extraction, and objection flagging in one call keeps latency and cost low. The rubric itself (not Claude) is where the product thinking lives — the LLM just executes it."
+  },
+  json: {
+    badge: "Pipeline Output",
+    badgeClass: "",
+    title: "Structured JSON",
+    whatHappens: "Claude's response is parsed into a structured JSON object. The parser then fans the different parts of the response out to three downstream systems in parallel.",
+    input: "Claude's raw response",
+    processing: "JSON validation, then split into three payloads: score for the user profile, action items for RM tasks, objections for marketing",
+    output: "Three parallel API calls to Radar and the marketing digest",
+    why: "A single AI call produces three different kinds of value for three different teams. Routing them separately means each team's system only receives what it needs, and failures in one route don't block the others."
+  },
+  unscoreable: {
+    badge: "Fallback Path",
+    badgeClass: "warning",
+    title: "Unscoreable Tag",
+    whatHappens: "If Sarvam returns a low-confidence transcript (bad connection, poor audio, cutouts), the pipeline stops here. The call is tagged as unscoreable and dropped into a manual review queue instead of being scored.",
+    input: "Low-confidence transcript from Sarvam",
+    processing: "The pipeline tags the call with an 'unscoreable' flag and sends an alert to the RM's manager with the recording link",
+    output: "Flagged entry in the manager's manual-review queue",
+    why: "Scoring a garbled transcript would produce a nonsense score that then poisons the RM's profile and misleads their manager. Flagging it as unscoreable is a 'know what you don't know' safeguard. Managers can listen manually if the call matters."
+  },
+  "radar-profile": {
+    badge: "Destination",
+    badgeClass: "destination",
+    title: "Radar · User Profile",
+    whatHappens: "The call score is written back to the user's profile inside Radar (our in-house CRM). The user's record now shows all their past interactions with scores attached.",
+    input: "Call score + RM ID + user ID + timestamp",
+    processing: "Appends a scored interaction row to the user's timeline in Radar",
+    output: "Updated user profile visible to managers and the RM team",
+    why: "Managers coach based on patterns, not single calls. Having scores on every user interaction lets a manager see how an RM performed across different kinds of prospects — not just the one call they happened to overhear."
+  },
+  "radar-tasks": {
+    badge: "Destination",
+    badgeClass: "destination",
+    title: "Radar · RM Tasks",
+    whatHappens: "The action items the RM promised during the call ('I'll send you the rating certificate', 'I'll follow up Friday') become real to-do items on the RM's Radar dashboard with deadlines auto-set.",
+    input: "List of action items with suggested deadlines",
+    processing: "Each action item becomes a task assigned to the RM in Radar, with the deadline parsed from the call context",
+    output: "RM's task list for tomorrow, auto-populated",
+    why: "RMs used to spend end-of-day time writing their own task lists from memory. Half the time they forgot something. Now the system does it for them, and the first thing they see each morning is exactly what they committed to."
+  },
+  marketing: {
+    badge: "Destination",
+    badgeClass: "destination",
+    title: "Performance Marketing Feedback",
+    whatHappens: "User objections surfaced during calls (concerns about pricing, trust, comparisons with FDs, specific product complexity) get aggregated into a weekly digest sent to the performance marketing team.",
+    input: "Objection themes extracted from the call",
+    processing: "Objections are categorised and counted across all calls that week to build a theme-frequency digest",
+    output: "Weekly objection digest emailed to the perf marketing team",
+    why: "Marketing historically guessed at user concerns when writing ad copy and landing pages. Now they get a real signal: '15 prospects asked about tax treatment this week' is actionable. Ad copy and landing pages improve based on what users actually say, not what marketing imagines they'll say."
+  }
+};
+
+// Map node → connectors
+const nodeConnections = {
+  recordings: { in: [], out: ['conn-1'] },
+  trigger: { in: ['conn-1'], out: ['conn-2'] },
+  sarvam: { in: ['conn-2'], out: ['conn-3', 'conn-fail'] },
+  optimizer: { in: ['conn-3'], out: ['conn-4'] },
+  claude: { in: ['conn-4'], out: ['conn-5'] },
+  json: { in: ['conn-5'], out: ['conn-branch-1', 'conn-branch-2', 'conn-branch-3'] },
+  unscoreable: { in: ['conn-fail'], out: [] },
+  'radar-profile': { in: ['conn-branch-1'], out: [] },
+  'radar-tasks': { in: ['conn-branch-2'], out: [] },
+  marketing: { in: ['conn-branch-3'], out: [] }
+};
+
+// ========== Panel ==========
+const panel = document.getElementById("panel");
+const backdrop = document.getElementById("backdrop");
+const panelContent = document.getElementById("panelContent");
+const panelClose = document.getElementById("panelClose");
+
+function sectionHtml(label, text, isMono) {
+  const content = isMono
+    ? `<div class="io-block">${escapeHtml(text)}</div>`
+    : `<p>${escapeHtml(text)}</p>`;
+  return `<div class="panel-section"><h4>${label}</h4>${content}</div>`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[c]);
+}
+
+function openPanel(id) {
+  const d = nodeDetails[id];
+  if (!d) return;
+  const badgeClass = d.badgeClass ? ` ${d.badgeClass}` : '';
+  panelContent.innerHTML = `
+    <span class="panel-badge${badgeClass}">${d.badge}</span>
+    <h3 id="panelHeading">${d.title}</h3>
+    ${sectionHtml('What happens', d.whatHappens)}
+    ${sectionHtml('Input', d.input, true)}
+    ${sectionHtml('Processing', d.processing)}
+    ${sectionHtml('Output', d.output, true)}
+    ${sectionHtml('Why it matters', d.why)}
+  `;
+  panel.classList.add("open");
+  backdrop.classList.add("open");
+  panel.setAttribute("aria-hidden", "false");
+  highlightRelated(id);
+  // Focus the close button for accessibility
+  setTimeout(() => panelClose.focus(), 300);
+}
+
+function closePanel() {
+  panel.classList.remove("open");
+  backdrop.classList.remove("open");
+  panel.setAttribute("aria-hidden", "true");
+  clearRelated();
+}
+
+function highlightRelated(nodeId) {
+  clearRelated();
+  const node = document.querySelector(`.node[data-id="${nodeId}"]`);
+  if (node) node.classList.add("selected");
+  const conns = nodeConnections[nodeId];
+  if (conns) {
+    [...conns.in, ...conns.out].forEach(cId => {
+      const c = document.getElementById(cId);
+      if (c) c.classList.add("related");
+    });
+  }
+}
+
+function clearRelated() {
+  document.querySelectorAll(".node.selected").forEach(n => n.classList.remove("selected"));
+  document.querySelectorAll(".connector.related").forEach(c => c.classList.remove("related"));
+}
+
+panelClose.addEventListener("click", closePanel);
+backdrop.addEventListener("click", closePanel);
+
+// Node interactions (click, Enter, Space)
+document.querySelectorAll(".node").forEach((node) => {
+  node.addEventListener("click", () => {
+    hideTooltip();
+    openPanel(node.dataset.id);
+  });
+  node.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openPanel(node.dataset.id);
+    }
+  });
+});
+
+// ========== Hover tooltip ==========
+const tooltip = document.getElementById("tooltip");
+let tooltipHideTimer = null;
+let tooltipCurrentNode = null;
+
+function positionTooltip(nodeEl) {
+  const rect = nodeEl.getBoundingClientRect();
+  const tipRect = tooltip.getBoundingClientRect();
+  const margin = 10;
+
+  let top = rect.top - tipRect.height - 12;
+  let left = rect.left + (rect.width / 2) - (tipRect.width / 2);
+
+  // Flip below if no room above
+  if (top < margin) {
+    top = rect.bottom + 12;
+  }
+
+  // Keep in viewport horizontally
+  const maxLeft = window.innerWidth - tipRect.width - margin;
+  if (left < margin) left = margin;
+  if (left > maxLeft) left = maxLeft;
+
+  tooltip.style.top = `${top}px`;
+  tooltip.style.left = `${left}px`;
+}
+
+function showTooltip(nodeId, nodeEl) {
+  if (walkthroughOpen) return;
+  if (panel.classList.contains("open")) return;
+
+  const d = nodeDetails[nodeId];
+  if (!d) return;
+
+  clearTimeout(tooltipHideTimer);
+  tooltipCurrentNode = nodeEl;
+
+  tooltip.innerHTML = `
+    <div class="tooltip-label">What happens</div>
+    <div class="tooltip-title">${d.title}</div>
+    <p class="tooltip-body">${d.whatHappens}</p>
+    <div class="tooltip-hint">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      Click for full details
+    </div>
+  `;
+
+  tooltip.classList.add("open");
+  tooltip.setAttribute("aria-hidden", "false");
+  requestAnimationFrame(() => positionTooltip(nodeEl));
+}
+
+function hideTooltip() {
+  clearTimeout(tooltipHideTimer);
+  tooltipHideTimer = setTimeout(() => {
+    tooltip.classList.remove("open");
+    tooltip.setAttribute("aria-hidden", "true");
+    tooltipCurrentNode = null;
+  }, 60);
+}
+
+document.querySelectorAll(".node").forEach((node) => {
+  node.addEventListener("pointerenter", (e) => {
+    if (e.pointerType && e.pointerType !== "mouse") return;
+    showTooltip(node.dataset.id, node);
+  });
+  node.addEventListener("pointerleave", (e) => {
+    if (e.pointerType && e.pointerType !== "mouse") return;
+    hideTooltip();
+  });
+  node.addEventListener("focus", () => showTooltip(node.dataset.id, node));
+  node.addEventListener("blur", () => hideTooltip());
+});
+
+// Hide tooltip when the diagram scrolls or window resizes
+document.querySelector(".diagram-wrapper").addEventListener("scroll", hideTooltip);
+window.addEventListener("resize", hideTooltip);
+
+// ========== Animation ==========
+const sequence = [
+  { node: "recordings", conn: null, duration: 700 },
+  { node: "trigger", conn: "conn-1", duration: 700 },
+  { node: "sarvam", conn: "conn-2", duration: 800, branch: { node: "unscoreable", conn: "conn-fail", particle: "particle-2" } },
+  { node: "optimizer", conn: "conn-3", duration: 700 },
+  { node: "claude", conn: "conn-4", duration: 900 },
+  { node: "json", conn: "conn-5", duration: 700 },
+  {
+    parallel: true,
+    duration: 1100,
+    stages: [
+      { node: "radar-profile", conn: "conn-branch-1", particle: "particle-1" },
+      { node: "radar-tasks", conn: "conn-branch-2", particle: "particle-3" },
+      { node: "marketing", conn: "conn-branch-3", particle: "particle-4" }
+    ]
+  }
+];
+
+let playing = false;
+let animTimeout = null;
+let activeAnims = [];
+
+function clearAnimState() {
+  document.querySelectorAll(".node").forEach(n => n.classList.remove("active"));
+  document.querySelectorAll(".connector").forEach(c => c.classList.remove("active"));
+  document.querySelectorAll(".particle").forEach(p => (p.style.opacity = 0));
+}
+
+function cancelAnims() {
+  activeAnims.forEach(id => cancelAnimationFrame(id));
+  activeAnims = [];
+}
+
+function animateParticle(connId, particleId, duration, callback) {
+  const path = document.getElementById(connId);
+  const particle = document.getElementById(particleId);
+  if (!path || !particle) { if (callback) callback(); return; }
+
+  const length = path.getTotalLength();
+  const start = performance.now();
+  particle.style.opacity = 1;
+
+  function step(now) {
+    if (!playing) {
+      particle.style.opacity = 0;
+      return;
+    }
+    const t = Math.min((now - start) / duration, 1);
+    const point = path.getPointAtLength(length * t);
+    particle.setAttribute("cx", point.x);
+    particle.setAttribute("cy", point.y);
+    if (t < 1) {
+      activeAnims.push(requestAnimationFrame(step));
+    } else {
+      particle.style.opacity = 0;
+      if (callback) callback();
+    }
+  }
+  activeAnims.push(requestAnimationFrame(step));
+}
+
+function playStep(idx) {
+  if (!playing) return;
+  if (idx >= sequence.length) {
+    animTimeout = setTimeout(() => {
+      if (!playing) return;
+      clearAnimState();
+      setTimeout(() => playStep(0), 400);
+    }, 2200);
+    return;
+  }
+  const step = sequence[idx];
+  if (step.parallel) {
+    step.stages.forEach((s) => {
+      const conn = document.getElementById(s.conn);
+      if (conn) conn.classList.add("active");
+      animateParticle(s.conn, s.particle, step.duration, () => {
+        const n = document.querySelector(`.node[data-id="${s.node}"]`);
+        if (n) n.classList.add("active");
+      });
+    });
+    animTimeout = setTimeout(() => playStep(idx + 1), step.duration + 400);
+  } else {
+    const n = document.querySelector(`.node[data-id="${step.node}"]`);
+    if (n) n.classList.add("active");
+    if (step.conn) {
+      const c = document.getElementById(step.conn);
+      if (c) c.classList.add("active");
+      animateParticle(step.conn, "particle-1", step.duration, () => {});
+    }
+    if (step.branch) {
+      setTimeout(() => {
+        if (!playing) return;
+        const bc = document.getElementById(step.branch.conn);
+        if (bc) bc.classList.add("active");
+        animateParticle(step.branch.conn, step.branch.particle, step.duration, () => {
+          const bn = document.querySelector(`.node[data-id="${step.branch.node}"]`);
+          if (bn) bn.classList.add("active");
+        });
+      }, step.duration * 0.5);
+    }
+    animTimeout = setTimeout(() => playStep(idx + 1), step.duration + 350);
+  }
+}
+
+function startAnimation() {
+  if (walkthroughOpen) exitWalkthrough();
+  clearTimeout(animTimeout);
+  cancelAnims();
+  clearAnimState();
+  playing = true;
+  playStep(0);
+}
+
+function pauseAnimation() {
+  playing = false;
+  clearTimeout(animTimeout);
+  cancelAnims();
+}
+
+document.getElementById("playBtn").addEventListener("click", startAnimation);
+document.getElementById("pauseBtn").addEventListener("click", pauseAnimation);
+
+// ========== Walkthrough ==========
+const walkthroughSteps = [
+  {
+    nodeId: "recordings",
+    connId: null,
+    stepLabel: "Step 1 · Input",
+    title: "An RM finishes a call with a prospect",
+    caption: "Priya is a Relationship Manager. She just hung up after an 18-minute call with Rohit, a prospect curious about a 10.5% corporate bond. The recording automatically lands in cloud storage.",
+    visual: `<span class="data-label">New in storage</span>📄 Priya_Rohit_2024-11-20_18-42.mp3
+   Duration: 18:42  ·  Size: 4.2 MB
+   RM: Priya  ·  User: Rohit  ·  Call outcome: callback requested`
+  },
+  {
+    nodeId: "trigger",
+    connId: "conn-1",
+    stepLabel: "Step 2 · Trigger",
+    title: "At 10 PM, the system picks everything up",
+    caption: "Every night a scheduled job scans the storage bucket for new recordings and queues them for processing. Priya's call is one of 47 recordings from today.",
+    visual: `<span class="data-label">Nightly batch · 10:00 PM</span>Scanning cloud storage...
+Found: 47 new recordings today
+
+Queue:
+  ├─ Vikram_Ananya_2024-11-20.mp3
+  ├─ Rakesh_Sameer_2024-11-20.mp3
+  ├─ <span class="highlight">Priya_Rohit_2024-11-20.mp3  ← our example</span>
+  └─ ...44 more`
+  },
+  {
+    nodeId: "sarvam",
+    connId: "conn-2",
+    stepLabel: "Step 3 · Transcription",
+    title: "Audio becomes text",
+    caption: "Each recording is sent to Sarvam, which converts speech to text. Priya and Rohit were talking in a mix of Hindi and English, which Sarvam handles natively without translation.",
+    visual: `<span class="data-label">Sarvam transcript (snippet)</span>[00:04:12] Priya: Rohit ji, main aapko bata rahi thi — 
+          yeh 10.5% corporate bond hai, AA rated.
+[00:04:28] Rohit: Haan haan, lekin AA kya hota hai 
+          exactly? Safe hai?
+[00:04:35] Priya: AA matlab second highest rating. 
+          Umm, basically ek second-safest category hai...
+[00:04:52] Rohit: Okay okay. Documentation bhejenge?`,
+    hasBranch: true
+  },
+  {
+    nodeId: "optimizer",
+    connId: "conn-3",
+    stepLabel: "Step 4 · Pre-processing",
+    title: "The transcript gets cleaned up",
+    caption: "Fillers, long silences, and repeated acknowledgements get stripped before the transcript goes to Claude. The meaning stays the same, but the token count drops by about a third — which keeps the API bill sensible.",
+    visual: `<span class="data-label">Before · 2,847 tokens</span>"...umm, haan haan haan, so basically, 
+umm, what I was saying was... (3 sec pause)... 
+the yield is, umm, 10.5%, haan..."
+
+<span class="data-label">After · 1,912 tokens (<span class="success-text">-33%</span>)</span>"...so basically what I was saying was 
+the yield is 10.5%..."`
+  },
+  {
+    nodeId: "claude",
+    connId: "conn-4",
+    stepLabel: "Step 5 · AI scoring",
+    title: "Claude scores the call and extracts next steps",
+    caption: "The cleaned transcript goes to Claude Sonnet along with a scoring prompt. In one API call Claude reads the full call, scores it against the rubric, and extracts action items plus any objections the prospect raised.",
+    visual: `<span class="data-label">Prompt</span>Score this call against the propensity rubric 
+and extract action items. Return as JSON.
+[cleaned transcript...]
+
+<span class="data-label">Response</span>{
+  "call_score": <span class="highlight">7.2</span>,
+  "ratings": {
+    "discovery": 8, "clarity": 7,
+    "objection_handling": 6, "next_steps": 8
+  },
+  "action_items": [...],
+  "objections": [...]
+}`
+  },
+  {
+    nodeId: "json",
+    connId: "conn-5",
+    stepLabel: "Step 6 · Fan-out",
+    title: "One response, three destinations",
+    caption: "The structured JSON gets parsed. Different parts of it get sent to different places in parallel — the score goes to the user's profile, the action items become tasks for Priya, and the objections feed into the marketing digest.",
+    visual: `<span class="data-label">Routing</span>{
+  "call_score": 7.2       ─────→  <span class="highlight">User Profile</span>
+  "action_items": [
+    "Share AA rating cert",
+    "Follow up Friday"
+  ]                        ─────→  <span class="highlight">RM Tasks</span>
+  "objections": [
+    "AA rating confusing"
+  ]                        ─────→  <span class="highlight">Marketing</span>
+}`
+  },
+  {
+    nodeId: "radar-profile",
+    connId: "conn-branch-1",
+    stepLabel: "Step 7 · Destination 1",
+    title: "Rohit's profile gets the new score",
+    caption: "Rohit's record in Radar (our in-house CRM) picks up a new entry: a 7.2 from Priya's call. Managers can now see how Priya performed across every call she's had with every prospect, not just the ones they happened to overhear.",
+    visual: `<span class="data-label">Rohit's profile · Radar CRM</span><span class="success-text">Rohit Sharma</span>
+Phone: ****2341
+Last contact: Priya · 20 Nov
+
+Call history
+  Nov 20 · Priya · <span class="highlight">7.2/10 ↑</span>  (this call)
+  Nov 14 · Priya · 6.8/10
+  Nov  7 · Priya · 6.5/10
+  Oct 29 · Priya · 7.0/10`
+  },
+  {
+    nodeId: "radar-tasks",
+    connId: "conn-branch-2",
+    stepLabel: "Step 8 · Destination 2",
+    title: "Priya gets her tasks for tomorrow",
+    caption: "The two things Priya promised Rohit on the call are now sitting at the top of her task list for tomorrow morning. She didn't have to write them down herself. Deadlines are inferred from what she said on the call.",
+    visual: `<span class="data-label">Priya's task list · Radar</span><span class="success-text">Tasks for tomorrow</span>
+  ☐ Share AA rating certificate with Rohit    today
+  ☐ Follow up with Rohit on quarterly review  Fri
+  ☐ Send bond fact sheet to Anita             today
+  ☐ Check KYC status for Vikram               today`
+  },
+  {
+    nodeId: "marketing",
+    connId: "conn-branch-3",
+    stepLabel: "Step 9 · Destination 3",
+    title: "Marketing hears what prospects are confused about",
+    caption: "Rohit's 'what is AA rating?' question joins a weekly digest that goes to the performance marketing team. When the same objection shows up 12 times in a week, marketing can rewrite ad copy or clarify the landing page to pre-answer it.",
+    visual: `<span class="data-label">Weekly objection digest · 20 Nov</span><span class="success-text">Top themes mentioned by prospects this week:</span>
+  1. "AA rating language is confusing"     12×
+  2. "Comparison with FD unclear"           9×
+  3. "Minimum investment feels high"        7×
+  4. "Tax treatment unclear"                6×
+  5. "Lock-in period concerns"              4×
+
+<span class="data-label">Priya's call contributed to #1</span>`
+  }
+];
+
+const branchStep = {
+  nodeId: "unscoreable",
+  connId: "conn-fail",
+  stepLabel: "Branch · what if the audio was bad?",
+  title: "Bad audio? The pipeline tags it and stops",
+  caption: "If Priya and Rohit had been on a bad connection with 50% of the audio dropped, Sarvam would return a low-confidence transcript. Rather than let Claude try to score garbage (and poison Priya's profile with a bogus score), the pipeline flags the call as unscoreable and sends it to the manager's manual review queue.",
+  visual: `<span class="data-label">Sarvam output · low confidence</span>[00:04:12] Priya: ████ ji, ████ bata ████ 
+          yeh ████████ bond hai, ██ rated.
+[00:04:28] Rohit: ████████ safe ████?
+
+<span class="warning-text">⚠ Sarvam confidence: 23% (threshold: 70%)</span>
+
+<span class="data-label">Pipeline action</span><span class="warning-text">→ Flagged as unscoreable
+→ Routed to manager's review queue
+→ No score written to Priya's profile</span>`
+};
+
+let walkthroughOpen = false;
+let walkthroughIdx = 0;
+let viewingBranch = false;
+
+const walkthroughEl = document.getElementById("walkthrough");
+const walkthroughBody = document.getElementById("walkthroughBody");
+const stepCounter = document.getElementById("stepCounter");
+const walkthroughPrev = document.getElementById("walkthroughPrev");
+const walkthroughNext = document.getElementById("walkthroughNext");
+const walkthroughExit = document.getElementById("walkthroughExit");
+const walkthroughProgress = document.getElementById("walkthroughProgress");
+
+function buildProgressDots() {
+  walkthroughProgress.innerHTML = walkthroughSteps.map((_, i) =>
+    `<div class="progress-dot" data-i="${i}"></div>`
+  ).join("");
+}
+buildProgressDots();
+
+function updateProgressDots() {
+  walkthroughProgress.querySelectorAll(".progress-dot").forEach((dot, i) => {
+    dot.classList.remove("filled", "current");
+    if (i < walkthroughIdx && !viewingBranch) dot.classList.add("filled");
+    if (i === walkthroughIdx && !viewingBranch) dot.classList.add("current");
+  });
+}
+
+function renderWalkthroughStep() {
+  const step = viewingBranch ? branchStep : walkthroughSteps[walkthroughIdx];
+  if (!step) return;
+
+  walkthroughBody.innerHTML = `
+    <p class="step-label">${step.stepLabel}</p>
+    <h3 class="step-title">${step.title}</h3>
+    <p class="step-caption">${step.caption}</p>
+    <div class="step-visual">${step.visual}</div>
+    ${step.hasBranch && !viewingBranch ? `
+      <button class="branch-toggle" id="viewBranchBtn" aria-label="See the branch scenario">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        What if the audio was bad?
+      </button>
+    ` : ""}
+    ${viewingBranch ? `
+      <button class="branch-toggle" id="exitBranchBtn" aria-label="Back to main flow">
+        ← Back to the main flow
+      </button>
+    ` : ""}
+  `;
+
+  // Update step counter and highlights
+  if (viewingBranch) {
+    stepCounter.textContent = `Branch scenario`;
+  } else {
+    stepCounter.textContent = `Step ${walkthroughIdx + 1} of ${walkthroughSteps.length}`;
+  }
+
+  highlightWalkthroughNode(step.nodeId, step.connId);
+  updateProgressDots();
+  updateWalkthroughControls();
+
+  // Attach branch toggle listeners
+  const vBranch = document.getElementById("viewBranchBtn");
+  if (vBranch) vBranch.addEventListener("click", () => { viewingBranch = true; renderWalkthroughStep(); });
+  const xBranch = document.getElementById("exitBranchBtn");
+  if (xBranch) xBranch.addEventListener("click", () => { viewingBranch = false; renderWalkthroughStep(); });
+}
+
+function highlightWalkthroughNode(nodeId, connId) {
+  // Clear previous step-active highlighting
+  document.querySelectorAll(".step-active").forEach(el => el.classList.remove("step-active"));
+
+  const node = document.querySelector(`.node[data-id="${nodeId}"]`);
+  if (node) node.classList.add("step-active");
+  if (connId) {
+    const conn = document.getElementById(connId);
+    if (conn) conn.classList.add("step-active");
+  }
+}
+
+function updateWalkthroughControls() {
+  walkthroughPrev.disabled = (walkthroughIdx === 0 && !viewingBranch);
+  walkthroughPrev.style.opacity = walkthroughPrev.disabled ? 0.4 : 1;
+  if (walkthroughIdx === walkthroughSteps.length - 1 && !viewingBranch) {
+    walkthroughNext.textContent = "Finish";
+  } else {
+    walkthroughNext.textContent = "Next →";
+  }
+}
+
+function startWalkthrough() {
+  pauseAnimation();
+  closePanel();
+  walkthroughOpen = true;
+  walkthroughIdx = 0;
+  viewingBranch = false;
+  walkthroughEl.classList.add("open");
+  walkthroughEl.setAttribute("aria-hidden", "false");
+  document.body.classList.add("walkthrough-active");
+  document.getElementById("diagram").parentElement.classList.add("walkthrough-active");
+  // Apply walkthrough-active to SVG parent to get the dim effect
+  document.getElementById("diagram").classList.add("walkthrough-active");
+  renderWalkthroughStep();
+}
+
+function exitWalkthrough() {
+  walkthroughOpen = false;
+  viewingBranch = false;
+  walkthroughEl.classList.remove("open");
+  walkthroughEl.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("walkthrough-active");
+  document.getElementById("diagram").classList.remove("walkthrough-active");
+  document.querySelectorAll(".step-active").forEach(el => el.classList.remove("step-active"));
+}
+
+function nextStep() {
+  if (viewingBranch) {
+    viewingBranch = false;
+    renderWalkthroughStep();
+    return;
+  }
+  if (walkthroughIdx < walkthroughSteps.length - 1) {
+    walkthroughIdx++;
+    renderWalkthroughStep();
+  } else {
+    exitWalkthrough();
+  }
+}
+
+function prevStep() {
+  if (viewingBranch) {
+    viewingBranch = false;
+    renderWalkthroughStep();
+    return;
+  }
+  if (walkthroughIdx > 0) {
+    walkthroughIdx--;
+    renderWalkthroughStep();
+  }
+}
+
+document.getElementById("walkthroughBtn").addEventListener("click", startWalkthrough);
+walkthroughExit.addEventListener("click", exitWalkthrough);
+walkthroughNext.addEventListener("click", nextStep);
+walkthroughPrev.addEventListener("click", prevStep);
+
+// ========== Keyboard shortcuts ==========
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    if (walkthroughOpen) exitWalkthrough();
+    else if (panel.classList.contains("open")) closePanel();
+    return;
+  }
+  if (walkthroughOpen) {
+    if (e.key === "ArrowRight") { e.preventDefault(); nextStep(); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); prevStep(); }
+  }
+});
+
+// ========== Startup ==========
+window.addEventListener("load", () => {
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reduced) {
+    setTimeout(startAnimation, 500);
+  }
+});
+</script>
+</body>
+</html>
