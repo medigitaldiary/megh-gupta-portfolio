@@ -13,6 +13,7 @@ import {
   StepGrid,
   Timeline,
 } from "@/components/case-study";
+import "@/components/case-study/case-study.css";
 
 // /preview/case-study-kit — a visual regression target. Renders every
 // component in every variant so a token tweak can be verified at a
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function CaseStudyKitPage() {
   return (
-    <main className="px-6 py-16 md:px-8 md:py-20">
+    <main className="case-study-page px-6 py-16 md:px-8 md:py-20">
       <div className="mx-auto max-w-2xl">
         <p className="font-mono text-xs uppercase tracking-[0.24em] text-fg-subtle">
           Preview

@@ -43,8 +43,11 @@ export function Callout({
   return (
     <aside
       className={`my-8 rounded-lg border border-border border-l-4 bg-bg-elevated p-5 md:p-6 ${border}`}
+      data-hl-callout-label
     >
-      <Eyebrow variant={labelVariant}>{eyebrow ?? LABELS[variant]}</Eyebrow>
+      <Eyebrow variant={labelVariant}>
+        <span data-hl-word>{eyebrow ?? LABELS[variant]}</span>
+      </Eyebrow>
       <div className="mt-2 font-sans text-base leading-relaxed text-fg">
         {children}
       </div>

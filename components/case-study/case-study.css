@@ -1,0 +1,135 @@
+/* ============================================================
+ * Case study — Tier 1 lilac highlighter surfaces
+ * ============================================================
+ *
+ * Scoped to the .case-study-page wrapper applied by both the live
+ * route (app/work/[slug]/page.tsx) and the kit preview
+ * (app/preview/case-study-kit/page.tsx). Case study pages stay on
+ * the production green palette; this file adds ONLY the highlighter
+ * marks (and a lilac hover state on tag pills) that the Oatmeal
+ * palette experiment proved out, without pulling the whole v3
+ * palette through.
+ *
+ * The asset at /images/v3/highlighter.svg is reused across v3 and
+ * case studies — moved to a palette-neutral path (/images/highlighter.svg)
+ * can happen later once the direction is confirmed.
+ *
+ * Tier 1 surfaces
+ *   1. Case study hero eyebrow  (page load, 400ms delay)
+ *   2. HeadlineStrip eyebrow    (scroll-into-view)
+ *   3. Callout eyebrow label    (scroll-into-view)
+ *   4. Quote attribution        (scroll-into-view)
+ *   5. Pill variant="tag"       (hover)
+ * -------------------------------------------------------------- */
+
+/* -----------------------------------------------------------
+ * Shared ::before pseudo + sweep keyframe
+ * -----------------------------------------------------------*/
+.case-study-page [data-hl-word] {
+  position: relative;
+  display: inline-block;
+  padding: 0 0.1em;
+  z-index: 0;
+  margin: 0 0.02em;
+}
+
+.case-study-page [data-hl-word]::before {
+  content: "";
+  position: absolute;
+  top: -8%;
+  bottom: -8%;
+  left: -0.08em;
+  right: -0.08em;
+  z-index: -1;
+  background-image: url("/images/v3/highlighter.svg");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0 100%;
+  pointer-events: none;
+  will-change: background-size;
+}
+
+@keyframes case-study-hl-sweep {
+  from {
+    background-size: 0 100%;
+  }
+  to {
+    background-size: 100% 100%;
+  }
+}
+
+/* -----------------------------------------------------------
+ * 1 · Hero eyebrow + 2 · HeadlineStrip eyebrow — page load sweep
+ * Both live above the fold on a case study page; the reader is
+ * already looking at them on arrival, so the sweep plays on load.
+ * -----------------------------------------------------------*/
+.case-study-page .case-study-hero-eyebrow [data-hl-word]::before,
+.case-study-page .case-study-headline-eyebrow [data-hl-word]::before {
+  animation: case-study-hl-sweep 0.65s cubic-bezier(0.22, 0.61, 0.36, 1)
+    forwards;
+  animation-delay: 0.4s;
+}
+
+/* HeadlineStrip fires a touch later so the two marks don't stack
+   in the eye — hero eyebrow first (0.4s), headline metric second
+   (0.6s). */
+.case-study-page .case-study-headline-eyebrow [data-hl-word]::before {
+  animation-delay: 0.6s;
+}
+
+/* -----------------------------------------------------------
+ * 3 · Callout eyebrow label — scroll-into-view sweep
+ * 4 · Quote attribution     — scroll-into-view sweep
+ * These live below the fold in the body of a case study. The
+ * stroke draws as each surface enters the viewport (view-timeline
+ * drives the animation off scroll position). Fallback for browsers
+ * without view-timeline: a plain time-based sweep on page load.
+ * -----------------------------------------------------------*/
+.case-study-page [data-hl-callout-label] [data-hl-word]::before,
+.case-study-page [data-hl-quote-attr] [data-hl-word]::before {
+  animation: case-study-hl-sweep linear forwards;
+  animation-timeline: view(block);
+  animation-range: entry 20% entry 70%;
+}
+
+@supports not (animation-timeline: view()) {
+  .case-study-page [data-hl-callout-label] [data-hl-word]::before,
+  .case-study-page [data-hl-quote-attr] [data-hl-word]::before {
+    animation: case-study-hl-sweep 0.65s cubic-bezier(0.22, 0.61, 0.36, 1)
+      forwards;
+    animation-delay: 0.2s;
+  }
+}
+
+/* -----------------------------------------------------------
+ * 5 · Pill variant="tag" — hover-triggered lilac fill
+ * The hover state turns the hairline tag chip into a lilac-filled
+ * pill. One tag at a time (user is pointing at it), so no
+ * cascade when the cursor moves across the row.
+ * -----------------------------------------------------------*/
+.case-study-page [data-hl-tag] {
+  background-color: transparent;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    color 160ms ease-out;
+}
+
+.case-study-page [data-hl-tag]:hover {
+  background-color: rgba(203, 179, 232, 0.55);
+  border-color: rgba(184, 156, 220, 0.6);
+}
+
+/* -----------------------------------------------------------
+ * prefers-reduced-motion — static full stroke on all surfaces,
+ * no sweep animation. Pill hover transition disabled.
+ * -----------------------------------------------------------*/
+@media (prefers-reduced-motion: reduce) {
+  .case-study-page [data-hl-word]::before {
+    animation: none;
+    background-size: 100% 100%;
+  }
+  .case-study-page [data-hl-tag] {
+    transition: none;
+  }
+}

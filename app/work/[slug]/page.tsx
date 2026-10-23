@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import * as caseStudy from "@/components/case-study";
+import "@/components/case-study/case-study.css";
 import { getCaseStudy } from "@/lib/case-study";
 import { getAllWorkCards, getWorkCardBySlug } from "@/lib/work";
 
@@ -41,7 +42,7 @@ export default async function WorkCaseStudy({
   const study = await getCaseStudy(slug);
 
   return (
-    <main className="px-6 py-24 md:px-8 md:py-32">
+    <main className="case-study-page px-6 py-24 md:px-8 md:py-32">
       <div className="mx-auto max-w-2xl">
         <Link
           href="/#work"
@@ -50,8 +51,10 @@ export default async function WorkCaseStudy({
           <span aria-hidden="true">←</span> Back to selected work
         </Link>
 
-        <p className="mt-8 font-mono text-xs uppercase tracking-wider text-accent">
-          {card.eyebrow} · {card.company}
+        <p className="case-study-hero-eyebrow mt-8 font-mono text-xs uppercase tracking-wider text-accent">
+          <span data-hl-word>
+            {card.eyebrow} · {card.company}
+          </span>
         </p>
         <h1 className="mt-3 font-serif text-4xl leading-tight text-fg md:text-5xl">
           {study?.frontmatter.title ?? card.title}
@@ -62,8 +65,8 @@ export default async function WorkCaseStudy({
           <>
             {/* Headline metric strip — the one number that earns the page */}
             <div className="mt-10 rounded-xl border border-border bg-bg-elevated p-6 md:p-8">
-              <p className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
-                Headline metric
+              <p className="case-study-headline-eyebrow font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
+                <span data-hl-word>Headline metric</span>
               </p>
               <p className="mt-2 font-serif text-2xl text-fg md:text-3xl">
                 {study.frontmatter.headline_metric}

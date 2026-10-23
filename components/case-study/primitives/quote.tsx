@@ -13,14 +13,14 @@ export function Quote({
   children: ReactNode;
 }) {
   return (
-    <figure className="my-14 border-l-2 border-accent pl-6">
+    <figure className="my-14 border-l-2 border-accent pl-6" data-hl-quote-attr>
       <blockquote className="font-serif text-2xl leading-snug text-fg md:text-3xl">
         {children}
       </blockquote>
       {attribution ? (
         <figcaption className="mt-4 font-mono text-xs uppercase tracking-wider text-fg-subtle">
           <span aria-hidden="true">— </span>
-          {attribution}
+          <span data-hl-word>{attribution}</span>
         </figcaption>
       ) : null}
     </figure>

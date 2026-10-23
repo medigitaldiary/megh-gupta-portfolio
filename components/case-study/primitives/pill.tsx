@@ -21,5 +21,12 @@ export function Pill({
       : variant === "status"
         ? "border-accent font-mono text-[11px] uppercase tracking-wider text-accent"
         : "border-border font-mono text-[11px] text-fg-muted";
-  return <span className={`${base} ${look}`}>{children}</span>;
+  // tag variant opts into the case-study-page lilac hover fill via
+  // data-hl-tag — picked up by components/case-study/case-study.css.
+  const hoverAttr = variant === "tag" ? { "data-hl-tag": true } : {};
+  return (
+    <span className={`${base} ${look}`} {...hoverAttr}>
+      {children}
+    </span>
+  );
 }
