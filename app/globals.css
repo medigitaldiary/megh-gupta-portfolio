@@ -1,14 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #fafaf7;
-  --bg-elevated: #ffffff;
-  --fg: #111111;
-  --fg-muted: #555555;
-  --fg-subtle: #999999;
-  --border: #e8e6e0;
-  --accent: #1f4d3a;
-  --accent-fg: #fafaf7;
+  /* Palette: Oatmeal / Pine Green / Soft Lilac. Promoted from the
+     /preview/v3 experiment, now the production direction. See
+     CLAUDE.md §3 and STYLE.md for role rules. Pine on --fg carries the
+     structural, high-read-time surfaces; Lilac on --highlight stays
+     decorative and never acts as chrome text. */
+  --bg: #e8dcc6; /* Oatmeal — primary warm surface */
+  --bg-elevated: #f3ebd9; /* Lightened Oatmeal — cards, modals */
+  --fg: #1f3b2e; /* Pine — body, headings, CTA fill */
+  --fg-muted: #3a5544; /* Lighter pine — secondary text */
+  --fg-subtle: #556b5d; /* Muted pine — captions */
+  --border: #d4c4a8; /* Toasted oat — hairlines */
+  --accent: #1f3b2e; /* Same hue as --fg — monochrome brand */
+  --accent-fg: #e8dcc6; /* Oatmeal — text on Pine buttons */
+  --highlight: #cbb3e8; /* Soft Lilac — decorative tint, never chrome */
 
   /* Product Venn palette — used only by components/product-venn.tsx */
   --venn-user: #c1497f;
@@ -26,14 +32,16 @@
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-fg: var(--accent-fg);
+  --color-highlight: var(--highlight);
 
-  /* Display face: Oswald (was Instrument Serif) — kept as --font-serif for
-     the semantic role, so no consumer needs to change. */
-  --font-serif: var(--font-oswald);
-  /* Body face: Satoshi (was Inter) */
-  --font-sans: var(--font-satoshi);
-  --font-mono: var(--font-jetbrains-mono);
-  --font-hand: var(--font-caveat);
+  /* Geist — one typeface for display and body. --font-serif and
+     --font-sans both resolve to Geist Sans so every utility
+     (font-serif, font-sans) renders in the same face. Kalam stays on
+     --font-hand for the hero greeting. */
+  --font-serif: var(--font-geist-sans);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-hand: var(--font-hand);
 
   --text-display: 4rem;
   --text-display--line-height: 1.05;

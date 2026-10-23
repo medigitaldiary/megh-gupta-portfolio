@@ -1,44 +1,28 @@
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { JetBrains_Mono, Kalam } from "next/font/google";
-import localFont from "next/font/local";
+import { Geist, Geist_Mono, Kalam } from "next/font/google";
 import "./globals.css";
 
-// Oswald — display / headline face. Variable woff2 covers all weights.
-// CSS variable name kept generic (--font-serif is a role, not a face).
-const oswald = localFont({
-  src: "../public/fonts/Oswald-Variable.woff2",
-  variable: "--font-oswald",
-  weight: "200 700",
-  style: "normal",
-  display: "swap",
-});
-
-// Satoshi — body face. Ships the italic axis in its own file.
-const satoshi = localFont({
-  src: [
-    {
-      path: "../public/fonts/Satoshi-Variable.woff2",
-      weight: "300 900",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/Satoshi-VariableItalic.woff2",
-      weight: "300 900",
-      style: "italic",
-    },
-  ],
-  variable: "--font-satoshi",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+// Geist is the production typeface for the whole site now (both display
+// and body). The old Oswald + Satoshi + JetBrains Mono stack that lived
+// here was promoted to a preview-only direction and then back out of
+// use; see CLAUDE.md §2. The leaf CSS variables (--font-geist-sans,
+// --font-geist-mono) are what globals.css @theme inline reads.
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
   display: "swap",
 });
 
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+// Kalam stays as the handwritten face for the hero greeting ("Hi, I am
+// Megh.") and anywhere else font-hand is used.
 const kalam = Kalam({
   variable: "--font-hand",
   subsets: ["latin"],
@@ -175,7 +159,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="theme-color" content="#FAFAF7" />
+        <meta name="theme-color" content="#E8DCC6" />
         {/* discovery:start */}
         <link
           rel="help"
@@ -203,7 +187,7 @@ export default function RootLayout({
         {/* discovery:end */}
       </head>
       <body
-        className={`${oswald.variable} ${satoshi.variable} ${jetbrainsMono.variable} ${kalam.variable} antialiased bg-bg text-fg`}
+        className={`${geistSans.variable} ${geistMono.variable} ${kalam.variable} antialiased bg-bg text-fg`}
       >
         <a
           href="#main"

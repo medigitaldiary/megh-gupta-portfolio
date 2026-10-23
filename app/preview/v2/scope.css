@@ -1,24 +1,19 @@
 /* ============================================================
- * Preview v2 — font override layer
+ * Preview v2 — no-op scope (fonts promoted to global)
  * ============================================================
  *
- * Scoped to .v2-scope. Flips the four leaf font variables that
- * next/font/local sets on <body> (--font-oswald, --font-satoshi,
- * --font-jetbrains-mono, --font-hand) so every Tailwind utility
- * compiled against them (font-serif, font-sans, font-mono) resolves
- * to Geist inside this subtree.
+ * This file used to override the leaf font variables that
+ * next/font/local set on <body> so the v2 preview rendered under
+ * Geist while the rest of the site stayed on Oswald/Satoshi/
+ * JetBrains Mono.
  *
- * Fonts only. Type scale, radii, and padding stay unchanged — this
- * is a straight face swap, not the broader DS v1 experiment /preview/v2.1
- * carries.
+ * Geist is now the production typeface for the whole site (see
+ * app/layout.tsx + app/globals.css). The override here is a no-op
+ * and the /preview/v2 route is identical to the main site under
+ * the current design direction. The route and scope are kept so
+ * links and bookmarks don't break; the empty class exists so the
+ * import in layout.tsx stays valid.
  * -------------------------------------------------------------- */
 .v2-scope {
-  --font-oswald: var(--font-geist-sans);
-  --font-satoshi: var(--font-geist-sans);
-  --font-jetbrains-mono: var(--font-geist-sans);
-  /* --font-hand intentionally NOT overridden — the Hero's "Hi, I am Megh"
-     greeting uses it via an inline style and should stay on Kalam. Same
-     reservation applies to any future scoped handwritten accent. */
-
-  font-family: var(--font-geist-sans);
+  /* intentionally empty */
 }
