@@ -128,9 +128,9 @@
   will-change: background-size;
 }
 
-/* Stagger the three words by targeting their parent <span class="block">
-   positions within the H1. First line → first word, etc. 180ms between
-   each so the eye follows the ink arriving. */
+/* HERO stagger — the three words inside the H1 fire on page load,
+   180ms apart, so the eye follows the ink arriving across the three
+   lines. */
 .v3-scope h1 > span:nth-child(1) [data-hl-word]::before {
   animation-delay: 0.4s;
 }
@@ -139,6 +139,38 @@
 }
 .v3-scope h1 > span:nth-child(3) [data-hl-word]::before {
   animation-delay: 0.76s;
+}
+
+/* SECTION EYEBROWS (EXPERIENCE, SELECTED WORK, …) — rendered inside
+   SectionHeader as a <p> with a <span data-hl-word> around the label.
+   The hero sweep fires on page load, which is right because the user
+   is already looking at it. These eyebrows live below the fold, so a
+   page-load sweep is wasted — by the time the reader scrolls there,
+   the stroke is already drawn. Drive the animation off the scroll
+   position instead, via animation-timeline: view(). The highlight
+   draws exactly as each section enters the viewport, which keeps the
+   "someone's marking this phrase" vibe on every scroll past. */
+.v3-scope p [data-hl-word]::before {
+  animation: v3-hl-sweep linear forwards;
+  animation-timeline: view(block);
+  animation-range: entry 20% entry 70%;
+  animation-delay: 0;
+  /* The eyebrow label is small (12px) and letter-spaced; expand the
+     stroke's vertical reach slightly so the mark reads as a proper
+     highlighter and not a hairline tint. */
+  top: -8%;
+  bottom: -8%;
+}
+
+/* Fallback for browsers without view-timeline (Firefox, older Safari).
+   Run a plain time-based sweep on page load. Less dramatic — the sweep
+   is done by the time the user scrolls there — but still correct. */
+@supports not (animation-timeline: view()) {
+  .v3-scope p [data-hl-word]::before {
+    animation: v3-hl-sweep 0.65s cubic-bezier(0.22, 0.61, 0.36, 1)
+      forwards;
+    animation-delay: 0.2s;
+  }
 }
 
 @keyframes v3-hl-sweep {
