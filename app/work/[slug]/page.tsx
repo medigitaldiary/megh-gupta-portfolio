@@ -23,7 +23,7 @@ export async function generateMetadata({
   const study = await getCaseStudy(slug);
   const hasBody = !!study;
   return {
-    title: `${card.title} — case study`,
+    title: `${card.title} · case study`,
     description: card.oneLiner,
     robots: { index: hasBody, follow: true },
   };
@@ -71,7 +71,7 @@ export default async function WorkCaseStudy({
               {study.frontmatter.supporting_metrics?.length ? (
                 <ul className="mt-4 space-y-1 text-sm text-fg-muted">
                   {study.frontmatter.supporting_metrics.map((m) => (
-                    <li key={m}>— {m}</li>
+                    <li key={m}>· {m}</li>
                   ))}
                 </ul>
               ) : null}
@@ -90,10 +90,10 @@ export default async function WorkCaseStudy({
               Case study
             </p>
             <p className="mt-2 font-serif text-2xl text-fg">
-              Coming soon — I&apos;m writing it up.
+              Coming soon. I&apos;m writing it up.
             </p>
             <p className="mt-3 text-sm text-fg-muted">
-              The full breakdown — context, decisions, tradeoffs, and numbers —
+              The full breakdown (context, decisions, tradeoffs, and numbers)
               drops here shortly. In the meantime, feel free to reach out and
               I&apos;ll walk you through it live.
             </p>

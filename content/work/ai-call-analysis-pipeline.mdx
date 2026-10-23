@@ -1,5 +1,5 @@
 ---
-title: "AI Call Analysis Pipeline — turning call recordings into coaching and follow-up"
+title: "AI Call Analysis Pipeline: turning call recordings into coaching and follow-up"
 slug: "ai-call-analysis-pipeline"
 role: "Product Manager"
 timeline: "March 2026 →"
@@ -8,7 +8,7 @@ stack: ["Sarvam STT", "Claude Sonnet", "Scheduled nightly job", "Radar (internal
 tags: ["Internal AI tooling", "LLM workflow", "Fintech ops"]
 headline_metric: "Nightly workflow turning ~8 hours of daily recordings into structured call-quality scores and Radar follow-up tasks"
 supporting_metrics:
-  - "8 RMs covered — 4 full-time, 4 interns"
+  - "8 RMs covered: 4 full-time, 4 interns"
   - "~8 hours of call recordings per day, Hindi + English + Hinglish"
   - "Rubric iterated twice between March and April based on manager feedback"
 featured: true
@@ -23,7 +23,7 @@ Two different workflow gaps collided on the RM team.
 
 **Call quality was invisible.** Recordings sat in cloud storage after calls ended. Managers had no systematic way to review conversations, understand how RMs handled discovery and objections, or follow up with coaching. Spot checks happened; a consistent review process didn't.
 
-**Customer objections weren't reaching marketing.** On calls, users raised concerns about pricing, trust, product complexity, and comparisons with fixed deposits — the exact language we needed to feed back into ads and landing pages. That signal was happening live in every call and reaching no one who wrote copy.
+**Customer objections weren't reaching marketing.** On calls, users raised concerns about pricing, trust, product complexity, and comparisons with fixed deposits, the exact language we needed to feed back into ads and landing pages. That signal was happening live in every call and reaching no one who wrote copy.
 
 <Callout variant="insight">
 The goal: turn daily recordings into structured coaching actions and customer-objection insights without adding manual work.
@@ -33,7 +33,7 @@ The goal: turn daily recordings into structured coaching actions and customer-ob
 
 <Section variant="deepDive" eyebrow="The solution" heading="From raw audio to action">
 
-The pipeline runs as a scheduled nightly batch job. It picks up the day's recordings, transcribes them, scores them against a rubric, and delivers the output into Radar — the internal CRM where RMs and managers already work. Below is the full flow; play it through once to see the shape, or click any stage to inspect it.
+The pipeline runs as a scheduled nightly batch job. It picks up the day's recordings, transcribes them, scores them against a rubric, and delivers the output into Radar, the internal CRM where RMs and managers already work. Below is the full flow; play it through once to see the shape, or click any stage to inspect it.
 
 <AiCallPipeline />
 
@@ -43,7 +43,7 @@ A scheduled job orchestrates the workflow. Sarvam handles speech-to-text. Claude
 
 <Section variant="narrative" eyebrow="Decisions" heading="Why I built it this way">
 
-Call-quality tooling wasn't on the engineering roadmap. Engineering was focused on the core platform — the right place for them to be. Rather than wait for capacity or pitch a dedicated sales-enablement platform (Gong, Chorus — both poor fit for cost, language, or the scope of this internal workflow), I built a v1 using API orchestration and a scheduled job. Vibe-coded end-to-end.
+Call-quality tooling wasn't on the engineering roadmap. Engineering was focused on the core platform, the right place for them to be. Rather than wait for capacity or pitch a dedicated sales-enablement platform (Gong, Chorus, both poor fit for cost, language, or the scope of this internal workflow), I built a v1 using API orchestration and a scheduled job. Vibe-coded end-to-end.
 
 <DataTable variant="comparison" caption="Technology decisions and the trade-off each one carried">
   <thead>
@@ -56,7 +56,7 @@ Call-quality tooling wasn't on the engineering roadmap. Engineering was focused 
   <tbody>
     <tr>
       <td>Nightly batch job</td>
-      <td>Met the initial operational need — next-day coaching and marketing feedback.</td>
+      <td>Met the initial operational need, next-day coaching and marketing feedback.</td>
       <td>No real-time assist on the call itself.</td>
     </tr>
     <tr>
@@ -114,7 +114,7 @@ The pipeline's output is only as good as the definition of a good call. The rubr
     <tr>
       <td>Next steps</td>
       <td>Whether the call ended with a concrete action.</td>
-      <td>Named date, named action, confirmed with the user — not "I'll send some options later."</td>
+      <td>Named date, named action, confirmed with the user, not "I'll send some options later."</td>
     </tr>
     <tr>
       <td>Pace & tone</td>
@@ -134,13 +134,13 @@ The overall score is a weighted roll-up across the six criteria. The weights are
 ### How the rubric changed between March and April
 
 <Timeline variant="vertical">
-  <Timeline.Event date="March 2026" title="Initial rubric — average reported 5.2 / 10">
+  <Timeline.Event date="March 2026" title="Initial rubric: average reported 5.2 / 10">
     First-run rubric emphasised structural elements (discovery, next steps). Managers felt the scores didn't match their own coaching judgement on the same calls.
   </Timeline.Event>
   <Timeline.Event date="Between the two" title="Iteration based on manager feedback">
     Reweighted the parameters; added empathy and pace as distinct criteria; tightened the definitions used for objection handling so the LLM wasn't rewarding deflection.
   </Timeline.Event>
-  <Timeline.Event date="April 2026" title="Revised rubric — average reported ≈ 6.0 / 10">
+  <Timeline.Event date="April 2026" title="Revised rubric: average reported ≈ 6.0 / 10">
     Managers felt the revised scores were closer to their own read of the same calls.
   </Timeline.Event>
 </Timeline>
@@ -166,7 +166,7 @@ A transcription-plus-summary workflow would have produced vague output no RM wou
     No separate translation step. Claude handles the mixed-language transcript directly, which keeps meaning that would be lost in a translate-first pipeline.
   </StepGrid.Cell>
   <StepGrid.Cell title="Action-item quality" eyebrow="Prompt discipline">
-    The prompt returns concrete tasks with deadlines — not generic "follow up with the user." The structured JSON schema enforces the shape.
+    The prompt returns concrete tasks with deadlines, not generic "follow up with the user." The structured JSON schema enforces the shape.
   </StepGrid.Cell>
 </StepGrid>
 
@@ -193,7 +193,7 @@ A single prompt change moved the output from suggestions to tasks:
   </tbody>
 </DataTable>
 
-Call complexity — user maturity, deal size, number of objections — informs the overall score, but a specific complexity-adjustment implementation is still being tuned and is not disclosed here.
+Call complexity, user maturity, deal size, number of objections, informs the overall score, but a specific complexity-adjustment implementation is still being tuned and is not disclosed here.
 
 </Section>
 
@@ -213,18 +213,18 @@ Rollout was a product decision, not an afterthought. The team wanted to assess w
   </StepGrid.Cell>
 </StepGrid>
 
-Nothing here was a formal validation study — I don't have one and I'm not going to claim one. What I did have was manager judgement on specific calls, used as a sanity check before the pipeline's output started shaping individual coaching conversations.
+Nothing here was a formal validation study. I don't have one and I'm not going to claim one. What I did have was manager judgement on specific calls, used as a sanity check before the pipeline's output started shaping individual coaching conversations.
 
 </Section>
 
 <Section variant="metrics" eyebrow="Results" heading="What changed and what the evidence shows">
 
-Three different claims — kept separate on purpose.
+Three different claims, kept separate on purpose.
 
 ### Workflow changes (shipped)
 
 - Recordings now become structured call-quality scores and action items on a nightly cadence.
-- Action items land in Radar as RM tasks with deadlines — part of the existing work queue, not a parallel surface.
+- Action items land in Radar as RM tasks with deadlines, part of the existing work queue, not a parallel surface.
 - Managers have a systematic way to review call patterns across RMs instead of relying on spot checks.
 - Customer objections surfaced on calls can inform marketing discussions downstream.
 
@@ -244,7 +244,7 @@ The rubric changed between the two averages. This is not a 15% improvement in ca
 
 - Whether real call quality (as a user would experience it) actually improved between March and April.
 - The agreement rate between AI scores and manager scores at the individual-call level.
-- Downstream outcomes from the marketing feedback loop — whether specific objection themes led to specific copy changes, and whether those copy changes moved conversion.
+- Downstream outcomes from the marketing feedback loop, whether specific objection themes led to specific copy changes, and whether those copy changes moved conversion.
 
 Reporting these as open items is deliberate. The pipeline earned a place in the workflow; the counterfactuals didn't get measured.
 
@@ -258,7 +258,7 @@ Three priority groups, honest about where each one sits.
 - **Evaluation and feedback.** Let managers annotate or override scores inside Radar and feed those overrides back into the rubric review. The current loop is me reading manager feedback in Slack.
 - **Operational hardening.** Cost and latency instrumentation (Sarvam latency, API spend by day), stronger governance for privacy and audit, secret management proper, backup and recovery. The things that separate "an internal v1 that works" from "a production system I'd hand to someone else."
 
-Real-time analysis is the obvious next feature. I'd only build it when the user need actually calls for it — live assist is a different product than next-day coaching, and the complexity jump is real.
+Real-time analysis is the obvious next feature. I'd only build it when the user need actually calls for it, live assist is a different product than next-day coaching, and the complexity jump is real.
 
 </Section>
 
@@ -329,23 +329,23 @@ Honest about who did what.
   <DataTable.Column label="I owned">
     <ul>
       <li>Problem framing and the "build v1 internally, don't wait for engineering" call.</li>
-      <li>The nightly pipeline end-to-end — scheduled job, Sarvam integration, Claude Sonnet prompts, structured output schema, Radar integration. Vibe-coded.</li>
+      <li>The nightly pipeline end-to-end, scheduled job, Sarvam integration, Claude Sonnet prompts, structured output schema, Radar integration. Vibe-coded.</li>
       <li>The call-quality rubric design and two rounds of iteration based on manager feedback.</li>
       <li>Edge-case decisions: unscoreable tagging, pre-processing cuts, action-item format, Hinglish handling.</li>
-      <li>The staged rollout — manager-only reports in Phase 1, Radar integration in Phase 2.</li>
+      <li>The staged rollout, manager-only reports in Phase 1, Radar integration in Phase 2.</li>
       <li>The pipeline's day-two operations: monitoring the output quality, fielding manager feedback, tuning prompts.</li>
     </ul>
   </DataTable.Column>
   <DataTable.Column label="Team owned">
     <ul>
-      <li>Call recording infrastructure and cloud storage — platform engineering, pre-existing.</li>
-      <li>Radar — the internal CRM surface that receives the scores and tasks; owned by the broader product + engineering team.</li>
-      <li>The rubric feedback itself — the 4 full-time RMs' managers reviewed early scores and told me where the LLM's judgement didn't match theirs.</li>
-      <li>SEBI and compliance alignment on what the pipeline is and isn't allowed to do with transcript data — Rehana on the compliance side.</li>
+      <li>Call recording infrastructure and cloud storage, platform engineering, pre-existing.</li>
+      <li>Radar, the internal CRM surface that receives the scores and tasks; owned by the broader product + engineering team.</li>
+      <li>The rubric feedback itself, the 4 full-time RMs' managers reviewed early scores and told me where the LLM's judgement didn't match theirs.</li>
+      <li>SEBI and compliance alignment on what the pipeline is and isn't allowed to do with transcript data. Rehana on the compliance side.</li>
     </ul>
   </DataTable.Column>
 </DataTable>
 
-What I owned was the shape — the problem framing, the rubric, the pipeline, the rollout, and the ongoing operation. The platform underneath and the humans using the output owned everything else.
+What I owned was the shape, the problem framing, the rubric, the pipeline, the rollout, and the ongoing operation. The platform underneath and the humans using the output owned everything else.
 
 </Section>
