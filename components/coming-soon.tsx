@@ -107,8 +107,12 @@ export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
         </p>
 
         <h1
-          className="font-serif text-[3.5rem] leading-[1] md:text-[6rem]"
-          style={{ color: t.headline, letterSpacing: "-0.01em" }}
+          className="whitespace-nowrap font-serif leading-[1]"
+          style={{
+            color: t.headline,
+            letterSpacing: "-0.02em",
+            fontSize: "clamp(2rem, 8.5vw, 6rem)",
+          }}
         >
           Under Construction
         </h1>

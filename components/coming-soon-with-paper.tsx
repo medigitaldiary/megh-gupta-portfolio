@@ -71,7 +71,13 @@ export function ComingSoonWithPaper({ variant }: { variant: Variant }) {
       </div>
 
       <div className="flex max-w-2xl flex-col items-center">
-        <h1 className="font-serif text-[3.25rem] text-fg leading-[1.05] md:text-[5rem]">
+        <h1
+          className="whitespace-nowrap font-serif text-fg leading-[1.05]"
+          style={{
+            letterSpacing: "-0.02em",
+            fontSize: "clamp(2rem, 8.5vw, 5rem)",
+          }}
+        >
           Under Construction
         </h1>
 
