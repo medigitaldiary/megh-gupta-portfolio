@@ -1,0 +1,18 @@
+/* ============================================================
+ * Preview v3 — no-op scope (palette + chrome promoted to global)
+ * ============================================================
+ *
+ * This file used to carry the Oatmeal / Pine Green / Soft Lilac
+ * palette, the Geist font swap, and every decorative moment —
+ * hero word highlighter, section-eyebrow highlighter, hero greeting
+ * sun, ambient washes, lilac selection, focus rings, link hover,
+ * shelf chrome, card hairlines.
+ *
+ * All of it has been promoted to app/globals.css + app/layout.tsx,
+ * so the /preview/v3 route now looks the same as every other route.
+ * The route and scope are kept so links and bookmarks don't break;
+ * the empty class exists so the import in layout.tsx stays valid.
+ * -------------------------------------------------------------- */
+.v3-scope {
+  /* intentionally empty */
+}
