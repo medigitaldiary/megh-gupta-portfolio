@@ -15,6 +15,7 @@
   --accent: #1f3b2e; /* Same hue as --fg — monochrome brand */
   --accent-fg: #e8dcc6; /* Oatmeal — text on Pine buttons */
   --highlight: #cbb3e8; /* Soft Lilac — decorative tint, never chrome */
+  --highlight-strong: #b89cdc; /* Stronger lilac — focus rings, link underlines */
 
   /* Product Venn palette — used only by components/product-venn.tsx */
   --venn-user: #c1497f;
@@ -71,6 +72,219 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  position: relative;
+  isolation: isolate;
+}
+
+/* ============================================================
+ * V3 ATMOSPHERIC CHROME — promoted from /preview/v3/scope.css
+ * so Lilac stays decorative across the whole site. Palette and
+ * fonts are already handled above; this block only adds the
+ * decorative moments: ambient washes, hero word highlighter,
+ * section-eyebrow highlighter, hero greeting sun, text selection,
+ * focus rings, link hover, shelf chrome, card hairlines.
+ * Lilac never carries meaning here, only atmosphere.
+ * ============================================================ */
+
+/* Ambient washes — two radial lilac zones sit beneath content.
+   Fixed so they stay in frame as the page scrolls, pointer-events:
+   none so they never block clicks. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 55% 40% at 8% 42%,
+      rgba(203, 179, 232, 0.22),
+      rgba(203, 179, 232, 0) 70%
+    ),
+    radial-gradient(
+      ellipse 70% 35% at 50% 95%,
+      rgba(203, 179, 232, 0.28),
+      rgba(203, 179, 232, 0) 70%
+    );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Hero word highlights — chisel-tip highlighter stroke sweeps
+   behind "features", "products", "systems" in the hero headline.
+   Three words fire staggered on page load (180ms apart). */
+[data-hl-word] {
+  position: relative;
+  display: inline-block;
+  padding: 0 0.1em;
+  z-index: 0;
+  margin: 0 0.02em;
+}
+
+[data-hl-word]::before {
+  content: "";
+  position: absolute;
+  top: 12%;
+  bottom: 10%;
+  left: -0.08em;
+  right: -0.08em;
+  z-index: -1;
+  background-image: url("/images/v3/highlighter.svg");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0 100%;
+  animation: v3-hl-sweep 0.65s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  animation-delay: 0.4s;
+  pointer-events: none;
+  will-change: background-size;
+}
+
+h1 > span:nth-child(1) [data-hl-word]::before {
+  animation-delay: 0.4s;
+}
+h1 > span:nth-child(2) [data-hl-word]::before {
+  animation-delay: 0.58s;
+}
+h1 > span:nth-child(3) [data-hl-word]::before {
+  animation-delay: 0.76s;
+}
+
+/* Section eyebrows (EXPERIENCE, SELECTED WORK, …) ride the
+   scroll — view-timeline draws the stroke as each eyebrow
+   enters the viewport. */
+p [data-hl-word]::before {
+  animation: v3-hl-sweep linear forwards;
+  animation-timeline: view(block);
+  animation-range: entry 20% entry 70%;
+  animation-delay: 0;
+  top: -8%;
+  bottom: -8%;
+}
+
+@supports not (animation-timeline: view()) {
+  p [data-hl-word]::before {
+    animation: v3-hl-sweep 0.65s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    animation-delay: 0.2s;
+  }
+}
+
+@keyframes v3-hl-sweep {
+  from {
+    background-size: 0 100%;
+  }
+  to {
+    background-size: 100% 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-hl-word]::before {
+    animation: none;
+    background-size: 100% 100%;
+  }
+}
+
+/* Text selection — dragging to select paints the highlight in
+   lilac with Pine foreground kept for legibility. */
+::selection {
+  background: var(--highlight);
+  color: var(--fg);
+}
+
+/* Focus rings — keyboard navigation gets a lilac ring with a
+   soft outer glow, distinct from the Pine CTA fill. */
+*:focus-visible {
+  outline: 2px solid var(--highlight-strong);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(203, 179, 232, 0.3);
+  border-radius: 2px;
+}
+
+/* Link hover — body/nav/footer links grow a lilac underline. */
+main a:not(.group):hover,
+nav a:hover,
+footer a:hover {
+  text-decoration-color: var(--highlight-strong);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* Shelf wall-shadow — books on the bookshelf fold carry a soft
+   lilac inner glow so the "lift" moment reads as a lavender flare. */
+[data-shelf-book] {
+  box-shadow:
+    0 14px 22px -14px rgba(31, 59, 46, 0.4),
+    0 2px 4px -2px rgba(31, 59, 46, 0.2),
+    0 0 36px -14px rgba(203, 179, 232, 0.6);
+}
+
+/* Shelf preview card — cream swapped for a lilac-leaning cream
+   with a lilac rim and thin lilac top border. !important is
+   required because the host rule uses Tailwind's arbitrary-value
+   class (`bg-[#F7F1E6]`) which compiles to its own high-specificity
+   utility. */
+[class*="bg-\\[\\#F7F1E6\\]"] {
+  /* biome-ignore-start lint/complexity/noImportantStyles: see rule above */
+  background-color: #ede4d9 !important;
+  box-shadow:
+    0 32px 60px -22px rgba(31, 59, 46, 0.22),
+    0 0 0 1px rgba(203, 179, 232, 0.4),
+    0 -2px 0 0 var(--highlight) inset !important;
+  /* biome-ignore-end lint/complexity/noImportantStyles: see rule above */
+}
+
+/* Hero greeting sun — animated sun icon with a soft lilac halo
+   next to the handwritten "Hi, I am Megh." greeting. Narrowly
+   scoped via [data-hero-greeting] so the sparkle only appears
+   next to the hero line. */
+[data-hero-greeting]::before {
+  content: "";
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-right: 0.35em;
+  vertical-align: -0.04em;
+  background-image: url("/images/v3/hero-sun.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  filter: drop-shadow(0 0 6px rgba(203, 179, 232, 0.55))
+    drop-shadow(0 0 12px rgba(203, 179, 232, 0.3));
+  animation:
+    hero-sun-spin 10s linear infinite,
+    hero-sun-pulse 3s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes hero-sun-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hero-sun-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-hero-greeting]::before {
+    animation: none;
+    opacity: 0.9;
+  }
+}
+
+/* Card hairlines — elevated surfaces get a thin lilac tint
+   blended into the border, perceptible when the eye drifts
+   across a card edge. */
+[class*="border-border"]:not(button):not(a) {
+  border-color: color-mix(in oklab, var(--border) 70%, var(--highlight) 30%);
 }
 
 section {
