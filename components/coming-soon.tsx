@@ -110,8 +110,8 @@ export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
           className="whitespace-nowrap font-serif leading-[1]"
           style={{
             color: t.headline,
-            letterSpacing: "-0.02em",
-            fontSize: "clamp(2rem, 8.5vw, 6rem)",
+            letterSpacing: "-0.03em",
+            fontSize: "min(7.5vw, 6rem)",
           }}
         >
           Under Construction
