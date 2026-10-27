@@ -1,0 +1,326 @@
+/* ============================================================
+ * Preview v3 — Oatmeal / Pine Green / Soft Lilac palette
+ * Promoted from the /preview/oatmeal sandbox; v3 is the full
+ * portfolio under this palette direction. Lilac stays atmospheric.
+ * ============================================================
+ *
+ * Base roles (unchanged — Pine carries the whole brand):
+ *   --bg          Oatmeal       primary warm surface
+ *   --bg-elevated Lightened     cards, modals
+ *   --fg          Pine Green    body, headings, CTAs, nav, eyebrows
+ *   --fg-muted    Lighter pine  secondary text
+ *   --fg-subtle   Muted pine    captions
+ *   --border      Toasted oat   hairlines
+ *   --accent      Pine Green    (same hue as --fg — monochrome brand)
+ *   --accent-fg   Oatmeal       text on Pine buttons
+ *   --highlight   Soft Lilac    tint only (never chrome)
+ *
+ * Lilac shows up only in atmospheric / interactive moments —
+ * selection, focus, hover, ambient washes, decorative marks.
+ * It never becomes a text colour, a CTA fill, or anything the
+ * reader has to parse for meaning.
+ * -------------------------------------------------------------- */
+.v3-scope {
+  /* Palette */
+  --bg: #e8dcc6;
+  --bg-elevated: #f3ebd9;
+  --fg: #1f3b2e;
+  --fg-muted: #3a5544;
+  --fg-subtle: #556b5d;
+  --border: #d4c4a8;
+  --accent: #1f3b2e;
+  --accent-fg: #e8dcc6;
+  --highlight: #cbb3e8;
+  --highlight-strong: #b89cdc;
+
+  /* Fonts — match /preview/v2 (Geist) so the palette is evaluated
+     against the finalised font direction. globals.css uses @theme
+     inline, so flipping the leaf next/font/local variables that
+     Tailwind utilities compile against (font-serif, font-sans,
+     font-mono) is the only way to swap faces without touching
+     components. --font-hand is intentionally NOT overridden so the
+     hero's "Hi, I am Megh" greeting stays on Kalam. */
+  --font-oswald: var(--font-geist-sans);
+  --font-satoshi: var(--font-geist-sans);
+  --font-jetbrains-mono: var(--font-geist-sans);
+
+  font-family: var(--font-geist-sans);
+  background-color: var(--bg);
+  color: var(--fg);
+  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+}
+
+/* =============================================================
+ * 1 · AMBIENT WASHES
+ * Three radial zones give the whole page a soft lavender glow —
+ * one anchored top-right (echoes the lotus halo), one mid-left,
+ * one deep bottom to tie the fold off. Low opacity, no pointer
+ * events, sits beneath content via z-index -1.
+ * ============================================================= */
+.v3-scope::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 55% 40% at 8% 42%,
+      rgba(203, 179, 232, 0.22),
+      rgba(203, 179, 232, 0) 70%
+    ),
+    radial-gradient(
+      ellipse 70% 35% at 50% 95%,
+      rgba(203, 179, 232, 0.28),
+      rgba(203, 179, 232, 0) 70%
+    );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* -----------------------------------------------------------
+ * 1b · HERO WORD HIGHLIGHTS — chisel-tip highlighter stroke
+ * The three concept words in the hero headline ("features",
+ * "products", "systems") get a hand-drawn highlighter stroke
+ * swept behind them: a broad chisel-tip body with a darker
+ * starting blob, grain streaks, and an angled chisel end.
+ *
+ * The stroke is a static SVG at /images/v3/highlighter.svg.
+ * On page load it sweeps in LEFT → RIGHT via a ::before pseudo
+ * element whose width animates 0 → 100% of the word. The three
+ * words fire in sequence (staggered 180ms apart) so the hero
+ * reads as "ink arriving" rather than three simultaneous blobs.
+ *
+ * The word itself sits on top via z-index.
+ *
+ * data-hl-word is a plain attribute so the markup is a no-op
+ * on /preview/v2 (production green theme); only the v3 scope
+ * paints the stroke.
+ * -----------------------------------------------------------*/
+.v3-scope [data-hl-word] {
+  position: relative;
+  display: inline-block;
+  padding: 0 0.1em;
+  z-index: 0;
+  /* Pull the stroke area slightly outside the glyph so the darker
+     starting blob doesn't crowd the first letter. */
+  margin: 0 0.02em;
+}
+
+.v3-scope [data-hl-word]::before {
+  content: "";
+  position: absolute;
+  /* Vertical window the stroke occupies — tighter than the full
+     line-box so the stroke paints around the glyph body only,
+     never bleeding onto neighbouring lines. */
+  top: 12%;
+  bottom: 10%;
+  left: -0.08em;
+  right: -0.08em;
+  z-index: -1;
+  background-image: url("/images/v3/highlighter.svg");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0 100%;
+  animation: v3-hl-sweep 0.65s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  animation-delay: 0.4s;
+  pointer-events: none;
+  will-change: background-size;
+}
+
+/* HERO stagger — the three words inside the H1 fire on page load,
+   180ms apart, so the eye follows the ink arriving across the three
+   lines. */
+.v3-scope h1 > span:nth-child(1) [data-hl-word]::before {
+  animation-delay: 0.4s;
+}
+.v3-scope h1 > span:nth-child(2) [data-hl-word]::before {
+  animation-delay: 0.58s;
+}
+.v3-scope h1 > span:nth-child(3) [data-hl-word]::before {
+  animation-delay: 0.76s;
+}
+
+/* SECTION EYEBROWS (EXPERIENCE, SELECTED WORK, …) — rendered inside
+   SectionHeader as a <p> with a <span data-hl-word> around the label.
+   The hero sweep fires on page load, which is right because the user
+   is already looking at it. These eyebrows live below the fold, so a
+   page-load sweep is wasted — by the time the reader scrolls there,
+   the stroke is already drawn. Drive the animation off the scroll
+   position instead, via animation-timeline: view(). The highlight
+   draws exactly as each section enters the viewport, which keeps the
+   "someone's marking this phrase" vibe on every scroll past. */
+.v3-scope p [data-hl-word]::before {
+  animation: v3-hl-sweep linear forwards;
+  animation-timeline: view(block);
+  animation-range: entry 20% entry 70%;
+  animation-delay: 0;
+  /* The eyebrow label is small (12px) and letter-spaced; expand the
+     stroke's vertical reach slightly so the mark reads as a proper
+     highlighter and not a hairline tint. */
+  top: -8%;
+  bottom: -8%;
+}
+
+/* Fallback for browsers without view-timeline (Firefox, older Safari).
+   Run a plain time-based sweep on page load. Less dramatic — the sweep
+   is done by the time the user scrolls there — but still correct. */
+@supports not (animation-timeline: view()) {
+  .v3-scope p [data-hl-word]::before {
+    animation: v3-hl-sweep 0.65s cubic-bezier(0.22, 0.61, 0.36, 1)
+      forwards;
+    animation-delay: 0.2s;
+  }
+}
+
+@keyframes v3-hl-sweep {
+  from {
+    background-size: 0 100%;
+  }
+  to {
+    background-size: 100% 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-scope [data-hl-word]::before {
+    animation: none;
+    background-size: 100% 100%;
+  }
+}
+
+/* =============================================================
+ * 2 · TEXT SELECTION
+ * Dragging to select any text paints the highlight in lilac
+ * (with Pine foreground kept for legibility). Tiny delight;
+ * consistent brand moment the user triggers themselves.
+ * ============================================================= */
+.v3-scope ::selection {
+  background: var(--highlight);
+  color: var(--fg);
+}
+
+/* =============================================================
+ * 3 · FOCUS RINGS
+ * Every :focus-visible across the scope now rings in lilac
+ * (with a soft outer glow) instead of the default Pine ring,
+ * so keyboard navigation gets its own distinct accent.
+ * ============================================================= */
+.v3-scope *:focus-visible {
+  outline: 2px solid var(--highlight-strong);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(203, 179, 232, 0.3);
+  border-radius: 2px;
+}
+
+/* =============================================================
+ * 4 · LINK HOVER
+ * On hover, any <a> inside the scope grows a lilac underline
+ * that fills in from left to right. Pine text stays; lilac
+ * is just the moving decoration.
+ * ============================================================= */
+.v3-scope main a:not(.group):hover,
+.v3-scope nav a:hover,
+.v3-scope footer a:hover {
+  text-decoration-color: var(--highlight-strong);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* =============================================================
+ * 5 · AMBIENT LILAC ON THE SHELF
+ * The wooden plank's wall-shadow gets a lavender wash under
+ * the fold, so the cast reads warm instead of pure black-fade.
+ * Books also carry a soft lilac inner glow — strongest on the
+ * active book (data-shelf-book) so the "lift" moment is a
+ * decorative lilac flare.
+ * ============================================================= */
+.v3-scope [data-shelf-book] {
+  box-shadow:
+    0 14px 22px -14px rgba(31, 59, 46, 0.4),
+    0 2px 4px -2px rgba(31, 59, 46, 0.2),
+    0 0 36px -14px rgba(203, 179, 232, 0.6);
+}
+
+/* =============================================================
+ * 6 · SHELF PREVIEW CARD
+ * Swap the hardcoded cream for a lilac-leaning cream, with a
+ * lilac rim shadow and a thin lilac top border — the "page from
+ * the opened book" feels like it was tinted by the lavender halo.
+ * ============================================================= */
+.v3-scope [class*="bg-\\[\\#F7F1E6\\]"] {
+  background-color: #ede4d9 !important;
+  box-shadow:
+    0 32px 60px -22px rgba(31, 59, 46, 0.22),
+    0 0 0 1px rgba(203, 179, 232, 0.4),
+    0 -2px 0 0 var(--highlight) inset !important;
+}
+
+/* =============================================================
+ * 7 · HERO GREETING SPARKLE
+ * The handwritten "Hi, I am Megh." greeting carries a small
+ * animated lilac sparkle — a 4-point star (unicode ✦) that
+ * rotates and breathes in / out, with a soft lilac halo behind
+ * it. Hand-drawn flourish next to a cursive line.
+ *
+ * Narrowly scoped via [data-hero-greeting] so the sparkle only
+ * appears here, not on every text-accent surface across the
+ * page (previously the square decoration spread to Experience
+ * timeline markers and other text-accent spots).
+ * ============================================================= */
+.v3-scope [data-hero-greeting]::before {
+  content: "";
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-right: 0.35em;
+  vertical-align: -0.04em;
+  background-image: url("/images/v3/hero-sun.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  /* Soft lilac halo behind the sun. drop-shadow on the pseudo
+     mirrors the glow we had on the ✦ unicode star. */
+  filter: drop-shadow(0 0 6px rgba(203, 179, 232, 0.55))
+    drop-shadow(0 0 12px rgba(203, 179, 232, 0.3));
+  animation:
+    hero-sun-spin 10s linear infinite,
+    hero-sun-pulse 3s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes hero-sun-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hero-sun-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-scope [data-hero-greeting]::before {
+    animation: none;
+    opacity: 0.9;
+  }
+}
+
+/* =============================================================
+ * 8 · CARD HAIRLINES
+ * Elevated surfaces (cards, callouts) get a thin lilac tint
+ * blended into their border — subtle but perceptible when the
+ * eye drifts across a card edge.
+ * ============================================================= */
+.v3-scope [class*="border-border"]:not(button):not(a) {
+  border-color: color-mix(in oklab, var(--border) 70%, var(--highlight) 30%);
+}
