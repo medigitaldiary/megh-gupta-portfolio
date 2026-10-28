@@ -491,7 +491,7 @@ Everything that's in `app/layout.tsx`'s `<head>` today is a **baseline, not a sa
   - `rel="help" type="text/plain"` → `/llms.txt`.
   - `rel="help" type="text/markdown"` → `/AGENTS.md`.
   - `rel="sitemap" type="application/xml"` → `/sitemap.xml`.
-- **Favicon:** `app/icon.svg` (adaptive light/dark cloud).
+- **Favicon:** `app/icon.png` + `app/apple-icon.png` (circular portrait avatar with alpha transparency) and `public/favicon.ico`.
 
 ### Per-page-type overrides that MUST ship at launch
 
