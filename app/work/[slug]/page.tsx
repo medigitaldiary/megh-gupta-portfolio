@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import * as caseStudy from "@/components/case-study";
 import { getCaseStudy } from "@/lib/case-study";
 import { getAllWorkCards, getWorkCardBySlug } from "@/lib/work";
 
@@ -76,9 +77,11 @@ export default async function WorkCaseStudy({
               ) : null}
             </div>
 
-            {/* Body prose */}
-            <article className="prose prose-neutral mt-12 max-w-none text-fg [&_h2]:mt-10 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:text-fg [&_h3]:mt-6 [&_h3]:font-sans [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-fg [&_p]:mt-4 [&_p]:leading-relaxed [&_p]:text-fg-muted [&_strong]:text-fg [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-6 [&_li]:text-fg-muted [&_a]:text-fg [&_a]:underline [&_a]:underline-offset-4">
-              <MDXRemote source={study.body} />
+            {/* Body — MDX rendered with the case-study design-system
+                components. Arbitrary selectors below are the typography
+                source of truth (no @tailwindcss/typography in deps). */}
+            <article className="mt-12 max-w-none text-fg [&_h2]:mt-10 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:text-fg [&_h3]:mt-6 [&_h3]:font-sans [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-fg [&_p]:mt-4 [&_p]:leading-relaxed [&_p]:text-fg-muted [&_strong]:text-fg [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-6 [&_li]:text-fg-muted [&_a]:text-fg [&_a]:underline [&_a]:underline-offset-4">
+              <MDXRemote source={study.body} components={caseStudy} />
             </article>
           </>
         ) : (
