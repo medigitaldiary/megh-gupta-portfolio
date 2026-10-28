@@ -74,19 +74,25 @@ export function ComingSoonWithPaper({ variant }: { variant: Variant }) {
         <h1
           className="whitespace-nowrap font-serif text-fg leading-[1.05]"
           style={{
-            letterSpacing: "-0.03em",
-            fontSize: "min(7.5vw, 5rem)",
+            letterSpacing: "-0.04em",
+            fontSize: "clamp(2.25rem, 9vw, 5rem)",
           }}
         >
           Under Construction
         </h1>
 
-        <p className="mt-6 font-serif text-fg text-xl leading-[1.4] md:text-2xl">
+        <p
+          className="mt-6 font-serif text-fg leading-[1.4]"
+          style={{ fontSize: "clamp(1rem, 2.6vw, 1.5rem)" }}
+        >
           Building a new home for my work &amp; ideas.
         </p>
 
-        <p className="mt-10 text-base text-fg leading-[1.7] md:text-lg">
-          I&apos;m Megh — Product Manager at BondScanner, building 0→1 fintech
+        <p
+          className="mt-10 text-fg leading-[1.7]"
+          style={{ fontSize: "clamp(0.9375rem, 1.9vw, 1.125rem)" }}
+        >
+          I&apos;m Megh, Product Manager at BondScanner, building 0→1 fintech
           and the AI tools that quietly run behind it. Previously platform PM at
           Ultra.
         </p>
