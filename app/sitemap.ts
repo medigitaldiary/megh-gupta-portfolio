@@ -3,6 +3,10 @@ import { getAllWorkCards } from "@/lib/work";
 
 const SITE = "https://www.meghgupta.in";
 
+// /work/* is password-locked until launch (middleware.ts). Flip to false
+// when the case studies go public so they're listed again.
+const LOCK_WORK = true;
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const workEntries: MetadataRoute.Sitemap = getAllWorkCards().map((c) => ({
@@ -19,6 +23,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 1,
     },
-    ...workEntries,
+    ...(LOCK_WORK ? [] : workEntries),
   ];
 }
