@@ -1,0 +1,282 @@
+/* Backstage Pass — scoped to the /unlock route. Every selector is
+   prefixed `bp-` so nothing leaks into the rest of the site. */
+
+.bp-stage {
+  perspective: 1400px;
+}
+
+/* Entrance: slide up + settle with a soft overshoot. */
+.bp-enter {
+  animation: bp-enter 900ms cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
+}
+@keyframes bp-enter {
+  from {
+    opacity: 0;
+    transform: translateY(60px) rotate(-3deg) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0) scale(1);
+  }
+}
+
+/* Idle float. */
+.bp-float {
+  animation: bp-float 6s ease-in-out 900ms infinite;
+}
+@keyframes bp-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-0.6deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(0.6deg);
+  }
+}
+
+/* Pointer tilt — CSS vars set from JS. */
+.bp-tilt {
+  transform: rotateX(var(--bp-rx, 0deg)) rotateY(var(--bp-ry, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 220ms ease-out;
+  will-change: transform;
+}
+
+/* Wrong password — the ticket shakes its head. */
+.bp-shake {
+  animation: bp-shake 520ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+@keyframes bp-shake {
+  10%,
+  90% {
+    transform: translateX(-2px) rotate(-0.4deg);
+  }
+  20%,
+  80% {
+    transform: translateX(5px) rotate(0.6deg);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-10px) rotate(-1deg);
+  }
+  40%,
+  60% {
+    transform: translateX(10px) rotate(1deg);
+  }
+}
+
+/* Ticket halves with real half-circle notches at the perforation.
+   Desktop: perforation is vertical (body | stub).
+   Mobile: perforation is horizontal (body over stub). */
+.bp-body,
+.bp-stub {
+  --bp-notch: 14px;
+  background-color: #f3ebd9;
+  background-image:
+    radial-gradient(rgba(31, 59, 46, 0.035) 1px, transparent 1px),
+    linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.55),
+      rgba(255, 255, 255, 0) 45%
+    );
+  background-size:
+    6px 6px,
+    100% 100%;
+}
+
+.bp-body {
+  -webkit-mask:
+    radial-gradient(circle var(--bp-notch) at 100% 0, #0000 98%, #000) top /
+    100% 51% no-repeat,
+    radial-gradient(circle var(--bp-notch) at 100% 100%, #0000 98%, #000) bottom
+    / 100% 51% no-repeat;
+  mask:
+    radial-gradient(circle var(--bp-notch) at 100% 0, #0000 98%, #000) top /
+    100% 51% no-repeat,
+    radial-gradient(circle var(--bp-notch) at 100% 100%, #0000 98%, #000) bottom
+    / 100% 51% no-repeat;
+  border-radius: 18px 0 0 18px;
+}
+
+.bp-stub {
+  -webkit-mask:
+    radial-gradient(circle var(--bp-notch) at 0 0, #0000 98%, #000) top / 100%
+    51% no-repeat,
+    radial-gradient(circle var(--bp-notch) at 0 100%, #0000 98%, #000) bottom /
+    100% 51% no-repeat;
+  mask:
+    radial-gradient(circle var(--bp-notch) at 0 0, #0000 98%, #000) top / 100%
+    51% no-repeat,
+    radial-gradient(circle var(--bp-notch) at 0 100%, #0000 98%, #000) bottom /
+    100% 51% no-repeat;
+  border-radius: 0 18px 18px 0;
+  background-color: #ece1ca;
+  transform-origin: 0% 100%;
+}
+
+/* Dashed perforation line on the stub's inner edge. */
+.bp-perf {
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  left: 0;
+  border-left: 2px dashed rgba(31, 59, 46, 0.28);
+}
+
+@media (max-width: 767px) {
+  .bp-body {
+    -webkit-mask:
+      radial-gradient(circle var(--bp-notch) at 0 100%, #0000 98%, #000) left /
+      51% 100% no-repeat,
+      radial-gradient(circle var(--bp-notch) at 100% 100%, #0000 98%, #000)
+      right / 51% 100% no-repeat;
+    mask:
+      radial-gradient(circle var(--bp-notch) at 0 100%, #0000 98%, #000) left /
+      51% 100% no-repeat,
+      radial-gradient(circle var(--bp-notch) at 100% 100%, #0000 98%, #000)
+      right / 51% 100% no-repeat;
+    border-radius: 18px 18px 0 0;
+  }
+  .bp-stub {
+    -webkit-mask:
+      radial-gradient(circle var(--bp-notch) at 0 0, #0000 98%, #000) left / 51%
+      100% no-repeat,
+      radial-gradient(circle var(--bp-notch) at 100% 0, #0000 98%, #000) right /
+      51% 100% no-repeat;
+    mask:
+      radial-gradient(circle var(--bp-notch) at 0 0, #0000 98%, #000) left / 51%
+      100% no-repeat,
+      radial-gradient(circle var(--bp-notch) at 100% 0, #0000 98%, #000) right /
+      51% 100% no-repeat;
+    border-radius: 0 0 18px 18px;
+    transform-origin: 100% 0%;
+  }
+  .bp-perf {
+    top: 0;
+    bottom: auto;
+    left: 18px;
+    right: 18px;
+    border-left: 0;
+    border-top: 2px dashed rgba(31, 59, 46, 0.28);
+  }
+}
+
+/* Drop shadow lives on a wrapper because masks clip box-shadow. */
+.bp-shadow {
+  filter: drop-shadow(0 30px 40px rgba(31, 59, 46, 0.22))
+    drop-shadow(0 6px 10px rgba(31, 59, 46, 0.12))
+    drop-shadow(0 0 40px rgba(203, 179, 232, 0.35));
+}
+
+/* Rubber stamps. */
+.bp-stamp {
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  border: 4px double currentColor;
+  border-radius: 10px;
+  letter-spacing: 0.18em;
+  animation: bp-stamp 420ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.bp-stamp-fade {
+  animation:
+    bp-stamp 420ms cubic-bezier(0.2, 1.4, 0.4, 1) both,
+    bp-stamp-out 500ms ease-in 1500ms forwards;
+}
+@keyframes bp-stamp {
+  from {
+    opacity: 0;
+    transform: rotate(-14deg) scale(2.4);
+  }
+  60% {
+    opacity: 0.95;
+  }
+  to {
+    opacity: 0.85;
+    transform: rotate(-12deg) scale(1);
+  }
+}
+@keyframes bp-stamp-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Success — the stub tears off along the perforation. */
+.bp-tear {
+  animation: bp-tear 900ms cubic-bezier(0.55, 0, 0.75, 0.4) 450ms forwards;
+}
+@keyframes bp-tear {
+  to {
+    transform: translate(60px, 140px) rotate(22deg);
+    opacity: 0;
+  }
+}
+@media (max-width: 767px) {
+  @keyframes bp-tear {
+    to {
+      transform: translate(30px, 160px) rotate(-14deg);
+      opacity: 0;
+    }
+  }
+}
+
+.bp-exit {
+  animation: bp-exit 600ms ease-in 1100ms forwards;
+}
+@keyframes bp-exit {
+  to {
+    opacity: 0;
+    filter: blur(6px);
+    transform: scale(1.02);
+  }
+}
+
+/* Typed characters pop in as ink dots. */
+.bp-dot {
+  animation: bp-dot 260ms cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+@keyframes bp-dot {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.bp-caret {
+  animation: bp-caret 1.1s steps(2, end) infinite;
+}
+@keyframes bp-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp-enter,
+  .bp-float,
+  .bp-shake,
+  .bp-tear,
+  .bp-dot,
+  .bp-caret,
+  .bp-stamp,
+  .bp-stamp-fade {
+    animation: none;
+  }
+  .bp-tilt {
+    transform: none;
+    transition: none;
+  }
+  .bp-stamp,
+  .bp-stamp-fade {
+    opacity: 0.85;
+    transform: rotate(-12deg);
+  }
+  .bp-exit {
+    animation: bp-exit 300ms ease-in forwards;
+  }
+}
