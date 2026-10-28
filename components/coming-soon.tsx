@@ -110,23 +110,29 @@ export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
           className="whitespace-nowrap font-serif leading-[1]"
           style={{
             color: t.headline,
-            letterSpacing: "-0.03em",
-            fontSize: "min(7.5vw, 6rem)",
+            letterSpacing: "-0.04em",
+            fontSize: "clamp(2.25rem, 9vw, 6rem)",
           }}
         >
           Under Construction
         </h1>
 
         <p
-          className="mt-6 font-serif text-xl italic leading-[1.35] md:text-2xl"
-          style={{ color: t.subtitle }}
+          className="mt-6 font-serif italic leading-[1.35]"
+          style={{
+            color: t.subtitle,
+            fontSize: "clamp(1rem, 2.6vw, 1.5rem)",
+          }}
         >
           Building a new home for my work &amp; ideas.
         </p>
 
         <p
-          className="mt-10 max-w-xl text-base leading-[1.75] md:text-lg"
-          style={{ color: t.body }}
+          className="mt-10 max-w-xl leading-[1.75]"
+          style={{
+            color: t.body,
+            fontSize: "clamp(0.9375rem, 1.9vw, 1.125rem)",
+          }}
         >
           Hi, I&apos;m Megh. I build 0→1 fintech, and the AI tools that quietly
           run behind it. Right now at{" "}
