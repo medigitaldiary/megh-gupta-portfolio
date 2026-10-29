@@ -58,7 +58,11 @@ export default function PreviewIndex() {
       </ul>
 
       <p className="mt-10 text-fg-subtle text-xs">
-        Also live:{" "}
+        About collage:{" "}
+        <Link className="underline" href="/preview/v44">
+          /preview/v44
+        </Link>
+        . Also live:{" "}
         <Link className="underline" href="/paper-preview">
           /paper-preview
         </Link>{" "}
