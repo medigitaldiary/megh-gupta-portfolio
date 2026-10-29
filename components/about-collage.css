@@ -541,7 +541,7 @@
   outline-offset: 4px;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1023px) and (min-width: 768px) {
   .about-collage {
     height: 200svh;
   }
@@ -560,7 +560,7 @@
   }
 
   .about-collage-bio {
-    padding: 6.5rem 4.6rem 5rem;
+    padding: 5.5rem 5.2rem 4rem;
   }
 
   .about-slip {
@@ -569,7 +569,56 @@
   }
 
   .about-tip {
-    width: min(9.5rem, 28vw);
+    width: min(9.5rem, 22vw);
+  }
+}
+
+@media (max-width: 767px) {
+  .about-collage {
+    height: 210svh;
+  }
+
+  .about-cut {
+    left: calc(var(--px) + (var(--mfx) - var(--px)) * var(--t));
+    top: calc(var(--py) + (var(--mfy) - var(--py)) * var(--t));
+    width: calc(var(--pw) * 0.46 + (var(--mfw) - var(--pw) * 0.46) * var(--t));
+    z-index: var(--mz);
+    transform: translate(-50%, -50%)
+      rotate(calc(var(--pr) + (var(--mfr) - var(--pr)) * var(--t)));
+  }
+
+  .about-cut:hover,
+  .about-cut:focus-within {
+    transform: translate(-50%, -50%)
+      rotate(calc(var(--pr) + (var(--mfr) - var(--pr)) * var(--t))) scale(1.04);
+  }
+
+  .about-sticker {
+    padding: 0.28rem 0.26rem 0.32rem;
+  }
+
+  .about-collage-bio {
+    padding: 9.75rem 1.2rem 10.25rem;
+  }
+
+  .about-slip {
+    max-width: 100%;
+    padding: 1.05rem 1rem 1.15rem;
+  }
+
+  .about-collage-copy {
+    font-size: 0.9375rem;
+  }
+
+  .about-tip,
+  .about-cut[data-side="left"] .about-tip,
+  .about-cut[data-side="right"] .about-tip {
+    left: 0.3rem;
+    right: 0.3rem;
+    top: auto;
+    bottom: 0.3rem;
+    width: auto;
+    transform: rotate(-1.1deg);
   }
 }
 

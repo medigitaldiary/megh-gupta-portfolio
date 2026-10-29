@@ -10,6 +10,7 @@ const CUTS = ["a", "b", "c", "d", "e", "f"] as const;
 function layoutPrints(count: number) {
   const leftCount = Math.ceil(count / 2);
   const rightCount = Math.floor(count / 2);
+  const topCount = Math.ceil(count / 2);
 
   return Array.from({ length: count }, (_, i) => {
     const pileA = (i / count) * Math.PI * 2;
@@ -19,8 +20,14 @@ function layoutPrints(count: number) {
     const t = colCount <= 1 ? 0.5 : indexInCol / (colCount - 1);
     const jitter = ((i * 17) % 5) - 2;
     const sign = isLeft ? -1 : 1;
+    const onTop = i < topCount;
+    const indexInRow = onTop ? i : i - topCount;
+    const rowLen = onTop ? topCount : Math.max(count - topCount, 1);
+    const mt = rowLen <= 1 ? 0.5 : indexInRow / (rowLen - 1);
+    const mid = Math.floor((rowLen - 1) / 2);
     return {
       z: i + 1,
+      mz: onTop ? 3 + indexInRow : indexInRow === mid ? 12 : 6 + indexInRow,
       tape: i % 3 === 1,
       cut: CUTS[i % CUTS.length],
       px: `${(50 + Math.cos(pileA) * 2.8).toFixed(2)}%`,
@@ -32,6 +39,11 @@ function layoutPrints(count: number) {
       fr: `${(sign * (4 + (i % 4))).toFixed(1)}deg`,
       fw: "8.2rem",
       side: isLeft ? "right" : "left",
+      band: onTop ? "top" : "bottom",
+      mfx: `${(22 + mt * 56 + jitter * 0.3).toFixed(2)}%`,
+      mfy: `${(onTop ? 11.4 + (indexInRow % 2) * 1.8 : 88.6 - (indexInRow % 2) * 1.8).toFixed(2)}%`,
+      mfr: `${(sign * (6 + (i % 3) * 2.2)).toFixed(1)}deg`,
+      mfw: "6.05rem",
     };
   });
 }
@@ -130,6 +142,7 @@ export function AboutCollage() {
               key={piece.id}
               className={`about-cut about-cut-${piece.cut}`}
               data-side={piece.side}
+              data-band={piece.band}
               data-tip={openTip === piece.id ? "true" : undefined}
               onMouseEnter={() => setOpenTip(piece.id)}
               onMouseLeave={() =>
@@ -146,6 +159,11 @@ export function AboutCollage() {
                   "--fr": piece.fr,
                   "--fw": piece.fw,
                   "--z": piece.z,
+                  "--mz": piece.mz,
+                  "--mfx": piece.mfx,
+                  "--mfy": piece.mfy,
+                  "--mfr": piece.mfr,
+                  "--mfw": piece.mfw,
                 } as CSSProperties
               }
             >
