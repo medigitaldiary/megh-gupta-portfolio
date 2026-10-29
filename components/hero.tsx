@@ -1,9 +1,32 @@
 import Image from "next/image";
+import { HeroLink } from "@/components/hero-link";
 import { ProductVenn } from "@/components/product-venn";
+import { ProductVennTravel } from "@/components/product-venn-travel";
 
-export function Hero() {
+export function Hero({ link }: { link?: "travel" }) {
+  const portrait = (
+    <Image
+      src="/images/hero-portrait.webp"
+      alt="Megh Gupta, portrait avatar"
+      width={128}
+      height={128}
+      priority
+      className="h-[44px] w-[44px] shrink-0 rounded-full md:h-[56px] md:w-[56px]"
+      style={{
+        filter: "drop-shadow(0 2px 8px rgba(31, 59, 46, 0.18))",
+      }}
+    />
+  );
+
   return (
-    <section id="hero" className="px-6 py-20 md:px-8 md:py-28">
+    <section
+      id="hero"
+      className={
+        link === "travel"
+          ? "relative px-6 py-20 md:px-8 md:py-28"
+          : "px-6 py-20 md:px-8 md:py-28"
+      }
+    >
       <div className="mx-auto grid max-w-5xl items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         <div className="min-w-0">
           {/* Avatar + handwritten greeting sit on the same row; the
@@ -12,17 +35,13 @@ export function Hero() {
               the data-hero-greeting attribute neutralises that rule
               in app/globals.css without touching the global stylesheet. */}
           <div className="mb-3 flex items-center gap-4 md:gap-[18px]">
-            <Image
-              src="/images/hero-portrait.webp"
-              alt="Megh Gupta, portrait avatar"
-              width={128}
-              height={128}
-              priority
-              className="h-[44px] w-[44px] shrink-0 rounded-full md:h-[56px] md:w-[56px]"
-              style={{
-                filter: "drop-shadow(0 2px 8px rgba(31, 59, 46, 0.18))",
-              }}
-            />
+            {link === "travel" ? (
+              <span data-hero-portrait className="inline-flex shrink-0">
+                {portrait}
+              </span>
+            ) : (
+              portrait
+            )}
             <p
               className="translate-y-[3px] text-3xl leading-[1] text-accent md:translate-y-[5px] md:text-[2.25rem]"
               style={{ fontFamily: "var(--font-hand), cursive" }}
@@ -54,9 +73,14 @@ export function Hero() {
         </div>
 
         <div className="min-w-0">
-          <ProductVenn />
+          {link === "travel" ? (
+            <ProductVennTravel variant="travel" />
+          ) : (
+            <ProductVenn />
+          )}
         </div>
       </div>
+      {link === "travel" ? <HeroLink /> : null}
     </section>
   );
 }
