@@ -1,0 +1,649 @@
+/* Desk collage. --p drives explode (--t) then the paper slip (--b).
+   Palette stays oatmeal / pine / lilac. No Vox yellow-blue-red. */
+
+@property --p {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --t {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --b {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.about-collage {
+  --p: 0;
+  --t: max(0, min(1, calc((var(--p) - 0.04) / 0.5)));
+  --b: max(0, min(1, calc((var(--p) - 0.5) / 0.32)));
+  --paper: var(--bg-elevated);
+  position: relative;
+  isolation: isolate;
+  height: 220svh;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.about-collage-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse 80% 70% at 50% 40%,
+      color-mix(in srgb, var(--bg-elevated) 55%, transparent),
+      transparent 70%
+    ), var(--bg);
+}
+
+.about-collage-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/about/grain.svg");
+  background-size: 160px 160px;
+  opacity: 0.22;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  z-index: 4;
+}
+
+.about-strips {
+  position: absolute;
+  inset: 18% -8% 28%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--t);
+}
+
+.about-strip {
+  position: absolute;
+  left: -6%;
+  width: 112%;
+  height: 1.35rem;
+  transform-origin: 20% 50%;
+}
+
+.about-strip-1 {
+  top: 18%;
+  background: color-mix(in srgb, var(--fg) 78%, var(--bg));
+  clip-path: polygon(
+    0% 28%,
+    8% 4%,
+    19% 32%,
+    31% 0%,
+    44% 36%,
+    58% 8%,
+    71% 40%,
+    84% 2%,
+    100% 30%,
+    100% 78%,
+    86% 100%,
+    72% 70%,
+    58% 98%,
+    43% 66%,
+    29% 100%,
+    16% 72%,
+    0% 96%
+  );
+  transform: rotate(-7deg) translateX(calc((var(--t) - 1) * 4vw));
+}
+
+.about-strip-2 {
+  top: 46%;
+  height: 1.7rem;
+  background: color-mix(in srgb, var(--highlight) 82%, var(--bg-elevated));
+  clip-path: polygon(
+    0% 18%,
+    11% 0%,
+    24% 28%,
+    38% 2%,
+    52% 34%,
+    66% 0%,
+    79% 30%,
+    91% 6%,
+    100% 24%,
+    100% 82%,
+    88% 100%,
+    74% 68%,
+    59% 96%,
+    44% 64%,
+    30% 100%,
+    14% 70%,
+    0% 92%
+  );
+  transform: rotate(4deg) translateX(calc((1 - var(--t)) * 5vw));
+}
+
+.about-strip-3 {
+  top: 72%;
+  background: color-mix(in srgb, var(--border) 70%, var(--fg-muted));
+  clip-path: polygon(
+    0% 34%,
+    9% 0%,
+    22% 38%,
+    35% 6%,
+    49% 42%,
+    63% 2%,
+    76% 36%,
+    89% 8%,
+    100% 32%,
+    100% 76%,
+    85% 100%,
+    70% 68%,
+    54% 98%,
+    39% 64%,
+    24% 100%,
+    10% 70%,
+    0% 94%
+  );
+  transform: rotate(-3deg) translateX(calc((var(--t) - 1) * 3vw));
+}
+
+.about-collage-desk {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.about-cut {
+  position: absolute;
+  left: calc(var(--px) + (var(--fx) - var(--px)) * var(--t));
+  top: calc(var(--py) + (var(--fy) - var(--py)) * var(--t));
+  width: calc(var(--pw) + (var(--fw) - var(--pw)) * var(--t));
+  z-index: var(--z);
+  overflow: visible;
+  pointer-events: auto;
+  transform: translate(-50%, -50%)
+    rotate(calc(var(--pr) + (var(--fr) - var(--pr)) * var(--t)));
+  will-change: left, top, transform;
+}
+
+.about-cut:hover,
+.about-cut:focus-within {
+  z-index: 40;
+  transform: translate(-50%, -50%)
+    rotate(calc(var(--pr) + (var(--fr) - var(--pr)) * var(--t))) scale(1.05);
+}
+
+.about-sticker {
+  position: relative;
+  padding: 0.42rem 0.4rem 0.5rem;
+  background: var(--paper);
+  line-height: 0;
+  filter: drop-shadow(
+    0.2rem 0.4rem 0.55rem color-mix(in srgb, var(--fg) 28%, transparent)
+  );
+}
+
+.about-sticker-photo {
+  overflow: hidden;
+  background: var(--border);
+}
+
+.about-sticker-photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.about-cut-a .about-sticker {
+  clip-path: polygon(
+    3% 1.5%,
+    18% 0.4%,
+    41% 2.2%,
+    68% 0.6%,
+    92% 2%,
+    99% 8%,
+    97.5% 38%,
+    99.2% 72%,
+    96.5% 96%,
+    72% 99%,
+    38% 97.2%,
+    8% 99.4%,
+    0.8% 78%,
+    2.2% 36%
+  );
+}
+
+.about-cut-b .about-sticker {
+  clip-path: polygon(
+    1.4% 3%,
+    22% 0.8%,
+    48% 2.6%,
+    74% 0.4%,
+    98% 3.2%,
+    99.4% 28%,
+    97% 61%,
+    99% 94%,
+    76% 98.8%,
+    44% 96.6%,
+    12% 99%,
+    0.6% 71%,
+    2.4% 32%
+  );
+}
+
+.about-cut-c .about-sticker {
+  clip-path: polygon(
+    2.8% 1.2%,
+    28% 2.8%,
+    54% 0.5%,
+    81% 2.4%,
+    98.6% 1.6%,
+    99.2% 34%,
+    97.4% 68%,
+    98.8% 97%,
+    64% 99.2%,
+    29% 97%,
+    1.2% 98.6%,
+    0.4% 54%,
+    2% 18%
+  );
+}
+
+.about-cut-d .about-sticker {
+  clip-path: polygon(
+    1.6% 0.8%,
+    31% 2.2%,
+    58% 0.4%,
+    86% 1.8%,
+    99% 2.6%,
+    97.8% 42%,
+    99.4% 78%,
+    96.2% 98.6%,
+    61% 97.4%,
+    24% 99%,
+    1.8% 96.8%,
+    0.8% 58%,
+    2.6% 22%
+  );
+}
+
+.about-cut-e .about-sticker {
+  clip-path: polygon(
+    2.4% 2.4%,
+    19% 0.6%,
+    46% 2%,
+    73% 0.8%,
+    97.4% 1.2%,
+    99.6% 24%,
+    97.2% 58%,
+    99.2% 91%,
+    78% 99.4%,
+    41% 97%,
+    6% 98.8%,
+    1.2% 64%,
+    0.6% 26%
+  );
+}
+
+.about-cut-f .about-sticker {
+  clip-path: polygon(
+    1.2% 1.6%,
+    26% 0.4%,
+    52% 2.2%,
+    79% 0.8%,
+    98.8% 2.8%,
+    97.6% 36%,
+    99.4% 71%,
+    97% 98%,
+    63% 97.6%,
+    28% 99.2%,
+    2.4% 96.4%,
+    0.6% 62%,
+    2% 24%
+  );
+}
+
+.about-cut-tape {
+  position: absolute;
+  top: -0.4rem;
+  left: 36%;
+  z-index: 3;
+  width: 3.6rem;
+  height: 1.05rem;
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--bg-elevated) 55%, var(--highlight) 45%) 0 0.22rem,
+    color-mix(in srgb, var(--bg-elevated) 70%, var(--highlight) 30%) 0.22rem
+      0.4rem
+  );
+  opacity: calc(0.45 + var(--t) * 0.4);
+  transform: rotate(-18deg);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--fg) 14%, transparent);
+  pointer-events: none;
+}
+
+.about-collage-bio {
+  position: relative;
+  z-index: 8;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5.5rem max(1.5rem, calc(50vw - 16rem)) 3rem;
+  pointer-events: none;
+}
+
+.about-slip {
+  position: relative;
+  max-width: 32rem;
+  margin-inline: auto;
+  padding: 1.45rem 1.5rem 1.6rem;
+  background: var(--paper);
+  opacity: var(--b);
+  transform: rotate(-2.4deg) translateY(calc((1 - var(--b)) * 1.7rem))
+    scale(calc(0.96 + var(--b) * 0.04));
+  transform-origin: 40% 20%;
+  filter: drop-shadow(
+    0.35rem 0.7rem 0.85rem color-mix(in srgb, var(--fg) 22%, transparent)
+  );
+  clip-path: polygon(
+    1.2% 4.8%,
+    8% 0.8%,
+    18% 5.2%,
+    29% 0.4%,
+    42% 4.6%,
+    55% 0.6%,
+    68% 5%,
+    80% 0.5%,
+    91% 4.4%,
+    98.8% 1.2%,
+    96.4% 14%,
+    99.5% 28%,
+    95.8% 43%,
+    99.2% 58%,
+    96.2% 74%,
+    99% 88%,
+    95.5% 99.2%,
+    82% 95.4%,
+    68% 99.4%,
+    53% 95.2%,
+    38% 99%,
+    24% 95.6%,
+    11% 99.2%,
+    0.8% 95%,
+    4.2% 82%,
+    0.4% 66%,
+    4.6% 50%,
+    0.5% 33%,
+    3.8% 16%
+  );
+}
+
+.about-slip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/about/grain.svg");
+  background-size: 140px 140px;
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.about-slip-tape {
+  position: absolute;
+  top: -0.55rem;
+  left: 42%;
+  z-index: 2;
+  width: 4.6rem;
+  height: 1.2rem;
+  background: color-mix(in srgb, var(--bg-elevated) 58%, var(--highlight) 42%);
+  opacity: calc(0.35 + var(--b) * 0.5);
+  transform: rotate(-12deg);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--fg) 12%, transparent);
+  pointer-events: none;
+}
+
+.about-collage[data-open="true"] .about-slip {
+  pointer-events: auto;
+}
+
+.about-collage-title {
+  font-size: clamp(1.75rem, 5vw, 2.65rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.about-collage-copy {
+  position: relative;
+  margin-top: 0.9rem;
+  font-size: clamp(0.9375rem, 1.7vw, 1.125rem);
+  line-height: 1.65;
+  color: var(--fg-muted);
+}
+
+.about-collage-copy + .about-collage-copy {
+  margin-top: 0.75rem;
+}
+
+.about-collage-mark {
+  position: relative;
+  z-index: 0;
+  padding: 0 0.06em;
+}
+
+.about-collage-mark::before {
+  content: "";
+  position: absolute;
+  inset: 12% -0.08em 8%;
+  z-index: -1;
+  background-image: url("/images/v3/highlighter.svg");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: calc(var(--b) * 100%) 100%;
+  pointer-events: none;
+}
+
+.about-tip {
+  position: absolute;
+  z-index: 6;
+  width: min(11.5rem, 18vw);
+  padding: 0.7rem 0.8rem 0.8rem;
+  background: var(--paper);
+  color: var(--fg);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  filter: drop-shadow(
+    0.2rem 0.35rem 0.45rem color-mix(in srgb, var(--fg) 22%, transparent)
+  );
+  clip-path: polygon(
+    1.5% 6%,
+    14% 1%,
+    32% 5%,
+    51% 0.8%,
+    72% 5.5%,
+    90% 1.2%,
+    98.5% 7%,
+    96.5% 38%,
+    99% 72%,
+    95% 98%,
+    70% 94%,
+    44% 99%,
+    18% 94.5%,
+    1.2% 98%,
+    4% 64%,
+    0.8% 28%
+  );
+}
+
+.about-tip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/about/grain.svg");
+  background-size: 120px 120px;
+  opacity: 0.16;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.about-cut[data-side="right"] .about-tip {
+  left: calc(100% + 0.45rem);
+  top: 50%;
+  transform: translateY(-50%) rotate(1.4deg);
+}
+
+.about-cut[data-side="left"] .about-tip {
+  right: calc(100% + 0.45rem);
+  top: 50%;
+  transform: translateY(-50%) rotate(-1.4deg);
+}
+
+.about-collage[data-open="true"] .about-cut:hover .about-tip,
+.about-collage[data-open="true"] .about-cut:focus-within .about-tip,
+.about-collage[data-open="true"] .about-cut[data-tip="true"] .about-tip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.about-tip-kicker {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+
+.about-tip-body {
+  display: block;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--fg-muted);
+}
+
+.about-cut-hit {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: inherit;
+}
+
+.about-cut-hit:focus-visible {
+  outline: 2px solid var(--highlight-strong, var(--highlight));
+  outline-offset: 4px;
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  .about-collage {
+    height: 200svh;
+  }
+
+  .about-cut {
+    width: calc(
+      var(--pw) *
+      0.58 +
+      (var(--fw) * 0.58 - var(--pw) * 0.58) *
+      var(--t)
+    );
+  }
+
+  .about-sticker {
+    padding: 0.32rem 0.3rem 0.38rem;
+  }
+
+  .about-collage-bio {
+    padding: 5.5rem 5.2rem 4rem;
+  }
+
+  .about-slip {
+    max-width: 100%;
+    padding: 1.15rem 1.1rem 1.25rem;
+  }
+
+  .about-tip {
+    width: min(9.5rem, 22vw);
+  }
+}
+
+@media (max-width: 767px) {
+  .about-collage {
+    height: 210svh;
+  }
+
+  .about-cut {
+    left: calc(var(--px) + (var(--mfx) - var(--px)) * var(--t));
+    top: calc(var(--py) + (var(--mfy) - var(--py)) * var(--t));
+    width: calc(var(--pw) * 0.46 + (var(--mfw) - var(--pw) * 0.46) * var(--t));
+    z-index: var(--mz);
+    transform: translate(-50%, -50%)
+      rotate(calc(var(--pr) + (var(--mfr) - var(--pr)) * var(--t)));
+  }
+
+  .about-cut:hover,
+  .about-cut:focus-within {
+    transform: translate(-50%, -50%)
+      rotate(calc(var(--pr) + (var(--mfr) - var(--pr)) * var(--t))) scale(1.04);
+  }
+
+  .about-sticker {
+    padding: 0.28rem 0.26rem 0.32rem;
+  }
+
+  .about-collage-bio {
+    padding: 9.75rem 1.2rem 10.25rem;
+  }
+
+  .about-slip {
+    max-width: 100%;
+    padding: 1.05rem 1rem 1.15rem;
+  }
+
+  .about-collage-copy {
+    font-size: 0.9375rem;
+  }
+
+  .about-tip,
+  .about-cut[data-side="left"] .about-tip,
+  .about-cut[data-side="right"] .about-tip {
+    left: 0.3rem;
+    right: 0.3rem;
+    top: auto;
+    bottom: 0.3rem;
+    width: auto;
+    transform: rotate(-1.1deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-collage {
+    --p: 1;
+    --t: 1;
+    --b: 1;
+    height: auto;
+  }
+
+  .about-collage-stage {
+    position: relative;
+    height: auto;
+    min-height: 100svh;
+    overflow: hidden;
+  }
+
+  .about-slip {
+    opacity: 1;
+    transform: rotate(-2.4deg);
+    pointer-events: auto;
+  }
+
+  .about-collage-mark::before {
+    background-size: 100% 100%;
+  }
+}
