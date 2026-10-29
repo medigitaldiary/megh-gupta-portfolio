@@ -98,7 +98,7 @@ function damp(cur: number, target: number, k: number) {
 }
 
 function zoneOf(el: Element): Zone {
-  const z = el.dataset.zone;
+  const z = el.getAttribute("data-zone");
   if (z === "user" || z === "tech" || z === "biz") return z;
   return "user";
 }
