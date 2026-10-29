@@ -13,12 +13,12 @@ export function Hero() {
               in app/globals.css without touching the global stylesheet. */}
           <div className="mb-3 flex items-center gap-4 md:gap-[18px]">
             <Image
-              src="/images/avatar.png"
+              src="/images/hero-portrait.webp"
               alt="Megh Gupta, portrait avatar"
-              width={168}
-              height={168}
+              width={128}
+              height={128}
               priority
-              className="h-[60px] w-[60px] shrink-0 rounded-full md:h-[84px] md:w-[84px]"
+              className="h-[44px] w-[44px] shrink-0 rounded-full md:h-[56px] md:w-[56px]"
               style={{
                 filter: "drop-shadow(0 2px 8px rgba(31, 59, 46, 0.18))",
               }}
