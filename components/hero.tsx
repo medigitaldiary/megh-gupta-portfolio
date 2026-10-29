@@ -24,7 +24,7 @@ export function Hero() {
               }}
             />
             <p
-              className="-translate-y-[2px] text-3xl leading-[1] text-accent md:-translate-y-[4px] md:text-[2.25rem]"
+              className="translate-y-[3px] text-3xl leading-[1] text-accent md:translate-y-[5px] md:text-[2.25rem]"
               style={{ fontFamily: "var(--font-hand), cursive" }}
             >
               Hi, I am Megh.
