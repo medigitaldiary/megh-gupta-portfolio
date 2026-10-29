@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ProductVenn } from "@/components/product-venn";
 
 export function Hero() {
@@ -5,13 +6,30 @@ export function Hero() {
     <section id="hero" className="px-6 py-20 md:px-8 md:py-28">
       <div className="mx-auto grid max-w-5xl items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         <div className="min-w-0">
-          <p
-            data-hero-greeting
-            className="mb-3 text-3xl leading-[1] text-accent md:text-[2.25rem]"
-            style={{ fontFamily: "var(--font-hand), cursive" }}
-          >
-            Hi, I am Megh.
-          </p>
+          {/* Avatar + handwritten greeting sit on the same row; the
+              avatar's left edge aligns with the H1 below. The avatar
+              replaces the earlier sun icon pseudo-element: removing
+              the data-hero-greeting attribute neutralises that rule
+              in app/globals.css without touching the global stylesheet. */}
+          <div className="mb-3 flex items-center gap-4 md:gap-[18px]">
+            <Image
+              src="/images/avatar.png"
+              alt="Megh Gupta, portrait avatar"
+              width={168}
+              height={168}
+              priority
+              className="h-[60px] w-[60px] shrink-0 rounded-full md:h-[84px] md:w-[84px]"
+              style={{
+                filter: "drop-shadow(0 2px 8px rgba(31, 59, 46, 0.18))",
+              }}
+            />
+            <p
+              className="text-3xl leading-[1] text-accent md:text-[2.25rem]"
+              style={{ fontFamily: "var(--font-hand), cursive" }}
+            >
+              Hi, I am Megh.
+            </p>
+          </div>
 
           <h1 className="font-serif text-[2.25rem] leading-[1.08] tracking-tight text-fg md:text-[3rem] lg:text-[3.25rem]">
             <span className="block">
