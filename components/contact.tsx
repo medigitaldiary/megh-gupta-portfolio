@@ -6,7 +6,7 @@ export function Contact() {
   return (
     <section
       id="connect"
-      className="scroll-mt-16 bg-accent px-6 py-32 text-accent-fg md:px-8 md:py-48"
+      className="scroll-mt-16 bg-accent px-6 pt-32 pb-16 text-accent-fg md:px-8 md:pt-48 md:pb-24"
     >
       <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
         <h2 className="font-serif text-[3rem] leading-[1.05] tracking-tight md:text-[4rem]">
