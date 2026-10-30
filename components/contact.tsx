@@ -13,28 +13,32 @@ export function Contact() {
           Let&apos;s Connect.
         </h2>
 
-        <p className="mt-8 max-w-2xl text-base leading-[1.6] text-accent-fg/85 md:text-lg">
+        <p className="mt-8 text-base leading-[1.6] text-accent-fg/85 md:text-lg">
           If you&apos;re working in fintech/wealthtech, product, or the
-          early-stage startup world - I&apos;d love to hear from you. Whether
-          it&apos;s to swap notes, jam on a product problem, or talk about fixed
-          income and financial access, feel free to reach out.
-        </p>
-
-        <div className="mt-16 w-full">
-          <CalEmbed />
-        </div>
-
-        <p className="mt-8 max-w-2xl text-sm text-accent-fg/70">
-          calendars not your thing?{" "}
-          <a
-            href={`mailto:${FALLBACK_EMAIL}`}
-            className="underline decoration-accent-fg/50 underline-offset-4 transition-opacity duration-150 hover:opacity-90"
-          >
-            {FALLBACK_EMAIL}
-          </a>{" "}
-          works just as well.
+          early-stage startup world - I&apos;d love to hear from you.
+          <br className="hidden min-[1100px]:block" />
+          Whether it&apos;s to swap notes, jam on a product problem, or talk
+          about fixed income and financial access.
         </p>
       </div>
+
+      {/* Month view snaps to a 1040px booker at Cal's 1024px breakpoint.
+          Below that, cap at 1000px so the frame never sits in the 1024–1039px
+          band, which is what forces both scrollbars. 1104 = 1040 + section px-8. */}
+      <div className="mx-auto mt-10 w-full max-w-[1000px] min-[1104px]:max-w-[1040px]">
+        <CalEmbed />
+      </div>
+
+      <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-accent-fg/70">
+        calendars not your thing?{" "}
+        <a
+          href={`mailto:${FALLBACK_EMAIL}`}
+          className="underline decoration-accent-fg/50 underline-offset-4 transition-opacity duration-150 hover:opacity-90"
+        >
+          {FALLBACK_EMAIL}
+        </a>{" "}
+        works just as well.
+      </p>
     </section>
   );
 }

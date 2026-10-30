@@ -1,3 +1,10 @@
+export type AboutPrintFrame = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+};
+
 export type AboutVoxChapter = {
   id: string;
   kicker: string;
@@ -11,10 +18,23 @@ export type AboutVoxChapter = {
   width: number;
   height: number;
   cut: string;
+  // Extra shots for this slot. Layout stays at 12 frames; new photos go here.
+  frames?: AboutPrintFrame[];
 };
 
-// Append an entry here to add a print to the About desk. Layout is computed
-// from the array length, so the center slip stays put.
+export function framesFor(chapter: AboutVoxChapter): AboutPrintFrame[] {
+  const primary: AboutPrintFrame = {
+    src: chapter.src,
+    alt: chapter.alt,
+    width: chapter.width,
+    height: chapter.height,
+  };
+  if (!chapter.frames?.length) return [primary];
+  return [primary, ...chapter.frames];
+}
+
+// Layout is locked at 12 desk slots. Do not append chapters for extra photos —
+// add them to `frames` on an existing slot so they fade in place.
 export const ABOUT_VOX_CHAPTERS: AboutVoxChapter[] = [
   {
     id: "bike",
@@ -119,6 +139,26 @@ export const ABOUT_VOX_CHAPTERS: AboutVoxChapter[] = [
     width: 819,
     height: 1024,
     cut: "b",
+    frames: [
+      {
+        src: "/images/about/studio-tank-down.webp",
+        alt: "Illustrated cut-out of Megh in a black tank, looking down under studio light.",
+        width: 819,
+        height: 1024,
+      },
+      {
+        src: "/images/about/studio-tank-over.webp",
+        alt: "Illustrated cut-out of Megh in a black tank, glancing over his shoulder.",
+        width: 819,
+        height: 1024,
+      },
+      {
+        src: "/images/about/studio-tank-back.webp",
+        alt: "Illustrated cut-out of Megh from behind in a black tank, studio backdrop.",
+        width: 819,
+        height: 1024,
+      },
+    ],
   },
   {
     id: "festive",
@@ -127,8 +167,8 @@ export const ABOUT_VOX_CHAPTERS: AboutVoxChapter[] = [
     highlight: "Festive",
     tip: "Festive night. Green kurta. I actually showed up to dance.",
     caption: "Festive night. Green kurta. I actually showed up to dance.",
-    src: "/images/about/festive-kurta.webp",
-    alt: "Illustrated cut-out of Megh laughing in a green kurta against a red firework backdrop, confetti on the floor.",
+    src: "/images/about/festive-kurta-crop.webp",
+    alt: "Illustrated cut-out of Megh in a green kurta, cropped closer against the firework backdrop.",
     width: 819,
     height: 1024,
     cut: "c",
@@ -171,5 +211,13 @@ export const ABOUT_VOX_CHAPTERS: AboutVoxChapter[] = [
     width: 819,
     height: 1024,
     cut: "f",
+    frames: [
+      {
+        src: "/images/about/lilac-suit-adjust.webp",
+        alt: "Illustrated cut-out of Megh in a lilac suit adjusting his jacket on the stairs.",
+        width: 819,
+        height: 1024,
+      },
+    ],
   },
 ];
