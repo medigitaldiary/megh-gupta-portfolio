@@ -331,7 +331,7 @@
   height: 100%;
   flex-direction: column;
   justify-content: center;
-  padding: 5.5rem max(1.5rem, calc(50vw - 16rem)) 3rem;
+  padding: 7.25rem max(1.5rem, calc(50vw - 15.5rem)) 6.75rem;
   pointer-events: none;
 }
 
@@ -502,6 +502,18 @@
   transform: translateY(-50%) rotate(-1.4deg);
 }
 
+.about-cut[data-side="top"] .about-tip {
+  left: 50%;
+  bottom: calc(100% + 0.4rem);
+  transform: translateX(-50%) rotate(-1.6deg);
+}
+
+.about-cut[data-side="bottom"] .about-tip {
+  left: 50%;
+  top: calc(100% + 0.4rem);
+  transform: translateX(-50%) rotate(1.5deg);
+}
+
 .about-collage[data-open="true"] .about-cut:hover .about-tip,
 .about-collage[data-open="true"] .about-cut:focus-within .about-tip,
 .about-collage[data-open="true"] .about-cut[data-tip="true"] .about-tip {
@@ -560,7 +572,7 @@
   }
 
   .about-collage-bio {
-    padding: 5.5rem 5.2rem 4rem;
+    padding: 7rem 4.4rem 6.5rem;
   }
 
   .about-slip {
