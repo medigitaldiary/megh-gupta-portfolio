@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
-import { ABOUT_VOX_CHAPTERS } from "@/lib/about-vox";
+import { ABOUT_VOX_CHAPTERS, framesFor } from "@/lib/about-vox";
 import "./about-collage.css";
 
 const CUTS = ["a", "b", "c", "d", "e", "f"] as const;
@@ -11,81 +11,127 @@ function clamp(n: number, lo: number, hi: number) {
   return Math.min(hi, Math.max(lo, n));
 }
 
-function pushOutOfKeep(
-  ux: number,
-  uy: number,
-  keep: { x0: number; x1: number; y0: number; y1: number },
+function unitNoise(seed: number) {
+  const n = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
+  return n - Math.floor(n);
+}
+
+function outwardSide(x: number, y: number) {
+  const dx = x - 50;
+  const dy = y - 50;
+  if (Math.abs(dx) >= Math.abs(dy)) return dx < 0 ? "left" : "right";
+  return dy < 0 ? "top" : "bottom";
+}
+
+function pinToFrame(
+  point: { x: number; y: number },
+  frame: { x0: number; x1: number; y0: number; y1: number },
 ) {
-  const tX =
-    ux === 0
-      ? Number.POSITIVE_INFINITY
-      : ux > 0
-        ? (keep.x1 - 50) / ux
-        : (keep.x0 - 50) / ux;
-  const tY =
-    uy === 0
-      ? Number.POSITIVE_INFINITY
-      : uy > 0
-        ? (keep.y1 - 50) / uy
-        : (keep.y0 - 50) / uy;
-  const t = Math.min(Math.abs(tX), Math.abs(tY));
-  return { x: 50 + ux * t, y: 50 + uy * t };
+  if (point.x > 30 && point.x < 70) point.x = point.x < 50 ? 22 : 78;
+  point.x = clamp(point.x, frame.x0, frame.x1);
+  point.y = clamp(point.y, frame.y0, frame.y1);
+}
+
+function separatePrints(
+  points: { x: number; y: number }[],
+  frame: { x0: number; x1: number; y0: number; y1: number },
+  rx: number,
+  ry: number,
+) {
+  for (let iter = 0; iter < 28; iter++) {
+    for (let i = 0; i < points.length; i++) {
+      const a = points[i];
+      if (!a) continue;
+      for (let j = i + 1; j < points.length; j++) {
+        const b = points[j];
+        if (!b) continue;
+        const nx = (b.x - a.x) / rx;
+        const ny = (b.y - a.y) / ry;
+        const d2 = nx * nx + ny * ny;
+        if (d2 >= 1 || d2 === 0) continue;
+        const d = Math.sqrt(d2);
+        const push = (1 - d) * 0.55;
+        a.x -= (nx / d) * push * rx;
+        a.y -= (ny / d) * push * ry;
+        b.x += (nx / d) * push * rx;
+        b.y += (ny / d) * push * ry;
+      }
+      pinToFrame(a, frame);
+    }
+  }
+}
+
+function scatterAroundSlip(
+  count: number,
+  pockets: { x: number; y: number }[],
+  frame: { x0: number; x1: number; y0: number; y1: number },
+  rx: number,
+  ry: number,
+) {
+  const points = Array.from({ length: count }, (_, i) => {
+    const pocket = pockets[i % pockets.length] ?? { x: 12, y: 22 };
+    const point = {
+      x: pocket.x + (unitNoise(i * 2.1) - 0.5) * 3,
+      y: pocket.y + (unitNoise(i * 5.7) - 0.5) * 2.4,
+    };
+    pinToFrame(point, frame);
+    return point;
+  });
+  separatePrints(points, frame, rx, ry);
+  return points;
 }
 
 function layoutPrints(count: number) {
-  // Slip stay-clear box, in % of the stage. Prints sit on a ring around it.
-  const deskKeep = { x0: 24, x1: 76, y0: 16, y1: 84 };
-  const phoneKeep = { x0: 16, x1: 84, y0: 18, y1: 82 };
+  const desk = scatterAroundSlip(
+    count,
+    [
+      { x: 12, y: 18 },
+      { x: 88, y: 18 },
+      { x: 11, y: 40 },
+      { x: 89, y: 40 },
+      { x: 12, y: 62 },
+      { x: 88, y: 62 },
+      { x: 16, y: 86 },
+      { x: 84, y: 86 },
+      { x: 24, y: 28 },
+      { x: 76, y: 28 },
+      { x: 24, y: 74 },
+      { x: 76, y: 74 },
+    ],
+    { x0: 10, x1: 90, y0: 14, y1: 88 },
+    16,
+    23,
+  );
+  const phone = scatterAroundSlip(
+    count,
+    [
+      { x: 14, y: 18 },
+      { x: 86, y: 18 },
+      { x: 13, y: 40 },
+      { x: 87, y: 40 },
+      { x: 14, y: 62 },
+      { x: 86, y: 62 },
+      { x: 18, y: 84 },
+      { x: 82, y: 84 },
+      { x: 24, y: 28 },
+      { x: 76, y: 28 },
+      { x: 24, y: 74 },
+      { x: 76, y: 74 },
+    ],
+    { x0: 12, x1: 88, y0: 16, y1: 86 },
+    18,
+    24,
+  );
 
   return Array.from({ length: count }, (_, i) => {
     const pileA = (i / count) * Math.PI * 2;
-    // Half-step off the axes so nothing parks on 12 / 6 o'clock under the slip.
-    const flyA = -Math.PI / 2 + ((i + 0.5) / count) * Math.PI * 2;
-    const ux = Math.cos(flyA);
-    const uy = Math.sin(flyA);
-    const jitter = ((i * 17) % 7) - 3;
     const sign = i % 2 === 0 ? -1 : 1;
-
-    let x = 50 + ux * (40 + jitter * 0.45);
-    let y = 50 + uy * (37 + (i % 3) * 0.55);
-    if (
-      x > deskKeep.x0 &&
-      x < deskKeep.x1 &&
-      y > deskKeep.y0 &&
-      y < deskKeep.y1
-    ) {
-      const pushed = pushOutOfKeep(ux, uy, deskKeep);
-      x = pushed.x;
-      y = pushed.y;
-    }
-    x = clamp(x + jitter * 0.35, 10, 90);
-    y = clamp(y + ((i % 2) * 1.1 - 0.55), 11, 89);
-
-    let mx = 50 + ux * (41 + jitter * 0.3);
-    let my = 50 + uy * 39;
-    if (
-      mx > phoneKeep.x0 &&
-      mx < phoneKeep.x1 &&
-      my > phoneKeep.y0 &&
-      my < phoneKeep.y1
-    ) {
-      const pushed = pushOutOfKeep(ux, uy, phoneKeep);
-      mx = pushed.x;
-      my = pushed.y;
-    }
-    mx = clamp(mx, 12, 88);
-    my = clamp(my, 10, 90);
-
-    const dx = x - 50;
-    const dy = y - 50;
-    const side =
-      Math.abs(dy) >= Math.abs(dx)
-        ? dy < 0
-          ? "top"
-          : "bottom"
-        : dx < 0
-          ? "left"
-          : "right";
+    const spot = desk[i] ?? { x: 12, y: 20 };
+    const mobile = phone[i] ?? { x: 14, y: 22 };
+    const x = spot.x;
+    const y = spot.y;
+    const mx = mobile.x;
+    const my = mobile.y;
     const onTop = y < 50;
 
     return {
@@ -96,19 +142,73 @@ function layoutPrints(count: number) {
       px: `${(50 + Math.cos(pileA) * 2.8).toFixed(2)}%`,
       py: `${(48 + Math.sin(pileA) * 2.4).toFixed(2)}%`,
       pr: `${(sign * (3 + (i % 5) * 1.4)).toFixed(1)}deg`,
-      pw: "11.6rem",
+      pw: "12.4rem",
       fx: `${x.toFixed(2)}%`,
       fy: `${y.toFixed(2)}%`,
       fr: `${(sign * (5 + (i % 4) * 1.2)).toFixed(1)}deg`,
-      fw: "7.4rem",
-      side,
+      fw: "8.85rem",
+      side: outwardSide(x, y),
       band: onTop ? "top" : "bottom",
       mfx: `${mx.toFixed(2)}%`,
       mfy: `${my.toFixed(2)}%`,
       mfr: `${(sign * (6 + (i % 3) * 2.2)).toFixed(1)}deg`,
-      mfw: "5.35rem",
+      mfw: "5.85rem",
+      floatDelay: `${(-i * 0.67).toFixed(2)}s`,
+      floatDur: `${(4.2 + (i % 5) * 0.55).toFixed(2)}s`,
     };
   });
+}
+
+function boxesOverlap(a: DOMRect, b: DOMRect, pad = 8) {
+  return (
+    a.left < b.right - pad &&
+    a.right > b.left + pad &&
+    a.top < b.bottom - pad &&
+    a.bottom > b.top + pad
+  );
+}
+
+function pinTipInView(figure: HTMLElement) {
+  const tip = figure.querySelector(".about-tip");
+  if (!(tip instanceof HTMLElement)) return;
+  const stage = figure.closest(".about-collage-stage");
+  const slip = figure.closest(".about-collage")?.querySelector(".about-slip");
+  const stageBox =
+    stage instanceof HTMLElement ? stage.getBoundingClientRect() : null;
+  const slipBox =
+    slip instanceof HTMLElement ? slip.getBoundingClientRect() : null;
+  const pad = 8;
+  const home = figure.dataset.homeSide ?? figure.dataset.side ?? "on";
+  if (!figure.dataset.homeSide) figure.dataset.homeSide = home;
+  const cover =
+    figure.getBoundingClientRect().top > window.innerHeight * 0.45
+      ? "cover-top"
+      : "cover-bottom";
+  const order = [
+    home,
+    "right",
+    "left",
+    "bottom",
+    "top",
+    cover,
+    "cover-top",
+    "cover-bottom",
+  ].filter((side, index, all) => all.indexOf(side) === index);
+  for (const side of order) {
+    figure.dataset.side = side;
+    const box = tip.getBoundingClientRect();
+    const inFrame = stageBox
+      ? box.top >= stageBox.top + pad &&
+        box.left >= stageBox.left + pad &&
+        box.bottom <= stageBox.bottom - pad &&
+        box.right <= stageBox.right - pad
+      : box.top >= pad &&
+        box.left >= pad &&
+        box.bottom <= window.innerHeight - pad &&
+        box.right <= window.innerWidth - pad;
+    if (inFrame && !(slipBox && boxesOverlap(box, slipBox))) return;
+  }
+  figure.dataset.side = cover;
 }
 
 const PRINT_LAYOUTS = layoutPrints(ABOUT_VOX_CHAPTERS.length);
@@ -121,7 +221,12 @@ const PIECES = ABOUT_VOX_CHAPTERS.map((chapter, i) => ({
 
 export function AboutCollage() {
   const rootRef = useRef<HTMLElement>(null);
+  const pausedRef = useRef(false);
   const [openTip, setOpenTip] = useState<string | null>(null);
+  const [deskOpen, setDeskOpen] = useState(false);
+  const [frameIndex, setFrameIndex] = useState<Record<string, number>>({});
+
+  pausedRef.current = openTip !== null;
 
   useEffect(() => {
     const root = rootRef.current;
@@ -132,6 +237,7 @@ export function AboutCollage() {
     const setStatic = () => {
       root.style.setProperty("--p", "1");
       root.dataset.open = "true";
+      setDeskOpen(true);
     };
 
     if (reduce.matches) {
@@ -144,8 +250,15 @@ export function AboutCollage() {
     }
 
     let frame = 0;
+    let latched = false;
     const update = () => {
       frame = 0;
+      if (latched) {
+        root.style.setProperty("--p", "1");
+        root.dataset.open = "true";
+        setDeskOpen(true);
+        return;
+      }
       const total = root.offsetHeight - window.innerHeight;
       if (total <= 0) {
         root.style.setProperty("--p", "0");
@@ -156,8 +269,15 @@ export function AboutCollage() {
         1,
         Math.max(0, -root.getBoundingClientRect().top / total),
       );
+      if (p >= 0.62) {
+        latched = true;
+        root.style.setProperty("--p", "1");
+        root.dataset.open = "true";
+        setDeskOpen(true);
+        return;
+      }
       root.style.setProperty("--p", p.toFixed(4));
-      root.dataset.open = p >= 0.62 ? "true" : "false";
+      root.dataset.open = "false";
     };
 
     const onScroll = () => {
@@ -168,6 +288,13 @@ export function AboutCollage() {
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (!(event.target instanceof Node) || root.contains(event.target))
+        return;
+      setOpenTip(null);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
     const onChange = () => {
       if (reduce.matches) {
         setStatic();
@@ -180,10 +307,63 @@ export function AboutCollage() {
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      document.removeEventListener("pointerdown", onPointerDown);
       reduce.removeEventListener("change", onChange);
       if (frame) cancelAnimationFrame(frame);
     };
   }, []);
+
+  useEffect(() => {
+    if (!deskOpen) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const left = PIECES.filter(
+      (piece) => parseFloat(piece.fx) < 50 && framesFor(piece).length > 1,
+    ).map((piece) => piece.id);
+    const right = PIECES.filter(
+      (piece) => parseFloat(piece.fx) >= 50 && framesFor(piece).length > 1,
+    ).map((piece) => piece.id);
+    if (left.length === 0 && right.length === 0) return;
+
+    let lastLeft: string | null = null;
+    let lastRight: string | null = null;
+
+    const pick = (pool: string[], last: string | null) => {
+      if (pool.length === 0) return null;
+      const fresh = pool.filter((id) => id !== last);
+      const source = fresh.length > 0 ? fresh : pool;
+      return source[Math.floor(Math.random() * source.length)] ?? source[0];
+    };
+
+    const tick = () => {
+      if (pausedRef.current) return;
+      const leftId = pick(left, lastLeft);
+      const rightId = pick(right, lastRight);
+      const ids = [leftId, rightId].filter((id): id is string => Boolean(id));
+      if (ids.length === 0) return;
+      lastLeft = leftId;
+      lastRight = rightId;
+      setFrameIndex((prev) => {
+        const next = { ...prev };
+        for (const id of ids) {
+          const piece = PIECES.find((entry) => entry.id === id);
+          const stack = piece ? framesFor(piece) : [];
+          if (stack.length < 2) continue;
+          next[id] = ((prev[id] ?? 0) + 1) % stack.length;
+        }
+        return next;
+      });
+    };
+
+    const fadeMs = 900;
+    const gapMs = 1000;
+    const start = window.setTimeout(tick, 1600);
+    const pulse = window.setInterval(tick, fadeMs + gapMs);
+    return () => {
+      window.clearTimeout(start);
+      window.clearInterval(pulse);
+    };
+  }, [deskOpen]);
 
   return (
     <section
@@ -207,7 +387,11 @@ export function AboutCollage() {
               data-side={piece.side}
               data-band={piece.band}
               data-tip={openTip === piece.id ? "true" : undefined}
-              onMouseEnter={() => setOpenTip(piece.id)}
+              onMouseEnter={(event) => {
+                setOpenTip(piece.id);
+                const figure = event.currentTarget;
+                window.requestAnimationFrame(() => pinTipInView(figure));
+              }}
               onMouseLeave={() =>
                 setOpenTip((id) => (id === piece.id ? null : id))
               }
@@ -227,6 +411,8 @@ export function AboutCollage() {
                   "--mfy": piece.mfy,
                   "--mfr": piece.mfr,
                   "--mfw": piece.mfw,
+                  "--float-delay": piece.floatDelay,
+                  "--float-dur": piece.floatDur,
                 } as CSSProperties
               }
             >
@@ -238,19 +424,48 @@ export function AboutCollage() {
                 className="about-cut-hit"
                 aria-describedby={`about-tip-${piece.id}`}
                 aria-expanded={openTip === piece.id}
-                onClick={() =>
-                  setOpenTip((id) => (id === piece.id ? null : piece.id))
-                }
+                onClick={(event) => {
+                  // Mouse click must not pin the tip; hover already shows it.
+                  if (window.matchMedia("(hover: hover)").matches) {
+                    setOpenTip(null);
+                    event.currentTarget.blur();
+                    return;
+                  }
+                  setOpenTip((id) => (id === piece.id ? null : piece.id));
+                  const figure = event.currentTarget.closest("figure");
+                  if (figure instanceof HTMLElement) {
+                    window.requestAnimationFrame(() => pinTipInView(figure));
+                  }
+                }}
               >
                 <div className="about-sticker">
-                  <div className="about-sticker-photo">
-                    <Image
-                      src={piece.src}
-                      alt={piece.alt}
-                      width={piece.width}
-                      height={piece.height}
-                      sizes="(min-width: 768px) 12rem, 7rem"
-                    />
+                  <div
+                    className={
+                      framesFor(piece).length > 1
+                        ? "about-sticker-photo is-stack"
+                        : "about-sticker-photo"
+                    }
+                    style={
+                      {
+                        aspectRatio: `${piece.width} / ${piece.height}`,
+                      } as CSSProperties
+                    }
+                  >
+                    {framesFor(piece).map((frame, i) => (
+                      <Image
+                        key={frame.src}
+                        src={frame.src}
+                        alt={i === (frameIndex[piece.id] ?? 0) ? frame.alt : ""}
+                        width={frame.width}
+                        height={frame.height}
+                        sizes="(min-width: 768px) 15rem, 9rem"
+                        className={
+                          i === (frameIndex[piece.id] ?? 0)
+                            ? "is-on"
+                            : undefined
+                        }
+                      />
+                    ))}
                   </div>
                 </div>
               </button>
