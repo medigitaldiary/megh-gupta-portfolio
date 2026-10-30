@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AboutMe } from "@/components/about-me";
+import { AboutCollage } from "@/components/about-collage";
 import { Contact } from "@/components/contact";
 import { Experience } from "@/components/experience";
 import { HeroOverture } from "@/components/hero-overture";
@@ -22,7 +22,7 @@ export default function PortfolioV34Preview() {
         <HeroOverture />
         <Experience />
         <SelectedWorkShelf />
-        <AboutMe />
+        <AboutCollage />
         <Contact />
       </main>
       <SiteFooter />
