@@ -7,43 +7,106 @@ import "./about-collage.css";
 
 const CUTS = ["a", "b", "c", "d", "e", "f"] as const;
 
+function clamp(n: number, lo: number, hi: number) {
+  return Math.min(hi, Math.max(lo, n));
+}
+
+function pushOutOfKeep(
+  ux: number,
+  uy: number,
+  keep: { x0: number; x1: number; y0: number; y1: number },
+) {
+  const tX =
+    ux === 0
+      ? Number.POSITIVE_INFINITY
+      : ux > 0
+        ? (keep.x1 - 50) / ux
+        : (keep.x0 - 50) / ux;
+  const tY =
+    uy === 0
+      ? Number.POSITIVE_INFINITY
+      : uy > 0
+        ? (keep.y1 - 50) / uy
+        : (keep.y0 - 50) / uy;
+  const t = Math.min(Math.abs(tX), Math.abs(tY));
+  return { x: 50 + ux * t, y: 50 + uy * t };
+}
+
 function layoutPrints(count: number) {
-  const leftCount = Math.ceil(count / 2);
-  const rightCount = Math.floor(count / 2);
-  const topCount = Math.ceil(count / 2);
+  // Slip stay-clear box, in % of the stage. Prints sit on a ring around it.
+  const deskKeep = { x0: 24, x1: 76, y0: 16, y1: 84 };
+  const phoneKeep = { x0: 16, x1: 84, y0: 18, y1: 82 };
 
   return Array.from({ length: count }, (_, i) => {
     const pileA = (i / count) * Math.PI * 2;
-    const isLeft = i % 2 === 0;
-    const indexInCol = Math.floor(i / 2);
-    const colCount = isLeft ? leftCount : rightCount;
-    const t = colCount <= 1 ? 0.5 : indexInCol / (colCount - 1);
-    const jitter = ((i * 17) % 5) - 2;
-    const sign = isLeft ? -1 : 1;
-    const onTop = i < topCount;
-    const indexInRow = onTop ? i : i - topCount;
-    const rowLen = onTop ? topCount : Math.max(count - topCount, 1);
-    const mt = rowLen <= 1 ? 0.5 : indexInRow / (rowLen - 1);
-    const mid = Math.floor((rowLen - 1) / 2);
+    // Half-step off the axes so nothing parks on 12 / 6 o'clock under the slip.
+    const flyA = -Math.PI / 2 + ((i + 0.5) / count) * Math.PI * 2;
+    const ux = Math.cos(flyA);
+    const uy = Math.sin(flyA);
+    const jitter = ((i * 17) % 7) - 3;
+    const sign = i % 2 === 0 ? -1 : 1;
+
+    let x = 50 + ux * (40 + jitter * 0.45);
+    let y = 50 + uy * (37 + (i % 3) * 0.55);
+    if (
+      x > deskKeep.x0 &&
+      x < deskKeep.x1 &&
+      y > deskKeep.y0 &&
+      y < deskKeep.y1
+    ) {
+      const pushed = pushOutOfKeep(ux, uy, deskKeep);
+      x = pushed.x;
+      y = pushed.y;
+    }
+    x = clamp(x + jitter * 0.35, 10, 90);
+    y = clamp(y + ((i % 2) * 1.1 - 0.55), 11, 89);
+
+    let mx = 50 + ux * (41 + jitter * 0.3);
+    let my = 50 + uy * 39;
+    if (
+      mx > phoneKeep.x0 &&
+      mx < phoneKeep.x1 &&
+      my > phoneKeep.y0 &&
+      my < phoneKeep.y1
+    ) {
+      const pushed = pushOutOfKeep(ux, uy, phoneKeep);
+      mx = pushed.x;
+      my = pushed.y;
+    }
+    mx = clamp(mx, 12, 88);
+    my = clamp(my, 10, 90);
+
+    const dx = x - 50;
+    const dy = y - 50;
+    const side =
+      Math.abs(dy) >= Math.abs(dx)
+        ? dy < 0
+          ? "top"
+          : "bottom"
+        : dx < 0
+          ? "left"
+          : "right";
+    const onTop = y < 50;
+
     return {
       z: i + 1,
-      mz: onTop ? 3 + indexInRow : indexInRow === mid ? 12 : 6 + indexInRow,
+      mz: onTop ? 4 + (i % 5) : 8 + (i % 4),
       tape: i % 3 === 1,
       cut: CUTS[i % CUTS.length],
       px: `${(50 + Math.cos(pileA) * 2.8).toFixed(2)}%`,
       py: `${(48 + Math.sin(pileA) * 2.4).toFixed(2)}%`,
       pr: `${(sign * (3 + (i % 5) * 1.4)).toFixed(1)}deg`,
       pw: "11.6rem",
-      fx: `${(isLeft ? 13.2 + jitter * 0.2 : 86.8 - jitter * 0.2).toFixed(2)}%`,
-      fy: `${(18 + t * 64).toFixed(2)}%`,
-      fr: `${(sign * (4 + (i % 4))).toFixed(1)}deg`,
-      fw: "8.2rem",
-      side: isLeft ? "right" : "left",
+      fx: `${x.toFixed(2)}%`,
+      fy: `${y.toFixed(2)}%`,
+      fr: `${(sign * (5 + (i % 4) * 1.2)).toFixed(1)}deg`,
+      fw: "7.4rem",
+      side,
       band: onTop ? "top" : "bottom",
-      mfx: `${(22 + mt * 56 + jitter * 0.3).toFixed(2)}%`,
-      mfy: `${(onTop ? 11.4 + (indexInRow % 2) * 1.8 : 88.6 - (indexInRow % 2) * 1.8).toFixed(2)}%`,
+      mfx: `${mx.toFixed(2)}%`,
+      mfy: `${my.toFixed(2)}%`,
       mfr: `${(sign * (6 + (i % 3) * 2.2)).toFixed(1)}deg`,
-      mfw: "6.05rem",
+      mfw: "5.35rem",
     };
   });
 }
