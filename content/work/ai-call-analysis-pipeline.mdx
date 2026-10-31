@@ -1,0 +1,351 @@
+---
+title: "AI Call Analysis Pipeline: turning call recordings into coaching and follow-up"
+slug: "ai-call-analysis-pipeline"
+role: "Product Manager"
+timeline: "March 2026 →"
+team: "Me (PM, pipeline architect, builder, operator) + 8 Relationship Managers (4 full-time + 4 interns) + Radar as the delivery surface"
+stack: ["Sarvam STT", "Claude Sonnet", "Scheduled nightly job", "Radar (internal CRM)", "Structured JSON output"]
+tags: ["Internal AI tooling", "LLM workflow", "Fintech ops"]
+headline_metric: "Nightly workflow turning ~8 hours of daily recordings into structured call-quality scores and Radar follow-up tasks"
+supporting_metrics:
+  - "8 RMs covered: 4 full-time, 4 interns"
+  - "~8 hours of call recordings per day, Hindi + English + Hinglish"
+  - "Rubric iterated twice between March and April based on manager feedback"
+featured: true
+order: 7
+hero_image: "/images/work/ai-call-analysis-pipeline/cover.webp"
+published: true
+---
+
+<Section variant="narrative" eyebrow="The problem" heading="Hours of calls, little structured feedback">
+
+Two different workflow gaps collided on the RM team.
+
+**Call quality was invisible.** Recordings sat in cloud storage after calls ended. Managers had no systematic way to review conversations, understand how RMs handled discovery and objections, or follow up with coaching. Spot checks happened; a consistent review process didn't.
+
+**Customer objections weren't reaching marketing.** On calls, users raised concerns about pricing, trust, product complexity, and comparisons with fixed deposits, the exact language we needed to feed back into ads and landing pages. That signal was happening live in every call and reaching no one who wrote copy.
+
+<Callout variant="insight">
+The goal: turn daily recordings into structured coaching actions and customer-objection insights without adding manual work.
+</Callout>
+
+</Section>
+
+<Section variant="deepDive" eyebrow="The solution" heading="From raw audio to action">
+
+The pipeline runs as a scheduled nightly batch job. It picks up the day's recordings, transcribes them, scores them against a rubric, and delivers the output into Radar, the internal CRM where RMs and managers already work. Below is the full flow; play it through once to see the shape, or click any stage to inspect it.
+
+<AiCallPipeline />
+
+A scheduled job orchestrates the workflow. Sarvam handles speech-to-text. Claude Sonnet analyses transcripts and produces structured output. Radar becomes the operational destination for scores and tasks. The decisions behind each of those choices are in the next section.
+
+</Section>
+
+<Section variant="narrative" eyebrow="Decisions" heading="Why I built it this way">
+
+Call-quality tooling wasn't on the engineering roadmap. Engineering was focused on the core platform, the right place for them to be. Rather than wait for capacity or pitch a dedicated sales-enablement platform (Gong, Chorus, both poor fit for cost, language, or the scope of this internal workflow), I built a v1 using API orchestration and a scheduled job. Vibe-coded end-to-end.
+
+<DataTable variant="comparison" caption="Technology decisions and the trade-off each one carried">
+  <thead>
+    <tr>
+      <th>Decision</th>
+      <th>Why it fit</th>
+      <th>Trade-off</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Nightly batch job</td>
+      <td>Met the initial operational need, next-day coaching and marketing feedback.</td>
+      <td>No real-time assist on the call itself.</td>
+    </tr>
+    <tr>
+      <td>Sarvam for STT</td>
+      <td>Hindi / Hinglish / Indian-accent recognition at batch-friendly cost.</td>
+      <td>Transcription quality is the floor every downstream score sits on.</td>
+    </tr>
+    <tr>
+      <td>Claude Sonnet for analysis</td>
+      <td>Long-transcript understanding, mixed-language handling, structured JSON out.</td>
+      <td>Output quality depends on the rubric and the prompt, not on a trained model.</td>
+    </tr>
+    <tr>
+      <td>Internal workflow (not a vendor)</td>
+      <td>Fast to ship without engineering capacity; built around our specific rubric and Radar.</td>
+      <td>Reliability and operational hardening are on me, not on a vendor SLA.</td>
+    </tr>
+  </tbody>
+</DataTable>
+
+<Callout variant="decision">
+Ship a useful internal v1 fast, validate its value in the real workflow, and leave room for production hardening later. The trade-off was carrying the operational gaps myself in exchange for not blocking the use case on an engineering ticket.
+</Callout>
+
+</Section>
+
+<Section variant="deepDive" eyebrow="The rubric" heading="Designing the call-quality rubric">
+
+The pipeline's output is only as good as the definition of a good call. The rubric is what the LLM is actually scoring against. It evaluates six criteria.
+
+<DataTable variant="data" caption="The six-criterion call-quality rubric">
+  <thead>
+    <tr>
+      <th>Criterion</th>
+      <th>What it evaluates</th>
+      <th>What good looks like</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Discovery</td>
+      <td>Whether the RM understood the user before pitching.</td>
+      <td>Asked about goals, horizon, prior investments; didn't jump into products in the first two minutes.</td>
+    </tr>
+    <tr>
+      <td>Risk & return clarity</td>
+      <td>How the RM explained the risk/return profile of the specific bond.</td>
+      <td>Named the specific risk; put the return in the context of the lock-in; didn't oversell safety.</td>
+    </tr>
+    <tr>
+      <td>Objection handling</td>
+      <td>What the RM did when the user raised a concern.</td>
+      <td>Acknowledged first, answered specifically, didn't deflect to a different product.</td>
+    </tr>
+    <tr>
+      <td>Next steps</td>
+      <td>Whether the call ended with a concrete action.</td>
+      <td>Named date, named action, confirmed with the user, not "I'll send some options later."</td>
+    </tr>
+    <tr>
+      <td>Pace & tone</td>
+      <td>How the conversation felt from the user's side.</td>
+      <td>Space between questions; adjusted to the user's confidence level; didn't rush closes.</td>
+    </tr>
+    <tr>
+      <td>Empathy</td>
+      <td>Signal that the RM heard the user as a person, not a lead.</td>
+      <td>Reflected what the user said; met concerns on their terms before moving on.</td>
+    </tr>
+  </tbody>
+</DataTable>
+
+The overall score is a weighted roll-up across the six criteria. The weights are not disclosed on this page because they are still being tuned; the next revision may change them again.
+
+### How the rubric changed between March and April
+
+<Timeline variant="vertical">
+  <Timeline.Event date="March 2026" title="Initial rubric: average reported 5.2 / 10">
+    First-run rubric emphasised structural elements (discovery, next steps). Managers felt the scores didn't match their own coaching judgement on the same calls.
+  </Timeline.Event>
+  <Timeline.Event date="Between the two" title="Iteration based on manager feedback">
+    Reweighted the parameters; added empathy and pace as distinct criteria; tightened the definitions used for objection handling so the LLM wasn't rewarding deflection.
+  </Timeline.Event>
+  <Timeline.Event date="April 2026" title="Revised rubric: average reported ≈ 6.0 / 10">
+    Managers felt the revised scores were closer to their own read of the same calls.
+  </Timeline.Event>
+</Timeline>
+
+<Callout variant="caution" eyebrow="Important caveat on the 5.2 → 6.0 change">
+The rubric changed between these two measurements. The higher April average reflects a change in reported scores following rubric changes, not a validated improvement in real call quality. Reading it as "15% better calls" would be wrong. The right read is: the evaluation system now matches manager judgement more closely than it did in March.
+</Callout>
+
+</Section>
+
+<Section variant="deepDive" eyebrow="Edge cases" heading="Making the output useful in real work">
+
+A transcription-plus-summary workflow would have produced vague output no RM would act on. The practical decisions sat in the edge cases.
+
+<StepGrid variant="parallel">
+  <StepGrid.Cell title="Long or noisy recordings" eyebrow="Pre-processing">
+    Trim long pauses, fillers, hold music, and repetitive confirmations before analysis. Keeps token and API cost aligned with the actual call content.
+  </StepGrid.Cell>
+  <StepGrid.Cell title="Unscoreable calls" eyebrow="Failure handling">
+    When transcription fails or the audio is unusable, the call is tagged <strong>unscoreable</strong> instead of receiving a misleading number. Managers see the tag and know why there's no score.
+  </StepGrid.Cell>
+  <StepGrid.Cell title="Hinglish conversations" eyebrow="Language mix">
+    No separate translation step. Claude handles the mixed-language transcript directly, which keeps meaning that would be lost in a translate-first pipeline.
+  </StepGrid.Cell>
+  <StepGrid.Cell title="Action-item quality" eyebrow="Prompt discipline">
+    The prompt returns concrete tasks with deadlines, not generic "follow up with the user." The structured JSON schema enforces the shape.
+  </StepGrid.Cell>
+</StepGrid>
+
+### The action-item quality shift
+
+A single prompt change moved the output from suggestions to tasks:
+
+<DataTable variant="comparison" caption="Action-item format: before and after the prompt revision">
+  <thead>
+    <tr>
+      <th>Output type</th>
+      <th>Illustrative shape (not a real call)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Weak output</td>
+      <td><em>"Follow up with the user."</em></td>
+    </tr>
+    <tr>
+      <td>Improved output</td>
+      <td><em>"Follow up with the user about the lock-in concern raised on the call by the agreed date."</em></td>
+    </tr>
+  </tbody>
+</DataTable>
+
+Call complexity, user maturity, deal size, number of objections, informs the overall score, but a specific complexity-adjustment implementation is still being tuned and is not disclosed here.
+
+</Section>
+
+<Section variant="narrative" eyebrow="Rollout" heading="Earning trust before exposing scores">
+
+Rollout was a product decision, not an afterthought. The team wanted to assess whether the AI scores were credible against manager coaching judgement before exposing them to RMs individually.
+
+<StepGrid variant="sequence">
+  <StepGrid.Cell title="Manager-only reports" eyebrow="Phase 1">
+    Initial reports went to managers only. Individual scores were not shown to RMs in Radar. Managers compared the pipeline's scores against their own read of the same calls.
+  </StepGrid.Cell>
+  <StepGrid.Cell title="Rubric iteration" eyebrow="Between phases">
+    Manager feedback fed the rubric revision described above. Reweighted parameters, added criteria, tightened definitions.
+  </StepGrid.Cell>
+  <StepGrid.Cell title="Radar integration" eyebrow="Phase 2">
+    Scores and action items became available in Radar. RMs can see their own scores and tasks. Managers see the team view.
+  </StepGrid.Cell>
+</StepGrid>
+
+Nothing here was a formal validation study. I don't have one and I'm not going to claim one. What I did have was manager judgement on specific calls, used as a sanity check before the pipeline's output started shaping individual coaching conversations.
+
+</Section>
+
+<Section variant="metrics" eyebrow="Results" heading="What changed and what the evidence shows">
+
+Three different claims, kept separate on purpose.
+
+### Workflow changes (shipped)
+
+- Recordings now become structured call-quality scores and action items on a nightly cadence.
+- Action items land in Radar as RM tasks with deadlines, part of the existing work queue, not a parallel surface.
+- Managers have a systematic way to review call patterns across RMs instead of relying on spot checks.
+- Customer objections surfaced on calls can inform marketing discussions downstream.
+
+### Reported score trend (measured, with caveat)
+
+<MetricRow>
+  <Metric variant="inline" value="5.2 / 10" label="March average" caption="Initial rubric" />
+  <Metric variant="inline" value="~6.0 / 10" label="April average" caption="Revised rubric" />
+  <Metric variant="inline" value="8 RMs" label="scope" caption="4 FT + 4 interns" />
+</MetricRow>
+
+<Callout variant="caution">
+The rubric changed between the two averages. This is not a 15% improvement in call quality. It is a change in reported scores following rubric changes that brought the LLM's judgement closer to the managers'. Treat the number as evaluation-system progress, not call-quality progress.
+</Callout>
+
+### What's still unvalidated
+
+- Whether real call quality (as a user would experience it) actually improved between March and April.
+- The agreement rate between AI scores and manager scores at the individual-call level.
+- Downstream outcomes from the marketing feedback loop, whether specific objection themes led to specific copy changes, and whether those copy changes moved conversion.
+
+Reporting these as open items is deliberate. The pipeline earned a place in the workflow; the counterfactuals didn't get measured.
+
+</Section>
+
+<Section variant="reflection" eyebrow="Next" heading="What I'd improve next">
+
+Three priority groups, honest about where each one sits.
+
+- **Reliability.** Better retries, failure handling, monitoring, and alerts for transcription or analysis failures. Right now I'm the one who notices when a day drops silently.
+- **Evaluation and feedback.** Let managers annotate or override scores inside Radar and feed those overrides back into the rubric review. The current loop is me reading manager feedback in Slack.
+- **Operational hardening.** Cost and latency instrumentation (Sarvam latency, API spend by day), stronger governance for privacy and audit, secret management proper, backup and recovery. The things that separate "an internal v1 that works" from "a production system I'd hand to someone else."
+
+Real-time analysis is the obvious next feature. I'd only build it when the user need actually calls for it, live assist is a different product than next-day coaching, and the complexity jump is real.
+
+</Section>
+
+<Section variant="deepDive" eyebrow="Under the hood" heading="Architecture and limitations">
+
+The system is an **LLM-powered workflow automation pipeline**. It is not a trained ML model. There's no model training, no feature store, no dedicated inference infrastructure. The intelligence is in the prompt, the rubric, and the structured output schema.
+
+<DataTable variant="data" caption="Components and their responsibilities">
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Responsibility</th>
+      <th>Current state</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Scheduled job</td>
+      <td>Orchestrates the nightly workflow: dequeue recordings → transcribe → analyse → deliver.</td>
+      <td>Working. Hardening pending.</td>
+    </tr>
+    <tr>
+      <td>Sarvam STT</td>
+      <td>Speech-to-text for the full call recording.</td>
+      <td>Working. Latency and cost not yet instrumented.</td>
+    </tr>
+    <tr>
+      <td>Claude Sonnet</td>
+      <td>Transcript analysis against the rubric; structured JSON output.</td>
+      <td>Working. Rubric is still iterating.</td>
+    </tr>
+    <tr>
+      <td>Radar integration</td>
+      <td>Writes scores to user profiles and tasks to RM queues.</td>
+      <td>Working. End-to-end audit log is pending.</td>
+    </tr>
+  </tbody>
+</DataTable>
+
+### Known gaps I haven't closed yet
+
+- Retries and robust error handling across the three API calls per recording.
+- Monitoring and alerting (if a nightly run drops, I want a notification, not a Slack message from an RM the next morning).
+- Scaling the orchestration beyond the current RM team's volume.
+- Secret management properly centralised.
+- Audit logging on every stage.
+- Backup and recovery for the structured outputs.
+
+Some of these controls may exist at a platform level that I haven't audited; I'm listing them as "I haven't verified they're there" rather than "they don't exist."
+
+</Section>
+
+<Section variant="narrative" eyebrow="What this enabled" heading="A pattern, not a one-off">
+
+The project established a pattern for addressing internal workflows with LLMs + lightweight API orchestration, without needing a full engineering project from day one. The same pattern connects to other internal AI tools in flight: an internal assistant, a compliance workflow, a Deal QC tool, and MoEngage MCP workflows. Each one is small, each one is scoped to a specific operational gap, each one sits inside an existing surface rather than inventing a new one.
+
+<Callout variant="learning">
+The useful part of an AI workflow isn't the model. It's the quality criteria, the handling of edge cases, and the way the output fits into the team's existing work.
+</Callout>
+
+</Section>
+
+<Section variant="ownership" eyebrow="Attribution" heading="Ownership and collaboration">
+
+Honest about who did what.
+
+<DataTable variant="ownership">
+  <DataTable.Column label="I owned">
+    <ul>
+      <li>Problem framing and the "build v1 internally, don't wait for engineering" call.</li>
+      <li>The nightly pipeline end-to-end, scheduled job, Sarvam integration, Claude Sonnet prompts, structured output schema, Radar integration. Vibe-coded.</li>
+      <li>The call-quality rubric design and two rounds of iteration based on manager feedback.</li>
+      <li>Edge-case decisions: unscoreable tagging, pre-processing cuts, action-item format, Hinglish handling.</li>
+      <li>The staged rollout, manager-only reports in Phase 1, Radar integration in Phase 2.</li>
+      <li>The pipeline's day-two operations: monitoring the output quality, fielding manager feedback, tuning prompts.</li>
+    </ul>
+  </DataTable.Column>
+  <DataTable.Column label="Team owned">
+    <ul>
+      <li>Call recording infrastructure and cloud storage, platform engineering, pre-existing.</li>
+      <li>Radar, the internal CRM surface that receives the scores and tasks; owned by the broader product + engineering team.</li>
+      <li>The rubric feedback itself, the 4 full-time RMs' managers reviewed early scores and told me where the LLM's judgement didn't match theirs.</li>
+      <li>SEBI and compliance alignment on what the pipeline is and isn't allowed to do with transcript data. Rehana on the compliance side.</li>
+    </ul>
+  </DataTable.Column>
+</DataTable>
+
+What I owned was the shape, the problem framing, the rubric, the pipeline, the rollout, and the ongoing operation. The platform underneath and the humans using the output owned everything else.
+
+</Section>
