@@ -595,6 +595,53 @@ section {
   fill: rgba(110, 231, 160, 0.14);
 }
 
+/* Nav status chip — the outgoing line slides up, the next line rises
+   into the same slot. 500ms matches CHIP_FLIP_MS in nav.tsx. The pill
+   width eases on the same duration so a shorter line shrinks the chip. */
+@keyframes nav-chip-in {
+  from {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes nav-chip-out {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-110%);
+    opacity: 0;
+  }
+}
+
+.nav-chip-in,
+.nav-chip-out {
+  animation-duration: 500ms;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  animation-fill-mode: both;
+}
+
+.nav-chip-in {
+  animation-name: nav-chip-in;
+}
+
+.nav-chip-out {
+  animation-name: nav-chip-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-chip-in,
+  .nav-chip-out {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lab-portal-halo,
   .lab-portal-swirl-outer,
