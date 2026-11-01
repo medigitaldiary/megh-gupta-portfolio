@@ -10,8 +10,9 @@ import type { WorkCard } from "@/lib/work";
 // Same hinge as ramakrushna.xyz: perspective 1500, the front face
 // rests flat and springs to rotateY(-35) off its left edge. The
 // "Click to read" card behind it tilts 4°, in that product's color.
-// A copy of the card sits 1px back and peeks out. Touch does not
-// hinge. Reduced motion stays closed.
+// A copy of the card sits 1px back while it is open. The close is a
+// tween, not a spring, so it cannot overshoot and leave that copy
+// sticking out. Touch does not hinge. Reduced motion stays closed.
 
 // Local product marks for this fold. Sampled from the logo files.
 // BondScanner #182F8C, Ultra #171513, MoveInSync #3DAE2B.
@@ -228,43 +229,62 @@ const SPRING = {
   mass: 1,
 };
 
+// Closing with the same spring overshoots past flat, and the copy
+// behind the cover stays visible along the right edge. Ease out instead.
+const CLOSE = { duration: 0.32, ease: [0.4, 0, 0.2, 1] } as const;
+
 function Thumbnail({ card }: { card: WorkCard }) {
   const reduced = useReducedMotion() ?? false;
   const [armed, setArmed] = useState(false);
+  const [lifted, setLifted] = useState(false);
+  const armedRef = useRef(armed);
+  armedRef.current = armed;
   const open = armed && !reduced;
-  const transition = reduced ? { duration: 0 } : SPRING;
   const mark = productMark(card.company);
+  const hinge = reduced ? { duration: 0 } : open ? SPRING : CLOSE;
+  const back =
+    "transition-opacity duration-150 " +
+    (reduced ? "transition-none " : "") +
+    (open ? "opacity-100" : "opacity-0");
+
+  const arm = (pointerType?: string) => {
+    if (pointerType === "touch") return;
+    setArmed(true);
+    setLifted(true);
+  };
+
+  const disarm = (pointerType?: string) => {
+    if (pointerType === "touch") return;
+    setArmed(false);
+    window.setTimeout(() => {
+      if (!armedRef.current) setLifted(false);
+    }, 380);
+  };
 
   return (
     <Link
       href={`/work/${card.slug}`}
       aria-label={`Read the ${card.title} case study`}
-      className={`relative block h-full ${open ? "z-20" : ""}`}
-      onPointerEnter={(event) => {
-        if (event.pointerType === "touch") return;
-        setArmed(true);
-      }}
-      onPointerLeave={(event) => {
-        if (event.pointerType === "touch") return;
-        setArmed(false);
-      }}
-      onFocus={() => setArmed(true)}
-      onBlur={() => setArmed(false)}
+      className={`relative block h-full ${lifted ? "z-20" : ""}`}
+      onPointerEnter={(event) => arm(event.pointerType)}
+      onPointerLeave={(event) => disarm(event.pointerType)}
+      onFocus={() => arm()}
+      onBlur={() => disarm()}
     >
       <div className="relative [perspective:1500px] [transform-style:preserve-3d]">
         <div
           aria-hidden="true"
-          className="absolute inset-0 [transform:translateZ(-1px)]"
+          className={`absolute inset-0 [transform:translateZ(-1px)] ${back}`}
         >
           <CardFace card={card} still />
         </div>
         <motion.div
           aria-hidden="true"
-          className={`absolute inset-x-0 bottom-0 flex h-[86%] items-center justify-end rounded-[1.75rem] pr-4 ${mark.slab}`}
+          className={`absolute inset-x-0 bottom-0 flex h-[86%] items-center justify-end rounded-[1.75rem] pr-4 ${mark.slab} ${back}`}
           style={{ transformOrigin: "left bottom" }}
           initial={false}
           animate={{ rotate: open ? 4 : 0 }}
-          transition={transition}
+          transition={hinge}
         >
           <span className="font-mono text-xs font-semibold uppercase tracking-[-0.04em] [writing-mode:vertical-rl]">
             Click to read
@@ -274,8 +294,8 @@ function Thumbnail({ card }: { card: WorkCard }) {
           className="relative rounded-[1.75rem] shadow-[0_18px_32px_-22px_rgba(31,59,46,0.28)]"
           style={{ transformOrigin: "left bottom" }}
           initial={false}
-          animate={{ rotateY: open ? -35 : 0, z: 1 }}
-          transition={transition}
+          animate={{ rotateY: open ? -35 : 0, z: lifted ? 1 : 0 }}
+          transition={{ ...hinge, z: { duration: 0 } }}
         >
           <CardFace card={card} />
         </motion.div>
