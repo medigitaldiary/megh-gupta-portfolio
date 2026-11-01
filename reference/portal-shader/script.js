@@ -1,7 +1,7 @@
+import { OrbitControls } from "https://unpkg.com/three@0.120.0/examples/jsm/controls/OrbitControls";
 import { EffectComposer } from "https://unpkg.com/three@0.120.0/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "https://unpkg.com/three@0.120.0/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "https://unpkg.com/three@0.120.0/examples/jsm/postprocessing/UnrealBloomPass.js";
-import { OrbitControls } from "https://unpkg.com/three@0.120.0/examples/jsm/controls/OrbitControls";
 
 var scene,
   camera,
@@ -227,9 +227,13 @@ const createScene = () => {
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    10000
+    10000,
   );
-  camera.position.set(2.8023353727059592, -3.2822868359844346, 3.473751741859916,);
+  camera.position.set(
+    2.8023353727059592,
+    -3.2822868359844346,
+    3.473751741859916,
+  );
   renderer = new THREE.WebGLRenderer();
   renderer.antialias = true;
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -250,19 +254,27 @@ const createScene = () => {
       },
       perlinnoise: {
         type: "t",
-        value: new THREE.TextureLoader().load('https://raw.githubusercontent.com/pizza3/asset/master/noise9.png'),
+        value: new THREE.TextureLoader().load(
+          "https://raw.githubusercontent.com/pizza3/asset/master/noise9.png",
+        ),
       },
       sparknoise: {
         type: "t",
-        value: new THREE.TextureLoader().load('https://raw.githubusercontent.com/pizza3/asset/master/sparklenoise.png'),
+        value: new THREE.TextureLoader().load(
+          "https://raw.githubusercontent.com/pizza3/asset/master/sparklenoise.png",
+        ),
       },
       waterturbulence: {
         type: "t",
-        value: new THREE.TextureLoader().load('https://raw.githubusercontent.com/pizza3/asset/master/waterturbulence.png'),
+        value: new THREE.TextureLoader().load(
+          "https://raw.githubusercontent.com/pizza3/asset/master/waterturbulence.png",
+        ),
       },
       noiseTex: {
         type: "t",
-        value: new THREE.TextureLoader().load('https://raw.githubusercontent.com/pizza3/asset/master/rgbnoise2.png'),
+        value: new THREE.TextureLoader().load(
+          "https://raw.githubusercontent.com/pizza3/asset/master/rgbnoise2.png",
+        ),
       },
       color5: {
         value: new THREE.Vector3(...options.color5),
@@ -295,7 +307,7 @@ const createScene = () => {
     new THREE.Vector2(window.innerWidth, window.innerHeight),
     1.5,
     0.4,
-    0.85
+    0.85,
   );
   bloomPass.threshold = options.bloomThreshold;
   bloomPass.strength = options.bloomStrength;
@@ -340,7 +352,7 @@ const animate = (deltaTime) => {
   updateDraw(deltaTime);
 
   // renderer.render(scene, camera);
-// console.log(camera.position)
+  // console.log(camera.position)
   bloomPass.threshold = options.bloomThreshold;
   bloomPass.strength = options.bloomStrength;
   bloomPass.radius = options.bloomRadius;

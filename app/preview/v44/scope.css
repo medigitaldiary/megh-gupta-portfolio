@@ -1,0 +1,357 @@
+/* v44: Vox-style paper collage, scoped. Palette stays the site tokens.
+   Yellow/blue/red bars are not used. Motion is CSS vars + calc(). */
+
+@property --p {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --t {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --start {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --end {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+.v44-scope {
+  --p: 0;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.v44-desk {
+  --p: 0;
+  position: relative;
+  background: var(--bg);
+}
+
+.v44-desk::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("/images/about/grain.svg");
+  background-size: 180px 180px;
+  opacity: 0.12;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  z-index: 2;
+}
+
+.v44-track {
+  height: 820svh;
+}
+
+.v44-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.v44-camera {
+  position: absolute;
+  inset: -8%;
+  z-index: 0;
+  transform: translate3d(calc((var(--p) - 0.5) * -7vw), calc(var(--p) * 4vh), 0)
+    scale(calc(1.04 + var(--p) * 0.08));
+  will-change: transform;
+  pointer-events: none;
+}
+
+.v44-bar {
+  position: absolute;
+  left: -10%;
+  width: 120%;
+  height: 1.15rem;
+  opacity: 0.22;
+}
+
+.v44-bar-1 {
+  top: 18%;
+  background: var(--fg);
+  transform: rotate(-8deg) translateX(calc((var(--p) - 0.4) * 12vw));
+}
+
+.v44-bar-2 {
+  top: 46%;
+  height: 1.6rem;
+  background: var(--highlight);
+  opacity: 0.4;
+  transform: rotate(4deg) translateX(calc((0.6 - var(--p)) * 10vw));
+}
+
+.v44-bar-3 {
+  top: 72%;
+  background: var(--fg-muted);
+  opacity: 0.16;
+  transform: rotate(-3deg) translateX(calc((var(--p) - 0.5) * 8vw));
+}
+
+.v44-intro,
+.v44-chapter {
+  --raw: calc((var(--p) - var(--start)) / (var(--end) - var(--start)));
+  --t: max(0, min(1, var(--raw)));
+  --show: min(calc(var(--t) * 4.2), calc((1 - var(--t)) * 4.2), 1);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 5.5rem 1.5rem 2.5rem;
+  opacity: var(--show);
+  transform: translate3d(0, calc((1 - var(--t)) * 1.4rem), 0)
+    scale(calc(0.96 + var(--t) * 0.04));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.v44-intro {
+  --show: min(1, calc((1 - var(--t)) * 3.2));
+  max-width: 40rem;
+  margin-inline: auto;
+  text-align: left;
+}
+
+.v44-chapter:last-of-type {
+  --show: min(calc(var(--t) * 4.2), 1);
+}
+
+.v44-chapter {
+  display: grid;
+  align-content: center;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+.v44-kicker {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+
+.v44-display {
+  font-size: clamp(2.25rem, 9vw, 4.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+.v44-lede {
+  margin-top: 0.75rem;
+  font-size: clamp(1rem, 2.6vw, 1.25rem);
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+
+.v44-note {
+  margin-top: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--fg-subtle);
+}
+
+.v44-headline {
+  font-size: clamp(1.75rem, 6.5vw, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.v44-caption {
+  margin-top: 0.7rem;
+  max-width: 28rem;
+  font-size: clamp(0.9375rem, 1.9vw, 1.125rem);
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+
+.v44-copy {
+  position: relative;
+}
+
+.v44-mark {
+  position: relative;
+  z-index: 0;
+  padding: 0 0.08em;
+}
+
+.v44-mark::before {
+  content: "";
+  position: absolute;
+  inset: 12% -0.08em 8%;
+  z-index: -1;
+  background-image: url("/images/v3/highlighter.svg");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: calc(var(--t, 1) * 100%) 100%;
+  pointer-events: none;
+}
+
+.v44-intro .v44-mark::before {
+  background-size: calc(min(var(--t) * 3, 1) * 100%) 100%;
+}
+
+.v44-cutout {
+  position: relative;
+  width: min(86vw, 22rem);
+  margin-inline: auto;
+  filter: drop-shadow(
+    0.35rem 0.55rem 0.7rem color-mix(in srgb, var(--fg) 28%, transparent)
+  );
+  transform: rotate(calc(-4deg + var(--t) * 3deg))
+    translate3d(calc((var(--t) - 0.5) * 1.2rem), 0, 0);
+}
+
+.v44-chapter-flip .v44-cutout {
+  transform: rotate(calc(3deg - var(--t) * 2deg))
+    translate3d(calc((0.5 - var(--t)) * 1.2rem), 0, 0);
+}
+
+.v44-paper {
+  background: var(--bg-elevated);
+  line-height: 0;
+}
+
+.v44-paper img {
+  width: 100%;
+  height: auto;
+}
+
+.v44-cut-a .v44-paper {
+  clip-path: polygon(2.2% 1.4%, 97.4% 2.6%, 99.2% 97.1%, 1.1% 98.6%);
+}
+
+.v44-cut-b .v44-paper {
+  clip-path: polygon(1.4% 2.8%, 98.6% 1.1%, 97.8% 98.4%, 2.6% 96.8%);
+}
+
+.v44-cut-c .v44-paper {
+  clip-path: polygon(3.1% 1.8%, 96.2% 3.4%, 98.8% 96.2%, 0.8% 98.1%);
+}
+
+.v44-cut-d .v44-paper {
+  clip-path: polygon(1.8% 0.9%, 98.1% 2.2%, 96.8% 98.8%, 2.4% 97.2%);
+}
+
+.v44-cut-e .v44-paper {
+  clip-path: polygon(2.6% 2.4%, 97.2% 0.8%, 99.4% 97.6%, 1.6% 96.4%);
+}
+
+.v44-cut-f .v44-paper {
+  clip-path: polygon(1.2% 1.6%, 98.8% 3.1%, 97.4% 98.2%, 2.8% 97.4%);
+}
+
+.v44-tape {
+  position: absolute;
+  top: -0.55rem;
+  left: 42%;
+  z-index: 2;
+  width: 4.4rem;
+  height: 1.15rem;
+  background: color-mix(in srgb, var(--bg-elevated) 62%, var(--highlight) 38%);
+  opacity: calc(0.35 + var(--t) * 0.5);
+  transform: rotate(-18deg);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--fg) 12%, transparent);
+}
+
+@media (min-width: 768px) {
+  .v44-chapter {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: center;
+    gap: 3rem;
+    padding-inline: 2.5rem;
+    max-width: 72rem;
+    margin-inline: auto;
+  }
+
+  .v44-chapter-flip {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  }
+
+  .v44-chapter-flip .v44-cutout {
+    order: 2;
+  }
+
+  .v44-cutout {
+    width: min(42vw, 28rem);
+    margin-inline: 0;
+  }
+
+  .v44-intro {
+    padding-inline: 2.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v44-desk::before {
+    position: absolute;
+  }
+
+  .v44-track {
+    height: auto;
+  }
+
+  .v44-stage {
+    position: relative;
+    height: auto;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    padding: 2rem 0 4rem;
+  }
+
+  .v44-camera {
+    display: none;
+  }
+
+  .v44-intro,
+  .v44-chapter {
+    position: relative;
+    inset: auto;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    padding: 0 1.5rem;
+  }
+
+  .v44-cutout {
+    transform: rotate(-2deg);
+  }
+
+  .v44-chapter-flip .v44-cutout {
+    transform: rotate(2deg);
+  }
+
+  .v44-mark::before,
+  .v44-intro .v44-mark::before {
+    background-size: 100% 100%;
+  }
+
+  .v44-tape {
+    opacity: 0.8;
+  }
+}
+
+.v44-desk[data-reduced="true"] .v44-track {
+  height: auto;
+}
+
+.v44-desk[data-reduced="true"] .v44-stage {
+  position: relative;
+  height: auto;
+  overflow: visible;
+}

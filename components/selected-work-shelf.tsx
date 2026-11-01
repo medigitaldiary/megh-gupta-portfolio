@@ -1,35 +1,24 @@
 import { SectionHeader } from "@/components/section-header";
-import { type ShelfBook, WorkShelf } from "@/components/work-shelf";
-import { getCaseStudy } from "@/lib/case-study";
+import { WorkThumbnails } from "@/components/work-thumbnails";
+import { withCoverVideos } from "@/lib/cover-video";
 import { getShelfWorkCards } from "@/lib/work";
 
-// Server component — pulls the shelf cards from lib/work and enriches
-// each one with headline + supporting metrics parsed from the matching
-// MDX frontmatter under /content/work. The interactive bookshelf below
-// stays a client component.
-export async function SelectedWorkShelf() {
-  // Allow up to 10 books so adding a 7th / 8th case study doesn't need
-  // a layout tweak.
-  const cards = getShelfWorkCards(10);
-  const books: ShelfBook[] = await Promise.all(
-    cards.map(async (card) => {
-      const study = await getCaseStudy(card.slug);
-      return {
-        ...card,
-        headlineMetric: study?.frontmatter.headline_metric,
-        supportingMetrics: study?.frontmatter.supporting_metrics ?? [],
-        tags: study?.frontmatter.tags ?? [],
-      };
-    }),
-  );
+// Fold 3: proof — numbers over adjectives.
+// The homepage shows 3.5 cards and steps one at a time. The rest live
+// on /work, in the same thumbnail cards.
+
+export function SelectedWorkShelf() {
+  const cards = withCoverVideos(getShelfWorkCards(10));
   return (
     <section id="work" className="px-6 py-24 md:px-8 md:py-32">
+      {/* Fold 3: proof — numbers over adjectives */}
       <div className="mx-auto max-w-6xl">
         <SectionHeader
           eyebrow="Selected Work"
-          title="A shelf of things I've built and shipped."
+          title="Things I've built and shipped."
+          action={{ href: "/work", label: "View all" }}
         />
-        <WorkShelf books={books} />
+        <WorkThumbnails cards={cards} layout="carousel" />
       </div>
     </section>
   );

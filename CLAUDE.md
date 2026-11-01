@@ -30,7 +30,7 @@
 | Hosting | **Vercel** (auto-deploy from `main` branch on GitHub) |
 | Analytics | **Vercel Analytics** + **Vercel Speed Insights** |
 | Email | `mailto:` link first. No form unless explicitly requested. |
-| Fonts | **Oswald** (headlines), **Satoshi** (body), **JetBrains Mono** (code/tags). Load via `next/font/local` from `/public/fonts/`. |
+| Fonts | **Geist Sans** (display + body), **Geist Mono** (code/tags), **Kalam** (handwritten greeting only). Load via `next/font/google`. Earlier Oswald + Satoshi + JetBrains Mono stack is retired. |
 | Package manager | **pnpm** |
 | Linting/formatting | **Biome** (single tool for both) |
 | Node version | 20 LTS or newer |
@@ -46,27 +46,60 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
 
 ```css
 :root {
-  --bg: #FAFAF7;          /* off-white, not pure white */
-  --bg-elevated: #FFFFFF; /* cards, modals */
-  --fg: #111111;          /* primary text */
-  --fg-muted: #555555;    /* secondary text */
-  --fg-subtle: #999999;   /* tertiary, captions */
-  --border: #E8E6E0;      /* hairlines */
-  --accent: #1F4D3A;      /* muted bond-paper green — the ONE accent */
-  --accent-fg: #FAFAF7;   /* text on accent backgrounds */
+  --bg: #E8DCC6;          /* Oatmeal — primary warm surface */
+  --bg-elevated: #F3EBD9; /* lightened oatmeal — cards, modals */
+  --fg: #1F3B2E;          /* Pine Green — body, headings, CTA fill */
+  --fg-muted: #3A5544;    /* lighter pine — secondary text */
+  --fg-subtle: #556B5D;   /* muted pine — captions */
+  --border: #D4C4A8;      /* toasted oat — hairlines */
+  --accent: #1F3B2E;      /* same hue as --fg: monochrome brand */
+  --accent-fg: #E8DCC6;   /* Oatmeal — text on Pine buttons */
+  --highlight: #CBB3E8;   /* Soft Lilac — decorative tint, never chrome */
 }
 ```
 
-**Rule:** No other colors. If a design needs a fifth color, ask first.
+**Rule:** No other colors. If a design needs a fifth family, ask first. The Oatmeal / Pine / Lilac palette was promoted from the `/preview/v3` experiment, so earlier commits may still show the retired `#FAFAF7 / #111111 / #1F4D3A` stack. Treat the values here as the source of truth. Lilac stays decorative (highlighter marks, focus rings, hover washes); never as text that carries meaning.
 
 ### Type scale
-- `display`: 4rem / 64px, Oswald, line-height 1.05 (hero only)
-- `h1`: 2.5rem / 40px, Oswald, line-height 1.1
-- `h2`: 1.75rem / 28px, Oswald, line-height 1.2
-- `h3`: 1.25rem / 20px, Satoshi Semibold, line-height 1.3
-- `body`: 1rem / 16px, Satoshi Regular, line-height 1.6
-- `small`: 0.875rem / 14px, Satoshi Regular, line-height 1.5
-- `mono`: 0.875rem / 14px, JetBrains Mono (tags, metrics annotations)
+Nominal sizes (desktop target). Mobile sizes derive from the fluid-type rule below.
+
+- `display`: 4rem / 64px, Geist Sans, line-height 1.05 (hero only)
+- `h1`: 2.5rem / 40px, Geist Sans, line-height 1.1
+- `h2`: 1.75rem / 28px, Geist Sans, line-height 1.2
+- `h3`: 1.25rem / 20px, Geist Sans Semibold, line-height 1.3
+- `body`: 1rem / 16px, Geist Sans, line-height 1.6
+- `small`: 0.875rem / 14px, Geist Sans, line-height 1.5
+- `mono`: 0.875rem / 14px, Geist Mono (tags, metrics annotations)
+
+### Fluid typography rule (mobile-hierarchy guarantee)
+
+Every display-size heading (hero display, H1, H2 inside a hero or fold) MUST preserve its visual hierarchy on mobile. Flat type on mobile — where the H1 looks nearly the same size as its subtitle — is a shippable-looking bug and will be rejected.
+
+**The rule in one line:** at EVERY viewport width from 320px up, the H1 must render at ≥ 1.75× the paired subtitle, and the subtitle at ≥ 1.25× body.
+
+**How to achieve it:**
+
+1. **Use `clamp(min, Nvw, max)` for every display heading.** Never use `min(Nvw, max)` without a floor on an H1 — a tight viewport will shrink the headline into its subtitle and the hierarchy collapses. Stepped Tailwind sizes (`text-3xl md:text-5xl`) are acceptable only when the mobile step is still ≥ 1.75× its paired body text at that breakpoint.
+
+2. **Pair the headline and the subtitle with a shared scaling vector.** When you clamp the headline, clamp the subtitle too, using the same `vw` family (one coefficient lower). Example that preserves hierarchy from 320 → 1440px:
+
+   ```tsx
+   // Hero
+   <h1 style={{ fontSize: "clamp(2.25rem, 9vw, 6rem)",   letterSpacing: "-0.04em" }}>…</h1>
+   <p  style={{ fontSize: "clamp(1rem,    2.6vw, 1.5rem)" }}>subtitle…</p>
+   <p  style={{ fontSize: "clamp(0.9375rem, 1.9vw, 1.125rem)" }}>body…</p>
+   ```
+
+   At 375px → 36 / 16 / 15 (ratios 2.25× and 1.07×). At 1440px → 96 / 24 / 18 (ratios 4× and 1.33×). Hierarchy stays strong at both ends.
+
+3. **If the headline must stay on one line (`whitespace-nowrap`), pick the floor so it fits at 320px with tight tracking.** For "Under Construction" (18 chars) in Geist Sans at `letter-spacing: -0.04em`, floor at `2.25rem` (36px) is the safe maximum that still fits inside `px-6` on an iPhone SE. Use less if the headline is longer.
+
+4. **Before shipping any display-size headline change, visually check at 375px.** Open the page at that width (`pnpm dev` + browser devtools or `/preview/skeleton`), and confirm the H1 is unmistakably bigger than its subtitle. If they look close, re-tune.
+
+5. **Known-safe current implementations:**
+   - `components/coming-soon.tsx` + `components/coming-soon-with-paper.tsx` — the clamp triple above.
+   - `components/hero.tsx` H1 (`text-[2.25rem] md:text-[3rem] lg:text-[3.25rem]`) — stepped, mobile at 36px, hierarchy ≥ 2.25× body.
+   - `components/section-header.tsx` H2 (`text-3xl md:text-5xl`) — stepped, mobile at 30px, hierarchy ≥ 1.9× body.
 
 ### Spacing
 Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepage, use `py-24 md:py-32`. Section max-width: `max-w-5xl`. Case study prose max-width: `max-w-2xl` (readability over fill).
@@ -459,7 +492,7 @@ Everything that's in `app/layout.tsx`'s `<head>` today is a **baseline, not a sa
   - `rel="help" type="text/plain"` → `/llms.txt`.
   - `rel="help" type="text/markdown"` → `/AGENTS.md`.
   - `rel="sitemap" type="application/xml"` → `/sitemap.xml`.
-- **Favicon:** `app/icon.svg` (adaptive light/dark cloud).
+- **Favicon:** `app/icon.png` + `app/apple-icon.png` (circular portrait avatar with alpha transparency) and `public/favicon.ico`.
 
 ### Per-page-type overrides that MUST ship at launch
 

@@ -74,7 +74,7 @@ function useIstClock() {
 export function SiteFooter() {
   const clock = useIstClock();
   return (
-    <footer className="px-6 py-12 md:px-8 md:py-16">
+    <footer className="px-6 py-6 md:px-8 md:py-8">
       <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 sm:flex-row">
         <ul className="flex items-center gap-2">
           {SOCIALS.map((s) => (

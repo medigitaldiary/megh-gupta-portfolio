@@ -1,6 +1,12 @@
 "use client";
 
-import { type ReactElement, useEffect, useState } from "react";
+import {
+  type ReactElement,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 export type NavItem = {
   id: string;
@@ -10,7 +16,7 @@ export type NavItem = {
 };
 
 // Nav mirrors the 7-fold storyboard in CLAUDE.md §14 — "the map should not
-// contradict the territory." Hero is the home anchor (click the wordmark),
+// contradict the territory." Hero is the home anchor (click the status chip),
 // so the pill carries the scrollable sections after it. Pages that want
 // a subset (e.g. v2 while Lab + Writing are being finalised) pass their
 // own `items` prop.
@@ -31,6 +37,193 @@ export const DEFAULT_NAV_ITEMS: NavItem[] = [
 const LINKEDIN_URL = "https://www.linkedin.com/in/megh-gupta-917280200";
 const RESUME_URL = "/resume.pdf";
 
+// The hero greeting already says the name. These four lines take turns
+// in the left slot. The last one is the contact CTA: filled pine, arrow,
+// and a jump to the connect fold. The others scroll back to the top.
+const CHIP_LINES = [
+  { text: "Product Manager" },
+  { text: "Building in fintech" },
+  { text: "Got a problem?" },
+  { text: "Let's connect.", cta: true },
+] as const;
+// Still time before the swap. ~4.3s of readable text after the 500ms flip.
+const CHIP_HOLD_MS = 4800;
+// Keep in sync with nav-chip-in / nav-chip-out in globals.css.
+const CHIP_FLIP_MS = 500;
+
+function StatusChip({
+  paused,
+  tabIndex,
+  onScrollTop,
+}: {
+  paused: boolean;
+  tabIndex: number;
+  onScrollTop: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+}) {
+  const [index, setIndex] = useState(0);
+  const [outgoing, setOutgoing] = useState<number | null>(null);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const [pageHidden, setPageHidden] = useState(false);
+  const prevIndex = useRef(0);
+  const linkRef = useRef<HTMLAnchorElement>(null);
+  const sizerRef = useRef<HTMLSpanElement>(null);
+  const primed = useRef(false);
+
+  const line = CHIP_LINES[index];
+  const isCta = "cta" in line && line.cta;
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onMotion = () => setReduceMotion(mq.matches);
+    onMotion();
+    mq.addEventListener("change", onMotion);
+    const onVis = () => setPageHidden(document.hidden);
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      mq.removeEventListener("change", onMotion);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (paused || reduceMotion || pageHidden) return;
+    const id = window.setInterval(() => {
+      setIndex((current) => (current + 1) % CHIP_LINES.length);
+    }, CHIP_HOLD_MS);
+    return () => window.clearInterval(id);
+  }, [paused, reduceMotion, pageHidden]);
+
+  useEffect(() => {
+    if (prevIndex.current === index) return;
+    const prev = prevIndex.current;
+    prevIndex.current = index;
+    setOutgoing(prev);
+    const t = window.setTimeout(() => setOutgoing(null), CHIP_FLIP_MS + 40);
+    return () => window.clearTimeout(t);
+  }, [index]);
+
+  // The pill width follows the current line. A hidden sizer has the same
+  // contents as the visible row, including the arrow on the CTA, and the
+  // link eases to that measured width.
+  useLayoutEffect(() => {
+    const link = linkRef.current;
+    const sizer = sizerRef.current;
+    if (!link || !sizer) return;
+
+    const apply = (animate: boolean) => {
+      const cs = getComputedStyle(link);
+      const extra =
+        parseFloat(cs.paddingLeft) +
+        parseFloat(cs.paddingRight) +
+        parseFloat(cs.borderLeftWidth) +
+        parseFloat(cs.borderRightWidth);
+      const next = Math.ceil(sizer.getBoundingClientRect().width + extra) + 1;
+      if (!animate) link.style.transition = "none";
+      link.style.width = `${next}px`;
+      if (!animate) {
+        // Flush so the first paint doesn't ease in from width: auto.
+        void link.offsetWidth;
+        link.style.transition = "";
+      }
+    };
+
+    // `line.text` is read so the measure re-runs when the sizer's copy changes.
+    if (line.text.length === 0) return;
+    apply(primed.current && !reduceMotion);
+    primed.current = true;
+  }, [line.text, reduceMotion]);
+
+  useEffect(() => {
+    const fonts = document.fonts;
+    if (!fonts) return;
+    let cancelled = false;
+    void fonts.ready.then(() => {
+      const link = linkRef.current;
+      const sizer = sizerRef.current;
+      if (cancelled || !link || !sizer) return;
+      const cs = getComputedStyle(link);
+      const extra =
+        parseFloat(cs.paddingLeft) +
+        parseFloat(cs.paddingRight) +
+        parseFloat(cs.borderLeftWidth) +
+        parseFloat(cs.borderRightWidth);
+      link.style.transition = "none";
+      link.style.width = `${Math.ceil(sizer.getBoundingClientRect().width + extra) + 1}px`;
+      void link.offsetWidth;
+      link.style.transition = "";
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const flipping = outgoing !== null && !reduceMotion;
+
+  return (
+    <a
+      ref={linkRef}
+      href={isCta ? "#connect" : "#hero"}
+      onClick={(e) => {
+        if (!isCta) onScrollTop(e);
+      }}
+      tabIndex={tabIndex}
+      className={`relative hidden max-md:inline-flex min-[860px]:inline-flex min-w-0 items-center rounded-full border py-2 pl-2.5 pr-3.5 text-sm font-medium transition-[width,background-color,color,border-color] duration-500 ease-[cubic-bezier(0.22,0.61,0.36,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${
+        isCta
+          ? "border-accent bg-accent text-accent-fg hover:opacity-90"
+          : "border-border bg-bg-elevated text-fg"
+      }`}
+    >
+      <span className="sr-only">
+        {isCta ? "Let's connect" : `${line.text}. Back to top`}
+      </span>
+      <span
+        ref={sizerRef}
+        className="pointer-events-none invisible absolute inline-flex w-max items-center gap-2 whitespace-nowrap"
+        aria-hidden="true"
+      >
+        <span className="h-1.5 w-1.5 shrink-0" />
+        <span>{line.text}</span>
+        {isCta ? (
+          <span className="h-3.5 w-3.5 shrink-0">
+            <ArrowRightIcon />
+          </span>
+        ) : null}
+      </span>
+      <span
+        aria-hidden="true"
+        className={`mr-2 h-1.5 w-1.5 shrink-0 rounded-full transition-colors duration-500 ${
+          isCta ? "bg-accent-fg" : "bg-fg"
+        }`}
+      />
+      <span className="relative h-5 min-w-0 flex-1 overflow-hidden" aria-hidden="true">
+        <span className="invisible whitespace-nowrap">{line.text}</span>
+        {outgoing !== null && !reduceMotion ? (
+          <span className="nav-chip-out absolute inset-0 flex items-center whitespace-nowrap">
+            {CHIP_LINES[outgoing].text}
+          </span>
+        ) : null}
+        <span
+          className={`absolute inset-0 flex items-center whitespace-nowrap ${
+            flipping ? "nav-chip-in" : ""
+          }`}
+        >
+          {line.text}
+        </span>
+      </span>
+      <span
+        aria-hidden="true"
+        className={`inline-flex shrink-0 overflow-hidden transition-[width,margin,opacity] duration-500 ease-[cubic-bezier(0.22,0.61,0.36,1)] motion-reduce:transition-none ${
+          isCta ? "ml-2 w-3.5 opacity-100" : "ml-0 w-0 opacity-0"
+        }`}
+      >
+        <span className="h-3.5 w-3.5 shrink-0">
+          <ArrowRightIcon />
+        </span>
+      </span>
+    </a>
+  );
+}
+
 export function Nav({ hide }: { hide?: string[] } = {}) {
   // `hide` is a list of nav ids to drop (e.g. `["lab", "writing"]`). Keeping
   // the filter here, not at the call site, means callers can be server
@@ -43,7 +236,7 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
   const [focusWithin, setFocusWithin] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState<string>("");
-  // Collapse the wordmark + right CTAs once past the hero, unless the viewer
+  // Collapse the status chip + right CTAs once past the hero, unless the viewer
   // is hovering or keyboard-focused in the nav. The pill stays anchored.
   const collapsed = scrolled && !hovered && !focusWithin;
 
@@ -140,10 +333,10 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
           backdrop-filter transition that was causing the collapse jerk. */}
       <div>
         <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 md:h-[72px] md:px-6">
-          {/* Left: wordmark. When collapsed we fade + slide a short distance
-              toward the pill so it reads as tucking under; the small distance
-              and ease-out curve keep the motion from "shooting" across the
-              layout. */}
+          {/* Left: status chip. Four lines, the last one a contact CTA.
+              The pill eases to the width of whichever line is showing.
+              Hidden from md up to 860px so the longer lines don't push
+              Resume off the bar. Collapses once the hero leaves. */}
           <div
             className={`justify-self-start will-change-[transform,opacity] transition-[transform,opacity] duration-[400ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] motion-reduce:transition-none ${
               collapsed
@@ -151,16 +344,11 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
                 : "translate-x-0 opacity-100"
             }`}
           >
-            <button
-              type="button"
-              onClick={scrollToTop}
+            <StatusChip
+              paused={collapsed || hovered || focusWithin}
               tabIndex={collapsed ? -1 : 0}
-              className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-            >
-              <span className="whitespace-nowrap text-base font-semibold text-fg">
-                Megh Gupta
-              </span>
-            </button>
+              onScrollTop={scrollToTop}
+            />
           </div>
 
           {/* Center pill — always visible. Slightly bumped shadow when floating
@@ -238,7 +426,7 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
             aria-controls="mobile-menu"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             onClick={() => setMenuOpen((v) => !v)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
+            className="col-start-3 inline-flex h-10 w-10 items-center justify-center justify-self-end rounded-md text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
           >
             <span aria-hidden="true" className="font-mono text-xl">
               {menuOpen ? "✕" : "☰"}
@@ -407,6 +595,24 @@ function MailIcon() {
     >
       <rect x="3" y="5" width="18" height="14" rx="2" />
       <path d="M3 7l9 6 9-6" />
+    </svg>
+  );
+}
+
+function ArrowRightIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-full w-full"
+      aria-hidden="true"
+    >
+      <path d="M5 12h14" />
+      <path d="M13 6l6 6-6 6" />
     </svg>
   );
 }
