@@ -1,25 +1,31 @@
 import type { Metadata } from "next";
 import {
+  AnalysisIcon,
   Callout,
   DataTable,
+  DeliverIcon,
   Eyebrow,
   Figure,
+  HumanIcon,
   Metric,
   MetricRow,
   Pill,
+  Pipeline,
   Quote,
   ScreenshotStack,
   Section,
   StepGrid,
   Timeline,
+  TranscriptIcon,
+  WaveformIcon,
 } from "@/components/case-study";
 
-// /preview/case-study-kit — a visual regression target. Renders every
+// /preview/case-study-kit: a visual regression target. Renders every
 // component in every variant so a token tweak can be verified at a
 // glance. noindex per the preview route convention.
 
 export const metadata: Metadata = {
-  title: "Case study kit — Megh Gupta",
+  title: "Case study kit: Megh Gupta",
   description: "Every component in the case-study system, every variant.",
   robots: { index: false, follow: false },
 };
@@ -32,7 +38,7 @@ export default function CaseStudyKitPage() {
           Preview
         </p>
         <h1 className="mt-2 font-serif text-3xl leading-tight text-fg md:text-4xl">
-          Case study design system — kit
+          Case study design system: kit
         </h1>
         <p className="mt-4 text-base leading-relaxed text-fg-muted">
           Every primitive, pattern, and layout variant on one page. If a token
@@ -111,7 +117,7 @@ export default function CaseStudyKitPage() {
             Internal linking depth improved ~50–60% after the fixes shipped.
           </Callout>
           <Callout variant="decision">
-            We chose Strapi + a Claude compliance agent over Framer — gates
+            We chose Strapi + a Claude compliance agent over Framer: gates
             belong upstream of the publishing tool.
           </Callout>
           <Callout variant="caution">
@@ -119,8 +125,8 @@ export default function CaseStudyKitPage() {
             We killed the experiment after three pages.
           </Callout>
           <Callout variant="learning">
-            Earlier is cheaper — the kinds of learnings you can only see once
-            the engine is actually running.
+            Earlier is cheaper: the kinds of learnings you can only see once the
+            engine is actually running.
           </Callout>
         </Section>
 
@@ -138,8 +144,8 @@ export default function CaseStudyKitPage() {
             variant="prose"
             src="/images/work/product-led-seo-engine/sample-blog.webp"
             alt="Placeholder for a representative BondScanner blog on mobile."
-            caption="Prose variant — fits the max-w-2xl column."
-            eyebrow="Fig. demo — Prose"
+            caption="Prose variant: fits the max-w-2xl column."
+            eyebrow="Fig. demo: Prose"
             isPlaceholder
           />
           <p>Wide variant (same column, breaks prose rhythm):</p>
@@ -147,23 +153,21 @@ export default function CaseStudyKitPage() {
             variant="wide"
             src="/images/work/product-led-seo-engine/nodal-diagram.webp"
             alt="Placeholder for a nodal diagram of the site graph."
-            caption="Wide variant — used for diagrams that are the point of the section."
-            eyebrow="Fig. demo — Wide"
+            caption="Wide variant: used for diagrams that are the point of the section."
+            eyebrow="Fig. demo: Wide"
             isPlaceholder
           />
           <p>SVG variant (inline children, no next/image):</p>
           <Figure
             variant="svg"
-            eyebrow="Fig. demo — SVG"
-            caption="SVG variant — pass any inline SVG as children."
+            eyebrow="Fig. demo: SVG"
+            caption="SVG variant: pass any inline SVG as children."
           >
             <svg
               viewBox="0 0 300 100"
               style={{ width: "100%", height: "auto" }}
             >
-              <title>
-                Demo SVG — single horizontal rule and a labeled dot.
-              </title>
+              <title>Demo SVG: single horizontal rule and a labeled dot.</title>
               <line
                 x1="20"
                 y1="50"
@@ -190,11 +194,11 @@ export default function CaseStudyKitPage() {
             variant="annotated"
             src="/images/work/product-led-seo-engine/sample-isin.webp"
             alt="Placeholder for an ISIN page with three annotations."
-            caption="Annotated variant — overlay numbered marks + legend below."
-            eyebrow="Fig. demo — Annotated"
+            caption="Annotated variant: overlay numbered marks + legend below."
+            eyebrow="Fig. demo: Annotated"
             isPlaceholder
             annotations={[
-              { x: 25, y: 20, label: "Hero slot — issuer, coupon, maturity." },
+              { x: 25, y: 20, label: "Hero slot: issuer, coupon, maturity." },
               { x: 70, y: 45, label: "Secondary market activity feed." },
               {
                 x: 40,
@@ -209,7 +213,7 @@ export default function CaseStudyKitPage() {
         <Section
           variant="narrative"
           eyebrow="Patterns"
-          heading="StepGrid — parallel"
+          heading="StepGrid: parallel"
         >
           <StepGrid variant="parallel" numbered>
             <StepGrid.Cell title="Technical foundations" eyebrow="Workstream">
@@ -233,7 +237,7 @@ export default function CaseStudyKitPage() {
         <Section
           variant="narrative"
           eyebrow="Patterns"
-          heading="StepGrid — sequence"
+          heading="StepGrid: sequence"
         >
           <StepGrid variant="sequence">
             <StepGrid.Cell
@@ -257,7 +261,7 @@ export default function CaseStudyKitPage() {
         <Section
           variant="narrative"
           eyebrow="Patterns"
-          heading="StepGrid — compare"
+          heading="StepGrid: compare"
         >
           <StepGrid variant="compare">
             <StepGrid.Cell title="Manual compliance review" eyebrow="Before">
@@ -272,7 +276,7 @@ export default function CaseStudyKitPage() {
         <Section
           variant="narrative"
           eyebrow="Patterns"
-          heading="DataTable — data"
+          heading="DataTable: data"
         >
           <DataTable variant="data" caption="Daily organic clicks by month">
             <thead>
@@ -305,7 +309,7 @@ export default function CaseStudyKitPage() {
         <Section
           variant="narrative"
           eyebrow="Patterns"
-          heading="DataTable — ownership"
+          heading="DataTable: ownership"
         >
           <DataTable variant="ownership">
             <DataTable.Column label="I owned">
@@ -330,7 +334,7 @@ export default function CaseStudyKitPage() {
         <Section
           variant="narrative"
           eyebrow="Patterns"
-          heading="DataTable — responsibility"
+          heading="DataTable: responsibility"
         >
           <DataTable variant="responsibility">
             <DataTable.Column label="Me">
@@ -354,7 +358,7 @@ export default function CaseStudyKitPage() {
         <Section
           variant="narrative"
           eyebrow="Patterns"
-          heading="Timeline — vertical"
+          heading="Timeline: vertical"
         >
           <Timeline variant="vertical">
             <Timeline.Event date="2026-09-10" title="20% ramp">
@@ -372,7 +376,7 @@ export default function CaseStudyKitPage() {
         <Section
           variant="narrative"
           eyebrow="Patterns"
-          heading="Timeline — horizontal"
+          heading="Timeline: horizontal"
         >
           <Timeline variant="horizontal">
             <Timeline.Event date="2026-01" title="Audit">
@@ -390,7 +394,7 @@ export default function CaseStudyKitPage() {
         <Section
           variant="narrative"
           eyebrow="Patterns"
-          heading="Timeline — phase"
+          heading="Timeline: phase"
         >
           <Timeline variant="phase">
             <Timeline.Event date="Jan 2026" title="Discovery" />
@@ -400,6 +404,60 @@ export default function CaseStudyKitPage() {
           </Timeline>
         </Section>
 
+        <Section variant="narrative" eyebrow="Patterns" heading="Pipeline">
+          <p>
+            Interactive 5-stage pipeline: Play walks through the sequence, or
+            hover / tap any stage to inspect it. Mobile stacks the stages
+            vertically; `prefers-reduced-motion` disables the auto-sequence and
+            transitions.
+          </p>
+          <Pipeline
+            footnote="Interactive demo: try hover, tap, or Play"
+            stages={[
+              {
+                id: "ingest",
+                label: "01 · Ingest",
+                title: "Nightly job",
+                description: "A scheduled batch identifies new recordings.",
+                icon: <WaveformIcon />,
+                preview: <p>Dequeue call recordings for the day.</p>,
+              },
+              {
+                id: "transcribe",
+                label: "02 · Transcribe",
+                title: "Sarvam STT",
+                description: "Hindi / English / Hinglish speech-to-text.",
+                icon: <TranscriptIcon />,
+                preview: <p>Convert audio to text.</p>,
+              },
+              {
+                id: "analyse",
+                label: "03 · Analyse",
+                title: "Claude Sonnet",
+                description: "Structured scoring against the rubric.",
+                icon: <AnalysisIcon />,
+                preview: <p>Score + action items as JSON.</p>,
+              },
+              {
+                id: "deliver",
+                label: "04 · Deliver",
+                title: "Radar integration",
+                description: "Scores + tasks land in the CRM.",
+                icon: <DeliverIcon />,
+                preview: <p>Scores attach to profiles; tasks to RMs.</p>,
+              },
+              {
+                id: "act",
+                label: "05 · Act",
+                title: "Human review",
+                description: "RMs act; managers coach.",
+                icon: <HumanIcon />,
+                preview: <p>Human follow-up on the structured output.</p>,
+              },
+            ]}
+          />
+        </Section>
+
         <Section
           variant="narrative"
           eyebrow="Patterns"
@@ -407,7 +465,7 @@ export default function CaseStudyKitPage() {
         >
           <ScreenshotStack
             layout="row"
-            eyebrow="Fig. demo — ScreenshotStack row"
+            eyebrow="Fig. demo: ScreenshotStack row"
           >
             <ScreenshotStack.Item
               src="/images/work/product-led-seo-engine/sample-blog.webp"
@@ -433,7 +491,7 @@ export default function CaseStudyKitPage() {
           eyebrow="Layouts"
           heading="narrative (this one)"
         >
-          <p>Default layout — single-column prose, max-w-2xl.</p>
+          <p>Default layout: single-column prose, max-w-2xl.</p>
         </Section>
 
         <Section variant="split" eyebrow="Layouts" heading="split">
@@ -516,7 +574,7 @@ export default function CaseStudyKitPage() {
         </Section>
 
         <Section variant="reflection" eyebrow="Layouts" heading="reflection">
-          <p>Short section — tighter prose column (max-w-xl).</p>
+          <p>Short section: tighter prose column (max-w-xl).</p>
           <Callout variant="learning">
             One short learning, framing the whole section.
           </Callout>
