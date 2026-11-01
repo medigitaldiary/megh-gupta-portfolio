@@ -88,7 +88,7 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Megh Gupta — Product Manager, BondScanner",
+        alt: "Megh Gupta in a white turtleneck",
       },
     ],
   },
@@ -112,6 +112,7 @@ const jsonLd = {
       name: "Megh Gupta",
       alternateName: "meghgupta",
       url: `${SITE_URL}/`,
+      image: `${SITE_URL}/opengraph-image`,
       jobTitle: "Product Manager",
       description: DESCRIPTION,
       worksFor: {
