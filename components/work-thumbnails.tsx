@@ -181,7 +181,7 @@ function WorkCarousel({ cards }: { cards: WorkCard[] }) {
         aria-roledescription="carousel"
         aria-label="Selected case studies"
         onScrollEnd={onScrollEnd}
-        className="@container overflow-x-auto pt-8 pb-2 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="@container overflow-x-auto pt-12 pb-16 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <ul className="flex w-max gap-6">
           {cards.map((card, index) => (
@@ -269,10 +269,7 @@ function Thumbnail({ card }: { card: WorkCard }) {
         </motion.div>
         <motion.div
           className="relative shadow-[0_18px_32px_-22px_rgba(31,59,46,0.45)]"
-          style={{
-            transformOrigin: "left bottom",
-            transformStyle: "preserve-3d",
-          }}
+          style={{ transformOrigin: "left bottom" }}
           initial={false}
           animate={{ rotateY: open ? -35 : -1, z: 1 }}
           transition={transition}
@@ -314,7 +311,7 @@ function CardFace({
       <p className="mt-2 line-clamp-2 h-10 text-sm leading-5 text-fg-muted">
         {card.oneLiner}
       </p>
-      <div className="relative mt-5 aspect-[4/3] overflow-hidden rounded-2xl bg-bg">
+      <div className="relative mt-5 aspect-[4/3] overflow-hidden rounded-2xl bg-bg [clip-path:inset(0_round_1rem)]">
         <CoverMedia
           poster={card.coverImage}
           video={still ? undefined : card.coverVideo}
@@ -365,7 +362,7 @@ function CoverMedia({
         playsInline
         preload="none"
         poster={poster}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover [clip-path:inset(0_round_1rem)]"
       >
         <source src={video} type="video/mp4" />
       </video>
@@ -381,7 +378,7 @@ function CoverMedia({
       fill
       sizes={sizes}
       unoptimized={isGif}
-      className="object-cover"
+      className="object-cover [clip-path:inset(0_round_1rem)]"
     />
   );
 }
