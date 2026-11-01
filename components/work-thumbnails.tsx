@@ -40,19 +40,34 @@ function productMark(company: string) {
   );
 }
 
+export type StudyMark = "text" | "row";
+
+function studyHref(slug: string, mark?: StudyMark) {
+  return mark ? `/work/${slug}?mark=${mark}` : `/work/${slug}`;
+}
+
 export function WorkThumbnails({
   cards,
   layout = "grid",
+  mark,
+  columns,
 }: {
   cards: WorkCard[];
   layout?: "grid" | "carousel";
+  mark?: StudyMark;
+  /** Lock the grid at two columns. The work index stays at three from `lg`. */
+  columns?: 2;
 }) {
-  if (layout === "carousel") return <WorkCarousel cards={cards} />;
+  if (layout === "carousel") return <WorkCarousel cards={cards} mark={mark} />;
+  const grid =
+    columns === 2
+      ? "grid grid-cols-1 gap-8 sm:grid-cols-2"
+      : "grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3";
   return (
-    <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className={grid}>
       {cards.map((card) => (
         <li key={card.slug} className="min-w-0">
-          <Thumbnail card={card} />
+          <Thumbnail card={card} mark={mark} />
         </li>
       ))}
     </ul>
@@ -89,7 +104,13 @@ function nearestStop(stops: number[], scrollLeft: number) {
   return best;
 }
 
-function WorkCarousel({ cards }: { cards: WorkCard[] }) {
+function WorkCarousel({
+  cards,
+  mark,
+}: {
+  cards: WorkCard[];
+  mark?: StudyMark;
+}) {
   const reduced = useReducedMotion() ?? false;
   const viewportRef = useRef<HTMLElement>(null);
   const indexRef = useRef(0);
@@ -195,7 +216,7 @@ function WorkCarousel({ cards }: { cards: WorkCard[] }) {
                 index === cards.length - 1 ? "snap-end" : "snap-start"
               }`}
             >
-              <Thumbnail card={card} />
+              <Thumbnail card={card} mark={mark} />
             </li>
           ))}
         </ul>
@@ -233,7 +254,13 @@ const SPRING = {
 // behind the cover stays visible along the right edge. Ease out instead.
 const CLOSE = { duration: 0.32, ease: [0.4, 0, 0.2, 1] } as const;
 
-function Thumbnail({ card }: { card: WorkCard }) {
+function Thumbnail({
+  card,
+  mark: studyMark,
+}: {
+  card: WorkCard;
+  mark?: StudyMark;
+}) {
   const reduced = useReducedMotion() ?? false;
   const [armed, setArmed] = useState(false);
   const [lifted, setLifted] = useState(false);
@@ -263,9 +290,9 @@ function Thumbnail({ card }: { card: WorkCard }) {
 
   return (
     <Link
-      href={`/work/${card.slug}`}
+      href={studyHref(card.slug, studyMark)}
       aria-label={`Read the ${card.title} case study`}
-      className={`relative block h-full ${lifted ? "z-20" : ""}`}
+      className={`relative block h-full rounded-[1.75rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${lifted ? "z-20" : ""}`}
       onPointerEnter={(event) => arm(event.pointerType)}
       onPointerLeave={(event) => disarm(event.pointerType)}
       onFocus={() => arm()}
