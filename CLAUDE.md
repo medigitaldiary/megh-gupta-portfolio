@@ -361,6 +361,7 @@ When you generate copy (case study draft, hero tagline, project description), ma
 - **Honest attribution.** When ownership is shared, say so. "Contributed to" is fine.
 - **Short sentences.** Average 15 words. If a sentence runs past 25, split it.
 - **No filler.** Cut "in order to," "it is important to note," "leverage," "synergy," "passionate."
+- **No em dashes.** Zero. Not in copy you draft, not in copy you edit, not in frontmatter, not in commit messages, not in PR descriptions. Replace with: a period and new sentence (break of thought), a colon (elaboration), a comma (parenthetical aside), parentheses (true aside), or "to" (a range). Hyphens (`-`) and en dashes (`–`) are fine. Full rule-book: `STYLE.md`.
 - **One idea per paragraph.** No walls of text.
 - **Numbers as evidence, not decoration.** Every number should earn its place by changing the reader's belief.
 

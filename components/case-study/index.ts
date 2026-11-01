@@ -10,7 +10,20 @@
 
 export type { SectionVariant } from "./layouts/section";
 export { Section } from "./layouts/section";
+// One-off: case-study-specific wrapper around <Pipeline>. Kept in the
+// barrel so MDX can call <AiCallPipeline /> directly. If the one-offs
+// list grows past a handful, promote them to a separate module.
+export { AiCallPipeline } from "./one-offs/ai-call-pipeline";
 export { DataTable } from "./patterns/data-table";
+export type { PipelineStage } from "./patterns/pipeline";
+export {
+  AnalysisIcon,
+  DeliverIcon,
+  HumanIcon,
+  Pipeline,
+  TranscriptIcon,
+  WaveformIcon,
+} from "./patterns/pipeline";
 // Convenience alias — some case studies may want to type <Screenshots>
 // as the shorter name; both work in MDX.
 export {
