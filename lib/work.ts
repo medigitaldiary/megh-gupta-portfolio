@@ -17,8 +17,11 @@ export type WorkCard = {
   // Resting lean angle in degrees; pivots on the book's bottom edge.
   // Alternating signs create the "propped against each other" shelf feel.
   leanDeg?: number;
-  // Path to the editorial cover art for the shelf. 2:3 portrait webp.
+  // Still poster for the thumbnail, and the cover on the older work cards.
   coverImage?: string;
+  // Moving cover for the thumbnail. When omitted, the shelf section
+  // uses public/videos/work/[slug].mp4 or .gif if that file exists.
+  coverVideo?: string;
   status: WorkStatus;
   featured?: boolean;
   order?: number;
@@ -32,13 +35,13 @@ export const workCards: WorkCard[] = [
     title: "Product-led SEO Engine",
     eyebrow: "Growth · SEO",
     oneLiner:
-      "How programmatic SEO ~2x'd BondScanner's organic clicks in three months.",
+      "Programmatic SEO ~2x'd BondScanner's organic clicks in three months.",
     role: "Growth PM",
     company: "BondScanner",
     timeline: "2026",
     spineColor: "bg-accent",
     spineHex: "#1F4D3A",
-    coverImage: "/images/work/product-led-seo-engine/cover.webp",
+    coverImage: "/images/work/product-led-seo-engine/poster.webp",
     leanDeg: -4,
     status: "live",
     featured: true,
@@ -83,13 +86,13 @@ export const workCards: WorkCard[] = [
     title: "DERIDATA Integration",
     eyebrow: "Data · Integrations",
     oneLiner:
-      "Wiring DERIDATA into BondScanner so pricing, yield, and risk stay one source of truth.",
+      "DERIDATA feeds BondScanner pricing, yield, and risk from one source.",
     role: "Product Manager",
     company: "BondScanner",
     timeline: "2026",
     spineColor: "bg-[#4A5D5A]",
     spineHex: "#0F4C3A",
-    coverImage: "/images/work/deridata-integration/cover.webp",
+    coverImage: "/images/work/deridata-integration/poster.webp",
     leanDeg: 4,
     status: "live",
     featured: true,
@@ -97,16 +100,16 @@ export const workCards: WorkCard[] = [
   },
   {
     slug: "freshdesk-support-stack",
-    title: "Freshdesk · Support Stack",
+    title: "Support Stack",
     eyebrow: "Ops · Support",
     oneLiner:
-      "Building the inbound support stack — Freshdesk + workflows + SLAs — from zero.",
+      "Building the inbound support stack — Freshdesk + workflows + SLAs.",
     role: "Founding PM",
     company: "BondScanner",
     timeline: "2025",
     spineColor: "bg-[#6B4E71]",
     spineHex: "#701A2F",
-    coverImage: "/images/work/freshdesk-support-stack/cover.webp",
+    coverImage: "/images/work/freshdesk-support-stack/poster.webp",
     leanDeg: -3,
     status: "live",
     featured: true,
@@ -117,10 +120,10 @@ export const workCards: WorkCard[] = [
   // scaffolded. Full story in content/work/moveinsync-independence-day.mdx.
   {
     slug: "moveinsync-independence-day",
-    title: "MoveInSync Independence Day",
+    title: "Traffic Speed Analysis",
     eyebrow: "Analytics · Content",
     oneLiner:
-      "An Independence Day traffic analysis across 5 Indian metros that fed a founder-brand LinkedIn post.",
+      "Traffic analysis across 5 Indian metros that fed a founder-brand LinkedIn post.",
     role: "Product Intern",
     company: "MoveInSync",
     timeline: "Aug 2024",
@@ -131,6 +134,23 @@ export const workCards: WorkCard[] = [
     status: "live",
     featured: true,
     order: 6,
+  },
+  {
+    slug: "ai-call-analysis-pipeline",
+    title: "AI Call Analysis Pipeline",
+    eyebrow: "Internal AI tooling",
+    oneLiner:
+      "Call recordings become coaching scores and Radar follow-ups, every night.",
+    role: "Product Manager",
+    company: "BondScanner",
+    timeline: "Mar 2026 →",
+    spineColor: "bg-[#182F8C]",
+    spineHex: "#182F8C",
+    coverImage: "/images/work/ai-call-analysis-pipeline/cover.webp",
+    leanDeg: -1,
+    status: "live",
+    featured: true,
+    order: 7,
   },
 ];
 
