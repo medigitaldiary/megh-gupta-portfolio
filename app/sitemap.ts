@@ -9,12 +9,20 @@ const LOCK_WORK = true;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const workEntries: MetadataRoute.Sitemap = getAllWorkCards().map((c) => ({
-    url: `${SITE}/work/${c.slug}`,
-    lastModified: now,
-    changeFrequency: "monthly",
-    priority: 0.6,
-  }));
+  const workEntries: MetadataRoute.Sitemap = [
+    {
+      url: `${SITE}/work`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    ...getAllWorkCards().map((c) => ({
+      url: `${SITE}/work/${c.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+  ];
 
   return [
     {

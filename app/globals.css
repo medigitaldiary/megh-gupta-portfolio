@@ -207,15 +207,6 @@ footer a:hover {
   text-underline-offset: 4px;
 }
 
-/* Shelf wall-shadow — books on the bookshelf fold carry a soft
-   lilac inner glow so the "lift" moment reads as a lavender flare. */
-[data-shelf-book] {
-  box-shadow:
-    0 14px 22px -14px rgba(31, 59, 46, 0.4),
-    0 2px 4px -2px rgba(31, 59, 46, 0.2),
-    0 0 36px -14px rgba(203, 179, 232, 0.6);
-}
-
 /* Shelf preview card — cream swapped for a lilac-leaning cream
    with a lilac rim and thin lilac top border. !important is
    required because the host rule uses Tailwind's arbitrary-value
