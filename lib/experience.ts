@@ -19,8 +19,10 @@ export type ExperienceProduct = {
   // Tailwind bg class to sit behind a transparent-mark logo (e.g. "bg-fg").
   logoBg?: string;
   current?: boolean;
-  // One-line summary shown as a tooltip on hover of the timeline chip.
+  // One-line summary kept for the expanded detail.
   summary?: string;
+  // Short proof shown on the timeline card itself. Always visible.
+  metric?: string;
   // Rich content for the list-view expand (mirrors ExperienceEntry).
   role?: string;
   headline?: string;
@@ -44,8 +46,10 @@ export type ExperienceEntry = {
   products?: ExperienceProduct[];
   current?: boolean;
   order?: number;
-  // One-line summary shown as a tooltip on hover of the timeline chip.
+  // One-line summary kept for the expanded detail.
   summary?: string;
+  // Short proof shown on the timeline card itself. Always visible.
+  metric?: string;
   // Rich content for the list-view expand.
   headline?: string;
   roleChips?: string[];
@@ -78,6 +82,7 @@ export const experienceEntries: ExperienceEntry[] = [
         role: "Platform Product Manager",
         summary:
           "Platform & Retention. GIFT City NRI FDs, Flexi Invoice Discounting (~₹50Cr AUM), Ultra web app.",
+        metric: "~₹50Cr AUM",
         roleChips: ["Platform PM", "Retention", "0→1"],
         narrative: [
           "My first PM role. Owned Platform & Retention for Ultra, Tap's alternative-investments app.",
@@ -105,6 +110,7 @@ export const experienceEntries: ExperienceEntry[] = [
         role: "Founding Product Manager",
         summary:
           "0→1 founding PM. Onboarding in 2 months, SEO engine (~2× organic clicks), AI ops tools.",
+        metric: "~2× organic clicks",
         roleChips: ["0→1 builder", "Growth PM", "AI/Product Systems"],
         narrative: [
           "Founding PM. There was no product yet. Just a freshly acquired SEBI license, a 2-month deadline, and a bet that India's bond market could be dragged out of the offline HNI world and made retail-friendly. I was one of the three PMs building it.",
@@ -132,6 +138,7 @@ export const experienceEntries: ExperienceEntry[] = [
     tagline: "",
     summary:
       "Pricing strategies for premium features + ETS dashboard for transport teams.",
+    metric: "50+ clients",
     roleChips: ["Product Intern", "Pricing", "Revenue"],
     narrative: [
       "Employee transportation SaaS - 300k+ commutes daily across 200+ enterprises.",
