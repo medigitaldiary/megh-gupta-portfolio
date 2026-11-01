@@ -1,17 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { SectionHeader } from "@/components/section-header";
 import {
   durationLabel,
   type ExperienceEntry,
-  endAsDecimalYear,
+  type ExperienceProduct,
   formatDateRange,
   getAllExperience,
   toDecimalYear,
 } from "@/lib/experience";
+
+const hand = { fontFamily: "var(--font-hand), cursive" } as const;
 
 type View = "timeline" | "list";
 
@@ -21,14 +23,12 @@ export function Experience() {
 
   return (
     <section id="experience" className="px-6 py-24 md:px-8 md:py-32">
+      {/* Fold 2: trajectory — where has this person been? */}
       <div className="mx-auto max-w-5xl">
         <div className="mb-10 flex flex-col gap-6 md:mb-14 md:flex-row md:items-end md:justify-between">
           <SectionHeader eyebrow="Experience" title="Where I've been." />
           <div className="flex items-center gap-3 md:mb-2">
-            <span
-              className="text-lg leading-none text-accent"
-              style={{ fontFamily: "var(--font-hand), cursive" }}
-            >
+            <span className="text-lg leading-none text-accent" style={hand}>
               try this
             </span>
             <span aria-hidden="true" className="text-accent">
@@ -143,6 +143,9 @@ function ListRow({
             <CompanyName entry={entry} />
             <span className="text-sm text-fg-muted">{entry.role}</span>
           </div>
+          <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-fg-subtle sm:hidden">
+            {formatDateRange(entry)}
+          </p>
         </div>
 
         <div className="hidden shrink-0 font-mono text-xs uppercase tracking-wider text-fg-subtle sm:block">
@@ -210,25 +213,27 @@ function LogoTile({
         : { box: "h-11 w-11", text: "text-lg", px: 44, pad: "p-1" };
   const bgClass = logoBg ?? "bg-bg-elevated";
   return (
-    <div
-      className={`relative ${dims.box} shrink-0 overflow-hidden rounded-lg border border-border ${bgClass}`}
-    >
-      {logo ? (
-        <Image
-          src={logo}
-          alt=""
-          width={dims.px}
-          height={dims.px}
-          className={`h-full w-full ${logoBg ? `${dims.pad} object-contain` : "object-cover"}`}
-        />
-      ) : (
-        <span
-          aria-hidden="true"
-          className={`flex h-full w-full items-center justify-center font-serif ${dims.text} ${logoBg ? "text-accent-fg" : "text-fg-subtle"}`}
-        >
-          {fallback.slice(0, 1).toUpperCase()}
-        </span>
-      )}
+    <div className={`relative ${dims.box} shrink-0`}>
+      <div
+        className={`h-full w-full overflow-hidden rounded-lg border border-border ${bgClass}`}
+      >
+        {logo ? (
+          <Image
+            src={logo}
+            alt=""
+            width={dims.px}
+            height={dims.px}
+            className={`h-full w-full ${logoBg ? `${dims.pad} object-contain` : "object-cover"}`}
+          />
+        ) : (
+          <span
+            aria-hidden="true"
+            className={`flex h-full w-full items-center justify-center font-serif ${dims.text} ${logoBg ? "text-accent-fg" : "text-fg-subtle"}`}
+          >
+            {fallback.slice(0, 1).toUpperCase()}
+          </span>
+        )}
+      </div>
       {current && (
         <span
           aria-hidden="true"
@@ -460,81 +465,169 @@ function TapInvestExpanded({ entry }: { entry: ExperienceEntry }) {
 
 // ─────────────────────────────────────────────────────────────
 // Timeline view
+// Phone: a vertical spine, newest first. Desktop keeps the original
+// horizontal band — chips on a year axis, detail on hover.
 // ─────────────────────────────────────────────────────────────
 
 type TimelineItem = {
   key: string;
   label: string;
-  role?: string;
+  role: string;
   url?: string;
-  current?: boolean;
+  current: boolean;
   logo?: string;
   logoBg?: string;
+  metric?: string;
   summary?: string;
+  employer?: string;
   start: number;
   end: number;
+  startYm: string;
+  endYm: string | "present";
+  headline?: string;
+  roleChips?: string[];
+  narrative?: string[];
+  achievements?: ExperienceEntry["achievements"];
+  closer?: string;
+  linkOut?: ExperienceEntry["linkOut"];
 };
 
 function expandToItems(entries: ExperienceEntry[]): TimelineItem[] {
   const items: TimelineItem[] = [];
   for (const entry of entries) {
-    const dated = entry.products?.filter((p) => p.start && p.end);
-    if (dated && dated.length > 0) {
-      // Split the parent employer into one chip per dated product.
-      for (const p of dated) {
-        items.push({
-          key: `${entry.slug}-${p.name}`,
-          label: p.name,
-          role: p.role ?? entry.role,
-          url: p.url,
-          current: p.current ?? p.end === "present",
-          logo: p.logo ?? entry.logo,
-          logoBg: p.logo ? p.logoBg : entry.logoBg,
-          summary: p.summary ?? entry.summary,
-          start: toDecimalYear(p.start as string),
-          end: toDecimalYear(p.end as string),
-        });
-      }
+    const dated = (entry.products ?? []).filter(
+      (
+        product,
+      ): product is ExperienceProduct & {
+        start: string;
+        end: string | "present";
+      } => Boolean(product.start && product.end),
+    );
+    if (dated.length > 0) {
+      for (const product of dated) items.push(toTimelineItem(entry, product));
     } else {
-      items.push({
-        key: entry.slug,
-        label: entry.company,
-        role: entry.role,
-        url: entry.url,
-        current: entry.current ?? entry.end === "present",
-        logo: entry.logo,
-        logoBg: entry.logoBg,
-        summary: entry.summary,
-        start: toDecimalYear(entry.start),
-        end: endAsDecimalYear(entry),
-      });
+      items.push(toTimelineItem(entry));
     }
   }
   return items;
 }
 
+function toTimelineItem(
+  entry: ExperienceEntry,
+  product?: ExperienceProduct & { start: string; end: string | "present" },
+): TimelineItem {
+  const startYm = product?.start ?? entry.start;
+  const endYm = product?.end ?? entry.end;
+  return {
+    key: product ? `${entry.slug}-${product.name}` : entry.slug,
+    label: product?.name ?? entry.company,
+    role: product?.role ?? entry.role,
+    url: product?.url ?? entry.url,
+    current: product
+      ? (product.current ?? endYm === "present")
+      : (entry.current ?? endYm === "present"),
+    logo: product?.logo ?? entry.logo,
+    logoBg: product?.logo ? product.logoBg : entry.logoBg,
+    metric: product?.metric ?? entry.metric,
+    summary: product?.summary ?? entry.summary,
+    employer: product ? entry.company : undefined,
+    start: toDecimalYear(startYm),
+    end: toDecimalYear(endYm),
+    startYm,
+    endYm,
+    headline: product?.headline ?? entry.headline,
+    roleChips: product?.roleChips ?? entry.roleChips,
+    narrative: product?.narrative ?? entry.narrative,
+    achievements: product?.achievements ?? entry.achievements,
+    closer: product?.closer ?? entry.closer,
+    linkOut: product?.linkOut ?? entry.linkOut,
+  };
+}
+
 function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
   const items = expandToItems(entries);
+  const [openKey, setOpenKey] = useState<string | null>(null);
+  const toggle = (key: string) =>
+    setOpenKey((current) => (current === key ? null : key));
+  const newestFirst = [...items].sort((a, b) => b.start - a.start);
 
+  return (
+    <div>
+      <VerticalTimeline
+        items={newestFirst}
+        openKey={openKey}
+        onToggle={toggle}
+      />
+      {openKey === null && (
+        <p
+          className="mt-6 text-center text-sm text-fg-subtle lg:hidden"
+          style={hand}
+        >
+          open a card for the detail
+        </p>
+      )}
+      <DesktopTimeline items={items} />
+    </div>
+  );
+}
+
+function VerticalTimeline({
+  items,
+  openKey,
+  onToggle,
+}: {
+  items: TimelineItem[];
+  openKey: string | null;
+  onToggle: (key: string) => void;
+}) {
+  return (
+    <ol
+      aria-label="Career timeline"
+      className="relative space-y-4 border-l border-border py-1 pl-5 lg:hidden"
+    >
+      {items.map((item) => {
+        const open = openKey === item.key;
+        const panelId = `tl-${item.key}-stack`;
+        return (
+          <li key={item.key} className="relative">
+            <span
+              aria-hidden="true"
+              className={`absolute top-4 h-2.5 w-2.5 rounded-full ring-4 ring-bg ${
+                item.current ? "bg-accent" : "bg-border"
+              }`}
+              style={{ left: "calc(-1.25rem - 5px)" }}
+            />
+            <TimelineCard
+              item={item}
+              open={open}
+              onToggle={() => onToggle(item.key)}
+              panelId={panelId}
+            />
+            {open && <TimelineDetail item={item} id={panelId} />}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+function DesktopTimeline({ items }: { items: TimelineItem[] }) {
   const now = new Date();
   const nowYear = now.getFullYear() + now.getMonth() / 12;
-  const earliest = Math.floor(Math.min(...items.map((i) => i.start)));
-  // Right edge = end of currentYear + 1 (today: 2027). "now" lands at
-  // ~92% of the band and the far-right year label anchors flush with
-  // the right edge via the -translate-x-full on the last marker.
+  const earliest = Math.floor(Math.min(...items.map((item) => item.start)));
+  // Right edge = end of currentYear + 1. "now" lands near the right,
+  // and the last year label anchors flush via -translate-x-full.
   const latest = now.getFullYear() + 1;
   const span = latest - earliest;
   const yearMarkers: number[] = [];
-  for (let y = earliest; y <= latest; y++) yearMarkers.push(y);
+  for (let year = earliest; year <= latest; year++) yearMarkers.push(year);
 
-  const pct = (v: number) => ((v - earliest) / span) * 100;
+  const pct = (value: number) => ((value - earliest) / span) * 100;
   const nowPct = pct(nowYear);
 
-  // Sort ascending; greedy lane packing prevents overlaps.
   const ascending = [...items].sort((a, b) => a.start - b.start);
-  type Placed = { item: TimelineItem; lane: number };
   const laneEnds: number[] = [];
-  const placed: Placed[] = ascending.map((item) => {
+  const placed = ascending.map((item) => {
     let lane = laneEnds.findIndex((end) => end <= item.start - 0.2);
     if (lane === -1) {
       lane = laneEnds.length;
@@ -545,18 +638,16 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
     return { item, lane };
   });
 
-  const numLanes = Math.max(1, laneEnds.length);
-  const laneHeight = 68; // px
-  const bandHeight = numLanes * laneHeight;
+  const laneHeight = 68;
+  const bandHeight = Math.max(1, laneEnds.length) * laneHeight;
 
   return (
-    <div>
+    <div className="hidden lg:block">
       <div className="overflow-x-auto pb-2">
         <div
           className="relative"
           style={{ minWidth: 780, height: bandHeight + 44 }}
         >
-          {/* cream band */}
           <div
             className="absolute inset-x-0 top-0 rounded-2xl"
             style={{
@@ -565,8 +656,6 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
                 "linear-gradient(180deg, var(--venn-cream) 0%, rgba(253,247,238,0.6) 100%)",
             }}
           />
-
-          {/* now marker */}
           <div
             className="pointer-events-none absolute top-0 flex flex-col items-center"
             style={{
@@ -575,10 +664,7 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
               height: bandHeight,
             }}
           >
-            <span
-              className="mb-1 text-sm text-accent"
-              style={{ fontFamily: "var(--font-hand), cursive" }}
-            >
+            <span className="mb-1 text-sm text-accent" style={hand}>
               now
             </span>
             <div
@@ -590,8 +676,6 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
               }}
             />
           </div>
-
-          {/* chips */}
           {placed.map(({ item, lane }) => {
             const left = pct(item.start);
             const width = Math.max(pct(item.end) - left, 8);
@@ -605,20 +689,16 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
               />
             );
           })}
-
-          {/* year labels — absolute-positioned at their real year offset,
-              so a 3-label / 3-year timeline reads 2024 @ 0, 2025 @ 33,
-              2026 @ 67 (not evenly distributed 0/50/100). */}
           <div
             className="absolute inset-x-0 h-4 font-mono text-xs text-fg-subtle"
             style={{ top: bandHeight + 12 }}
           >
-            {yearMarkers.map((y, i) => {
-              const isFirst = i === 0;
-              const isLast = i === yearMarkers.length - 1;
+            {yearMarkers.map((year, index) => {
+              const isFirst = index === 0;
+              const isLast = index === yearMarkers.length - 1;
               return (
                 <span
-                  key={y}
+                  key={year}
                   className={`absolute ${
                     isFirst
                       ? "translate-x-0"
@@ -626,19 +706,18 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
                         ? "-translate-x-full"
                         : "-translate-x-1/2"
                   }`}
-                  style={{ left: `${pct(y)}%` }}
+                  style={{ left: `${pct(year)}%` }}
                 >
-                  {y}
+                  {year}
                 </span>
               );
             })}
           </div>
         </div>
       </div>
-
       <p
         className="mt-6 text-center text-sm text-fg-subtle md:text-base"
-        style={{ fontFamily: "var(--font-hand), cursive" }}
+        style={hand}
       >
         hover any card to see what I built there
       </p>
@@ -658,7 +737,7 @@ function TimelineChip({
   topPx: number;
 }) {
   const tipId = `tl-tip-${item.key}`;
-  const chipInner = (
+  const chip = (
     <div className="flex h-full items-center gap-2 rounded-xl border border-border bg-bg-elevated px-3 py-2 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:border-accent hover:shadow-md">
       <LogoTile
         logo={item.logo}
@@ -675,42 +754,36 @@ function TimelineChip({
       </div>
     </div>
   );
-  const style = {
-    left: `${leftPct}%`,
-    width: `max(180px, ${widthPct}%)`,
-    top: `${topPx}px`,
-    height: "52px",
-  } as const;
 
   return (
-    <ChipWithTooltip tipId={tipId} item={item} style={style}>
+    <ChipWithTooltip
+      tipId={tipId}
+      item={item}
+      style={{
+        left: `${leftPct}%`,
+        width: `max(180px, ${widthPct}%)`,
+        top: `${topPx}px`,
+        height: "52px",
+      }}
+    >
       {item.url ? (
         <a
           href={item.url}
           target="_blank"
           rel="noopener noreferrer"
           aria-describedby={item.summary ? tipId : undefined}
-          className="block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           aria-label={item.role ? `${item.label} - ${item.role}` : item.label}
+          className="block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
         >
-          {chipInner}
+          {chip}
         </a>
       ) : (
-        chipInner
+        chip
       )}
     </ChipWithTooltip>
   );
 }
 
-// Chip wrapper + portal-rendered tooltip.
-//
-// The timeline band sits inside an `overflow-x-auto` scroller to allow
-// horizontal scroll on narrow screens; that scroller clips absolute
-// children on BOTH axes (an unavoidable CSS consequence of setting
-// overflow on either axis), which is why the old inline tooltip was
-// disappearing behind the folder. Portal-ing the tooltip to document.body
-// escapes the clip entirely. Position is measured from the chip's
-// bounding rect on each show + on scroll/resize while visible.
 function ChipWithTooltip({
   tipId,
   item,
@@ -719,8 +792,13 @@ function ChipWithTooltip({
 }: {
   tipId: string;
   item: TimelineItem;
-  style: React.CSSProperties;
-  children: React.ReactNode;
+  style: {
+    left: string;
+    width: string;
+    top: string;
+    height: string;
+  };
+  children: ReactNode;
 }) {
   const chipRef = useRef<HTMLDivElement | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -730,20 +808,18 @@ function ChipWithTooltip({
   useEffect(() => setMounted(true), []);
 
   const show = () => {
-    const r = chipRef.current?.getBoundingClientRect();
-    if (!r) return;
-    setRect(r);
+    const next = chipRef.current?.getBoundingClientRect();
+    if (!next) return;
+    setRect(next);
     setOpen(true);
   };
   const hide = () => setOpen(false);
 
-  // Keep the tooltip glued to the chip while it's open (user may scroll
-  // or resize mid-hover).
   useEffect(() => {
     if (!open) return;
     const update = () => {
-      const r = chipRef.current?.getBoundingClientRect();
-      if (r) setRect(r);
+      const next = chipRef.current?.getBoundingClientRect();
+      if (next) setRect(next);
     };
     window.addEventListener("scroll", update, { capture: true, passive: true });
     window.addEventListener("resize", update);
@@ -754,10 +830,7 @@ function ChipWithTooltip({
   }, [open]);
 
   return (
-    // The wrapper div only exists to catch hover/focus for tooltip
-    // positioning; the interactive child (the <a>) carries the semantic
-    // role.
-    // biome-ignore lint/a11y/noStaticElementInteractions: wrapper is non-interactive by design
+    // biome-ignore lint/a11y/noStaticElementInteractions: hover target for the tooltip; the link inside is the control
     <div
       ref={chipRef}
       className="absolute"
@@ -787,24 +860,19 @@ function TimelineTooltip({
   item: TimelineItem;
   chipRect: DOMRect;
 }) {
-  // Tooltip visual size and gap from the chip. Width stays fixed so copy
-  // wraps consistently; height is content-driven.
-  const TIP_WIDTH = 280;
-  const GAP = 12;
-  const EDGE_PAD = 12;
-
-  const chipCenterX = chipRect.left + chipRect.width / 2;
-  const desiredLeft = chipCenterX - TIP_WIDTH / 2;
-  const maxLeft = window.innerWidth - TIP_WIDTH - EDGE_PAD;
-  const left = Math.max(EDGE_PAD, Math.min(desiredLeft, maxLeft));
-  // Notch stays under the chip even if the tooltip shifts to avoid an
-  // edge clip; clamp inside the tooltip body so it never pokes outside.
-  const notchLeftWithinTip = Math.max(
-    16,
-    Math.min(chipCenterX - left, TIP_WIDTH - 16),
+  const tipWidth = 280;
+  const gap = 12;
+  const edge = 12;
+  const center = chipRect.left + chipRect.width / 2;
+  const left = Math.max(
+    edge,
+    Math.min(center - tipWidth / 2, window.innerWidth - tipWidth - edge),
   );
-
-  const dateRange = formatTimelineRange(item);
+  const notchLeft = Math.max(16, Math.min(center - left, tipWidth - 16));
+  const dateRange = formatDateRange({
+    start: item.startYm,
+    end: item.endYm,
+  });
 
   return (
     <div
@@ -813,8 +881,8 @@ function TimelineTooltip({
       className="pointer-events-none fixed z-[70] motion-reduce:transition-none"
       style={{
         left,
-        top: chipRect.top - GAP,
-        width: TIP_WIDTH,
+        top: chipRect.top - gap,
+        width: tipWidth,
         transform: "translateY(-100%)",
         animation: "tl-tip-in 160ms ease-out both",
       }}
@@ -829,19 +897,10 @@ function TimelineTooltip({
           </p>
         </div>
       </div>
-
-      {/* Notch — a 10x10 rotated square clipped to its upper half, so it
-          reads as a downward-pointing arrow coming out of the tooltip's
-          bottom edge and aligned with the chip center. */}
       <span
         aria-hidden="true"
-        className="absolute block h-[10px] w-[10px] rotate-45 border-slate-200/70 border-right border-bottom bg-white/95"
-        style={{
-          left: notchLeftWithinTip - 5,
-          bottom: -5,
-          borderRightWidth: 1,
-          borderBottomWidth: 1,
-        }}
+        className="absolute block h-[10px] w-[10px] rotate-45 border-slate-200/70 border-r border-b bg-white/95"
+        style={{ left: notchLeft - 5, bottom: -5 }}
       />
       <style>{`
         @keyframes tl-tip-in {
@@ -856,21 +915,103 @@ function TimelineTooltip({
   );
 }
 
-// Format a TimelineItem's decimal-year start/end into a readable range
-// like "Jun 2024 – Dec 2024" or "Jan 2026 – Present" (for the current
-// entry). Separate from the lib's formatDateRange because that one
-// takes string YYYY-MM inputs and we work in decimal-year here.
-function formatTimelineRange(item: TimelineItem): string {
-  const start = decimalYearToMonthYear(item.start);
-  const end = item.current ? "Present" : decimalYearToMonthYear(item.end);
-  return `${start} – ${end}`;
+function TimelineCard({
+  item,
+  open,
+  onToggle,
+  panelId,
+}: {
+  item: TimelineItem;
+  open: boolean;
+  onToggle: () => void;
+  panelId: string;
+}) {
+  const dates = formatDateRange({ start: item.startYm, end: item.endYm });
+  return (
+    <button
+      type="button"
+      aria-expanded={open}
+      aria-controls={panelId}
+      aria-label={`${item.label}, ${item.role}, ${dates}${
+        item.metric ? `, ${item.metric}` : ""
+      }`}
+      onClick={onToggle}
+      className={`flex w-full flex-col gap-1.5 rounded-xl border bg-bg-elevated px-3 py-3 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 motion-reduce:transition-none ${
+        open ? "border-accent" : "border-border hover:border-fg/30"
+      }`}
+    >
+      <div className="flex w-full min-w-0 shrink-0 items-center gap-2">
+        <LogoTile
+          logo={item.logo}
+          logoBg={item.logoBg}
+          fallback={item.label}
+          current={item.current}
+          size="sm"
+        />
+        <p className="truncate text-sm font-semibold text-fg">{item.label}</p>
+        <span
+          aria-hidden="true"
+          className={`ml-auto shrink-0 font-mono text-sm text-fg-subtle transition-transform duration-200 motion-reduce:transition-none ${
+            open ? "rotate-90" : ""
+          }`}
+        >
+          ›
+        </span>
+      </div>
+      <p className="shrink-0 text-xs leading-snug text-fg-muted">{item.role}</p>
+      <p className="shrink-0 font-mono text-[11px] text-fg-subtle">
+        {item.current && (
+          <span className="mr-1 text-accent" style={hand}>
+            now
+          </span>
+        )}
+        {dates}
+        {item.employer ? ` · ${item.employer}` : null}
+      </p>
+      {item.metric && (
+        <p className="shrink-0">
+          <span className="bg-highlight/80 box-decoration-clone px-1 text-xs font-medium leading-relaxed text-fg">
+            {item.metric}
+          </span>
+        </p>
+      )}
+    </button>
+  );
 }
 
-function decimalYearToMonthYear(decimal: number): string {
-  const year = Math.floor(decimal);
-  const monthIdx = Math.min(11, Math.max(0, Math.floor((decimal - year) * 12)));
-  const month = new Date(year, monthIdx).toLocaleString("en-US", {
-    month: "short",
-  });
-  return `${month} ${year}`;
+function TimelineDetail({ item, id }: { item: TimelineItem; id: string }) {
+  const company = item.employer
+    ? `${item.label} · ${item.employer}`
+    : item.label;
+  return (
+    <div id={id} className="mt-4">
+      <EntryDetail
+        role={item.role}
+        company={company}
+        logo={item.logo}
+        logoBg={item.logoBg}
+        headline={item.headline}
+        roleChips={item.roleChips}
+        narrative={item.narrative}
+        achievements={item.achievements}
+        closer={item.closer}
+        linkOut={item.linkOut}
+        start={item.startYm}
+        end={item.endYm}
+        current={item.current}
+      />
+      {item.url && !item.linkOut && (
+        <p className="mt-3 text-sm">
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
+          >
+            {item.label} ↗
+          </a>
+        </p>
+      )}
+    </div>
+  );
 }
