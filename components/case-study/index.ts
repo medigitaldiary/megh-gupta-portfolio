@@ -8,6 +8,7 @@
 // Order below matches the module layout:
 //   primitives / patterns / layouts / sub-component aliases.
 
+export { MarkdownH2 as h2 } from "./layouts/markdown-h2";
 export type { SectionVariant } from "./layouts/section";
 export { Section } from "./layouts/section";
 // One-off: case-study-specific wrapper around <Pipeline>. Kept in the

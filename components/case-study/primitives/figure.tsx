@@ -3,10 +3,10 @@ import type { ReactNode } from "react";
 import { Eyebrow } from "./eyebrow";
 
 // Figure — image, SVG, or diagram with a caption. Variants:
-//   prose     — fits the max-w-2xl prose column (default).
-//   wide      — same column (CLAUDE.md locks max-w-2xl), but breaks the
-//               prose rhythm — used for a diagram that is the point of
-//               the section.
+//   prose     — fits the case study prose column (default).
+//   wide      — same column, but breaks the prose rhythm. Used for a
+//               diagram that is the point of the section. Stays inside
+//               the column so it does not slide under the sticky index.
 //   svg       — accepts inline SVG children; no next/image.
 //   annotated — image with positioned accent-circled numbers overlaid
 //               and a numbered legend below the caption.

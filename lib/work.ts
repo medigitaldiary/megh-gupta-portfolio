@@ -167,3 +167,16 @@ export function getShelfWorkCards(n = 5): WorkCard[] {
 export function getWorkCardBySlug(slug: string): WorkCard | undefined {
   return workCards.find((c) => c.slug === slug);
 }
+
+/** The next live case studies after this one. Wraps, so the last study still offers two. */
+export function getNextWorkCards(slug: string, count = 2): WorkCard[] {
+  const cards = getAllWorkCards().filter((card) => card.status === "live");
+  const index = cards.findIndex((card) => card.slug === slug);
+  if (index === -1) return [];
+  const next: WorkCard[] = [];
+  for (let step = 1; step < cards.length && next.length < count; step++) {
+    const card = cards[(index + step) % cards.length];
+    if (card) next.push(card);
+  }
+  return next;
+}
