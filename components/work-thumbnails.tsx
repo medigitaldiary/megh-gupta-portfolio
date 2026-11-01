@@ -8,7 +8,7 @@ import type { WorkCard } from "@/lib/work";
 
 // Fold 3 — case-study thumbnails.
 // Same hinge as ramakrushna.xyz: perspective 1500, the front face
-// rests at rotateY(-1) and springs to -35° off its left edge. The
+// rests flat and springs to rotateY(-35) off its left edge. The
 // "Click to read" card behind it tilts 4°, in that product's color.
 // A copy of the card sits 1px back and peeks out. Touch does not
 // hinge. Reduced motion stays closed.
@@ -154,7 +154,10 @@ function WorkCarousel({ cards }: { cards: WorkCard[] }) {
   const onScrollEnd = () => {
     const viewport = viewportRef.current;
     if (!viewport || frameRef.current != null) return;
-    indexRef.current = nearestStop(carouselStops(viewport), viewport.scrollLeft);
+    indexRef.current = nearestStop(
+      carouselStops(viewport),
+      viewport.scrollLeft,
+    );
   };
 
   useEffect(() => {
@@ -268,10 +271,10 @@ function Thumbnail({ card }: { card: WorkCard }) {
           </span>
         </motion.div>
         <motion.div
-          className="relative shadow-[0_18px_32px_-22px_rgba(31,59,46,0.45)]"
+          className="relative rounded-[1.75rem] shadow-[0_18px_32px_-22px_rgba(31,59,46,0.28)]"
           style={{ transformOrigin: "left bottom" }}
           initial={false}
-          animate={{ rotateY: open ? -35 : -1, z: 1 }}
+          animate={{ rotateY: open ? -35 : 0, z: 1 }}
           transition={transition}
         >
           <CardFace card={card} />
@@ -290,7 +293,7 @@ function CardFace({
 }) {
   const mark = productMark(card.company);
   return (
-    <div className="flex h-full flex-col rounded-[1.75rem] border border-border bg-bg-elevated p-5">
+    <div className="flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-border bg-bg-elevated p-5">
       <div className="flex items-start justify-between gap-3">
         <p className="font-mono text-xs uppercase tracking-[0.16em] text-fg-subtle">
           {card.eyebrow}
@@ -311,7 +314,7 @@ function CardFace({
       <p className="mt-2 line-clamp-2 h-10 text-sm leading-5 text-fg-muted">
         {card.oneLiner}
       </p>
-      <div className="relative mt-5 aspect-[4/3] overflow-hidden rounded-2xl bg-bg [clip-path:inset(0_round_1rem)]">
+      <div className="relative mt-5 aspect-[4/3] overflow-hidden rounded-2xl bg-bg-elevated [clip-path:inset(0_round_1rem)]">
         <CoverMedia
           poster={card.coverImage}
           video={still ? undefined : card.coverVideo}
@@ -362,7 +365,7 @@ function CoverMedia({
         playsInline
         preload="none"
         poster={poster}
-        className="absolute inset-0 h-full w-full object-cover [clip-path:inset(0_round_1rem)]"
+        className="absolute inset-0 h-full w-full object-cover"
       >
         <source src={video} type="video/mp4" />
       </video>
@@ -378,7 +381,7 @@ function CoverMedia({
       fill
       sizes={sizes}
       unoptimized={isGif}
-      className="object-cover [clip-path:inset(0_round_1rem)]"
+      className="object-cover"
     />
   );
 }
