@@ -52,7 +52,7 @@
   --font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   --font-display: var(--font-sans);
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-hand: var(--font-kalam), cursive;
+  --font-hand: "Kalam", "Kalam Fallback", cursive;
 
   /* font.weight */
   --weight-regular: 400;
@@ -68,17 +68,17 @@
   --text-lead: 1.125rem;
   --text-title-sm: 1.25rem;
   --text-title: 1.5rem;
-  --text-h3: 1.75rem;
-  --text-h2-sm: 1.875rem;
-  --text-h2: 2.25rem;
-  --text-h1: 3rem;
-  --text-display: 4rem;
+  --text-head-xs: 1.75rem;
+  --text-head-sm: 1.875rem;
+  --text-head-md: 2.25rem;
+  --text-head-lg: 3rem;
+  --text-head-xl: 4rem;
 
   /* font.role */
-  --role-display: var(--text-h2);
-  --role-section: var(--text-h2-sm);
-  --role-article: var(--text-h3);
-  --role-contact: var(--text-h1);
+  --role-display: var(--text-head-md);
+  --role-section: var(--text-head-sm);
+  --role-article: var(--text-head-xs);
+  --role-contact: var(--text-head-lg);
 
   /* font.lineHeight */
   --leading-none: 1;
@@ -171,10 +171,10 @@
 
 @media (min-width: 48rem) {
   :root {
-    --role-display: var(--text-h1);
-    --role-section: var(--text-h1);
-    --role-article: var(--text-h2);
-    --role-contact: var(--text-display);
+    --role-display: var(--text-head-lg);
+    --role-section: var(--text-head-lg);
+    --role-article: var(--text-head-md);
+    --role-contact: var(--text-head-xl);
     --gutter: 2rem;
     --section-y: 8rem;
   }
@@ -196,7 +196,7 @@
 }
 
 /* Proposed mapping for the AI Call pipeline iframe (public/artifacts/ai-call-pipeline.html).
-   Applied inside the artifact, not here. success / warning wait on a Phase 3 decision. */
+   Applied inside the artifact, not here. --success and --warning are an approved exception and keep their values. */
 /*
 :root {
   --bg: var(--bg-elevated);
@@ -214,8 +214,8 @@
   --node-bg: var(--bg-elevated);
   --node-active-bg: color-mix(in srgb, var(--highlight) 22%, transparent);
   --node-dim: color-mix(in srgb, var(--fg) 4%, transparent);
-  --success: PENDING: Phase 3 decision;
-  --warning: PENDING: Phase 3 decision;
+  --success: #16a34a;
+  --warning: #d97706;
 }
 */
 

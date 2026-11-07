@@ -9,7 +9,7 @@
 1. **Only values found in Phase 1.** Each near-duplicate group collapses onto a value already in the code. The proposal creates names, not values.
 2. **Canonical value per group:** pick the value CLAUDE.md §3 already names; else the one with the most uses; else the one already on Tailwind's scale. The reason is stated in each group row.
 3. **Existing names stay.** `--bg`, `--fg`, `--accent` and the other `:root` variables become the semantic layer on top of a new primitive layer. Adopting the set needs no rename across the 235 utility uses that already reference them.
-4. **A value used once is not a token**, with three exceptions that a locked doc names: `--text-display` (CLAUDE.md §3 display size), `--container-prose` and `--container-rail` (CLAUDE.md §3 case-study shell). Single-use values elsewhere are folded into a neighbour or left as component-internal (§4).
+4. **A value used once is not a token**, with three exceptions that a locked doc names: `--text-head-xl` (the 64px CLAUDE.md §3 display size), `--container-prose` and `--container-rail` (CLAUDE.md §3 case-study shell). Single-use values elsewhere are folded into a neighbour or left as component-internal (§4).
 5. **"Edits"** = source locations that would need changing to adopt the token. A Tailwind default utility whose value already equals the token (e.g. `text-sm` for `--text-small`) counts as **0**, because registering the token under Tailwind's own theme name keeps the utility working. Arbitrary values, inline styles, CSS literals and JS constants count **1 each**.
 6. **Scopes:** `site` (every route), `lock` (`/unlock` only: the approved denied-red and dawn-sky exceptions), `island` (inside the AI Call iframe).
 
@@ -28,8 +28,8 @@
 | zIndex | 7 | 8 |
 | motion | 14 | 69 |
 | breakpoint | 6 | 7 |
-| island | 17 | 17 |
-| **Total** | **148** | **321** |
+| island | 17 | 15 |
+| **Total** | **148** | **319** |
 
 **21 of the 148 tokens change something a visitor would notice** (§3). Everything else is a rename or a refactor with identical output.
 
@@ -183,7 +183,7 @@ Every token, with what it replaces and how many places change. The same data is 
 | `--font-sans` | `var(--font-geist-sans), Arial, Helvetica, sans-serif` | (no change) | 0 |  | app/layout.tsx:12-16; app/globals.css:43,74 |
 | `--font-display` | `var(--font-sans)` | font-serif (resolves to Geist Sans) x14 | 14 |  | app/globals.css:42; 14 font-serif sites, see 01 §2.2a |
 | `--font-mono` | `var(--font-geist-mono), ui-monospace, monospace` | (no change) | 0 |  | app/layout.tsx:18-22; app/globals.css:44 |
-| `--font-hand` | `var(--font-kalam), cursive` | `style={{fontFamily: "var(--font-hand), cursive"}}` x3 sites | 3 | None. Requires renaming the next/font variable to --font-kalam (app/layout.tsx:27). | app/globals.css:45; experience.tsx:16; hero.tsx:56; backstage-pass.tsx:145 |
+| `--font-hand` | `"Kalam", "Kalam Fallback", cursive` | `style={{fontFamily: "var(--font-hand), cursive"}}` at experience.tsx:16 (one const, 5 uses), hero.tsx:56, backstage-pass.tsx:145 | 3 |  | design-system/patches/D5-font-hand-class.diff |
 
 ### 2.6 Font weights
 
@@ -206,20 +206,20 @@ Every token, with what it replaces and how many places change. The same data is 
 | `--text-lead` | `1.125rem` | text-lg x8 | 0 |  |  |
 | `--text-title-sm` | `1.25rem` | text-xl x4 | 0 |  |  |
 | `--text-title` | `1.5rem` | text-2xl x7 | 0 |  |  |
-| `--text-h3` | `1.75rem` | text-[1.75rem] x3 | 3 |  | app/work/[slug]/page.tsx:46; case-study/layouts/markdown-h2.tsx:23; case-study/layouts/section.tsx:55 |
-| `--text-h2-sm` | `1.875rem` | text-3xl x7 | 0 |  |  |
-| `--text-h2` | `2.25rem` | text-[2.25rem] x5 (identical to text-4xl); text-4xl x3; text-[2.5rem] 40px x1 (single use) | 6 | Experience role H3 at md+ drops from 40px to 36px. | see 01 §2.2b |
-| `--text-h1` | `3rem` | text-[3rem] x2 (identical to text-5xl); text-5xl x3; text-[3.25rem] 52px x1 (hero lg only) | 3 | Hero H1 at 1024px+ drops from 52px to 48px. **Approved by Megh.** | contact.tsx:12; hero.tsx:64 |
-| `--text-display` | `4rem` | text-[4rem] x1 | 1 |  | contact.tsx:12 |
+| `--text-head-xs` | `1.75rem` | text-[1.75rem] x3 | 3 |  | app/work/[slug]/page.tsx:46; case-study/layouts/markdown-h2.tsx:23; case-study/layouts/section.tsx:55 |
+| `--text-head-sm` | `1.875rem` | text-3xl x7 | 0 |  |  |
+| `--text-head-md` | `2.25rem` | text-[2.25rem] x5 (identical to text-4xl); text-4xl x3; text-[2.5rem] 40px x1 (single use) | 6 | Experience role H3 at md+ drops from 40px to 36px. | see 01 §2.2b |
+| `--text-head-lg` | `3rem` | text-[3rem] x2 (identical to text-5xl); text-5xl x3; text-[3.25rem] 52px x1 (hero lg only) | 3 | Hero H1 at 1024px+ drops from 52px to 48px. **Approved by Megh.** | contact.tsx:12; hero.tsx:64 |
+| `--text-head-xl` | `4rem` | text-[4rem] x1 | 1 |  | contact.tsx:12 |
 
 ### 2.8 Heading roles (responsive pairs)
 
 | Token | Value | Replaces (as built) | Edits | Visible change | Source |
 |---|---|---|---:|---|---|
-| `--role-display` | `var(--text-h2) → `md:` var(--text-h1)` | hero 36/48/52; case study 36/48 | 2 |  | hero.tsx:64; app/work/[slug]/page.tsx:105 |
-| `--role-section` | `var(--text-h2-sm) → `md:` var(--text-h1)` | (no change) | 1 |  | section-header.tsx:18 |
-| `--role-article` | `var(--text-h3) → `md:` var(--text-h2)` | (no change) | 3 |  | case-study/layouts/section.tsx:55; markdown-h2.tsx:23; app/work/[slug]/page.tsx:46 |
-| `--role-contact` | `var(--text-h1) → `md:` var(--text-display)` | (no change) | 1 |  | contact.tsx:12 |
+| `--role-display` | `var(--text-head-md) → `md:` var(--text-head-lg)` | hero 36/48/52; case study 36/48 | 2 |  | hero.tsx:64; app/work/[slug]/page.tsx:105 |
+| `--role-section` | `var(--text-head-sm) → `md:` var(--text-head-lg)` | (no change) | 1 |  | section-header.tsx:18 |
+| `--role-article` | `var(--text-head-xs) → `md:` var(--text-head-md)` | (no change) | 3 |  | case-study/layouts/section.tsx:55; markdown-h2.tsx:23; app/work/[slug]/page.tsx:46 |
+| `--role-contact` | `var(--text-head-lg) → `md:` var(--text-head-xl)` | (no change) | 1 |  | contact.tsx:12 |
 
 ### 2.9 Line heights
 
@@ -380,8 +380,8 @@ Every token, with what it replaces and how many places change. The same data is 
 | `--pipeline-node-bg` | `var(--bg-elevated)` | #ffffff | 1 |  | public/artifacts/ai-call-pipeline.html:10-28 |
 | `--pipeline-node-active-bg` | `color-mix(in srgb, var(--highlight) 22%, transparent)` | rgba(99,91,255,0.06) | 1 |  | public/artifacts/ai-call-pipeline.html:10-28 |
 | `--pipeline-node-dim` | `color-mix(in srgb, var(--fg) 4%, transparent)` | rgba(0,0,0,0.04) | 1 |  | public/artifacts/ai-call-pipeline.html:10-28 |
-| `--pipeline-success` | `PENDING: Phase 3 decision` | #16a34a | 1 |  | public/artifacts/ai-call-pipeline.html:10-28 |
-| `--pipeline-warning` | `PENDING: Phase 3 decision` | #d97706 | 1 |  | public/artifacts/ai-call-pipeline.html:10-28 |
+| `--pipeline-success` | `#16a34a` | (no change) | 0 |  | public/artifacts/ai-call-pipeline.html:25,22 (light); used in 36 rules, e.g. :275-276,347-349 |
+| `--pipeline-warning` | `#d97706` | (no change) | 0 |  | public/artifacts/ai-call-pipeline.html:25,22 (light); used in 36 rules, e.g. :275-276,347-349 |
 
 ---
 
@@ -399,8 +399,8 @@ Adopting the set is invisible **except** for these. Each one comes from folding 
 | V6 | `--ticket-stub` | Stub darkens by about 2% luminance. Check in Phase 4. |
 | V7 | `--text-micro` | Unlock labels move to 10px (from 9.6 and 10.4px); About tip kicker grows 0.7px; relock pill shrinks 0.9px. |
 | V8 | `--text-label` | 11px dates and stack pills grow to 12px. |
-| V9 | `--text-h2` | Experience role H3 at md+ drops from 40px to 36px. |
-| V10 | `--text-h1` | Hero H1 at 1024px+ drops from 52px to 48px. **Approved by Megh.** |
+| V9 | `--text-head-md` | Experience role H3 at md+ drops from 40px to 36px. |
+| V10 | `--text-head-lg` | Hero H1 at 1024px+ drops from 52px to 48px. **Approved by Megh.** |
 | V11 | `--leading-display` | Hero H1 lines sit about 1.4px closer at 48px. |
 | V12 | `--leading-body` | Case-study prose tightens 0.4px per line at 16px. Entry-detail body tightens from 1.7. |
 | V13 | `--tracking-label` | Small. 'View all' and card eyebrows widen from 0.16em. |
@@ -436,14 +436,16 @@ These values are real but belong to one component's own geometry or choreography
 
 ---
 
-## 5. Decisions carried into Phase 3
+## 5. Decisions
 
-| # | Decision | Options |
+Recorded in `02-decisions.md`, with the ready-to-review diffs in `patches/`.
+
+| # | Decision | Status |
 |---|---|---|
-| D1 | Approve, reject or keep-as-named each visible change (§3). V10 and V18 approved. | per row for the remaining 19 |
-| D2 | `@theme` type scale (`app/globals.css:47-58`, 0 uses, CLAUDE.md §3 nominal sizes) | (a) replace its values with §2.7 as-built sizes so `text-h1` etc. become real; (b) delete it; (c) keep CLAUDE.md sizes and migrate the code to them (large visual change) |
-| D3 | AI Call iframe status colours (`--success` green, `--warning` amber) | (a) approve a diagram-only status pair; (b) express status with pine shades + icons |
-| D4 | `font-serif` → `font-display` rename (14 edits) | (a) rename; (b) keep `font-serif` as the alias (0 edits, misleading name) |
-| D5 | `--font-hand` fix | Rename the next/font variable to `--font-kalam` (`app/layout.tsx:27`), then the token works and 3 inline styles go away |
+| D1 | Visible changes (§3) | **V10, V18 approved.** 19 rows still open. |
+| D2 | Unused `@theme` type scale, `app/globals.css:47-58` | **Approved: delete.** Docs keep the nominal sizes. Heading-size tokens here are renamed `--text-head-*` so no proposed token reuses a deleted name with a different value. |
+| D3 | AI Call iframe status colours | **Approved: scoped exception.** `--success` / `--warning` keep their values inside the iframe (§2.22). |
+| D4 | `font-serif` → `font-display` | **Approved.** Repo-wide sweep is 47 lines in 27 files, including 4 SVG `var(--font-serif)` references, not the 14 in-scope classes first counted. |
+| D5 | Kalam inline styles → `font-hand` class | **Approved in principle; diff ready for review.** No variable rename needed (verified in a production build). |
 
 Phase 4 still verifies the rendered values behind `--border-hairline`, `--scroll-offset` and the focus ring before any of these migrate.
