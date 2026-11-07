@@ -74,7 +74,7 @@ export function WorkThumbnails({
   );
 }
 
-const STEP_MS = 4500;
+const STEP_MS = 10000;
 
 // Stop positions: one card at a time, then a final stop that puts the
 // last card fully inside the viewport. The 3.5 peek means the last
