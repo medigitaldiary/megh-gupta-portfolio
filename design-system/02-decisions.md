@@ -4,11 +4,12 @@
 
 | # | Decision | Status | Artefact |
 |---|---|---|---|
-| D1 | Visible changes V1 to V21 | V10, V18 approved; 19 open | `02-tokens.md` §3 |
+| D1 | Visible changes V1 to V21 | V10, V18, V20 approved; 18 open | `02-tokens.md` §3 |
 | D2 | Delete the unused `@theme` type scale | Approved | `patches/D2-delete-theme-type-scale.diff` + CLAUDE.md text |
 | D3 | AI Call diagram status colours | Approved as a scoped exception | `tokens.json` → `island.ai-call-pipeline` + CLAUDE.md text |
 | D4 | Rename `font-serif` → `font-display` | Approved | `patches/D4-font-serif-to-font-display.diff` |
 | D5 | Kalam inline styles → `font-hand` class | Approved in principle, diff for review | `patches/D5-font-hand-class.diff` |
+| D6 | Work carousel advances every 10s | Approved (Megh) | `patches/D6-carousel-interval-10s.diff` |
 
 ---
 
@@ -101,12 +102,22 @@ The SVG attribute at `product-venn-travel.tsx:821` is untouched.
 
 ---
 
+## D6 · Work carousel advances every 10 seconds
+
+**Decision (Megh):** the Selected Work shelf moves to the next case study every **10s**, up from 4.5s. This is a new value, set by the owner, not one found in Phase 1.
+
+**Change:** `components/work-thumbnails.tsx:77`, `STEP_MS = 4500` → `10000`. One line. Pause on hover / focus, reduced-motion (no autoplay) and the arrows are unchanged.
+
+**Token impact:** V20's shared `--interval-rotate` is split into `--interval-chip` (4800ms, nav status chip, unchanged) and `--interval-carousel` (10000ms).
+
+**Carried into Phase 3 (unaffected by the new speed):** the shelf moves on its own indefinitely. It pauses on hover and keyboard focus, but has no visible pause control, so a touch user can't stop it. WCAG 2.2.2 (Pause, Stop, Hide) asks for one on any auto-moving content that lasts more than 5 seconds.
+
 ## How these ship
 
 - **CLAUDE.md §3: applied in this PR** (Megh's call). Adds the scoped colour exceptions table (Venn, denied red, dawn sky, diagram status) and the "nominal, not live tokens" note under Type scale. The note says the `@theme` entries are *scheduled* for removal; flip it to "removed" when the D2 code PR merges.
-- **Code diffs D2 + D4 + D5: held until Phase 4 has checked the rendered result** (Claude's call, delegated by Megh). Reasons:
+- **Code diffs D2 + D4 + D5 + D6: held until Phase 4 has checked the rendered result** (Claude's call, delegated by Megh). Reasons:
   1. D5 changes how Kalam is applied at seven spots. The build evidence says it renders the same, but it has not been seen on screen.
   2. D4 touches 27 files, including the Venn SVG font references. Phase 4 already screenshots the hero at 375px and 1440px, so it can compare before and after in the same pass.
   3. CLAUDE.md §13 wants code PRs off `dev`, and `dev` is behind `main` today. Waiting lets the code PR start from a synced `dev`.
 
-  Plan: Phase 4 renders `main`, then renders it again with the three patches applied. If both match (fonts, sizes, Venn labels), open one code PR into `dev` with the three diffs and the screenshots attached.
+  Plan: Phase 4 renders `main`, then renders it again with the patches applied. If both match (fonts, sizes, Venn labels), open one code PR into `dev` with the four diffs and the screenshots attached.

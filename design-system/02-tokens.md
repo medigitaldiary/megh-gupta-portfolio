@@ -26,10 +26,10 @@
 | shadow | 5 | 16 |
 | opacity | 2 | 1 |
 | zIndex | 7 | 8 |
-| motion | 14 | 69 |
+| motion | 15 | 69 |
 | breakpoint | 6 | 7 |
 | island | 17 | 15 |
-| **Total** | **148** | **319** |
+| **Total** | **149** | **319** |
 
 **21 of the 148 tokens change something a visitor would notice** (§3). Everything else is a rename or a refactor with identical output.
 
@@ -111,7 +111,7 @@ Each row lists every value found, with its use count. **Verdict** says whether t
 | Duration 500 | **500 (6)**, 520 (2), 550 (2), 580, 600 | Same | 500ms |
 | Duration 650 | **650 (2)**, 700 (2) | Same | 650ms (CSS, so it can be tokenised; the 700s are JS) |
 | Duration 900 | **900 (5)**, 1000, 1100 | Same | 900ms |
-| Rotation interval | 4500 (carousel), **4800 (nav chip)** | Same job | 4800ms (more read time) |
+| Rotation interval | 4500 (carousel), 4800 (nav chip) | **Split by Megh's decision:** carousel set to 10s, chip stays 4.8s | 10000ms / 4800ms |
 | Ease, standard | `(0.4,0,0.2,1)` ×5 spellings + Tailwind default | Identical | Tailwind default |
 | Ease, out | Tailwind `ease-out` (0,0,0.2,1) ×4; CSS keyword `ease-out` (0,0,0.58,1) ×7 | **Near**, different curves | Tailwind `(0,0,0.2,1)` |
 | Ease, emphasized | **(0.22,0.61,0.36,1) ×7**, (.2,.7,.3,1) ×2, (.22,.9,.3,1) ×1 | Same family | (0.22,0.61,0.36,1) |
@@ -322,7 +322,8 @@ Every token, with what it replaces and how many places change. The same data is 
 | `--duration-slower` | `500ms` | duration-500 x3; 500 CSS/JS x3; 520 x2; 550 x2; 580 x1; 600 x1 | 9 |  | product-venn-travel.tsx:391,466,85; app/unlock/backstage.css:47,225; product-venn.tsx:265 |
 | `--duration-emphasis` | `650ms` | 650 x2; 700 x2 | 4 |  | product-venn.tsx:270; product-venn-travel.tsx:483 |
 | `--duration-scene` | `900ms` | 900 x5; 1000 x1; 1100 x1 | 7 |  | product-venn-travel.tsx:426; hero-link.tsx:74 |
-| `--interval-rotate` | `4800ms` | 4800 nav chip; 4500 carousel | 2 | Carousel advances 0.3s slower. | work-thumbnails.tsx:77 |
+| `--interval-chip` | `4800ms` | CHIP_HOLD_MS 4800 | 1 |  | nav.tsx:50 |
+| `--interval-carousel` | `10000ms` | STEP_MS 4500 | 1 | Carousel advances every 10s instead of 4.5s. **Approved by Megh (set to 10s).** | work-thumbnails.tsx:77; design-system/patches/D6-carousel-interval-10s.diff |
 
 ### 2.19 Easing
 
@@ -410,12 +411,12 @@ Adopting the set is invisible **except** for these. Each one comes from folding 
 | V17 | `--shadow-sm` | Nav pill and chips get a pine-tinted shadow instead of grey. |
 | V18 | `--shadow-md` | Timeline tooltip shadow gets noticeably stronger (0.18 to 0.45 alpha). **Approved by Megh.** |
 | V19 | `--shadow-lg` | Cal booker shadow shrinks and turns pine. |
-| V20 | `--interval-rotate` | Carousel advances 0.3s slower. |
+| V20 | `--interval-carousel` | Carousel advances every 10s instead of 4.5s. **Approved by Megh (set to 10s).** |
 | V21 | `--breakpoint-booker` | Contact copy break moves from 1100 to 1104px. |
 
-**Approved:** V10 (hero H1 is 48px from 768px up; the 52px step at 1024px is retired) and V18 (timeline tooltip moves to oat and pine with the shared floating shadow). Both were reviewed against before/after mock-ups.
+**Approved:** V20 (carousel every 10s, set by Megh; a new value, not a Phase 1 one). V10 (hero H1 is 48px from 768px up; the 52px step at 1024px is retired) and V18 (timeline tooltip moves to oat and pine with the shared floating shadow). Both were reviewed against before/after mock-ups.
 
-**Still open:** the other 19 rows. For any row you reject, the value stays and becomes a named single-use token rather than an arbitrary value.
+**Still open:** the other 18 rows. For any row you reject, the value stays and becomes a named single-use token rather than an arbitrary value.
 
 ---
 
@@ -442,7 +443,7 @@ Recorded in `02-decisions.md`, with the ready-to-review diffs in `patches/`.
 
 | # | Decision | Status |
 |---|---|---|
-| D1 | Visible changes (§3) | **V10, V18 approved.** 19 rows still open. |
+| D1 | Visible changes (§3) | **V10, V18, V20 approved** (V20 at 10s). 18 rows still open. |
 | D2 | Unused `@theme` type scale, `app/globals.css:47-58` | **Approved: delete.** Docs keep the nominal sizes. Heading-size tokens here are renamed `--text-head-*` so no proposed token reuses a deleted name with a different value. |
 | D3 | AI Call iframe status colours | **Approved: scoped exception.** `--success` / `--warning` keep their values inside the iframe (§2.22). |
 | D4 | `font-serif` → `font-display` | **Approved.** Repo-wide sweep is 47 lines in 27 files, including 4 SVG `var(--font-serif)` references, not the 14 in-scope classes first counted. |

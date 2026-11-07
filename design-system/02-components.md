@@ -101,11 +101,11 @@ Five button patterns exist. None is a shared component; each is a class string r
 |---|---|
 | **Anatomy** | Sticky transparent bar (`z-nav` 50, 64px / 72px at `md`), 3-column grid in `--container-wide`. Left: **status chip**. Centre: **section pill** (desktop). Right: **LinkedIn + Resume** (desktop). Phones: **hamburger** in column 3. |
 | **Variants** | `hide` prop drops sections; v3 and v3.1 hide Lab and Writing, so the pill shows Experience, Work, About, Contact. |
-| **Status chip** | Pill that rotates 4 lines every `--interval-rotate` (4.8s) with a 500ms slide; the 4th line ("Let's connect.") is a pine CTA with an arrow that jumps to `#connect`; the others scroll to top. Width eases to the text. Pauses on hover, focus, hidden tab and reduced motion. |
+| **Status chip** | Pill that rotates 4 lines every `--interval-chip` (4.8s) with a 500ms slide; the 4th line ("Let's connect.") is a pine CTA with an arrow that jumps to `#connect`; the others scroll to top. Width eases to the text. Pauses on hover, focus, hidden tab and reduced motion. |
 | **Section pill** | Icon + label tabs, scroll-spy active state (`bg-bg text-fg shadow-sm`), `shadow-sm` → `shadow-md` once collapsed. |
 | **States** | **Collapsed** after 80px scroll (unless hovered / focused): chip and right CTAs fade and slide out, `tabIndex -1`. **Menu open**: full-screen oat sheet (`z-menu` 40) under the bar, body scroll locked, `Esc` closes. |
 | **Mobile** | Chip visible at the left; hidden 768 to 859px (`--breakpoint-nav-chip`); back from 860. After 80px of scroll only the hamburger remains. Menu links are text-height (computed 28px), icons 20px, Resume 48px, LinkedIn 44px. |
-| **Tokens** | `--container-wide`, `--bg-elevated`, `--border`, `--fg`, `--fg-muted`, `--accent`, `--shadow-sm`, `--shadow-md`, `--z-nav`, `--z-menu`, `--duration-slow`, `--ease-emphasized`, `--interval-rotate` |
+| **Tokens** | `--container-wide`, `--bg-elevated`, `--border`, `--fg`, `--fg-muted`, `--accent`, `--shadow-sm`, `--shadow-md`, `--z-nav`, `--z-menu`, `--duration-slow`, `--ease-emphasized`, `--interval-chip` |
 | **Usage rule** | Nav items mirror the fold order and names (CLAUDE.md §14). Case-study pages render **no nav** today; the back link is the only route home. |
 
 ---
@@ -215,7 +215,7 @@ Five button patterns exist. None is a shared component; each is a class string r
 | **Anatomy (card)** | One link. Back copy (1px behind) + coloured **spine slab** ("Click to read", vertical mono) + front **cover**: mono eyebrow + 28px logo, H3 24px, 2-line one-liner, 4:3 media well (looping muted video, GIF or poster). |
 | **Variants** | Layout **carousel** (homepage shelf) or **grid** (1 → 2 → 3 cols, or locked at 2 for "Keep reading"). `mark` passes `text` / `row` through to the case-study index style. |
 | **States** | **Hover / focus (fine pointer):** cover hinges open on a spring (rotateY -35°), slab tilts 4°, card lifts to `z-raised`. **Close:** 320ms tween (no overshoot). **Touch:** no hinge, tap opens the study. **Reduced motion:** stays closed, poster only. Video plays only when 45% visible. |
-| **Shelf** | Scroll-snap row in a container query; autoplays one card every 4.5s (→ `--interval-rotate`), wraps both ways, pauses on pointer or focus; two 40px arrows. |
+| **Shelf** | Scroll-snap row in a container query; autoplays one card every 4.5s today; 10s once D6 ships (`--interval-carousel`), wraps both ways, pauses on pointer or focus; two 40px arrows. |
 | **Mobile** | About 1.15 cards visible; swipe or arrows. Arrows are 40px. |
 | **Tokens** | `--radius-card`, `--radius-2xl`, `--bg-elevated`, `--border`, `--shadow-lg`, `--brand-*` (slabs), `--text-title`, `--text-small`, `--text-label`, `--tracking-label`, `--z-raised`, `--duration-moderate`, `--duration-slow`, `spring-hinge` |
 | **Usage rule** | Product brand colours appear only on the slab ("content as-is"). Every card links to a case study, even before the write-up exists (the coming-soon body handles that). |

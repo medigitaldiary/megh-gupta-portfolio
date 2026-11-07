@@ -151,7 +151,8 @@
   --duration-slower: 500ms;
   --duration-emphasis: 650ms;
   --duration-scene: 900ms;
-  --interval-rotate: 4800ms;
+  --interval-chip: 4800ms;
+  --interval-carousel: 10000ms;
 
   /* motion.easing */
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
