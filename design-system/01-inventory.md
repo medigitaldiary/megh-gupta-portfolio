@@ -2,7 +2,7 @@
 
 > Phase 1 of the design-system audit. This is a reverse-engineered record of what the code does today. Nothing here is a recommendation. Normalisation is Phase 2, gaps and fixes are Phase 3, rendered verification is Phase 4.
 
-**Revision 2** (after review): `/unlock` added as §4; Q1, Q6 and Q8 resolved; Q7 direction agreed; Q10 added.
+**Revision 2** (after review): `/unlock` added as §4; Q1, Q6, Q8 and Q10 resolved; Q7 direction agreed.
 
 **Audit date:** 2026-11-07 · **Commit:** `50a3913` (same commit as `origin/main`, so the live preview routes should run this code) · **Branch:** `mxg/upbeat-hypatia-85xg1z`
 
@@ -1119,7 +1119,7 @@ Nothing below is guessed. Each one needs your answer or a Phase 4 render check.
 | Q7 | **Should the AI Call iframe follow the site palette?** Direction agreed, decision in Phase 3. | Its own white / purple theme with an OS-driven dark mode (`ai-call-pipeline.html:34-55`) and an in-artifact theme switch (`:1837-1838`). Proposed rule: **site chrome on-system, content as-is.** Diagrams Megh authors adopt site tokens; real product screenshots and UI mockups keep their true colours inside a site-styled frame. Open sub-question: the artifact uses green `--success` and amber `--warning` as status colours, and the site palette has none. | Phase 3 logs the status-colour choice for Megh (scoped status set vs. pine shades + icons) |
 | Q8 | ~~Are the dead rules intentional?~~ **Resolved: dead, flagged for removal.** | `app/globals.css:244-257` (shelf card, orphaned when the bookshelf became thumbnail cards in PR #91) and `app/globals.css:259-306` (hero sun, orphaned by the portrait avatar in PR #67, plus its asset `public/images/v3/hero-sun.svg`). Boundary note for the cleanup: the sun block ends at **306**; `308-313` is the live card-hairline rule. The unused `@theme` type scale (`app/globals.css:47-58`) is a separate question for Phase 2. | Phase 3 lists the cleanup |
 | Q9 | **Relock pill line height** | `text-[0.68rem]` sets no line height, so it inherits. Final height depends on the inherited value. | Phase 4 |
-| Q10 | **Is `#b23a48` (denied red) an approved colour?** | CLAUDE.md §3 allows no colour family beyond oatmeal / pine / lilac without asking. The unlock error state uses a red (`backstage-pass.tsx:14`), and the sky backdrop uses blues and golds (`cloud-background.tsx:36-39`). An error state usually needs a colour that reads as "wrong", so this may be a deliberate exception. | **You:** Phase 2 needs to know whether to tokenise it (e.g. `--danger`) or treat it as a gap |
+| Q10 | ~~Is `#b23a48` (denied red) an approved colour?~~ **Resolved: approved, scoped exception.** | Deliberate. The palette has no red-adjacent hue, and a wrong password must read as "wrong" instantly. Scope: `/unlock` only, a utility gate rather than a brand surface; it never appears on `/`, `/work/*` or `/preview/*`. Used through `DENIED_INK` (`backstage-pass.tsx:14`) in three places: input underline on a wrong password (`:197`), status text (`:279`) and the DENIED stamp (`:317`). Not yet recorded in CLAUDE.md §3; Megh is backfilling the exception. The sky backdrop colours (`cloud-background.tsx:36-39`) are a separate case, still uncategorised. | Answered by Megh. Phase 2 tokenises it as a status colour scoped to the lock flow. |
 
 ---
 
