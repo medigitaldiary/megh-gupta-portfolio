@@ -10,6 +10,7 @@
 | D4 | Rename `font-serif` → `font-display` | Approved | `patches/D4-font-serif-to-font-display.diff` |
 | D5 | Kalam inline styles → `font-hand` class | Approved in principle, diff for review | `patches/D5-font-hand-class.diff` |
 | D6 | Work carousel advances every 10s | Approved (Megh), phone trade-off accepted | `patches/D6-carousel-interval-10s.diff` |
+| D7 | Move next/font variables from `<body>` to `<html>` so body text renders in Geist | **Proposed (Phase 4), needs Megh** | `patches/D7-font-variables-on-html.diff` |
 
 ---
 
@@ -72,7 +73,7 @@
 - `tsc --noEmit` passes;
 - Biome reports 20 issues before and 20 after, all pre-existing (`noImportantStyles` in `app/preview/v2.1/scope.css` and similar), so no new issues.
 
-**Runtime check:** a production build shows Tailwind emits `--font-serif` on `:root` today, so the SVG `var()` references resolve. After the rename it emits `--font-display` the same way, because it detects the name in source.
+**Runtime check (corrected in Phase 4):** Phase 2 said the Venn's SVG `var(--font-serif)` references resolve to Geist. They don't. Tailwind does emit `--font-serif` on `:root`, but its value points at next/font's variable, which only exists on `<body>`, so on `:root` it resolves to nothing and the labels render in the system font. The rename itself is still safe: Phase 4 rendered the patched build and it matches today's build pixel for pixel (see below). The font problem is separate and is fixed by D7.
 
 ## D5 · Kalam inline styles → `font-hand` class
 
@@ -116,6 +117,24 @@ The SVG attribute at `product-venn-travel.tsx:821` is untouched.
 
 **Carried into Phase 3 (unaffected by the new speed):** the shelf moves on its own indefinitely. It pauses on hover and keyboard focus, but has no visible pause control, so a touch user can't stop it. WCAG 2.2.2 (Pause, Stop, Hide) asks for one on any auto-moving content that lasts more than 5 seconds.
 
+## D7 · Font variables on `<html>` (proposed in Phase 4)
+
+**Finding:** everything without an explicit `font-serif` / `font-mono` class renders in the system font: body text, footer, buttons, case-study prose and dek, and the Venn labels and chips (03-gaps G-C17).
+
+**Cause:** next/font declares `--font-geist-sans`, `--font-geist-mono` and `--font-hand` on `<body>` (`app/layout.tsx:191`). Tailwind declares `--font-sans` / `--font-serif` / `--font-mono` / `--default-font-family` on `:root` as references to them, and on `:root` they don't exist yet.
+
+**Change:** `app/layout.tsx`, move the three `.variable` classes to `<html>`; `<body>` keeps `antialiased bg-bg text-fg`. One file, +5 / −2, Biome-clean, `tsc` passes.
+
+**Verified:** production build at 375px and 1440px. Body, footer, prose, dek and Venn labels compute to Geist; Venn chips to Geist Mono; greeting stays Kalam. Before/after: `phase4/d7-fonts-*.webp`.
+
+**Visible effect:**
+- Body copy switches from the visitor's system font to Geist. That's the locked brand face (CLAUDE.md §2), but it changes how every paragraph looks on real devices.
+- Two Venn chips touch at 1440px (G-C18).
+
+## Phase 4 gate for D2, D4, D5, D6: passed
+
+Production builds of `50a3913` with and without the four patches were rendered with reduced motion (static frames) at 375px and 1440px: `/preview/v3`, `/preview/v3.1`, both case-study marks, and `/unlock`. Every viewport and full-page screenshot is **pixel-identical**, except the live IST clock in the footer and the unlock ticket's minute-based serial. Computed styles match, with one string difference: D5's `font-hand` class gives `Kalam, "Kalam Fallback"` without the trailing `cursive` the inline style had. That only matters if Kalam fails to load, and "Kalam Fallback" (a metric-matched local font) still covers it.
+
 ## How these ship
 
 - **CLAUDE.md §3: applied in this PR** (Megh's call). Adds the scoped colour exceptions table (Venn, denied red, dawn sky, diagram status) and the "nominal, not live tokens" note under Type scale. The note says the `@theme` entries are *scheduled* for removal; flip it to "removed" when the D2 code PR merges.
@@ -124,4 +143,4 @@ The SVG attribute at `product-venn-travel.tsx:821` is untouched.
   2. D4 touches 27 files, including the Venn SVG font references. Phase 4 already screenshots the hero at 375px and 1440px, so it can compare before and after in the same pass.
   3. CLAUDE.md §13 wants code PRs off `dev`, and `dev` is behind `main` today. Waiting lets the code PR start from a synced `dev`.
 
-  Plan: Phase 4 renders `main`, then renders it again with the patches applied. If both match (fonts, sizes, Venn labels), open one code PR into `dev` with the four diffs and the screenshots attached.
+  Plan: Phase 4 renders `main`, then renders it again with the patches applied. If both match (fonts, sizes, Venn labels), open one code PR into `dev` with the four diffs and the screenshots attached. **Result: matched (gate passed).** Waiting on Megh for a branch to open the code PR from, and whether D7 rides along.

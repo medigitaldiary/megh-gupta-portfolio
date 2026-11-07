@@ -17,7 +17,7 @@
 - **M:** half a day to a day, several files or a new component.
 - **L:** several days, or needs content / design decisions first.
 
-**Evidence status:** contrast ratios are calculated exactly from the token values (WCAG 2.x formula, alpha composited over the real background). Tap-target heights are **computed from the class strings** (padding + line height + border). Phase 4 measures them in a browser. Anything that depends on which CSS rule wins is marked *Phase 4*.
+**Evidence status:** contrast ratios are calculated exactly from the token values (WCAG 2.x formula, alpha composited over the real background). Tap-target heights were computed from the class strings in Phase 3, then **measured in a browser in Phase 4; every computed value matched** (`04-verification.md` §3). Issues added or corrected by Phase 4 say so.
 
 **Decisions already taken** (D1 to D6 in `02-decisions.md`) are not repeated as issues. Where an approved change fixes an issue, the issue says so.
 
@@ -27,23 +27,24 @@
 
 | Area | Critical | High | Medium | Low |
 |---|---:|---:|---:|---:|
-| DS conflicts (§1.2) | 0 | 1 | 7 | 8 |
+| DS conflicts (§1.2) | 0 | 2 | 7 | 9 |
 | Missing in DS (§1.3) | 0 | 0 | 2 | 4 |
 | Missing in build (§1.4) | 0 | 0 | 0 | 2 |
 | Contrast (§2.1) | 0 | 3 | 4 | 2 |
-| Focus and keyboard (§2.3) | 0 | 1 | 2 | 2 |
+| Focus and keyboard (§2.3) | 0 | 1 | 3 | 2 |
 | Other accessibility (§2.4) | 0 | 0 | 2 | 1 |
 | Missing pieces (§3) | 0 | 1 | 5 | 3 |
-| Tap targets (§2.2) | 0 | 2 | 8 | 6 |
-| **Total** | **0** | **8** | **30** | **28** |
+| Tap targets (§2.2) | 0 | 2 | 8 | 7 |
+| **Total** | **0** | **9** | **31** | **30** |
 
 **Fix first** (most visitor impact for the least effort):
 
-1. **G-A6 · Focus ring is nearly invisible on oat** (1.75:1, needs 3:1). Keyboard users can't see where they are on most of the site. One CSS rule. *(High, S)*
-2. **G-A10 · Skip link is broken on `/preview/v3` and `/preview/v3.1`**: `<main>` has no `id="main"`. Two attributes. *(High, S)*
-3. **G-A1 · Caption grey fails contrast on the page background** (4.25:1, needs 4.5:1). It's used in 24 places: dates, eyebrows, footer. One token value. *(High, S)*
-4. **G-A3 · Hero Venn chips are unreadable on phones** (they render at about 4px). This is the first screen 60% of visitors see. *(High, M)*
-5. **G-M1 · A case-study page has no way to get in touch**: no nav, no footer, no contact CTA. A recruiter who opens a shared link can only go "back". *(High, M)*
+1. **G-C17 · Body text isn't rendering in Geist.** Everything without an explicit font class falls back to the system font (found in Phase 4). One file, patch D7 ready and verified. *(High, S)*
+2. **G-A6 · Focus ring is nearly invisible on oat** (1.75:1, needs 3:1). Keyboard users can't see where they are on most of the site. One CSS rule. *(High, S)*
+3. **G-A10 · Skip link is broken on `/preview/v3` and `/preview/v3.1`**: `<main>` has no `id="main"`. Two attributes. *(High, S)*
+4. **G-A1 · Caption grey fails contrast on the page background** (4.25:1, needs 4.5:1). It's used in 24 places: dates, eyebrows, footer. One token value. *(High, S)*
+5. **G-A3 · Hero Venn chips are unreadable on phones** (they render at about 4px). This is the first screen 60% of visitors see. *(High, M)*
+6. **G-M1 · A case-study page has no way to get in touch**: no nav, no footer, no contact CTA. A recruiter who opens a shared link can only go "back". *(High, M)*
 
 ---
 
@@ -73,6 +74,7 @@
 | ID | Issue | Evidence | Severity | Proposed fix | Effort |
 |---|---|---|---|---|---|
 | **G-C16** | Lilac as the focus-ring colour fails contrast | §3 names lilac for focus rings. The global outline `--highlight-strong` is 1.75:1 on oat (G-A6). The rule itself produces an inaccessible ring. | High | Update §3: focus rings are pine on light surfaces and oat on pine. Lilac stays as the outer glow only. Fixed in code by G-A6. | S |
+| **G-C17** | Body text is not rendered in Geist | CLAUDE.md §2 locks Geist Sans for body. Phase 4 measured `<body>`, footer, buttons, case-study prose and dek, and the Venn labels and chips all computing to the system stack (`ui-sans-serif, system-ui…`). Only elements with an explicit `font-serif` / `font-mono` class get Geist or Geist Mono. Cause: next/font sets its variables on `<body>` (`app/layout.tsx:191`), but Tailwind's `--font-sans`, `--font-serif`, `--font-mono` and `--default-font-family` are declared on `:root` (`<html>`), where those variables don't exist yet, so the chain resolves to nothing. Visitors see SF Pro (Apple), Segoe UI (Windows) or Roboto (Android). | High | Patch D7: move the three next/font variable classes from `<body>` to `<html>` (`design-system/patches/D7-font-variables-on-html.diff`, 1 file). Verified in a production build at 375 and 1440px: body, footer, prose and Venn labels become Geist, the chips Geist Mono, and the greeting stays Kalam. | S |
 | **G-C1** | Hardcoded colours outside the tokens | CLAUDE.md §7 'No hardcoded colors outside the CSS variables' and §3 'No other colors'. 32 hardcoded colour uses on the portfolio routes (01 §2.1c), 53 hex literals across in-scope TSX. Undocumented ones after the exceptions table: Tailwind slate in the timeline tooltip (`experience.tsx:890-902`), retired `#1F4D3A` in Cal (`cal-embed.tsx:15-16`), pine / oat re-typed in the relock pill (`relock-button.tsx:30`) and unlock (`backstage-pass.tsx:13,251`, `backstage.css:75,114`). | Medium | Adopt the approved token set (02-tokens §2); V1, V2, V4 and the `PINE` / relock swaps cover every undocumented case. | M |
 | **G-C2** | Fluid-type rule: case-study dek is too close to body | CLAUDE.md §3: subtitle must be ≥ 1.25× body. The case-study dek is 18px over 16px body = **1.125×**, at every width (`app/work/[slug]/page.tsx:108`). | Medium | Dek to `--text-title-sm` 20px (1.25×). The H1 stays ≥ 1.75× the dek at every width (36/20 = 1.8× on phones, 48/20 = 2.4× on desktop). | S |
 | **G-C5** | No shadcn/ui primitives; shared controls are copied class strings | CLAUDE.md §2 locks shadcn/ui in `/components/ui`. That folder doesn't exist. The primary pill is copied 5 times with drifting padding (02-components §1a); outline pill, icon button and segmented control are also inline class strings. | Medium | Create `components/ui/button.tsx` (primary / outline / icon / ghost, sizes M / L), `tag.tsx`, `segmented.tsx`. shadcn's copy-paste Button is the locked route. | M |
@@ -88,6 +90,7 @@
 | **G-C12** | Hover easing | §3 Motion: '150ms ease-out hover'. Most hovers use Tailwind's default curve (0.4, 0, 0.2, 1); only 4 say `ease-out` (01 §2.10a). | Low | Set `--ease-out` on hover transitions, or change §3 to 'ease-standard'. Not visible. | S |
 | **G-C14** | Title Case heading | STYLE.md §2: sentence case. Contact H2 reads 'Let's Connect.' (`contact.tsx:13`). | Low | 'Let's connect.' | S |
 | **G-C15** | Spaced hyphen used as a dash | STYLE.md allows hyphens only for compounds. Contact copy: 'early-stage startup world - I'd love to hear from you' (`contact.tsx:18`). | Low | Period: '…startup world. I'd love to hear from you.' | S |
+| **G-C18** | Venn chip layout was tuned on the fallback font | With D7 the chips render in Geist Mono, which is wider. At 1440px 'Experimentation' and 'Monetization' (Business row 3) touch (`design-system/phase4/d7-fonts-venn-1440.webp`). Chip home positions are hand-placed (`product-venn.tsx:29-56`). | Low | Nudge the two chips apart (about 10 drawing units) when D7 ships. If G-A3 moves chips out of the SVG on phones, only desktop needs it. | S |
 
 ### 1.3 Missing from the basic design system (built, but not documented)
 
@@ -179,7 +182,7 @@ Contrast issues:
 |---|---|---|---|---|---|
 | **G-A1** | Caption grey fails on the page background | `--fg-subtle` #556b5d on `--bg` = **4.25:1** (needs 4.5). It passes on cards (4.85). It's used about 24 times on page backgrounds: dates, eyebrows, footer, captions, index numbers (C5). After V3 + V6 it is also the unlock stub label colour (4.25). | High *(Approved by Megh: #506758)* | Darken `--fg-subtle` to **#506758** (20% toward `--fg-muted`): 4.52 on oat, 5.17 on cards. This is a new value, so it needs approval (CLAUDE.md §9). Alternative: use `--fg-muted` for small text on `--bg`. | S |
 | **G-A3** | Venn chip text: contrast and size | Cream on User #c1497f = **4.36:1**, on Business #c77e3b = **3.04:1** (C17, C19). The bigger problem is size: chip text is 14.5 drawing units in a 1200-unit SVG that fills the column. Computed render size: **about 4px at 375px wide** (327px column) and about 7px at 1440px. Zone labels about 10px and the 'I'm here' label about 8px on phones. The SVG has an `aria-label`, so screen readers get the summary. | High *(Phase 4 measures the real size)* | Phones first: below `lg`, show the three rings and zone labels only and list the chips as HTML below the diagram (real 12 to 14px text that wraps). Contrast: darker chip fills, or pine ink on Business only (3.76, still short). Both colour routes change an approved exception, so they need Megh. | M |
-| **G-A6** | Focus outline is nearly invisible on oat | Global `*:focus-visible` outline `--highlight-strong` #b89cdc: **1.75:1** on oat, 2.00:1 on cards (U1, U2); needs 3:1. The 4px lilac glow adds little. The pine component ring (8.99:1) may be overridden by this unlayered rule (01 Q2, Phase 4). A pine ring on the pine Contact fold would be 1:1 (U5); no element there uses it today. | High *(Phase 4 confirms which ring renders today)* | One rule in `app/globals.css:228-233`: outline `2px solid var(--fg)`, offset 2px; on `#connect` (pine) use `var(--accent-fg)`. Keep the lilac glow as decoration. Updates CLAUDE.md §3 (G-C16). | S |
+| **G-A6** | Focus outline is nearly invisible on oat | Global `*:focus-visible` outline `--highlight-strong` #b89cdc: **1.75:1** on oat, 2.00:1 on cards (U1, U2); needs 3:1. The 4px lilac glow adds little. The pine component ring (8.99:1) may be overridden by this unlayered rule (01 Q2, Phase 4). A pine ring on the pine Contact fold would be 1:1 (U5); no element there uses it today. | High *(Confirmed in Phase 4: the lilac outline is what renders; the pine component ring never shows)* | One rule in `app/globals.css:228-233`: outline `2px solid var(--fg)`, offset 2px; on `#connect` (pine) use `var(--accent-fg)`. Keep the lilac glow as decoration, and drop the `border-radius: 2px` (G-A18). Updates CLAUDE.md §3 (G-C16). | S |
 | **G-A2** | Section eyebrows over the highlighter mark | Mono 12px `--fg-subtle` on the lilac mark = **3.48:1** (C11). Affects 'EXPERIENCE', 'SELECTED WORK' and the case-study section eyebrows. | Medium | Eyebrow text to `--fg-muted` (4.96:1 on the mark). Found value, no new token. | S |
 | **G-A4** | Unlock labels | Pine at 60 to 70% on the ticket = **3.45 / 4.45:1**; on the stub 3.34:1 (C26, C27, C30). V3 (approved) fixes the ticket labels (4.85). The stub stays at 4.25 after V6, fixed by G-A1. | Medium | Ship V3 + V6 with G-A1. | S |
 | **G-A5** | AI Call iframe: faint and status text | Faint #999 on white = **2.85:1**; success text #16a34a = **3.30:1**; warning text #d97706 = **3.19:1** (C37 to C39). The status colours pass the 3:1 non-text bar, so they're fine on badges, icons and borders. They fail as text (`.warning-text`, `.success-text`, `.node-chip.warn/.dest` labels, `ai-call-pipeline.html:347-349,668-669`). | Medium | The island mapping fixes faint (→ `--fg-subtle` on `--bg-elevated`, 4.85). For status: keep the approved colours on badges and icons, and set status **text** in `--fg` next to a coloured dot. No new colours. | S |
@@ -209,6 +212,7 @@ Contrast issues:
 | Unlock 'Not supposed to be here?' | `backstage-pass.tsx:305` | ≈ 16px | Phone | Below 24, spacing exception likely | Low | `py-3 inline-block`. | S |
 | Nav section tabs | `nav.tsx:372` | 32px | Tablet / desktop | Pass | Low | `py-2.5`. | S |
 | LinkedIn icon (bar) | `nav.tsx:402` | 36px | Tablet / desktop | Pass | Low | `h-11 w-11` to match the menu copy. | S |
+| Resume button (bar) | `nav.tsx:413` | 36px (measured) | Tablet / desktop | Pass | Low | `py-2.5` (40px) or `py-3` (44px). | S |
 
 Inline text links inside sentences (contact `mailto:`, Experience company names, case-study prose links) are exempt from 2.5.8 and not listed.
 
@@ -219,7 +223,8 @@ Inline text links inside sentences (contact `mailto:`, Experience company names,
 | **G-A6b** | Focus ring contrast | See G-A6. | High | G-A6 | S |
 | **G-A10** | Skip link broken on the preview pages | 'Skip to content' targets `#main` (`app/layout.tsx:194`). `<main>` on `/preview/v3` and `/preview/v3.1` has no `id` (`app/preview/v3/page.tsx:21`, `v3.1/page.tsx:21`), so the link does nothing. Case-study and unlock pages have it. | High | `<main id="main">` on both pages. | S |
 | **G-A11** | Mobile menu doesn't manage focus | Opening the menu doesn't move focus into it, focus isn't trapped, and the page behind stays tabbable (`nav.tsx:438-482`; no focus or inert handling in the file). `Esc` closes it (good). | Medium | On open, focus the first link and set `inert` on `<main>` and the footer; on close, return focus to the hamburger. | S |
-| **G-A12** | Password field relies on a 2px caret for focus | `outline-none focus-visible:shadow-none focus-visible:outline-none` (`backstage-pass.tsx:194`). In hidden mode the only focus cue is a 2px blinking caret (`:220-225`). It autofocuses, so a keyboard user who tabs away and back gets almost no cue. | Medium | Underline thickens and turns `--fg` on focus (`focus-visible:border-fg`). Pairs with G-A7. | S |
+| **G-A12** | Password field focus ring is the low-contrast lilac one | The field sets `outline-none focus-visible:shadow-none` (`backstage-pass.tsx:194`), but Phase 4 shows the unlayered global rule wins: when focused it renders `outline: solid 2px #b89cdc` plus the lilac glow (measured on `/unlock`). The 2px custom caret (`:220-225`) is extra. So the field has a focus ring, but at about 2:1 on the ticket (same problem as G-A6). *(Corrected in Phase 4: Phase 3 said it relied on the caret only.)* | Medium | Fixed by G-A6. Optionally thicken the underline to `--fg` on focus as well (`focus-visible:border-fg`). | S |
+| **G-A18** | Focused buttons lose their rounded shape | The global `*:focus-visible` rule also sets `border-radius: 2px` (`app/globals.css:232`). Unlayered, it beats `rounded-full`, so every pill and circle control turns square-cornered while it has keyboard focus. Seen on the hero CTA (`design-system/phase4/focus-ring-today.webp`). Applies to the primary pills, icon buttons, nav tabs and segmented controls. | Medium | Drop `border-radius` from the global rule; an outline follows the element's own radius in current browsers. Ships with G-A6. | S |
 | **G-A14** | Some timeline entries are unreachable by keyboard on desktop | Desktop timeline chips are focusable only when the entry has a URL (`experience.tsx:769-784`); others are plain `div`s, so their tooltip can't be opened with a keyboard. The same content is in the list view and on phones. | Low | Make every chip a `button` that toggles the tooltip, or render the summary inline for chips without a link. | S |
 | **G-A15** | Controls with no component focus style | Carousel arrows, mobile-menu LinkedIn + Resume, Experience product and link-out links, contact `mailto:`, relock pill, 'View all' (01 §2.7). They rely on the global rule, so G-A6 fixes them. | Low | G-A6. | S |
 
@@ -263,6 +268,7 @@ Every issue above in one list, sorted by severity then effort. Cross-references 
 | G-A10 | Focus / keyboard | Skip link broken on the preview pages | High | S |  |
 | G-A6 | Contrast | Focus outline is nearly invisible on oat | High | S |  |
 | G-C16 | DS conflict | Lilac as the focus-ring colour fails contrast | High | S |  |
+| G-C17 | DS conflict | Body text is not rendered in Geist | High | S |  |
 | G-C10 | DS conflict | Storyboard: two folds missing, Stack missing from About | Medium | L | Yes |
 | G-M7 | Missing piece | Reusable lock flow for shared content | Medium | L | Yes |
 | G-C1 | DS conflict | Hardcoded colours outside the tokens | Medium | M |  |
@@ -270,9 +276,10 @@ Every issue above in one list, sorted by severity then effort. Cross-references 
 | G-M2 | Missing piece | Long case studies have no in-page navigation on phones | Medium | M |  |
 | G-M6 | Missing piece | Shared UI primitives | Medium | M |  |
 | G-A11 | Focus / keyboard | Mobile menu doesn't manage focus | Medium | S |  |
-| G-A12 | Focus / keyboard | Password field relies on a 2px caret for focus | Medium | S |  |
+| G-A12 | Focus / keyboard | Password field focus ring is the low-contrast lilac one | Medium | S |  |
 | G-A13 | Accessibility | Travel Venn traps the scroll on phones | Medium | S |  |
 | G-A16 | Accessibility | Carousel moves on its own with no pause control | Medium | S |  |
+| G-A18 | Focus / keyboard | Focused buttons lose their rounded shape | Medium | S |  |
 | G-A2 | Contrast | Section eyebrows over the highlighter mark | Medium | S |  |
 | G-A4 | Contrast | Unlock labels | Medium | S |  |
 | G-A5 | Contrast | AI Call iframe: faint and status text | Medium | S |  |
@@ -298,6 +305,7 @@ Every issue above in one list, sorted by severity then effort. Cross-references 
 | G-C12 | DS conflict | Hover easing | Low | S |  |
 | G-C14 | DS conflict | Title Case heading | Low | S |  |
 | G-C15 | DS conflict | Spaced hyphen used as a dash | Low | S |  |
+| G-C18 | DS conflict | Venn chip layout was tuned on the fallback font | Low | S |  |
 | G-C3 | DS conflict | Motion: cursor tracking and scroll-linked effects | Low | S |  |
 | G-C4 | DS conflict | `motion` (Framer Motion) used without the 'only if requested' note | Low | S | Yes |
 | G-C7 | DS conflict | CSS files beyond `globals.css` | Low | S |  |
@@ -307,4 +315,4 @@ Every issue above in one list, sorted by severity then effort. Cross-references 
 | G-D5 | Missing in DS | Imagery and texture | Low | S |  |
 | G-M4 | Missing piece | Error boundary | Low | S |  |
 | G-M8 | Missing piece | Confirmation pattern for copy actions | Low | S |  |
-| G-T1 to G-T16 | Tap targets | 16 controls under 44px (§2.2) | High 2, Medium 8, Low 6 | S each | |
+| G-T1 to G-T17 | Tap targets | 17 controls under 44px (§2.2) | High 2, Medium 8, Low 7 | S each | |

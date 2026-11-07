@@ -2,6 +2,8 @@
 
 > Phase 2 component reference. Facts (anatomy, variants, states, mobile) come from `01-inventory.md` §3 and §4, which carry the file:line citations. Token names come from `02-tokens.md`. A usage rule marked *(proposed)* is a recommendation; unmarked rules restate what the code or a code comment already does.
 >
+> **Phase 4 note:** today every element without an explicit font class renders in the system font, not Geist (03-gaps G-C17, patch D7). The specs below describe the intended faces.
+>
 > Mobile is listed first in every component because about 60% of visitors are on phones (CLAUDE.md §1). "Computed" tap heights come from padding + line height + border and get measured in Phase 4.
 
 ## Index
@@ -39,7 +41,7 @@ Five button patterns exist. None is a shared component; each is a class string r
 |---|---|
 | **Anatomy** | Label + optional trailing glyph or icon (→, download, arrow). `rounded-full`, pine fill, oat text. |
 | **Sizes** | **L** `px-6 py-3 text-sm` (hero CTA, `hero.tsx:83`; unlock submit, `backstage-pass.tsx:248`). **M** `px-4 py-2 text-sm` (nav Resume, `nav.tsx:413`). **L-mobile** `px-6 py-3 text-base` (mobile-menu Resume, `nav.tsx:473`). **M-alt** `px-5 py-2.5` (case-study coming-soon CTA, not rendered on AI Call). |
-| **States** | Hover `opacity: var(--opacity-hover)` (0.9), 150ms. Focus: pine `ring-2` + `ring-offset-2` (which ring renders is Phase 4 Q2). Unlock submit adds hover lift + shadow, **loading** (spinner + "Checking…"), **success** ("Welcome in"), **disabled** (`opacity` 0.5 → `--opacity-disabled`). No pressed / active state anywhere. |
+| **States** | Hover `opacity: var(--opacity-hover)` (0.9), 150ms. Focus: the classes ask for a pine `ring-2`, but the global lilac outline renders instead and squares the corners (Phase 4; fix in 03-gaps G-A6, G-A18). Unlock submit adds hover lift + shadow, **loading** (spinner + "Checking…"), **success** ("Welcome in"), **disabled** (`opacity` 0.5 → `--opacity-disabled`). No pressed / active state anywhere. |
 | **Mobile** | Hero CTA computed 44px tall. Nav Resume is hidden below `md`; the menu shows the L-mobile size (computed 48px). |
 | **Tokens** | `--accent`, `--accent-fg`, `--radius-full`, `--text-small`, `--opacity-hover`, `--duration-fast`, `--shadow-md` (unlock) |
 | **Usage rule** | One primary pill per fold. It is the only filled-pine control, so it always means "the main thing to do here". *(proposed)* Build it once as a shared component with `size="m" | "l"` and `state` props; today it is copied 5 times with drifting padding. |
@@ -88,7 +90,7 @@ Five button patterns exist. None is a shared component; each is a class string r
 | | |
 |---|---|
 | **Variants** | **Prose link**: underlined, offset 4px, inherits colour (`[&_a]` in the case-study article, `app/work/[slug]/page.tsx:46`). **Accent link**: `text-accent` + 40% pine underline that goes solid on hover (`experience.tsx:389,1009`). **Reveal link**: no underline until hover (company names, `experience.tsx:256`; product link `:439`). **Back link**: `text-sm text-fg-muted underline` + `←` (`page.tsx:97`). **On-pine link**: oat underline at 50% (`contact.tsx:36`). |
-| **States** | A global rule adds a 2px lilac underline at offset 4px on hover for every link inside `main`, `nav` or `footer` (`app/globals.css:236-242`). How it interacts with each link's own hover is Phase 4 Q3. Focus: pine ring on back link, company name and timeline chip; global rule elsewhere. |
+| **States** | A global rule adds a 2px lilac underline at offset 4px on hover for every link inside `main`, `nav` or `footer` (`app/globals.css:236-242`). Phase 4 confirmed unlayered global rules win over utilities, so this underline applies on top of each link's own hover. Focus: pine ring on back link, company name and timeline chip; global rule elsewhere. |
 | **Mobile** | Inline links are text-height (computed ≈ 20px). The back link is the only way off a case-study page (no nav there). |
 | **Tokens** | `--fg`, `--accent`, `--highlight-strong`, `--border-width-strong`, `--accent-fg` |
 | **Usage rule** | Links read as links at rest: underline or accent colour, never colour alone. External links use `target="_blank" rel="noopener noreferrer"` (all in scope do) and an `↗` when inline. |
@@ -131,7 +133,7 @@ Five button patterns exist. None is a shared component; each is a class string r
 | **Anatomy** | SVG, viewBox 1200 × 940: three rings (User, Technology, Business), three zone labels, 23 skill chips, pine marker + arrow + "I'm here" label. |
 | **Variants** | **Static** (v3): rings draw, chips pop in, marker bounces, arrow draws; then chips float. **Travel** (v3.1): same drawing; hover a chip to dim the other zones (0.35) and thicken its ring; **drag** a chip anywhere and it springs home; the marker waits for the hero dot to land. |
 | **States** | Hover (travel), drag (travel), reduced motion (final frame, no float). |
-| **Mobile** | Scales to the column width. Type is in drawing units, so chips render far smaller on a phone (Phase 4 Q5 measures). Travel chips set `touch-action: none`, so a finger that lands on a chip drags it instead of scrolling the page. |
+| **Mobile** | Scales to the column width. Type is in drawing units: measured in Phase 4, chip text is 4px at 375px and 7px at 1440px. Travel chips set `touch-action: none`, so a finger that lands on a chip drags it instead of scrolling the page. |
 | **Tokens** | `--venn-user`, `--venn-tech`, `--venn-biz`, `--venn-ink`, `--fg`, `--accent`, `--font-display`, `--font-mono`, `--ease-overshoot`, `--ease-standard`, `--z-drag` |
 | **Usage rule** | The Venn trio is the site's only data-viz palette and appears **only** here (confirmed by Megh). Never reuse the three colours as UI accents. |
 
