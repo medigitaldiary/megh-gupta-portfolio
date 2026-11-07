@@ -71,7 +71,7 @@ Each row lists every value found, with its use count. **Verdict** says whether t
 | 36 | `text-[2.25rem]` (5), `text-4xl` (3) | **Identical value**, two spellings | 36px | Exact duplicate |
 | 40 | `text-[2.5rem]` (1) | **Single use**, fold into 36 | 36px | Rule 4 |
 | 48 | `text-[3rem]` (2), `text-5xl` (3) | **Identical value** | 48px | Exact duplicate |
-| 52 | `text-[3.25rem]` (1, hero H1 at lg) | **Single use**, fold into 48 | 48px | Rule 4. **Visible** (V10): needs your approval |
+| 52 | `text-[3.25rem]` (1, hero H1 at lg) | **Single use**, fold into 48 | 48px | Rule 4. **Visible** (V11): needs your approval |
 | Fluid clamps | About title `clamp(1.75rem, 5vw, 2.65rem)`, About copy `clamp(.9375rem, 1.7vw, 1.125rem)`, unlock H1 `clamp(3rem, 9vw, 5.25rem)` | **Not tokenised**; component-level | n/a | One use each. Phase 3 compares them with the CLAUDE.md fluid rule. |
 
 ### 1.3 Line height and letter spacing
@@ -209,7 +209,7 @@ Every token, with what it replaces and how many places change. The same data is 
 | `--text-h3` | `1.75rem` | text-[1.75rem] x3 | 3 |  | app/work/[slug]/page.tsx:46; case-study/layouts/markdown-h2.tsx:23; case-study/layouts/section.tsx:55 |
 | `--text-h2-sm` | `1.875rem` | text-3xl x7 | 0 |  |  |
 | `--text-h2` | `2.25rem` | text-[2.25rem] x5 (identical to text-4xl); text-4xl x3; text-[2.5rem] 40px x1 (single use) | 6 | Experience role H3 at md+ drops from 40px to 36px. | see 01 §2.2b |
-| `--text-h1` | `3rem` | text-[3rem] x2 (identical to text-5xl); text-5xl x3; text-[3.25rem] 52px x1 (hero lg only) | 3 | Hero H1 at 1024px+ drops from 52px to 48px. Your call. | contact.tsx:12; hero.tsx:64 |
+| `--text-h1` | `3rem` | text-[3rem] x2 (identical to text-5xl); text-5xl x3; text-[3.25rem] 52px x1 (hero lg only) | 3 | Hero H1 at 1024px+ drops from 52px to 48px. **Approved by Megh.** | contact.tsx:12; hero.tsx:64 |
 | `--text-display` | `4rem` | text-[4rem] x1 | 1 |  | contact.tsx:12 |
 
 ### 2.8 Heading roles (responsive pairs)
@@ -288,7 +288,7 @@ Every token, with what it replaces and how many places change. The same data is 
 |---|---|---|---:|---|---|
 | `--shadow-xs` | `0 1px 0 color-mix(in srgb, var(--fg) 12%, transparent)` | fg 12%; fg 14% | 2 |  | about-collage.css:357,439 |
 | `--shadow-sm` | `0 2px 8px rgba(31, 59, 46, 0.18)` | hero drop-shadow (same value); Tailwind shadow-sm (black 10%) x3 | 4 | Nav pill and chips get a pine-tinted shadow instead of grey. | hero.tsx:24; nav.tsx:360,374; experience.tsx:741 |
-| `--shadow-md` | `0 10px 30px -12px rgba(31, 59, 46, 0.45)` | relock (same value); Tailwind shadow-md x2; Tailwind shadow-lg x1 (unlock hover); tooltip 0 12px 28px -10px slate .18; drag ghost 0 14px 28px -16px fg 50%; unlock submit 0 10px 24px -10px pine .6 | 7 | Timeline tooltip shadow gets noticeably stronger (0.18 to 0.45 alpha). | relock-button.tsx:30; nav.tsx:360; experience.tsx:741,890; product-venn-travel.tsx:361-362; backstage-pass.tsx:248,252 |
+| `--shadow-md` | `0 10px 30px -12px rgba(31, 59, 46, 0.45)` | relock (same value); Tailwind shadow-md x2; Tailwind shadow-lg x1 (unlock hover); tooltip 0 12px 28px -10px slate .18; drag ghost 0 14px 28px -16px fg 50%; unlock submit 0 10px 24px -10px pine .6 | 7 | Timeline tooltip shadow gets noticeably stronger (0.18 to 0.45 alpha). **Approved by Megh.** | relock-button.tsx:30; nav.tsx:360; experience.tsx:741,890; product-venn-travel.tsx:361-362; backstage-pass.tsx:248,252 |
 | `--shadow-lg` | `0 18px 32px -22px rgba(31, 59, 46, 0.28)` | work card (same value); Cal card 0 20px 60px -20px black .35 | 2 | Cal booker shadow shrinks and turns pine. | work-thumbnails.tsx:321; cal-embed.tsx:25 |
 | `--shadow-focus` | `0 0 0 4px color-mix(in srgb, var(--highlight) 30%, transparent)` | rgba(203,179,232,0.3) | 1 |  | app/globals.css:231 |
 
@@ -400,7 +400,7 @@ Adopting the set is invisible **except** for these. Each one comes from folding 
 | V7 | `--text-micro` | Unlock labels move to 10px (from 9.6 and 10.4px); About tip kicker grows 0.7px; relock pill shrinks 0.9px. |
 | V8 | `--text-label` | 11px dates and stack pills grow to 12px. |
 | V9 | `--text-h2` | Experience role H3 at md+ drops from 40px to 36px. |
-| V10 | `--text-h1` | Hero H1 at 1024px+ drops from 52px to 48px. Your call. |
+| V10 | `--text-h1` | Hero H1 at 1024px+ drops from 52px to 48px. **Approved by Megh.** |
 | V11 | `--leading-display` | Hero H1 lines sit about 1.4px closer at 48px. |
 | V12 | `--leading-body` | Case-study prose tightens 0.4px per line at 16px. Entry-detail body tightens from 1.7. |
 | V13 | `--tracking-label` | Small. 'View all' and card eyebrows widen from 0.16em. |
@@ -408,12 +408,12 @@ Adopting the set is invisible **except** for these. Each one comes from folding 
 | V15 | `--hero-avatar-gap` | 2px narrower at md+. |
 | V16 | `--radius-2xl` | Tooltip and ticket corners 2px tighter. |
 | V17 | `--shadow-sm` | Nav pill and chips get a pine-tinted shadow instead of grey. |
-| V18 | `--shadow-md` | Timeline tooltip shadow gets noticeably stronger (0.18 to 0.45 alpha). |
+| V18 | `--shadow-md` | Timeline tooltip shadow gets noticeably stronger (0.18 to 0.45 alpha). **Approved by Megh.** |
 | V19 | `--shadow-lg` | Cal booker shadow shrinks and turns pine. |
 | V20 | `--interval-rotate` | Carousel advances 0.3s slower. |
 | V21 | `--breakpoint-booker` | Contact copy break moves from 1100 to 1104px. |
 
-I'd be most careful with **V10** (hero H1 loses its 52px desktop step) and **V18** (the tooltip shadow gets much stronger). Both are small rule-driven folds with a big visual effect. If you'd rather keep either one, the honest move is to make it a named token with one use, not to keep the arbitrary value.
+I'd be most careful with **V11** (hero H1 loses its 52px desktop step) and **V18** (the tooltip shadow gets much stronger). Both are small rule-driven folds with a big visual effect. If you'd rather keep either one, the honest move is to make it a named token with one use, not to keep the arbitrary value.
 
 ---
 
