@@ -723,7 +723,7 @@ export function ProductVennTravel({
             y={c.cy}
             textAnchor="middle"
             dominantBaseline="central"
-            fontFamily="var(--font-serif), serif"
+            fontFamily="var(--font-display), serif"
             fontSize="36"
             fill="var(--fg)"
             pointerEvents="none"
@@ -819,7 +819,7 @@ export function ProductVennTravel({
         fontFamily={
           variant === "stage"
             ? "var(--font-hand), cursive"
-            : "var(--font-serif), serif"
+            : "var(--font-display), serif"
         }
         fontStyle={variant === "stage" ? "normal" : "italic"}
         fontSize={variant === "stage" ? 28 : 30}

@@ -469,7 +469,7 @@ export function ProductVenn({
             y={c.cy}
             textAnchor="middle"
             dominantBaseline="central"
-            fontFamily="var(--font-serif), serif"
+            fontFamily="var(--font-display), serif"
             fontSize="36"
             fill="var(--fg)"
             style={{ opacity: settled ? 1 : 0 }}
@@ -561,7 +561,7 @@ export function ProductVenn({
         data-role="marker-label"
         x={hideMarker ? 1048 : 1040}
         y={hideMarker ? 464 : 477}
-        fontFamily="var(--font-serif), serif"
+        fontFamily="var(--font-display), serif"
         fontStyle="italic"
         fontSize={hideMarker ? 24 : 30}
         fill="var(--accent)"

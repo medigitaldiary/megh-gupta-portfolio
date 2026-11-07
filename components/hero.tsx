@@ -61,7 +61,7 @@ export function Hero({
 
           <h1
             data-hero-reveal
-            className={`font-serif text-[2.25rem] leading-[1.08] tracking-tight text-fg md:text-[3rem] lg:text-[3.25rem] ${handoff ? "opacity-0" : ""}`}
+            className={`font-display text-[2.25rem] leading-[1.08] tracking-tight text-fg md:text-[3rem] lg:text-[3.25rem] ${handoff ? "opacity-0" : ""}`}
           >
             <span className="block">
               I turn ideas into <span data-hl-word>features</span>,

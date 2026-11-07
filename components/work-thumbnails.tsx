@@ -355,7 +355,7 @@ function CardFace({
           />
         ) : null}
       </div>
-      <h3 className="mt-3 font-serif text-2xl leading-tight text-fg">
+      <h3 className="mt-3 font-display text-2xl leading-tight text-fg">
         {card.title}
       </h3>
       <p className="mt-2 line-clamp-2 h-10 text-sm leading-5 text-fg-muted">

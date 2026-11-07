@@ -43,7 +43,7 @@ export async function generateMetadata({
 const proseColumn = "min-w-0 xl:col-start-1";
 
 const articleClass =
-  "mt-12 max-w-none text-fg xl:col-start-1 [&_a]:text-fg [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-10 [&_h2]:font-serif [&_h2]:text-[1.75rem] [&_h2]:leading-tight [&_h2]:text-fg md:[&_h2]:text-[2.25rem] [&_h3]:mt-6 [&_h3]:font-sans [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-fg [&_li]:leading-relaxed [&_p]:mt-4 [&_p]:leading-relaxed [&_strong]:text-fg [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-6";
+  "mt-12 max-w-none text-fg xl:col-start-1 [&_a]:text-fg [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-10 [&_h2]:font-display [&_h2]:text-[1.75rem] [&_h2]:leading-tight [&_h2]:text-fg md:[&_h2]:text-[2.25rem] [&_h3]:mt-6 [&_h3]:font-sans [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-fg [&_li]:leading-relaxed [&_p]:mt-4 [&_p]:leading-relaxed [&_strong]:text-fg [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-6";
 
 function readMark(value: string | undefined): IndexMark | null {
   return value === "text" || value === "row" ? value : null;
@@ -102,7 +102,7 @@ export default async function WorkCaseStudy({
           <p className="mt-8 font-mono text-xs uppercase tracking-wider text-accent">
             {kicker.join(" · ")}
           </p>
-          <h1 className="mt-3 font-serif text-4xl leading-tight text-fg md:text-5xl">
+          <h1 className="mt-3 font-display text-4xl leading-tight text-fg md:text-5xl">
             {study?.frontmatter.title ?? card.title}
           </h1>
           <p className="mt-6 text-lg leading-relaxed text-fg-muted">
@@ -142,7 +142,7 @@ export default async function WorkCaseStudy({
               <p className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
                 Headline metric
               </p>
-              <p className="mt-2 font-serif text-2xl text-fg md:text-3xl">
+              <p className="mt-2 font-display text-2xl text-fg md:text-3xl">
                 {study.frontmatter.headline_metric}
               </p>
               {study.frontmatter.supporting_metrics?.length ? (
@@ -165,7 +165,7 @@ export default async function WorkCaseStudy({
             <p className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
               Case study
             </p>
-            <p className="mt-2 font-serif text-2xl text-fg">
+            <p className="mt-2 font-display text-2xl text-fg">
               Coming soon. I&apos;m writing it up.
             </p>
             <p className="mt-3 text-sm text-fg-muted">

@@ -228,7 +228,7 @@ function LogoTile({
         ) : (
           <span
             aria-hidden="true"
-            className={`flex h-full w-full items-center justify-center font-serif ${dims.text} ${logoBg ? "text-accent-fg" : "text-fg-subtle"}`}
+            className={`flex h-full w-full items-center justify-center font-display ${dims.text} ${logoBg ? "text-accent-fg" : "text-fg-subtle"}`}
           >
             {fallback.slice(0, 1).toUpperCase()}
           </span>
@@ -316,7 +316,7 @@ function EntryDetail({
               {company}
             </p>
           )}
-          <h3 className="font-serif text-3xl leading-[1.05] tracking-tight text-fg md:text-[2.5rem]">
+          <h3 className="font-display text-3xl leading-[1.05] tracking-tight text-fg md:text-[2.5rem]">
             {role}
           </h3>
         </div>

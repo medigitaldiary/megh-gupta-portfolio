@@ -35,11 +35,11 @@
   --color-accent-fg: var(--accent-fg);
   --color-highlight: var(--highlight);
 
-  /* Geist — one typeface for display and body. --font-serif and
+  /* Geist — one typeface for display and body. --font-display and
      --font-sans both resolve to Geist Sans so every utility
-     (font-serif, font-sans) renders in the same face. Kalam stays on
+     (font-display, font-sans) renders in the same face. Kalam stays on
      --font-hand for the hero greeting. */
-  --font-serif: var(--font-geist-sans);
+  --font-display: var(--font-geist-sans);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-hand: var(--font-hand);
