@@ -144,17 +144,17 @@ Every token, with what it replaces and how many places change. The same data is 
 | Token | Value | Replaces (as built) | Edits | Visible change | Source |
 |---|---|---|---:|---|---|
 | `--bg` | `var(--oatmeal-200)` | (no change) | 0 |  | app/globals.css:9 |
-| `--bg-elevated` | `var(--oatmeal-100)` | bg-white/95 (timeline tooltip); bg-[#f3ebd9]/85 (relock); #f3ebd9 (ticket body) | 4 | Timeline tooltip turns from white to oat. | app/globals.css:10; experience.tsx:890,902; relock-button.tsx:30; app/unlock/backstage.css:75 |
+| `--bg-elevated` | `var(--oatmeal-100)` | bg-white/95 (timeline tooltip); bg-[#f3ebd9]/85 (relock); #f3ebd9 (ticket body) | 4 | Timeline tooltip turns from white to oat. **Approved by Megh.** | app/globals.css:10; experience.tsx:890,902; relock-button.tsx:30; app/unlock/backstage.css:75 |
 | `--fg` | `var(--pine-900)` | text-[#1f3b2e] (relock); PINE constant (unlock, 12 uses through one constant) | 2 |  | app/globals.css:11; relock-button.tsx:30; backstage-pass.tsx:13 |
-| `--fg-muted` | `var(--pine-700)` | text-slate-600 (tooltip body); opacity-80 text (unlock body) | 2 | Tooltip body and unlock body copy shift to pine. | app/globals.css:12; experience.tsx:891; backstage-pass.tsx:161 |
-| `--fg-subtle` | `var(--pine-500)` | text-slate-500 (tooltip date); opacity-60 / opacity-70 text labels (unlock) x7 | 8 | Unlock mono labels become solid pine-500 instead of translucent pine. | app/globals.css:13; experience.tsx:895; backstage-pass.tsx:132,171,297,305,342,348,376 |
+| `--fg-muted` | `var(--pine-700)` | text-slate-600 (tooltip body); opacity-80 text (unlock body) | 2 | Tooltip body and unlock body copy shift to pine. **Approved by Megh.** | app/globals.css:12; experience.tsx:891; backstage-pass.tsx:161 |
+| `--fg-subtle` | `var(--pine-500)` | text-slate-500 (tooltip date); opacity-60 / opacity-70 text labels (unlock) x7 | 8 | Unlock mono labels become solid pine-500 instead of translucent pine. **Approved by Megh.** | app/globals.css:13; experience.tsx:895; backstage-pass.tsx:132,171,297,305,342,348,376 |
 | `--border` | `var(--oatmeal-300)` | border-slate-200/70, /80 (tooltip) | 3 |  | app/globals.css:14; experience.tsx:890,894,902 |
 | `--border-hairline` | `color-mix(in oklab, var(--border) 70%, var(--highlight) 30%)` | [class*="border-border"] override | 1 | None if Phase 4 confirms the global rule already wins. | app/globals.css:311-313 |
-| `--accent` | `var(--pine-900)` | #1F4D3A Cal brand (x2); bg-[#1f3b2e] (relock hover); PINE inline on unlock submit | 4 | Cal booker buttons move from the retired green #1F4D3A to current pine. | app/globals.css:15; cal-embed.tsx:15,16; relock-button.tsx:30; backstage-pass.tsx:250 |
+| `--accent` | `var(--pine-900)` | #1F4D3A Cal brand (x2); bg-[#1f3b2e] (relock hover); PINE inline on unlock submit | 4 | Cal booker buttons move from the retired green #1F4D3A to current pine. **Approved by Megh.** | app/globals.css:15; cal-embed.tsx:15,16; relock-button.tsx:30; backstage-pass.tsx:250 |
 | `--accent-fg` | `var(--oatmeal-200)` | text-[#e8dcc6] (relock hover); #e8dcc6 inline (unlock submit) | 2 |  | app/globals.css:16; relock-button.tsx:30; backstage-pass.tsx:251 |
 | `--highlight` | `var(--lilac-300)` | rgba(203,179,232,0 / .22 / .28 / .3) in globals; rgba(203,179,232,.45 / .35) on unlock | 7 |  | app/globals.css:99,100,104,105,231; backstage-pass.tsx:137; app/unlock/backstage.css:169 |
 | `--highlight-strong` | `var(--lilac-400)` | (no change) | 0 |  | app/globals.css:18 |
-| `--ring-offset` | `var(--bg)` | --tw-ring-offset-color #fff (17 x ring-offset-2) | 17 | Focus-ring gap turns oat instead of white (if the pine ring is the one that renders, Phase 4). | 17 focus-visible:ring-offset-2 sites, see 01 §2.6 |
+| `--ring-offset` | `var(--bg)` | --tw-ring-offset-color #fff (17 x ring-offset-2) | 17 | Focus-ring gap turns oat instead of white (if the pine ring is the one that renders, Phase 4). **Approved by Megh.** | 17 focus-visible:ring-offset-2 sites, see 01 §2.6 |
 | `--surface-band` | `var(--cream-50)` | var(--venn-cream) outside the Venn; rgba(253,247,238,0.6) | 1 |  | experience.tsx:656 |
 
 ### 2.3 Data-viz colours (hero Venn)
@@ -198,8 +198,8 @@ Every token, with what it replaces and how many places change. The same data is 
 
 | Token | Value | Replaces (as built) | Edits | Visible change | Source |
 |---|---|---|---:|---|---|
-| `--text-micro` | `0.625rem` | text-[10px] x7; text-[0.6rem] 9.6px x5; text-[0.65rem] 10.4px x2; 0.58rem 9.28px x1; text-[0.68rem] 10.88px x1 | 16 | Unlock labels move to 10px (from 9.6 and 10.4px); About tip kicker grows 0.7px; relock pill shrinks 0.9px. | see 01 §2.2b and §4.3 |
-| `--text-label` | `0.75rem` | text-xs x18; text-[11px] x4; text-[12px] x1 | 5 | 11px dates and stack pills grow to 12px. | see 01 §2.2b |
+| `--text-micro` | `0.625rem` | text-[10px] x7; text-[0.6rem] 9.6px x5; text-[0.65rem] 10.4px x2; 0.58rem 9.28px x1; text-[0.68rem] 10.88px x1 | 16 | Unlock labels move to 10px (from 9.6 and 10.4px); About tip kicker grows 0.7px; relock pill shrinks 0.9px. **Approved by Megh.** | see 01 §2.2b and §4.3 |
+| `--text-label` | `0.75rem` | text-xs x18; text-[11px] x4; text-[12px] x1 | 5 | 11px dates and stack pills grow to 12px. **Approved by Megh.** | see 01 §2.2b |
 | `--text-small` | `0.875rem` | text-sm x28; 0.8125rem (13px) About tip body x1 | 1 |  | about-collage.css:602 |
 | `--text-body-compact` | `0.9375rem` | text-[15px] x2; 0.9375rem x1; text-[0.95rem] 15.2px x1 | 4 |  | experience.tsx:325,891; about-collage.css:688; backstage-pass.tsx:161 |
 | `--text-body` | `1rem` | text-base x8 | 0 |  |  |
@@ -208,7 +208,7 @@ Every token, with what it replaces and how many places change. The same data is 
 | `--text-title` | `1.5rem` | text-2xl x7 | 0 |  |  |
 | `--text-head-xs` | `1.75rem` | text-[1.75rem] x3 | 3 |  | app/work/[slug]/page.tsx:46; case-study/layouts/markdown-h2.tsx:23; case-study/layouts/section.tsx:55 |
 | `--text-head-sm` | `1.875rem` | text-3xl x7 | 0 |  |  |
-| `--text-head-md` | `2.25rem` | text-[2.25rem] x5 (identical to text-4xl); text-4xl x3; text-[2.5rem] 40px x1 (single use) | 6 | Experience role H3 at md+ drops from 40px to 36px. | see 01 §2.2b |
+| `--text-head-md` | `2.25rem` | text-[2.25rem] x5 (identical to text-4xl); text-4xl x3; text-[2.5rem] 40px x1 (single use) | 6 | Experience role H3 at md+ drops from 40px to 36px. **Approved by Megh.** | see 01 §2.2b |
 | `--text-head-lg` | `3rem` | text-[3rem] x2 (identical to text-5xl); text-5xl x3; text-[3.25rem] 52px x1 (hero lg only) | 3 | Hero H1 at 1024px+ drops from 52px to 48px. **Approved by Megh.** | contact.tsx:12; hero.tsx:64 |
 | `--text-head-xl` | `4rem` | text-[4rem] x1 | 1 |  | contact.tsx:12 |
 
@@ -226,11 +226,11 @@ Every token, with what it replaces and how many places change. The same data is 
 | Token | Value | Replaces (as built) | Edits | Visible change | Source |
 |---|---|---|---:|---|---|
 | `--leading-none` | `1` | leading-none x4; leading-[1] x1; leading-[0.95] x1 (unlock H1) | 2 |  | hero.tsx:55; backstage-pass.tsx:152 |
-| `--leading-display` | `1.05` | leading-[1.05] x2; leading-[1.08] x1 (hero) | 3 | Hero H1 lines sit about 1.4px closer at 48px. | contact.tsx:12; experience.tsx:319; hero.tsx:64 |
+| `--leading-display` | `1.05` | leading-[1.05] x2; leading-[1.08] x1 (hero) | 3 | Hero H1 lines sit about 1.4px closer at 48px. **Approved by Megh.** | contact.tsx:12; experience.tsx:319; hero.tsx:64 |
 | `--leading-heading` | `1.1` | leading-[1.1] x1; line-height: 1.1 x1 | 2 |  | section-header.tsx:18; about-collage.css:449 |
 | `--leading-tight` | `1.25` | leading-tight x8 | 0 |  |  |
 | `--leading-snug` | `1.375` | leading-snug x3; leading-[1.4] x1; line-height: 1.45 x1 | 2 |  | experience.tsx:348; about-collage.css:603 |
-| `--leading-body` | `1.6` | leading-relaxed 1.625 x10; leading-[1.6] x2; leading-[1.5] x1; line-height: 1.65 x1; leading-[1.7] x1 | 15 | Case-study prose tightens 0.4px per line at 16px. Entry-detail body tightens from 1.7. | see 01 §2.2d |
+| `--leading-body` | `1.6` | leading-relaxed 1.625 x10; leading-[1.6] x2; leading-[1.5] x1; line-height: 1.65 x1; leading-[1.7] x1 | 15 | Case-study prose tightens 0.4px per line at 16px. Entry-detail body tightens from 1.7. **Approved by Megh.** | see 01 §2.2d |
 
 ### 2.10 Letter spacing
 
@@ -239,8 +239,8 @@ Every token, with what it replaces and how many places change. The same data is 
 | `--tracking-display` | `-0.025em` | tracking-tight x5; -0.03em x1 (About title) | 1 |  | about-collage.css:450 |
 | `--tracking-display-tight` | `-0.04em` | tracking-[-0.04em] x1; -0.045em x1 (unlock H1) | 2 |  | work-thumbnails.tsx:316; backstage-pass.tsx:155 |
 | `--tracking-mono` | `0.05em` | tracking-wider x12; tracking-wide 0.025em x1 | 1 |  | experience.tsx:895 |
-| `--tracking-label` | `0.2em` | 0.15em x1; 0.16em x3; 0.18em x2; 0.2em x4 | 10 | Small. 'View all' and card eyebrows widen from 0.16em. | see 01 §2.2e and §4.3 |
-| `--tracking-eyebrow` | `0.24em` | 0.24em x2; 0.25em x2; 0.3em x3 (unlock) | 7 | Unlock brand and stub labels tighten from 0.3em. | section-header.tsx:14; case-study/primitives/eyebrow.tsx:24; backstage-pass.tsx:132,171,342,348,376 |
+| `--tracking-label` | `0.2em` | 0.15em x1; 0.16em x3; 0.18em x2; 0.2em x4 | 10 | Small. 'View all' and card eyebrows widen from 0.16em. **Approved by Megh.** | see 01 §2.2e and §4.3 |
+| `--tracking-eyebrow` | `0.24em` | 0.24em x2; 0.25em x2; 0.3em x3 (unlock) | 7 | Unlock brand and stub labels tighten from 0.3em. **Approved by Megh.** | section-header.tsx:14; case-study/primitives/eyebrow.tsx:24; backstage-pass.tsx:132,171,342,348,376 |
 
 ### 2.11 Spacing and layout
 
@@ -250,7 +250,7 @@ Every token, with what it replaces and how many places change. The same data is 
 | `--gutter` | `1.5rem → `md:` 2rem` | px-6 md:px-8 x6 page shells | 0 |  | hero.tsx:34; experience.tsx:25; selected-work-shelf.tsx:13; contact.tsx:9; site-footer.tsx:77; app/work/[slug]/page.tsx:80 |
 | `--section-y` | `6rem → `md:` 8rem` | py-24 md:py-32 x3 | 0 |  | experience.tsx:25; selected-work-shelf.tsx:13; app/work/[slug]/page.tsx:80 |
 | `--scroll-offset` | `80px` | scroll-mt-16 64px x1; scroll-mt-24 96px x2; scroll-margin-top: 80px x1 | 4 | None if Phase 4 confirms the global 80px already wins. | contact.tsx:9; case-study/layouts/markdown-h2.tsx:23; case-study/layouts/section.tsx:46; app/globals.css:316 |
-| `--hero-avatar-gap` | `1rem` | gap-4; md:gap-[18px] x1 | 1 | 2px narrower at md+. | hero.tsx:45 |
+| `--hero-avatar-gap` | `1rem` | gap-4; md:gap-[18px] x1 | 1 | 2px narrower at md+. **Approved by Megh.** | hero.tsx:45 |
 
 ### 2.12 Containers
 
@@ -270,7 +270,7 @@ Every token, with what it replaces and how many places change. The same data is 
 | `--radius-md` | `0.375rem` | rounded-md x6; 7px drag ghost x1 | 1 |  | product-venn-travel.tsx:352 |
 | `--radius-lg` | `0.5rem` | rounded-lg x5 | 0 |  |  |
 | `--radius-xl` | `0.75rem` | rounded-xl x7; border-radius: 10px x1 (stamp) | 1 |  | app/unlock/backstage.css:177 |
-| `--radius-2xl` | `1rem` | rounded-2xl x3; rounded-[18px] x1 (tooltip); 18px ticket corners x4 | 5 | Tooltip and ticket corners 2px tighter. | experience.tsx:890; app/unlock/backstage.css:99,113,139,152 |
+| `--radius-2xl` | `1rem` | rounded-2xl x3; rounded-[18px] x1 (tooltip); 18px ticket corners x4 | 5 | Tooltip and ticket corners 2px tighter. **Approved by Megh.** | experience.tsx:890; app/unlock/backstage.css:99,113,139,152 |
 | `--radius-card` | `1.75rem` | rounded-[1.75rem] x4 | 4 |  | work-thumbnails.tsx:295,310,321,343 |
 | `--radius-full` | `9999px` | rounded-full x31; 999px hero dot x1 | 1 |  | hero-link.tsx:35 |
 
@@ -287,9 +287,9 @@ Every token, with what it replaces and how many places change. The same data is 
 | Token | Value | Replaces (as built) | Edits | Visible change | Source |
 |---|---|---|---:|---|---|
 | `--shadow-xs` | `0 1px 0 color-mix(in srgb, var(--fg) 12%, transparent)` | fg 12%; fg 14% | 2 |  | about-collage.css:357,439 |
-| `--shadow-sm` | `0 2px 8px rgba(31, 59, 46, 0.18)` | hero drop-shadow (same value); Tailwind shadow-sm (black 10%) x3 | 4 | Nav pill and chips get a pine-tinted shadow instead of grey. | hero.tsx:24; nav.tsx:360,374; experience.tsx:741 |
+| `--shadow-sm` | `0 2px 8px rgba(31, 59, 46, 0.18)` | hero drop-shadow (same value); Tailwind shadow-sm (black 10%) x3 | 4 | Nav pill and chips get a pine-tinted shadow instead of grey. **Approved by Megh.** | hero.tsx:24; nav.tsx:360,374; experience.tsx:741 |
 | `--shadow-md` | `0 10px 30px -12px rgba(31, 59, 46, 0.45)` | relock (same value); Tailwind shadow-md x2; Tailwind shadow-lg x1 (unlock hover); tooltip 0 12px 28px -10px slate .18; drag ghost 0 14px 28px -16px fg 50%; unlock submit 0 10px 24px -10px pine .6 | 7 | Timeline tooltip shadow gets noticeably stronger (0.18 to 0.45 alpha). **Approved by Megh.** | relock-button.tsx:30; nav.tsx:360; experience.tsx:741,890; product-venn-travel.tsx:361-362; backstage-pass.tsx:248,252 |
-| `--shadow-lg` | `0 18px 32px -22px rgba(31, 59, 46, 0.28)` | work card (same value); Cal card 0 20px 60px -20px black .35 | 2 | Cal booker shadow shrinks and turns pine. | work-thumbnails.tsx:321; cal-embed.tsx:25 |
+| `--shadow-lg` | `0 18px 32px -22px rgba(31, 59, 46, 0.28)` | work card (same value); Cal card 0 20px 60px -20px black .35 | 2 | Cal booker shadow shrinks and turns pine. **Approved by Megh.** | work-thumbnails.tsx:321; cal-embed.tsx:25 |
 | `--shadow-focus` | `0 0 0 4px color-mix(in srgb, var(--highlight) 30%, transparent)` | rgba(203,179,232,0.3) | 1 |  | app/globals.css:231 |
 
 ### 2.16 Opacity
@@ -345,14 +345,14 @@ Every token, with what it replaces and how many places change. The same data is 
 | `--breakpoint-lg` | `64rem` | (max-width: 1023px) x1 | 0 |  | about-collage.css:622 |
 | `--breakpoint-xl` | `80rem` | (no change) | 0 |  | theme.css:330 |
 | `--breakpoint-nav-chip` | `53.75rem` | min-[860px] | 1 |  | nav.tsx:170 |
-| `--breakpoint-booker` | `69rem` | min-[1104px]; min-[1100px] x1 | 2 | Contact copy break moves from 1100 to 1104px. | contact.tsx:19,28 |
+| `--breakpoint-booker` | `69rem` | min-[1104px]; min-[1100px] x1 | 2 | Contact copy break moves from 1100 to 1104px. **Approved by Megh.** | contact.tsx:19,28 |
 
 ### 2.21 Lock-flow colours (`/unlock` only, approved exceptions)
 
 | Token | Value | Replaces (as built) | Edits | Visible change | Source |
 |---|---|---|---:|---|---|
 | `--status-danger` | `#b23a48` | DENIED_INK constant | 1 |  | backstage-pass.tsx:14 (used :197,279,317) |
-| `--ticket-stub` | `var(--bg)` | #ece1ca | 1 | Stub darkens by about 2% luminance. Check in Phase 4. | app/unlock/backstage.css:114 |
+| `--ticket-stub` | `var(--bg)` | #ece1ca | 1 | Stub darkens by about 2% luminance. Check in Phase 4. **Approved by Megh.** | app/unlock/backstage.css:114 |
 | `--sky-1` | `#b7cde1` | (no change) | 1 |  | cloud-background.tsx:36 |
 | `--sky-2` | `#ccdae7` | (no change) | 0 |  | cloud-background.tsx:36 |
 | `--sky-3` | `#e3dfcf` | (no change) | 0 |  | cloud-background.tsx:36 |
@@ -386,37 +386,35 @@ Every token, with what it replaces and how many places change. The same data is 
 
 ---
 
-## 3. Visible changes that need your approval
+## 3. Visible changes (all approved)
 
 Adopting the set is invisible **except** for these. Each one comes from folding a near-duplicate onto its canonical value.
 
 | # | Token | What a visitor would notice |
 |---:|---|---|
-| V1 | `--bg-elevated` | Timeline tooltip turns from white to oat. |
-| V2 | `--fg-muted` | Tooltip body and unlock body copy shift to pine. |
-| V3 | `--fg-subtle` | Unlock mono labels become solid pine-500 instead of translucent pine. |
-| V4 | `--accent` | Cal booker buttons move from the retired green #1F4D3A to current pine. |
-| V5 | `--ring-offset` | Focus-ring gap turns oat instead of white (if the pine ring is the one that renders, Phase 4). |
-| V6 | `--ticket-stub` | Stub darkens by about 2% luminance. Check in Phase 4. |
-| V7 | `--text-micro` | Unlock labels move to 10px (from 9.6 and 10.4px); About tip kicker grows 0.7px; relock pill shrinks 0.9px. |
-| V8 | `--text-label` | 11px dates and stack pills grow to 12px. |
-| V9 | `--text-head-md` | Experience role H3 at md+ drops from 40px to 36px. |
+| V1 | `--bg-elevated` | Timeline tooltip turns from white to oat. **Approved by Megh.** |
+| V2 | `--fg-muted` | Tooltip body and unlock body copy shift to pine. **Approved by Megh.** |
+| V3 | `--fg-subtle` | Unlock mono labels become solid pine-500 instead of translucent pine. **Approved by Megh.** |
+| V4 | `--accent` | Cal booker buttons move from the retired green #1F4D3A to current pine. **Approved by Megh.** |
+| V5 | `--ring-offset` | Focus-ring gap turns oat instead of white (if the pine ring is the one that renders, Phase 4). **Approved by Megh.** |
+| V6 | `--ticket-stub` | Stub darkens by about 2% luminance. Check in Phase 4. **Approved by Megh.** |
+| V7 | `--text-micro` | Unlock labels move to 10px (from 9.6 and 10.4px); About tip kicker grows 0.7px; relock pill shrinks 0.9px. **Approved by Megh.** |
+| V8 | `--text-label` | 11px dates and stack pills grow to 12px. **Approved by Megh.** |
+| V9 | `--text-head-md` | Experience role H3 at md+ drops from 40px to 36px. **Approved by Megh.** |
 | V10 | `--text-head-lg` | Hero H1 at 1024px+ drops from 52px to 48px. **Approved by Megh.** |
-| V11 | `--leading-display` | Hero H1 lines sit about 1.4px closer at 48px. |
-| V12 | `--leading-body` | Case-study prose tightens 0.4px per line at 16px. Entry-detail body tightens from 1.7. |
-| V13 | `--tracking-label` | Small. 'View all' and card eyebrows widen from 0.16em. |
-| V14 | `--tracking-eyebrow` | Unlock brand and stub labels tighten from 0.3em. |
-| V15 | `--hero-avatar-gap` | 2px narrower at md+. |
-| V16 | `--radius-2xl` | Tooltip and ticket corners 2px tighter. |
-| V17 | `--shadow-sm` | Nav pill and chips get a pine-tinted shadow instead of grey. |
+| V11 | `--leading-display` | Hero H1 lines sit about 1.4px closer at 48px. **Approved by Megh.** |
+| V12 | `--leading-body` | Case-study prose tightens 0.4px per line at 16px. Entry-detail body tightens from 1.7. **Approved by Megh.** |
+| V13 | `--tracking-label` | Small. 'View all' and card eyebrows widen from 0.16em. **Approved by Megh.** |
+| V14 | `--tracking-eyebrow` | Unlock brand and stub labels tighten from 0.3em. **Approved by Megh.** |
+| V15 | `--hero-avatar-gap` | 2px narrower at md+. **Approved by Megh.** |
+| V16 | `--radius-2xl` | Tooltip and ticket corners 2px tighter. **Approved by Megh.** |
+| V17 | `--shadow-sm` | Nav pill and chips get a pine-tinted shadow instead of grey. **Approved by Megh.** |
 | V18 | `--shadow-md` | Timeline tooltip shadow gets noticeably stronger (0.18 to 0.45 alpha). **Approved by Megh.** |
-| V19 | `--shadow-lg` | Cal booker shadow shrinks and turns pine. |
+| V19 | `--shadow-lg` | Cal booker shadow shrinks and turns pine. **Approved by Megh.** |
 | V20 | `--interval-carousel` | Carousel advances every 10s instead of 4.5s. **Approved by Megh (set to 10s).** |
-| V21 | `--breakpoint-booker` | Contact copy break moves from 1100 to 1104px. |
+| V21 | `--breakpoint-booker` | Contact copy break moves from 1100 to 1104px. **Approved by Megh.** |
 
-**Approved:** V20 (carousel every 10s, set by Megh; a new value, not a Phase 1 one). V10 (hero H1 is 48px from 768px up; the 52px step at 1024px is retired) and V18 (timeline tooltip moves to oat and pine with the shared floating shadow). Both were reviewed against before/after mock-ups.
-
-**Still open:** the other 18 rows. For any row you reject, the value stays and becomes a named single-use token rather than an arbitrary value.
+**All 21 approved by Megh.** V10 and V18 were reviewed against single before/after mock-ups, the other 19 against grouped mock-ups. V20 was approved at a new value, 10s (Megh's call, so the cover videos have time to play), not the 4.8s first proposed. V19 (Cal booker shadow) was approved even though Claude flagged that a pine shadow barely shows on the pine Contact fold; Phase 4 checks how it reads on the real page.
 
 ---
 
@@ -443,7 +441,7 @@ Recorded in `02-decisions.md`, with the ready-to-review diffs in `patches/`.
 
 | # | Decision | Status |
 |---|---|---|
-| D1 | Visible changes (§3) | **V10, V18, V20 approved** (V20 at 10s). 18 rows still open. |
+| D1 | Visible changes (§3) | **All 21 approved** (V20 at 10s). |
 | D2 | Unused `@theme` type scale, `app/globals.css:47-58` | **Approved: delete.** Docs keep the nominal sizes. Heading-size tokens here are renamed `--text-head-*` so no proposed token reuses a deleted name with a different value. |
 | D3 | AI Call iframe status colours | **Approved: scoped exception.** `--success` / `--warning` keep their values inside the iframe (§2.22). |
 | D4 | `font-serif` → `font-display` | **Approved.** Repo-wide sweep is 47 lines in 27 files, including 4 SVG `var(--font-serif)` references, not the 14 in-scope classes first counted. |

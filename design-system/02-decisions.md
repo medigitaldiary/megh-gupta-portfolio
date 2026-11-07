@@ -4,21 +4,21 @@
 
 | # | Decision | Status | Artefact |
 |---|---|---|---|
-| D1 | Visible changes V1 to V21 | V10, V18, V20 approved; 18 open | `02-tokens.md` §3 |
+| D1 | Visible changes V1 to V21 | All 21 approved | `02-tokens.md` §3 |
 | D2 | Delete the unused `@theme` type scale | Approved | `patches/D2-delete-theme-type-scale.diff` + CLAUDE.md text |
 | D3 | AI Call diagram status colours | Approved as a scoped exception | `tokens.json` → `island.ai-call-pipeline` + CLAUDE.md text |
 | D4 | Rename `font-serif` → `font-display` | Approved | `patches/D4-font-serif-to-font-display.diff` |
 | D5 | Kalam inline styles → `font-hand` class | Approved in principle, diff for review | `patches/D5-font-hand-class.diff` |
-| D6 | Work carousel advances every 10s | Approved (Megh) | `patches/D6-carousel-interval-10s.diff` |
+| D6 | Work carousel advances every 10s | Approved (Megh); one open question on phones | `patches/D6-carousel-interval-10s.diff` |
 
 ---
 
 ## D1 · Visible changes
 
-- **V10 approved:** the hero H1 is 48px from 768px up, and the 52px step at 1024px is retired.
-- **V18 approved:** the timeline tooltip moves to oat and pine with the shared floating shadow, `--shadow-md`.
+**All 21 approved.** V10 and V18 were reviewed against single before/after mock-ups, the other 19 against grouped mock-ups.
 
-Both were reviewed against before/after mock-ups. The other 19 are listed in `02-tokens.md` §3, each with the fold or component it touches.
+- **V20** was approved at a new value, 10s, instead of the proposed 4.8s (see D6).
+- **V19** (Cal booker shadow) was approved although Claude flagged that a pine shadow barely shows on the pine Contact fold. Phase 4 checks it on the real page.
 
 ## D2 · Delete the `@theme` type scale
 
@@ -104,7 +104,11 @@ The SVG attribute at `product-venn-travel.tsx:821` is untouched.
 
 ## D6 · Work carousel advances every 10 seconds
 
-**Decision (Megh):** the Selected Work shelf moves to the next case study every **10s**, up from 4.5s. This is a new value, set by the owner, not one found in Phase 1.
+**Decision (Megh):** the Selected Work shelf moves to the next case study every **10s**, up from 4.5s, because the cover videos are longer than 4.5s. A new value, set by the owner, not one found in Phase 1. The nav status chip stays at 4.8s (confirmed).
+
+**Cover video lengths** (`ffprobe` on `public/videos/work/*.mp4`): Ultra 18.0s, Bond Bytes 17.0s, MoveInSync 16.0s, AI Call 12.0s, SEO engine 5.0s, Deridata 4.8s, Freshdesk 4.8s.
+
+**Open question for Megh:** 10s fully covers the three short clips. On desktop (about 3.5 cards visible, one-card steps) every card stays in view for about 3 steps, so all clips finish. On phones (about 1.15 cards visible) each card gets about 10s, so the four long clips (12 to 18s) are cut off.
 
 **Change:** `components/work-thumbnails.tsx:77`, `STEP_MS = 4500` → `10000`. One line. Pause on hover / focus, reduced-motion (no autoplay) and the arrows are unchanged.
 
