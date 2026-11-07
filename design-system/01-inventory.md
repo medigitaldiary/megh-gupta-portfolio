@@ -2,6 +2,8 @@
 
 > Phase 1 of the design-system audit. This is a reverse-engineered record of what the code does today. Nothing here is a recommendation. Normalisation is Phase 2, gaps and fixes are Phase 3, rendered verification is Phase 4.
 
+**Revision 2** (after review): `/unlock` added as §4; Q1, Q6 and Q8 resolved; Q7 direction agreed; Q10 added.
+
 **Audit date:** 2026-11-07 · **Commit:** `50a3913` (same commit as `origin/main`, so the live preview routes should run this code) · **Branch:** `mxg/upbeat-hypatia-85xg1z`
 
 ## 0. Scope and method
@@ -15,6 +17,7 @@ The routes Megh named, and everything they render:
 | `/preview/v3` | `app/preview/v3/page.tsx` | `Nav` (Lab + Writing hidden), `Hero` (static Venn), `Experience`, `SelectedWorkShelf mark="text"`, `AboutCollage`, `Contact`, `SiteFooter`, plus `RelockButton` from `app/preview/layout.tsx` |
 | `/preview/v3.1` | `app/preview/v3.1/page.tsx` | Same folds. Differences: `Hero link="travel"` (draggable Venn + the pine dot that flies from portrait to pin) and `SelectedWorkShelf mark="row"` |
 | `/work/ai-call-analysis-pipeline` | `app/work/[slug]/page.tsx` + `content/work/ai-call-analysis-pipeline.mdx` | Case study shell, "On this page" index, headline-metric card, MDX body, "Keep reading" cards, `RelockButton` from `app/work/layout.tsx`. Reached from v3 as `?mark=text` and from v3.1 as `?mark=row`; the only visual difference is the index highlight style. |
+| `/unlock` | `app/unlock/page.tsx` + `app/unlock/backstage.css` | Password gate ("Backstage Pass") that `middleware.ts:10-24` sends every locked page through. Added to scope after review: it stays as the lock flow for preview pages and for content shared with specific people. Inventoried separately in **§4** so its values do not blur the portfolio counts. |
 
 `app/preview/v3/layout.tsx` and `app/preview/v3/scope.css` are no-ops (`scope.css:15-17`, empty `.v3-scope` class). v3 and v3.1 differ only in the two props above.
 
@@ -22,9 +25,9 @@ The file list came from an import-graph walk from those entry points (47 files).
 
 ### What is out of scope (and why it is still mentioned)
 
-- `app/globals.css:329-355`, `357-621`, `670-685` style the coming-soon clouds and the Lab scene. Neither renders on these routes. They are excluded from the counts and listed in Appendix B.
+- `app/globals.css:357-621` and `670-685` style the Lab scene, which does not render on these routes. `329-355` (`.cs-cloud` drift) renders only on `/unlock` and is covered in §4. They are excluded from the counts and listed in Appendix B.
 - Case-study kit components that exist but are **not used by the AI Call case study**: `Figure`, `Pill`, `Quote`, `ScreenshotStack`, `Pipeline`. They ship in the same bundle (`components/case-study/index.ts`) but never render here. Appendix C.
-- `/unlock` (the password gate) is the first screen a visitor hits before either preview, but it was not named. Not inventoried. See Open questions.
+- `/unlock` is in scope (see table above) but counted on its own in §4. §2 and Appendix D cover only the three portfolio routes.
 
 ### How values were counted
 
@@ -903,21 +906,220 @@ The code has no component named "bookshelf". The shelf is the Selected Work caro
 
 ---
 
-## 4. Open questions
+## 4. Unlock screen (`/unlock`)
+
+Added after review. Files: `app/unlock/page.tsx` (59 lines), `app/unlock/backstage.css` (282 lines, every selector prefixed `bp-`), `components/backstage-pass.tsx` (433 lines), `components/cloud-background.tsx` (104 lines), and `.cs-cloud` drift at `app/globals.css:329-355`. Logic lives in `app/unlock/actions.ts` and `lib/preview-auth.ts` (no styles).
+
+Counted separately from §2. Only the `dawn` sky renders here (`page.tsx:41`); the `blue` and `ods` palettes at `cloud-background.tsx:41-53` serve other preview routes and are excluded.
+
+### 4.1 Headline facts
+
+- **It uses zero project colour variables.** Pine is re-declared as a JS constant (`const PINE = "#1f3b2e"`, `backstage-pass.tsx:13`) and applied through inline `style` or SVG attributes in **12 places** (`backstage-pass.tsx:108,124,199,200,216,223,250,280,326,337,370,396`). The table below counts the constant once, at its definition. Oatmeal and elevated oat are typed as hex in CSS (`backstage.css:75`) and inline (`backstage-pass.tsx:251`). The only `var()` reads are `--font-hand` and the component's own `--bp-*` variables.
+- **It introduces a fourth colour family:** `DENIED_INK = "#b23a48"` (a red, `backstage-pass.tsx:14`), used for the error state: input underline, status text and the DENIED stamp.
+- **It introduces a sky palette:** a 5-stop blue-to-gold gradient, a warm sun glow and white clouds (`cloud-background.tsx:35-40,66-71`).
+- **It is the only screen with a form field**, and so the only place with input, error, loading and success states.
+- **Its type sizes are almost all one-offs:** five arbitrary mono sizes (`0.6rem`, `0.65rem`, `0.95rem`…) and a `clamp(3rem, 9vw, 5.25rem)` H1 set by inline style.
+
+### 4.2 Colour (all hardcoded)
+
+| Value | Resolves to | Source | Uses | Prefixes seen | Where |
+|---|---|---|---:|---|---|
+| `#000` |  | hardcoded | 16 | base | `app/unlock/backstage.css:90,92,95,97,104,106,109,111,130,132,135,137,143,145,148,150` |
+| `#ffffff` |  | hardcoded | 6 | base | `cloud-background.tsx:39,67,68,69,70,71` |
+| `rgba(31, 59, 46, 0.28)` |  | hardcoded | 2 | base | `app/unlock/backstage.css:124,161` |
+| `#1f3b2e` |  | hardcoded | 1 | base | `backstage-pass.tsx:13` |
+| `#b23a48` |  | hardcoded | 1 | base | `backstage-pass.tsx:14` |
+| `#b7cde1` |  | hardcoded | 1 | base | `cloud-background.tsx:36` |
+| `#ccdae7` |  | hardcoded | 1 | base | `cloud-background.tsx:36` |
+| `#d5dbe3` |  | hardcoded | 1 | base | `cloud-background.tsx:38` |
+| `#e3dfcf` |  | hardcoded | 1 | base | `cloud-background.tsx:36` |
+| `#e8dcc6` |  | hardcoded | 1 | base | `backstage-pass.tsx:251` |
+| `#ece1ca` |  | hardcoded | 1 | base | `app/unlock/backstage.css:114` |
+| `#f1e6ce` |  | hardcoded | 1 | base | `cloud-background.tsx:36` |
+| `#f3ebd9` |  | hardcoded | 1 | base | `app/unlock/backstage.css:75` |
+| `#f6ecd1` |  | hardcoded | 1 | base | `cloud-background.tsx:36` |
+| `bg-transparent` |  | Tailwind default | 1 | base | `backstage-pass.tsx:194` |
+| `rgba(203, 179, 232, 0.35)` |  | hardcoded | 1 | base | `app/unlock/backstage.css:169` |
+| `rgba(203,179,232,0.45)` |  | hardcoded | 1 | base | `backstage-pass.tsx:137` |
+| `rgba(232,220,198,0.15)` |  | hardcoded | 1 | base | `app/unlock/page.tsx:48` |
+| `rgba(232,220,198,0.55)` |  | hardcoded | 1 | base | `app/unlock/page.tsx:48` |
+| `rgba(255, 255, 255, 0.55)` |  | hardcoded | 1 | base | `app/unlock/backstage.css:80` |
+| `rgba(255, 255, 255, 0)` |  | hardcoded | 1 | base | `app/unlock/backstage.css:81` |
+| `rgba(255,232,187,0.35)` |  | hardcoded | 1 | base | `cloud-background.tsx:37` |
+| `rgba(255,239,200,0.85)` |  | hardcoded | 1 | base | `cloud-background.tsx:37` |
+| `rgba(31, 59, 46, 0.035)` |  | hardcoded | 1 | base | `app/unlock/backstage.css:77` |
+| `rgba(31, 59, 46, 0.12)` |  | hardcoded | 1 | base | `app/unlock/backstage.css:168` |
+| `rgba(31, 59, 46, 0.22)` |  | hardcoded | 1 | base | `app/unlock/backstage.css:167` |
+| `rgba(31,59,46,0.2)` |  | hardcoded | 1 | base | `backstage-pass.tsx:295` |
+| `rgba(31,59,46,0.35)` |  | hardcoded | 1 | base | `backstage-pass.tsx:198` |
+| `rgba(31,59,46,0.45)` |  | hardcoded | 1 | base | `backstage-pass.tsx:355` |
+| `rgba(31,59,46,0.6)` |  | hardcoded | 1 | base | `backstage-pass.tsx:252` |
+
+Where the `#000` values are: CSS `mask` gradients that cut the ticket's half-circle notches (`backstage.css:88-154`). They control transparency, not visible colour.
+
+Provenance:
+
+| Group | Values | Where |
+|---|---|---|
+| Pine, re-typed | `#1f3b2e` (constant), alpha 0.035 / 0.12 / 0.2 / 0.22 / 0.28 / 0.35 / 0.45 / 0.6 | `backstage-pass.tsx:13,198,252,295,355`, `backstage.css:77,124,161,167,168` |
+| Oatmeal family, re-typed | `#f3ebd9` (= `--bg-elevated`), `#ece1ca` (stub, darker oat, **not a token**), `#e8dcc6` (= `--bg`) at 0.55 / 0.15 veil | `backstage.css:75,114`, `backstage-pass.tsx:251`, `page.tsx:48` |
+| Lilac at alpha | `rgba(203,179,232,…)` 0.45 (badge), 0.35 (glow) | `backstage-pass.tsx:137`, `backstage.css:169` |
+| Denied red | `#b23a48` | `backstage-pass.tsx:14` (used at `:197,279,317`) |
+| Dawn sky | `#B7CDE1 → #CCDAE7 → #E3DFCF → #F1E6CE → #F6ECD1`, glow `rgba(255,239,200,.85)` / `rgba(255,232,187,.35)`, cloud shadow `#D5DBE3`, clouds `#FFFFFF` | `cloud-background.tsx:36-39,66-71` |
+| Paper sheen | `rgba(255,255,255,0.55 → 0)` | `backstage.css:80-81` |
+| Cloud shadow | `drop-shadow(0 18px 30px rgba(60,78,110,0.14))` + `blur(9px)` | `app/globals.css:338` |
+
+### 4.3 Typography
+
+| Value | Resolves to | Source | Uses | Prefixes seen | Where |
+|---|---|---|---:|---|---|
+| `text-[0.6rem]` |  | hardcoded | 5 | base | `backstage-pass.tsx:136,342,348,354,376` |
+| `text-2xl` | 1.5rem (24px) / lh 1.333 | Tailwind default | 3 | `md:` base | `backstage-pass.tsx:144,316,325` |
+| `text-[0.65rem]` |  | hardcoded | 2 | base | `backstage-pass.tsx:132,171` |
+| `text-3xl` | 1.875rem (30px) / lh 1.2 | Tailwind default | 2 | `md:` | `backstage-pass.tsx:316,325` |
+| `text-sm` | 0.875rem (14px) / lh 1.429 | Tailwind default | 2 | base | `backstage-pass.tsx:248,275` |
+| `clamp(3rem, 9vw, 5.25rem)` |  | hardcoded | 1 | base | `backstage-pass.tsx:154` |
+| `text-[0.95rem]` |  | hardcoded | 1 | base | `backstage-pass.tsx:161` |
+| `text-4xl` | 2.25rem (36px) / lh 1.111 | Tailwind default | 1 | base | `backstage-pass.tsx:345` |
+| `text-5xl` | 3rem (48px) / lh 1 | Tailwind default | 1 | `md:` | `backstage-pass.tsx:345` |
+| `text-lg` | 1.125rem (18px) / lh 1.556 | Tailwind default | 1 | base | `backstage-pass.tsx:194` |
+| `text-xl` | 1.25rem (20px) / lh 1.4 | Tailwind default | 1 | base | `backstage-pass.tsx:144` |
+| `text-xs` | 0.75rem (12px) / lh 1.333 | Tailwind default | 1 | base | `backstage-pass.tsx:294` |
+
+| Element | Size | Weight | Tracking | Line height | Font | Where |
+|---|---|---|---|---|---|---|
+| H1 "Backstage." | `clamp(3rem, 9vw, 5.25rem)` (48 to 84px), inline style | 600 | -0.045em | 0.95 | Geist Sans | `backstage-pass.tsx:150-159` |
+| Handwritten line | 20px / `md:` 24px | 400 | | 1 | Kalam | `:143-148` |
+| Body | 0.95rem (15.2px), `opacity-80` | | | relaxed (1.625) | Geist Sans | `:161` |
+| Mono labels (brand, password label, stub) | 0.6rem (9.6px) and 0.65rem (10.4px) uppercase, `opacity-60/70` | | 0.15em to 0.3em | | Geist Mono | `:132,136,171,342,348,354,376` |
+| Password input | 18px mono | | 0.2em | | Geist Mono | `:194` |
+| Status line | 14px | | | | Geist Sans | `:275` |
+| Stamp | 24px / `md:` 30px mono uppercase | 700 | 0.18em | | Geist Mono | `:316,325`, `backstage.css:178` |
+| "One" (stub) | 36px / `md:` 48px | 600 | tight | 1 | Geist Sans | `:345` |
+
+Weights:
+
+| Value | Resolves to | Source | Uses | Prefixes seen | Where |
+|---|---|---|---:|---|---|
+| `font-bold` | 700 | Tailwind default | 3 | base | `backstage-pass.tsx:316,325,359` |
+| `font-semibold` | 600 | Tailwind default | 2 | base | `backstage-pass.tsx:152,345` |
+| `font-medium` | 500 | Tailwind default | 1 | base | `backstage-pass.tsx:248` |
+
+Letter spacing:
+
+| Value | Resolves to | Source | Uses | Prefixes seen | Where |
+|---|---|---|---:|---|---|
+| `tracking-[0.2em]` |  | hardcoded | 3 | base | `backstage-pass.tsx:136,194,298` |
+| `tracking-[0.3em]` |  | hardcoded | 3 | base | `backstage-pass.tsx:132,342,376` |
+| `tracking-[0.25em]` |  | hardcoded | 2 | base | `backstage-pass.tsx:171,348` |
+| `-0.045em` |  | hardcoded | 1 | base | `backstage-pass.tsx:155` |
+| `letter-spacing: 0.18em` |  | hardcoded | 1 | base | `app/unlock/backstage.css:178` |
+| `tracking-[0.15em]` |  | hardcoded | 1 | base | `backstage-pass.tsx:354` |
+| `tracking-tight` | -0.025em | Tailwind default | 1 | base | `backstage-pass.tsx:345` |
+
+### 4.4 Shape, depth, motion
+
+Radius (rows `112`, `62`, `55`, `54`, `42`, `36` are cloud ellipse geometry in SVG units, not corner radii):
+
+| Value | Resolves to | Source | Uses | Prefixes seen | Where |
+|---|---|---|---:|---|---|
+| `rounded-full` | calc(infinity * 1px) | Tailwind default | 5 | base | `backstage-pass.tsx:136,215,248,354` `cloud-background.tsx:82` |
+| `112` |  | hardcoded | 1 | base | `cloud-background.tsx:66` |
+| `36` |  | hardcoded | 1 | base | `cloud-background.tsx:70` |
+| `42` |  | hardcoded | 1 | base | `cloud-background.tsx:67` |
+| `54` |  | hardcoded | 1 | base | `cloud-background.tsx:69` |
+| `55` |  | hardcoded | 1 | base | `cloud-background.tsx:71` |
+| `62` |  | hardcoded | 1 | base | `cloud-background.tsx:68` |
+| `border-radius: 0 0 18px 18px` |  | hardcoded | 1 | base | `app/unlock/backstage.css:152` |
+| `border-radius: 0 18px 18px 0` |  | hardcoded | 1 | base | `app/unlock/backstage.css:113` |
+| `border-radius: 10px` |  | hardcoded | 1 | base | `app/unlock/backstage.css:177` |
+| `border-radius: 18px 0 0 18px` |  | hardcoded | 1 | base | `app/unlock/backstage.css:99` |
+| `border-radius: 18px 18px 0 0` |  | hardcoded | 1 | base | `app/unlock/backstage.css:139` |
+| `rounded-md` | 0.375rem (6px) | Tailwind default | 1 | base | `backstage-pass.tsx:238` |
+
+Shadows: the ticket carries a three-layer `filter: drop-shadow(0 30px 40px rgba(31,59,46,.22)) drop-shadow(0 6px 10px rgba(31,59,46,.12)) drop-shadow(0 0 40px rgba(203,179,232,.35))` (`backstage.css:166-170`), on a wrapper because masks clip `box-shadow`. The submit button adds `box-shadow: 0 10px 24px -10px rgba(31,59,46,.6)` inline (`backstage-pass.tsx:252`) and `hover:shadow-lg` (Tailwind, black).
+
+Motion:
+
+| Value | Resolves to | Source | Uses | Prefixes seen | Where |
+|---|---|---|---:|---|---|
+| `duration-200` | 200ms | Tailwind default | 2 | base | `backstage-pass.tsx:248,264` |
+| `animate-spin` |  | Tailwind default | 1 | base | `backstage-pass.tsx:413` |
+| `animation: bp-caret 1.1s steps(2, end) infinite` |  | hardcoded | 1 | base | `app/unlock/backstage.css:251` |
+| `animation: bp-dot 260ms cubic-bezier(0.2, 1.6, 0.4, 1) both` |  | hardcoded | 1 | base | `app/unlock/backstage.css:237` |
+| `animation: bp-enter 900ms cubic-bezier(0.2, 0.9, 0.25, 1.15) both` |  | hardcoded | 1 | base | `app/unlock/backstage.css:10` |
+| `animation: bp-exit 300ms ease-in forwards` |  | hardcoded | 1 | base | `app/unlock/backstage.css:280` |
+| `animation: bp-exit 600ms ease-in 1100ms forwards` |  | hardcoded | 1 | base | `app/unlock/backstage.css:225` |
+| `animation: bp-float 6s ease-in-out 900ms infinite` |  | hardcoded | 1 | base | `app/unlock/backstage.css:25` |
+| `animation: bp-shake 520ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both` |  | hardcoded | 1 | base | `app/unlock/backstage.css:47` |
+| `animation: bp-stamp 420ms cubic-bezier(0.2, 1.4, 0.4, 1) both, bp-stamp-out 500ms ease-in 1500ms forwards` |  | hardcoded | 1 | base | `app/unlock/backstage.css:182` |
+| `animation: bp-stamp 420ms cubic-bezier(0.2, 1.4, 0.4, 1) both` |  | hardcoded | 1 | base | `app/unlock/backstage.css:179` |
+| `animation: bp-tear 900ms cubic-bezier(0.55, 0, 0.75, 0.4) 450ms forwards` |  | hardcoded | 1 | base | `app/unlock/backstage.css:207` |
+| `animation: none` |  | hardcoded | 1 | base | `app/unlock/backstage.css:268` |
+| `transition-all` | 150ms cubic-bezier(0.4, 0, 0.2, 1) | Tailwind default | 1 | base | `backstage-pass.tsx:248` |
+| `transition-opacity` | 150ms cubic-bezier(0.4, 0, 0.2, 1) | Tailwind default | 1 | base | `backstage-pass.tsx:238` |
+| `transition-transform` | 150ms cubic-bezier(0.4, 0, 0.2, 1) | Tailwind default | 1 | base | `backstage-pass.tsx:264` |
+| `transition: none` |  | hardcoded | 1 | base | `app/unlock/backstage.css:272` |
+| `transition: transform 220ms ease-out` |  | hardcoded | 1 | base | `app/unlock/backstage.css:41` |
+
+| Value | Resolves to | Source | Uses | Prefixes seen | Where |
+|---|---|---|---:|---|---|
+| `@keyframes bp-tear` |  | hardcoded | 2 | base | `app/unlock/backstage.css:209,216` |
+| `@keyframes bp-caret` |  | hardcoded | 1 | base | `app/unlock/backstage.css:253` |
+| `@keyframes bp-dot` |  | hardcoded | 1 | base | `app/unlock/backstage.css:239` |
+| `@keyframes bp-enter` |  | hardcoded | 1 | base | `app/unlock/backstage.css:12` |
+| `@keyframes bp-exit` |  | hardcoded | 1 | base | `app/unlock/backstage.css:227` |
+| `@keyframes bp-float` |  | hardcoded | 1 | base | `app/unlock/backstage.css:27` |
+| `@keyframes bp-shake` |  | hardcoded | 1 | base | `app/unlock/backstage.css:49` |
+| `@keyframes bp-stamp-out` |  | hardcoded | 1 | base | `app/unlock/backstage.css:199` |
+| `@keyframes bp-stamp` |  | hardcoded | 1 | base | `app/unlock/backstage.css:186` |
+
+Cloud drift: eight clouds, 150 to 195s per pass, linear, infinite (`cloud-background.tsx:18-27`, `app/globals.css:332-348`). Reduced motion parks them (`app/globals.css:350-355`).
+
+Breakpoints:
+
+| Value | Resolves to | Source | Uses | Prefixes seen | Where |
+|---|---|---|---:|---|---|
+| `md:` | min-width 48rem (768px) | Tailwind default | 19 | `md:` | `app/unlock/page.tsx:39` `backstage-pass.tsx:103,107,144,316,325,336,341,345,362,363` |
+| `sm:` | min-width 40rem (640px) | Tailwind default | 3 | `sm:` | `backstage-pass.tsx:176,354` |
+| `@media (max-width: 767px)` |  | hardcoded | 2 | base | `app/unlock/backstage.css:127,215` |
+| `@media (prefers-reduced-motion: reduce)` |  | media feature | 1 | base | `app/unlock/backstage.css:259` |
+
+### 4.5 Components on this screen
+
+| Part | Where | Variants / states | Mobile (<768) |
+|---|---|---|---|
+| Sky backdrop | `cloud-background.tsx:76-104`, `page.tsx:41-50` | `dawn` palette; 8 drifting clouds; radial oatmeal veil with `backdrop-blur-[2px]` behind the ticket | Same; full-bleed `min-h-[100svh]` |
+| Ticket | `backstage-pass.tsx:93-103`, `backstage.css:4-43,72-116,166-170` | Enters with an overshoot slide (900ms), floats (6s loop), tilts toward a **mouse** pointer (±8° / ±6°, `pointerType === "mouse"` only). Body and stub are separate halves with real half-circle notches (CSS masks) and an 18px outer radius. | Stacks vertically: body on top, stub below, perforation turns horizontal (`backstage.css:127-163`) |
+| Header row | `backstage-pass.tsx:131-141` | Mono brand label + lilac "Works in progress" badge (`rounded-full`, inline lilac 45% background) | Same |
+| Password field | `:169-242` | Underline-only input (`border-b-2`), mono 18px. **Typed characters show as pine ink dots**, not bullets: the real input text is transparent and an overlay draws one dot per character, max 14 (`:204-227`). Custom blinking caret. Show/hide toggle (eye icon, `aria-pressed`). States: idle (pine 35% underline), **error** (red underline, `aria-invalid`), disabled (`opacity-60`). The input **removes its own focus indicator**: `outline-none focus-visible:shadow-none focus-visible:outline-none` (`:194`). | Full width; button drops below the input (`flex-col`, `sm:flex-row`) |
+| Submit button | `:244-269` | Primary pine pill (inline background, not `bg-accent`) `px-6 py-3 text-sm font-medium`. States: hover lifts + `shadow-lg` + arrow nudges right; **loading** ("Checking…" + spinning SVG); **success** ("Welcome in"); disabled until text is typed (`opacity-50`). No component focus style (global rule only). | Full width under the field. Tap height computed 44px. |
+| Status line | `:272-290` | `aria-live="polite"`, reserved 1.25rem height so layout does not jump. Copy for: wrong (1st and 2nd try), wrong (3rd+), server not configured (red), admitted (pine). | Same |
+| Stamps | `:311-330`, `backstage.css:172-203` | DENIED (red, fades out after 1.5s) and ADMITTED (pine). Double 4px border, `mix-blend-mode: multiply`, slam-in at 2.4× scale. Decorative (`aria-hidden`). | Smaller (24px) |
+| Error feedback | `:51-61`, `backstage.css:45-67` | The whole ticket **shakes** (520ms), clears the field, refocuses | Same |
+| Success sequence | `:63-74`, `backstage.css:205-233` | ADMITTED stamp → stub **tears off** along the perforation (900ms, starts at 450ms) → ticket blurs out (600ms at 1100ms) → redirect at 1650ms (350ms under reduced motion) | Tear direction changes for the vertical layout (`backstage.css:215-222`) |
+| Footer row | `:293-309` | Dashed hairline; mono "Heading to → /preview/v3"; underlined "← Not supposed to be here?" link to `/` (`opacity-70 hover:opacity-100`, no focus style) | Wraps |
+| Stub | `:334-380` | "Admit One", rotated dashed date badge (`sm:` and up only), decorative barcode (fixed bar widths), serial. Entire stub `aria-hidden`. | Horizontal row; date badge hidden below 640px |
+| Reduced motion | `backstage.css:259-282` | No enter / float / shake / tear / dot / caret animation; no tilt; stamps static; exit shortened to 300ms | |
+
+---
+
+## 5. Open questions
 
 Nothing below is guessed. Each one needs your answer or a Phase 4 render check.
 
 | # | Question | What the code shows | How it gets resolved |
 |---|---|---|---|
-| Q1 | **Where are the "yellow-blue-red accent bars"?** | No yellow, blue or red bars exist in scope. The three strips in About are pine / lilac / oat-grey, and `about-collage.css:2` says "No Vox yellow-blue-red." The only three-colour set is the hero Venn: `--venn-user #c1497f` (pink-red), `--venn-tech #4a72b0` (blue), `--venn-biz #c77e3b` (amber-orange) at `app/globals.css:21-23`. | **You:** do you mean the Venn rings, the About strips, or something on a route outside this scope? Phase 4 also checks the live site renders the same (branch = `main`, so it should). |
+| Q1 | ~~Where are the "yellow-blue-red accent bars"?~~ **Resolved.** | There are none. `about-collage.css:2` is a reference note: the collage borrows Vox's paper-collage layout, and its yellow-blue-red palette was dropped on purpose. The only three-colour set is the hero Venn (`--venn-user #c1497f`, `--venn-tech #4a72b0`, `--venn-biz #c77e3b`, `app/globals.css:21-23`), read by **both** `product-venn.tsx:18-20` (v3) and `product-venn-travel.tsx:36-38` (v3.1). `--venn-cream` also tints the desktop experience band (`experience.tsx:656`). | Answered by Megh |
 | Q2 | **Which focus ring actually renders?** | Global `*:focus-visible` (lilac outline + glow, unlayered) and component `focus-visible:ring-accent ring-offset-2` (pine ring, inside Tailwind's utilities layer) both target the same elements. In CSS cascade layers, unlayered rules beat layered ones, so the global `outline` and `box-shadow` may override `outline-none` and the pine ring. | Phase 4: tab through and read `getComputedStyle`. |
 | Q3 | **Do unlayered global rules override other utilities?** | Same mechanism for `[class*="border-border"]` border colour (`app/globals.css:311-313`), `section { scroll-margin-top: 80px }` versus `scroll-mt-16` / `scroll-mt-24` (`app/globals.css:315-317`), and the global link-hover underline versus per-link `decoration-*` hovers. | Phase 4 computed styles |
 | Q4 | **Does `--font-hand` resolve?** | `@theme inline { --font-hand: var(--font-hand); }` points at itself (`app/globals.css:45`), while `next/font` sets `--font-hand` on `<body>` (`app/layout.tsx:191`). Kalam may or may not apply. | Phase 4: computed `font-family` on the greeting |
 | Q5 | **What size does the Venn text render at on a phone?** | All Venn type is in viewBox units (chips 14.5, zone labels 36, marker label 30) inside a 1200-unit drawing that scales to the column. | Phase 4: measure at 375 and 1440 |
-| Q6 | **Is `/unlock` in scope?** | It is the first screen anyone sees before `/preview/v3` (`middleware.ts:11-23`) and it renders `components/backstage-pass.tsx`. Not inventoried. | **You:** include it in Phase 2 and 3, or leave it out? |
-| Q7 | **Should the AI Call iframe follow the site palette?** | Its own white / purple theme, and it switches to near-black under OS dark mode (`ai-call-pipeline.html:34-55`). The case study page around it stays oatmeal. | **You** (Phase 3 decision). Phase 4 captures both modes if possible. |
-| Q8 | **Are dead rules intentional?** | `app/globals.css:244-257` targets `bg-[#F7F1E6]`, which no element uses. `app/globals.css:259-306` (hero sun) targets `[data-hero-greeting]`, which `hero.tsx:40-44` says was removed on purpose. The `@theme` type scale `app/globals.css:47-58` has 0 uses. | **You:** keep or flag for removal in Phase 3? |
+| Q6 | ~~Is `/unlock` in scope?~~ **Resolved: yes.** | Kept as the lock flow for preview pages and for content shared with specific people. | Inventoried in §4 |
+| Q7 | **Should the AI Call iframe follow the site palette?** Direction agreed, decision in Phase 3. | Its own white / purple theme with an OS-driven dark mode (`ai-call-pipeline.html:34-55`) and an in-artifact theme switch (`:1837-1838`). Proposed rule: **site chrome on-system, content as-is.** Diagrams Megh authors adopt site tokens; real product screenshots and UI mockups keep their true colours inside a site-styled frame. Open sub-question: the artifact uses green `--success` and amber `--warning` as status colours, and the site palette has none. | Phase 3 logs the status-colour choice for Megh (scoped status set vs. pine shades + icons) |
+| Q8 | ~~Are the dead rules intentional?~~ **Resolved: dead, flagged for removal.** | `app/globals.css:244-257` (shelf card, orphaned when the bookshelf became thumbnail cards in PR #91) and `app/globals.css:259-306` (hero sun, orphaned by the portrait avatar in PR #67, plus its asset `public/images/v3/hero-sun.svg`). Boundary note for the cleanup: the sun block ends at **306**; `308-313` is the live card-hairline rule. The unused `@theme` type scale (`app/globals.css:47-58`) is a separate question for Phase 2. | Phase 3 lists the cleanup |
 | Q9 | **Relock pill line height** | `text-[0.68rem]` sets no line height, so it inherits. Final height depends on the inherited value. | Phase 4 |
+| Q10 | **Is `#b23a48` (denied red) an approved colour?** | CLAUDE.md §3 allows no colour family beyond oatmeal / pine / lilac without asking. The unlock error state uses a red (`backstage-pass.tsx:14`), and the sky backdrop uses blues and golds (`cloud-background.tsx:36-39`). An error state usually needs a colour that reads as "wrong", so this may be a deliberate exception. | **You:** Phase 2 needs to know whether to tokenise it (e.g. `--danger`) or treat it as a gap |
 
 ---
 
@@ -935,7 +1137,7 @@ These blocks sit in the same global file and ship on every page, but they style 
 |---|---|---|
 | `244-257` | Shelf preview card override (`#ede4d9` background, pine + lilac box-shadow, `!important`) | Dead: targets class `bg-[#F7F1E6]`, which no element in the repo uses |
 | `259-306` | Hero greeting sun (`hero-sun.svg`, lilac drop-shadow glow, `hero-sun-spin` 10s + `hero-sun-pulse` 3s keyframes) | Dead: targets `[data-hero-greeting]`, removed on purpose (`hero.tsx:40-44`) |
-| `329-355` | `.cs-cloud` drift | Coming-soon page only |
+| `329-355` | `.cs-cloud` drift | Not on the portfolio routes. Renders on `/unlock` and is covered in §4. |
 | `357-412` | `.lab-cursor`, `.lab-bubble`, `.lab-led` | Lab (hidden on v3 / v3.1) |
 | `414-621` | Lab portal, bulb, sparks, flask smoke, skill tooltip | Lab |
 | `670-685` | Lab reduced-motion overrides | Lab |
