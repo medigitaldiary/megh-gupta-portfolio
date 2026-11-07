@@ -50,7 +50,7 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
   --bg-elevated: #F3EBD9; /* lightened oatmeal — cards, modals */
   --fg: #1F3B2E;          /* Pine Green — body, headings, CTA fill */
   --fg-muted: #3A5544;    /* lighter pine — secondary text */
-  --fg-subtle: #556B5D;   /* muted pine — captions */
+  --fg-subtle: #556B5D;   /* muted pine, captions. Approved change to #506758 for 4.5:1 on --bg; ships with the token code PR */
   --border: #D4C4A8;      /* toasted oat — hairlines */
   --accent: #1F3B2E;      /* same hue as --fg: monochrome brand */
   --accent-fg: #E8DCC6;   /* Oatmeal — text on Pine buttons */
@@ -60,17 +60,23 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
 
 **Rule:** No other colors. If a design needs a fifth family, ask first. The Oatmeal / Pine / Lilac palette was promoted from the `/preview/v3` experiment, so earlier commits may still show the retired `#FAFAF7 / #111111 / #1F4D3A` stack. Treat the values here as the source of truth. Lilac stays decorative (highlighter marks, focus rings, hover washes); never as text that carries meaning.
 
-**Approved exceptions to the three-colour rule.** Two sets of hex values live outside the Oatmeal / Pine / Lilac palette on purpose. They are the only exceptions. Any new one needs to be added here before it ships.
+**Approved exceptions to the three-colour rule.** Four sets of hex values live outside the Oatmeal / Pine / Lilac palette on purpose. They are the only exceptions. Any new one needs to be added here before it ships.
 
 | Where | Hex values | What it's for | Why the brand palette doesn't work |
 |---|---|---|---|
-| `app/globals.css` → `--venn-user`, `--venn-tech`, `--venn-biz`. Used only by `components/product-venn.tsx` in the hero fold. | `#c1497f` (User, pink-red), `#4a72b0` (Technology, blue), `#c77e3b` (Business, amber) | Semantic three-circle Venn in the hero. User / Technology / Business each carry a distinct meaning and need to read as three categories at a glance. | A single-hue Venn would lose the semantic separation that the diagram's whole point. |
+| `app/globals.css` → `--venn-user`, `--venn-tech`, `--venn-biz`. Used only by `components/product-venn.tsx` and `components/product-venn-travel.tsx` in the hero fold (chip ink `--venn-cream` `#fdf7ee` also tints the desktop experience timeline band). | `#c1497f` (User, pink-red), `#4a72b0` (Technology, blue), `#c77e3b` (Business, amber) | Semantic three-circle Venn in the hero. User / Technology / Business each carry a distinct meaning and need to read as three categories at a glance. | A single-hue Venn would lose the semantic separation that the diagram's whole point. |
 | `components/backstage-pass.tsx` → constant `DENIED_INK`. Used only on the `/unlock` screen in three places: input underline on a wrong password (`:197`), status text for the "Not quite…" / "Still not it…" / "lock isn't set up" messages (`:279`), and the DENIED rubber stamp that slams onto the ticket (`:317`). | `#b23a48` (denied red) | Password error state and the stamp that lands on a denied attempt. | The brand palette has no red-adjacent hue; error states need a colour that reads as "wrong" instantly. The `/unlock` screen is a utility gate, not a brand surface, so a semantic red is cheap and clear. |
+| `components/cloud-background.tsx` → `dawn` palette. Used only behind the ticket on `/unlock`. | Sky `#b7cde1` → `#ccdae7` → `#e3dfcf` → `#f1e6ce` → `#f6ecd1`, warm glow `rgba(255,239,200,.85)`, clouds `#ffffff` / `#d5dbe3` | Decorative dawn-sky backdrop for the lock screen. | A utility gate, not a brand surface; the sky sets it apart from the portfolio itself. Approved by Megh during the design-system audit. |
+| `public/artifacts/ai-call-pipeline.html` (iframe on the AI Call Analysis case study) → `--success`, `--warning`. | `#16a34a` (success, green), `#d97706` (warning, amber) | Semantic node states in the pipeline diagram: destination node (success), warning / fallback nodes (warning). | Status needs a meaning-carrying colour the palette doesn't have. Content diagram, not chrome. Use on badges, icons and dots; status *text* stays pine (contrast, `design-system/03-gaps.md` G-A5). Approved by Megh during the design-system audit. |
 
-Neither exception leaks onto `/`, `/work/*`, `/preview/*`, or any other brand surface.
+None of them leaks beyond the surface listed: none becomes chrome on `/`, `/work/*`, `/preview/*`, or any other brand surface.
+
+Third-party and product brand marks (LinkedIn blue, the BondScanner / Ultra / MoveInSync work-card spines) are content, not palette: they keep their true colours. Full as-built token set: `design-system/02-tokens.md`.
 
 ### Type scale
-Nominal sizes (desktop target). Mobile sizes derive from the fluid-type rule below.
+Nominal sizes (desktop target) for reasoning about hierarchy. Mobile sizes derive from the fluid-type rule below.
+
+These are **not live tokens.** The `@theme` entries that mirrored them (`text-display`, `text-h1` … `text-small` in `app/globals.css`) are used by no component and are scheduled for removal (`design-system/patches/D2-delete-theme-type-scale.diff`). Components use Tailwind's scale, arbitrary values, or the fluid `clamp()` triples below. The as-built size set is documented in `design-system/02-tokens.md` §2.7.
 
 - `display`: 4rem / 64px, Geist Sans, line-height 1.05 (hero only)
 - `h1`: 2.5rem / 40px, Geist Sans, line-height 1.1
@@ -119,6 +125,11 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 - 150ms ease-out hover transitions on cards and links.
 
 **Not acceptable** without explicit ask: parallax, scroll-jacking, cursor effects, mouse-tracking glows, page transitions.
+
+**Approved exceptions (explicit asks, confirmed by Megh):**
+- `/unlock` ticket tilts toward a mouse pointer (`components/backstage-pass.tsx`, `pointerType === "mouse"` only, off under reduced motion).
+- About collage is scroll-scrubbed: photos fly out and torn strips slide as the visitor scrolls a sticky stage (`components/about-collage.tsx` / `.css`; static under reduced motion).
+- v3.1 Product Venn chips are draggable (`components/product-venn-travel.tsx`).
 
 ---
 
