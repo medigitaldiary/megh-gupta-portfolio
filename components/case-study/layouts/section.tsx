@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { slugifyHeading } from "@/lib/case-study-toc";
 import { Eyebrow } from "../primitives/eyebrow";
 
 // Section — the one layout wrapper every case study section uses.
@@ -23,13 +24,6 @@ type Props = {
   children: ReactNode;
 };
 
-function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
 const SECTION_SPACING: Record<SectionVariant, string> = {
   narrative: "mt-16 md:mt-20",
   split: "mt-16 md:mt-20",
@@ -48,8 +42,8 @@ export function Section({
   id,
   children,
 }: Props) {
-  const resolvedId = id ?? (heading ? slugify(heading) : undefined);
-  const spacing = SECTION_SPACING[variant];
+  const resolvedId = id ?? (heading ? slugifyHeading(heading) : undefined);
+  const spacing = `${SECTION_SPACING[variant]} scroll-mt-24`;
 
   const header = heading ? (
     <header className="mb-6">
@@ -58,7 +52,7 @@ export function Section({
           {eyebrow}
         </Eyebrow>
       ) : null}
-      <h2 className="font-serif text-2xl leading-tight text-fg md:text-[1.75rem]">
+      <h2 className="font-serif text-[1.75rem] leading-tight text-fg md:text-[2.25rem]">
         {heading}
       </h2>
     </header>

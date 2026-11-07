@@ -58,7 +58,7 @@ export const workCards: WorkCard[] = [
     timeline: "2025",
     spineColor: "bg-fg",
     spineHex: "#1E3A8A",
-    coverImage: "/images/work/ultra-web-platform/cover.webp",
+    coverImage: "/images/work/ultra-web-platform/poster.webp",
     leanDeg: 3,
     status: "live",
     featured: true,
@@ -75,7 +75,7 @@ export const workCards: WorkCard[] = [
     timeline: "2026",
     spineColor: "bg-[#8B5E3C]",
     spineHex: "#C2410C",
-    coverImage: "/images/work/bond-bytes/cover.webp",
+    coverImage: "/images/work/bond-bytes/poster.webp",
     leanDeg: -2,
     status: "live",
     featured: true,
@@ -129,7 +129,7 @@ export const workCards: WorkCard[] = [
     timeline: "Aug 2024",
     spineColor: "bg-[#A66B2A]",
     spineHex: "#D97706",
-    coverImage: "/images/work/moveinsync-independence-day/cover.webp",
+    coverImage: "/images/work/moveinsync-independence-day/poster.webp",
     leanDeg: 2,
     status: "live",
     featured: true,
@@ -146,7 +146,7 @@ export const workCards: WorkCard[] = [
     timeline: "Mar 2026 →",
     spineColor: "bg-[#182F8C]",
     spineHex: "#182F8C",
-    coverImage: "/images/work/ai-call-analysis-pipeline/cover.webp",
+    coverImage: "/images/work/ai-call-analysis-pipeline/poster.webp",
     leanDeg: -1,
     status: "live",
     featured: true,
@@ -166,4 +166,17 @@ export function getShelfWorkCards(n = 5): WorkCard[] {
 
 export function getWorkCardBySlug(slug: string): WorkCard | undefined {
   return workCards.find((c) => c.slug === slug);
+}
+
+/** The next live case studies after this one. Wraps, so the last study still offers two. */
+export function getNextWorkCards(slug: string, count = 2): WorkCard[] {
+  const cards = getAllWorkCards().filter((card) => card.status === "live");
+  const index = cards.findIndex((card) => card.slug === slug);
+  if (index === -1) return [];
+  const next: WorkCard[] = [];
+  for (let step = 1; step < cards.length && next.length < count; step++) {
+    const card = cards[(index + step) % cards.length];
+    if (card) next.push(card);
+  }
+  return next;
 }

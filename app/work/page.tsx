@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { WorkThumbnails } from "@/components/work-thumbnails";
+import { type StudyMark, WorkThumbnails } from "@/components/work-thumbnails";
 import { withCoverVideos } from "@/lib/cover-video";
 import { getAllWorkCards } from "@/lib/work";
 
@@ -27,13 +27,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default function WorkIndexPage() {
+export default async function WorkIndexPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ mark?: string }>;
+}) {
+  const { mark: markParam } = await searchParams;
+  const mark: StudyMark | undefined =
+    markParam === "text" || markParam === "row" ? markParam : undefined;
   const cards = withCoverVideos(getAllWorkCards());
   return (
     <main className="px-6 py-24 md:px-8 md:py-32">
       <div className="mx-auto max-w-6xl">
         <Link
-          href="/#work"
+          href={
+            mark === "text"
+              ? "/preview/v3#work"
+              : mark === "row"
+                ? "/preview/v3.1#work"
+                : "/#work"
+          }
           className="inline-flex items-center gap-2 text-sm text-fg-muted underline underline-offset-4 hover:text-fg"
         >
           <span aria-hidden="true">←</span> Selected work
@@ -45,7 +58,7 @@ export default function WorkIndexPage() {
           Things I've built and shipped.
         </h1>
         <div className="mt-12 md:mt-16">
-          <WorkThumbnails cards={cards} />
+          <WorkThumbnails cards={cards} mark={mark} />
         </div>
       </div>
     </main>

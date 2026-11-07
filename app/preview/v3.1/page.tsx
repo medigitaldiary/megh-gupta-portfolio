@@ -21,7 +21,7 @@ export default function PortfolioV31Preview() {
       <main>
         <Hero link="travel" />
         <Experience />
-        <SelectedWorkShelf />
+        <SelectedWorkShelf mark="row" />
         <AboutCollage />
         <Contact />
       </main>

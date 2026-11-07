@@ -102,7 +102,7 @@ Every display-size heading (hero display, H1, H2 inside a hero or fold) MUST pre
    - `components/section-header.tsx` H2 (`text-3xl md:text-5xl`) — stepped, mobile at 30px, hierarchy ≥ 1.9× body.
 
 ### Spacing
-Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepage, use `py-24 md:py-32`. Section max-width: `max-w-5xl`. Case study prose max-width: `max-w-2xl` (readability over fill).
+Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepage, use `py-24 md:py-32`. Section max-width: `max-w-5xl`. Case study pages use a `max-w-6xl` shell: a prose column of `max-w-[46rem]` (~736px) with a sticky "On this page" rail beside it from `xl` up (the 46rem column and 15.5rem rail do not fit side by side at the `lg` breakpoint). Paragraphs stay in that column (readability over fill). Wide figures stay in the column too, so they do not slide under the rail.
 
 ### Motion
 **Sparing.** Acceptable:
