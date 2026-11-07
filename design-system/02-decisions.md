@@ -9,7 +9,7 @@
 | D3 | AI Call diagram status colours | Approved as a scoped exception | `tokens.json` → `island.ai-call-pipeline` + CLAUDE.md text |
 | D4 | Rename `font-serif` → `font-display` | Approved | `patches/D4-font-serif-to-font-display.diff` |
 | D5 | Kalam inline styles → `font-hand` class | Approved in principle, diff for review | `patches/D5-font-hand-class.diff` |
-| D6 | Work carousel advances every 10s | Approved (Megh); one open question on phones | `patches/D6-carousel-interval-10s.diff` |
+| D6 | Work carousel advances every 10s | Approved (Megh), phone trade-off accepted | `patches/D6-carousel-interval-10s.diff` |
 
 ---
 
@@ -108,7 +108,7 @@ The SVG attribute at `product-venn-travel.tsx:821` is untouched.
 
 **Cover video lengths** (`ffprobe` on `public/videos/work/*.mp4`): Ultra 18.0s, Bond Bytes 17.0s, MoveInSync 16.0s, AI Call 12.0s, SEO engine 5.0s, Deridata 4.8s, Freshdesk 4.8s.
 
-**Open question for Megh:** 10s fully covers the three short clips. On desktop (about 3.5 cards visible, one-card steps) every card stays in view for about 3 steps, so all clips finish. On phones (about 1.15 cards visible) each card gets about 10s, so the four long clips (12 to 18s) are cut off.
+**Phone trade-off (accepted by Megh, keep 10s):** 10s fully covers the three short clips. On desktop (about 3.5 cards visible, one-card steps) every card stays in view for about 3 steps, so all clips finish. On phones (about 1.15 cards visible) each card gets about 10s, so the four long clips (12 to 18s) are cut off. They loop, and a swipe back replays them. Alternatives considered: 18s (every clip finishes, desktop feels slow) and advancing when each video ends (about 20 lines of new code).
 
 **Change:** `components/work-thumbnails.tsx:77`, `STEP_MS = 4500` → `10000`. One line. Pause on hover / focus, reduced-motion (no autoplay) and the arrows are unchanged.
 
