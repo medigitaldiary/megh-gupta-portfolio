@@ -101,10 +101,12 @@ The SVG attribute at `product-venn-travel.tsx:821` is untouched.
 
 ---
 
-## How to ship these
+## How these ship
 
-CLAUDE.md §13 says feature branches come off `dev` and are PR'd into `dev`. These are code changes, so they shouldn't ride along in this docs PR.
+- **CLAUDE.md §3: applied in this PR** (Megh's call). Adds the scoped colour exceptions table (Venn, denied red, dawn sky, diagram status) and the "nominal, not live tokens" note under Type scale. The note says the `@theme` entries are *scheduled* for removal; flip it to "removed" when the D2 code PR merges.
+- **Code diffs D2 + D4 + D5: held until Phase 4 has checked the rendered result** (Claude's call, delegated by Megh). Reasons:
+  1. D5 changes how Kalam is applied at seven spots. The build evidence says it renders the same, but it has not been seen on screen.
+  2. D4 touches 27 files, including the Venn SVG font references. Phase 4 already screenshots the hero at 375px and 1440px, so it can compare before and after in the same pass.
+  3. CLAUDE.md §13 wants code PRs off `dev`, and `dev` is behind `main` today. Waiting lets the code PR start from a synced `dev`.
 
-Suggested split:
-1. A docs PR for the CLAUDE.md §3 text (D2, D3, plus the denied-red and sky entries).
-2. One code PR for D2 + D4 + D5. All three are mechanical, with no visual change except where Phase 4 says otherwise.
+  Plan: Phase 4 renders `main`, then renders it again with the three patches applied. If both match (fonts, sizes, Venn labels), open one code PR into `dev` with the three diffs and the screenshots attached.

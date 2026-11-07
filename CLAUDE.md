@@ -60,8 +60,21 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
 
 **Rule:** No other colors. If a design needs a fifth family, ask first. The Oatmeal / Pine / Lilac palette was promoted from the `/preview/v3` experiment, so earlier commits may still show the retired `#FAFAF7 / #111111 / #1F4D3A` stack. Treat the values here as the source of truth. Lilac stays decorative (highlighter marks, focus rings, hover washes); never as text that carries meaning.
 
+**Scoped colour exceptions.** Outside Oatmeal / Pine / Lilac, these colours are approved only where listed. Each one is semantic or decorative for its own surface and never becomes site chrome. Adding a row still means asking first.
+
+| Surface | Where | Colours | Use |
+|---|---|---|---|
+| Hero Product Venn | `components/product-venn.tsx`, `product-venn-travel.tsx` (`--venn-*` in `app/globals.css`) | User `#C1497F`, Technology `#4A72B0`, Business `#C77E3B`, chip ink `#FDF7EE` | Data-viz only. The site's only three-colour set; never reused as UI accents. |
+| Unlock gate | `/unlock`, `components/backstage-pass.tsx` (`DENIED_INK`) | `#B23A48` | Wrong-password feedback only: input underline, status text, DENIED stamp |
+| Unlock gate | `/unlock`, `components/cloud-background.tsx` (`dawn` palette) | Sky `#B7CDE1` to `#F6ECD1`, warm glow, clouds `#FFFFFF` / `#D5DBE3` | Decorative backdrop |
+| AI Call Analysis pipeline diagram | iframe `public/artifacts/ai-call-pipeline.html` | `--success #16A34A`, `--warning #D97706` | Semantic node states: destination node (success), warning / fallback nodes (warning) |
+
+Third-party and product brand marks (LinkedIn blue, the BondScanner / Ultra / MoveInSync work-card spines) are content, not palette: they keep their true colours. Full as-built token set: `design-system/02-tokens.md`.
+
 ### Type scale
-Nominal sizes (desktop target). Mobile sizes derive from the fluid-type rule below.
+Nominal sizes (desktop target) for reasoning about hierarchy. Mobile sizes derive from the fluid-type rule below.
+
+These are **not live tokens.** The `@theme` entries that mirrored them (`text-display`, `text-h1` … `text-small` in `app/globals.css`) are used by no component and are scheduled for removal (`design-system/patches/D2-delete-theme-type-scale.diff`). Components use Tailwind's scale, arbitrary values, or the fluid `clamp()` triples below. The as-built size set is documented in `design-system/02-tokens.md` §2.7.
 
 - `display`: 4rem / 64px, Geist Sans, line-height 1.05 (hero only)
 - `h1`: 2.5rem / 40px, Geist Sans, line-height 1.1
