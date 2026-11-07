@@ -71,7 +71,7 @@ Each row lists every value found, with its use count. **Verdict** says whether t
 | 36 | `text-[2.25rem]` (5), `text-4xl` (3) | **Identical value**, two spellings | 36px | Exact duplicate |
 | 40 | `text-[2.5rem]` (1) | **Single use**, fold into 36 | 36px | Rule 4 |
 | 48 | `text-[3rem]` (2), `text-5xl` (3) | **Identical value** | 48px | Exact duplicate |
-| 52 | `text-[3.25rem]` (1, hero H1 at lg) | **Single use**, fold into 48 | 48px | Rule 4. **Visible** (V11): needs your approval |
+| 52 | `text-[3.25rem]` (1, hero H1 at lg) | **Single use**, fold into 48 | 48px | Rule 4. **Visible** (V10): needs your approval |
 | Fluid clamps | About title `clamp(1.75rem, 5vw, 2.65rem)`, About copy `clamp(.9375rem, 1.7vw, 1.125rem)`, unlock H1 `clamp(3rem, 9vw, 5.25rem)` | **Not tokenised**; component-level | n/a | One use each. Phase 3 compares them with the CLAUDE.md fluid rule. |
 
 ### 1.3 Line height and letter spacing
@@ -413,7 +413,9 @@ Adopting the set is invisible **except** for these. Each one comes from folding 
 | V20 | `--interval-rotate` | Carousel advances 0.3s slower. |
 | V21 | `--breakpoint-booker` | Contact copy break moves from 1100 to 1104px. |
 
-I'd be most careful with **V11** (hero H1 loses its 52px desktop step) and **V18** (the tooltip shadow gets much stronger). Both are small rule-driven folds with a big visual effect. If you'd rather keep either one, the honest move is to make it a named token with one use, not to keep the arbitrary value.
+**Approved:** V10 (hero H1 is 48px from 768px up; the 52px step at 1024px is retired) and V18 (timeline tooltip moves to oat and pine with the shared floating shadow). Both were reviewed against before/after mock-ups.
+
+**Still open:** the other 19 rows. For any row you reject, the value stays and becomes a named single-use token rather than an arbitrary value.
 
 ---
 
@@ -438,7 +440,7 @@ These values are real but belong to one component's own geometry or choreography
 
 | # | Decision | Options |
 |---|---|---|
-| D1 | Approve, reject or keep-as-named each visible change V1 to V21 (§3) | per row |
+| D1 | Approve, reject or keep-as-named each visible change (§3). V10 and V18 approved. | per row for the remaining 19 |
 | D2 | `@theme` type scale (`app/globals.css:47-58`, 0 uses, CLAUDE.md §3 nominal sizes) | (a) replace its values with §2.7 as-built sizes so `text-h1` etc. become real; (b) delete it; (c) keep CLAUDE.md sizes and migrate the code to them (large visual change) |
 | D3 | AI Call iframe status colours (`--success` green, `--warning` amber) | (a) approve a diagram-only status pair; (b) express status with pine shades + icons |
 | D4 | `font-serif` → `font-display` rename (14 edits) | (a) rename; (b) keep `font-serif` as the alias (0 edits, misleading name) |
