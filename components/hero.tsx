@@ -52,8 +52,7 @@ export function Hero({
             </span>
             <p
               data-hero-slot="greeting"
-              className={`translate-y-[3px] text-3xl leading-[1] text-accent md:translate-y-[5px] md:text-[2.25rem] ${handoff ? "opacity-0" : ""}`}
-              style={{ fontFamily: "var(--font-hand), cursive" }}
+              className={`translate-y-[3px] font-hand text-3xl leading-[1] text-accent md:translate-y-[5px] md:text-[2.25rem] ${handoff ? "opacity-0" : ""}`}
             >
               Hi, I am Megh.
             </p>
