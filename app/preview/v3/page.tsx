@@ -21,7 +21,7 @@ export default function PortfolioV3Preview() {
       <main>
         <Hero />
         <Experience />
-        <SelectedWorkShelf />
+        <SelectedWorkShelf mark="text" />
         <AboutCollage />
         <Contact />
       </main>

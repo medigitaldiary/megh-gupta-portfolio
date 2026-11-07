@@ -3,8 +3,19 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import * as caseStudy from "@/components/case-study";
+import {
+  CaseStudyToc,
+  type IndexMark,
+} from "@/components/case-study/case-study-toc";
+import { WorkThumbnails } from "@/components/work-thumbnails";
 import { getCaseStudy } from "@/lib/case-study";
-import { getAllWorkCards, getWorkCardBySlug } from "@/lib/work";
+import { extractToc, readingMinutes } from "@/lib/case-study-toc";
+import { withCoverVideos } from "@/lib/cover-video";
+import {
+  getAllWorkCards,
+  getNextWorkCards,
+  getWorkCardBySlug,
+} from "@/lib/work";
 
 type Params = { slug: string };
 
@@ -29,39 +40,105 @@ export async function generateMetadata({
   };
 }
 
+const proseColumn = "min-w-0 xl:col-start-1";
+
+const articleClass =
+  "mt-12 max-w-none text-fg xl:col-start-1 [&_a]:text-fg [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-10 [&_h2]:font-serif [&_h2]:text-[1.75rem] [&_h2]:leading-tight [&_h2]:text-fg md:[&_h2]:text-[2.25rem] [&_h3]:mt-6 [&_h3]:font-sans [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-fg [&_li]:leading-relaxed [&_p]:mt-4 [&_p]:leading-relaxed [&_strong]:text-fg [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-6";
+
+function readMark(value: string | undefined): IndexMark | null {
+  return value === "text" || value === "row" ? value : null;
+}
+
 export default async function WorkCaseStudy({
   params,
+  searchParams,
 }: {
   params: Promise<Params>;
+  searchParams: Promise<{ mark?: string }>;
 }) {
   const { slug } = await params;
+  const { mark: markParam } = await searchParams;
+  const previewMark = readMark(markParam);
+  const mark: IndexMark = previewMark ?? "row";
   const card = getWorkCardBySlug(slug);
   if (!card) notFound();
 
   const study = await getCaseStudy(slug);
+  const toc = study ? extractToc(study.body) : [];
+  const minutes = study ? readingMinutes(study.body) : null;
+  const more = withCoverVideos(getNextWorkCards(slug, 2));
+
+  const role = study?.frontmatter.role ?? card.role;
+  const timeline = study?.frontmatter.timeline ?? card.timeline;
+  const kicker = [role, card.company, timeline];
+  if (minutes) kicker.push(`${minutes} min`);
+
+  const team = study?.frontmatter.team;
+  const stack = study?.frontmatter.stack ?? [];
 
   return (
-    <main className="px-6 py-24 md:px-8 md:py-32">
-      <div className="mx-auto max-w-2xl">
-        <Link
-          href="/#work"
-          className="inline-flex items-center gap-2 text-sm text-fg-muted underline underline-offset-4 hover:text-fg"
-        >
-          <span aria-hidden="true">←</span> Back to selected work
-        </Link>
+    <main id="main" className="px-6 py-24 md:px-8 md:py-32">
+      <div
+        className={`mx-auto grid w-full max-w-[46rem] ${
+          toc.length > 0
+            ? "xl:max-w-6xl xl:grid-cols-[minmax(0,46rem)_15.5rem] xl:justify-center xl:gap-x-16"
+            : ""
+        }`}
+      >
+        <header className={proseColumn}>
+          <Link
+            href={
+              previewMark === "text"
+                ? "/preview/v3#work"
+                : previewMark === "row"
+                  ? "/preview/v3.1#work"
+                  : "/#work"
+            }
+            className="inline-flex items-center gap-2 rounded-sm text-sm text-fg-muted underline underline-offset-4 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+          >
+            <span aria-hidden="true">←</span> Back to selected work
+          </Link>
 
-        <p className="mt-8 font-mono text-xs uppercase tracking-wider text-accent">
-          {card.eyebrow} · {card.company}
-        </p>
-        <h1 className="mt-3 font-serif text-4xl leading-tight text-fg md:text-5xl">
-          {study?.frontmatter.title ?? card.title}
-        </h1>
-        <p className="mt-6 text-lg text-fg-muted">{card.oneLiner}</p>
+          <p className="mt-8 font-mono text-xs uppercase tracking-wider text-accent">
+            {kicker.join(" · ")}
+          </p>
+          <h1 className="mt-3 font-serif text-4xl leading-tight text-fg md:text-5xl">
+            {study?.frontmatter.title ?? card.title}
+          </h1>
+          <p className="mt-6 text-lg leading-relaxed text-fg-muted">
+            {card.oneLiner}
+          </p>
+
+          {team ? <p className="mt-4 text-sm text-fg-muted">{team}</p> : null}
+          {stack.length ? (
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {stack.map((item) => (
+                <li
+                  key={item}
+                  className="inline-flex items-center rounded-full border border-border px-2.5 py-1 font-mono text-[11px] text-fg-muted"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </header>
+
+        {toc.length > 0 ? (
+          <aside className="mt-10 xl:col-start-2 xl:row-span-5 xl:row-start-1 xl:mt-0 xl:self-stretch">
+            <CaseStudyToc
+              items={toc}
+              mark={mark}
+              className="xl:sticky xl:top-8 xl:max-h-[calc(100svh-4rem)] xl:overflow-y-auto"
+            />
+          </aside>
+        ) : null}
 
         {study ? (
           <>
-            {/* Headline metric strip — the one number that earns the page */}
-            <div className="mt-10 rounded-xl border border-border bg-bg-elevated p-6 md:p-8">
+            <div
+              className={`mt-10 rounded-xl border border-border bg-bg-elevated p-6 md:p-8 ${proseColumn}`}
+            >
               <p className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
                 Headline metric
               </p>
@@ -70,22 +147,21 @@ export default async function WorkCaseStudy({
               </p>
               {study.frontmatter.supporting_metrics?.length ? (
                 <ul className="mt-4 space-y-1 text-sm text-fg-muted">
-                  {study.frontmatter.supporting_metrics.map((m) => (
-                    <li key={m}>· {m}</li>
+                  {study.frontmatter.supporting_metrics.map((metric) => (
+                    <li key={metric}>· {metric}</li>
                   ))}
                 </ul>
               ) : null}
             </div>
 
-            {/* Body — MDX rendered with the case-study design-system
-                components. Arbitrary selectors below are the typography
-                source of truth (no @tailwindcss/typography in deps). */}
-            <article className="mt-12 max-w-none text-fg [&_h2]:mt-10 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:text-fg [&_h3]:mt-6 [&_h3]:font-sans [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-fg [&_p]:mt-4 [&_p]:leading-relaxed [&_p]:text-fg-muted [&_strong]:text-fg [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-6 [&_li]:text-fg-muted [&_a]:text-fg [&_a]:underline [&_a]:underline-offset-4">
+            <article className={articleClass}>
               <MDXRemote source={study.body} components={caseStudy} />
             </article>
           </>
         ) : (
-          <div className="mt-10 rounded-xl border border-border bg-bg-elevated p-6 md:p-8">
+          <div
+            className={`mt-10 rounded-xl border border-border bg-bg-elevated p-6 md:p-8 ${proseColumn}`}
+          >
             <p className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
               Case study
             </p>
@@ -99,57 +175,42 @@ export default async function WorkCaseStudy({
             </p>
             <Link
               href="/#connect"
-              className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm text-accent-fg transition-opacity duration-150 hover:opacity-90"
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm text-accent-fg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             >
               Let&apos;s talk about it →
             </Link>
           </div>
         )}
 
-        <dl className="mt-14 grid grid-cols-2 gap-6 border-t border-border pt-8 text-sm">
-          <div>
-            <dt className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
-              Role
-            </dt>
-            <dd className="mt-1 text-fg">
-              {study?.frontmatter.role ?? card.role}
-            </dd>
-          </div>
-          <div>
-            <dt className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
-              Timeline
-            </dt>
-            <dd className="mt-1 text-fg">
-              {study?.frontmatter.timeline ?? card.timeline}
-            </dd>
-          </div>
-          {study?.frontmatter.team ? (
-            <div className="col-span-2">
-              <dt className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
-                Team
-              </dt>
-              <dd className="mt-1 text-fg-muted">{study.frontmatter.team}</dd>
-            </div>
-          ) : null}
-          {study?.frontmatter.stack?.length ? (
-            <div className="col-span-2">
-              <dt className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
-                Stack
-              </dt>
-              <dd className="mt-2 flex flex-wrap gap-2">
-                {study.frontmatter.stack.map((s) => (
-                  <span
-                    key={s}
-                    className="inline-flex items-center rounded-full border border-border px-2.5 py-1 font-mono text-[11px] text-fg-muted"
-                  >
-                    {s}
-                  </span>
-                ))}
-              </dd>
-            </div>
-          ) : null}
-        </dl>
+        <KeepReading cards={more} mark={previewMark} />
       </div>
     </main>
+  );
+}
+
+function KeepReading({
+  cards,
+  mark,
+}: {
+  cards: ReturnType<typeof getNextWorkCards>;
+  mark: IndexMark | null;
+}) {
+  if (cards.length === 0) return null;
+
+  return (
+    <section
+      aria-labelledby="keep-reading"
+      className={`mt-20 border-t border-border pt-12 ${proseColumn}`}
+    >
+      <h2
+        id="keep-reading"
+        className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle"
+      >
+        Keep reading
+      </h2>
+      <div className="mt-8">
+        <WorkThumbnails cards={cards} columns={2} mark={mark ?? undefined} />
+      </div>
+    </section>
   );
 }

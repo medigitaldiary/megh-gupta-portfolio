@@ -8,10 +8,11 @@ import type { WorkCard } from "@/lib/work";
 
 // Fold 3 — case-study thumbnails.
 // Same hinge as ramakrushna.xyz: perspective 1500, the front face
-// rests at rotateY(-1) and springs to -35° off its left edge. The
+// rests flat and springs to rotateY(-35) off its left edge. The
 // "Click to read" card behind it tilts 4°, in that product's color.
-// A copy of the card sits 1px back and peeks out. Touch does not
-// hinge. Reduced motion stays closed.
+// A copy of the card sits 1px back while it is open. The close is a
+// tween, not a spring, so it cannot overshoot and leave that copy
+// sticking out. Touch does not hinge. Reduced motion stays closed.
 
 // Local product marks for this fold. Sampled from the logo files.
 // BondScanner #182F8C, Ultra #171513, MoveInSync #3DAE2B.
@@ -39,19 +40,34 @@ function productMark(company: string) {
   );
 }
 
+export type StudyMark = "text" | "row";
+
+function studyHref(slug: string, mark?: StudyMark) {
+  return mark ? `/work/${slug}?mark=${mark}` : `/work/${slug}`;
+}
+
 export function WorkThumbnails({
   cards,
   layout = "grid",
+  mark,
+  columns,
 }: {
   cards: WorkCard[];
   layout?: "grid" | "carousel";
+  mark?: StudyMark;
+  /** Lock the grid at two columns. The work index stays at three from `lg`. */
+  columns?: 2;
 }) {
-  if (layout === "carousel") return <WorkCarousel cards={cards} />;
+  if (layout === "carousel") return <WorkCarousel cards={cards} mark={mark} />;
+  const grid =
+    columns === 2
+      ? "grid grid-cols-1 gap-8 sm:grid-cols-2"
+      : "grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3";
   return (
-    <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className={grid}>
       {cards.map((card) => (
         <li key={card.slug} className="min-w-0">
-          <Thumbnail card={card} />
+          <Thumbnail card={card} mark={mark} />
         </li>
       ))}
     </ul>
@@ -88,7 +104,13 @@ function nearestStop(stops: number[], scrollLeft: number) {
   return best;
 }
 
-function WorkCarousel({ cards }: { cards: WorkCard[] }) {
+function WorkCarousel({
+  cards,
+  mark,
+}: {
+  cards: WorkCard[];
+  mark?: StudyMark;
+}) {
   const reduced = useReducedMotion() ?? false;
   const viewportRef = useRef<HTMLElement>(null);
   const indexRef = useRef(0);
@@ -154,7 +176,10 @@ function WorkCarousel({ cards }: { cards: WorkCard[] }) {
   const onScrollEnd = () => {
     const viewport = viewportRef.current;
     if (!viewport || frameRef.current != null) return;
-    indexRef.current = nearestStop(carouselStops(viewport), viewport.scrollLeft);
+    indexRef.current = nearestStop(
+      carouselStops(viewport),
+      viewport.scrollLeft,
+    );
   };
 
   useEffect(() => {
@@ -181,7 +206,7 @@ function WorkCarousel({ cards }: { cards: WorkCard[] }) {
         aria-roledescription="carousel"
         aria-label="Selected case studies"
         onScrollEnd={onScrollEnd}
-        className="@container overflow-x-auto pt-8 pb-2 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="@container overflow-x-auto pt-12 pb-16 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <ul className="flex w-max gap-6">
           {cards.map((card, index) => (
@@ -191,7 +216,7 @@ function WorkCarousel({ cards }: { cards: WorkCard[] }) {
                 index === cards.length - 1 ? "snap-end" : "snap-start"
               }`}
             >
-              <Thumbnail card={card} />
+              <Thumbnail card={card} mark={mark} />
             </li>
           ))}
         </ul>
@@ -225,57 +250,79 @@ const SPRING = {
   mass: 1,
 };
 
-function Thumbnail({ card }: { card: WorkCard }) {
+// Closing with the same spring overshoots past flat, and the copy
+// behind the cover stays visible along the right edge. Ease out instead.
+const CLOSE = { duration: 0.32, ease: [0.4, 0, 0.2, 1] } as const;
+
+function Thumbnail({
+  card,
+  mark: studyMark,
+}: {
+  card: WorkCard;
+  mark?: StudyMark;
+}) {
   const reduced = useReducedMotion() ?? false;
   const [armed, setArmed] = useState(false);
+  const [lifted, setLifted] = useState(false);
+  const armedRef = useRef(armed);
+  armedRef.current = armed;
   const open = armed && !reduced;
-  const transition = reduced ? { duration: 0 } : SPRING;
   const mark = productMark(card.company);
+  const hinge = reduced ? { duration: 0 } : open ? SPRING : CLOSE;
+  const back =
+    "transition-opacity duration-150 " +
+    (reduced ? "transition-none " : "") +
+    (open ? "opacity-100" : "opacity-0");
+
+  const arm = (pointerType?: string) => {
+    if (pointerType === "touch") return;
+    setArmed(true);
+    setLifted(true);
+  };
+
+  const disarm = (pointerType?: string) => {
+    if (pointerType === "touch") return;
+    setArmed(false);
+    window.setTimeout(() => {
+      if (!armedRef.current) setLifted(false);
+    }, 380);
+  };
 
   return (
     <Link
-      href={`/work/${card.slug}`}
+      href={studyHref(card.slug, studyMark)}
       aria-label={`Read the ${card.title} case study`}
-      className={`relative block h-full ${open ? "z-20" : ""}`}
-      onPointerEnter={(event) => {
-        if (event.pointerType === "touch") return;
-        setArmed(true);
-      }}
-      onPointerLeave={(event) => {
-        if (event.pointerType === "touch") return;
-        setArmed(false);
-      }}
-      onFocus={() => setArmed(true)}
-      onBlur={() => setArmed(false)}
+      className={`relative block h-full rounded-[1.75rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${lifted ? "z-20" : ""}`}
+      onPointerEnter={(event) => arm(event.pointerType)}
+      onPointerLeave={(event) => disarm(event.pointerType)}
+      onFocus={() => arm()}
+      onBlur={() => disarm()}
     >
       <div className="relative [perspective:1500px] [transform-style:preserve-3d]">
         <div
           aria-hidden="true"
-          className="absolute inset-0 [transform:translateZ(-1px)]"
+          className={`absolute inset-0 [transform:translateZ(-1px)] ${back}`}
         >
           <CardFace card={card} still />
         </div>
         <motion.div
           aria-hidden="true"
-          className={`absolute inset-x-0 bottom-0 flex h-[86%] items-center justify-end rounded-[1.75rem] pr-4 ${mark.slab}`}
+          className={`absolute inset-x-0 bottom-0 flex h-[86%] items-center justify-end rounded-[1.75rem] pr-4 ${mark.slab} ${back}`}
           style={{ transformOrigin: "left bottom" }}
           initial={false}
           animate={{ rotate: open ? 4 : 0 }}
-          transition={transition}
+          transition={hinge}
         >
           <span className="font-mono text-xs font-semibold uppercase tracking-[-0.04em] [writing-mode:vertical-rl]">
             Click to read
           </span>
         </motion.div>
         <motion.div
-          className="relative shadow-[0_18px_32px_-22px_rgba(31,59,46,0.45)]"
-          style={{
-            transformOrigin: "left bottom",
-            transformStyle: "preserve-3d",
-          }}
+          className="relative rounded-[1.75rem] shadow-[0_18px_32px_-22px_rgba(31,59,46,0.28)]"
+          style={{ transformOrigin: "left bottom" }}
           initial={false}
-          animate={{ rotateY: open ? -35 : -1, z: 1 }}
-          transition={transition}
+          animate={{ rotateY: open ? -35 : 0, z: lifted ? 1 : 0 }}
+          transition={{ ...hinge, z: { duration: 0 } }}
         >
           <CardFace card={card} />
         </motion.div>
@@ -293,7 +340,7 @@ function CardFace({
 }) {
   const mark = productMark(card.company);
   return (
-    <div className="flex h-full flex-col rounded-[1.75rem] border border-border bg-bg-elevated p-5">
+    <div className="flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-border bg-bg-elevated p-5">
       <div className="flex items-start justify-between gap-3">
         <p className="font-mono text-xs uppercase tracking-[0.16em] text-fg-subtle">
           {card.eyebrow}
@@ -314,7 +361,7 @@ function CardFace({
       <p className="mt-2 line-clamp-2 h-10 text-sm leading-5 text-fg-muted">
         {card.oneLiner}
       </p>
-      <div className="relative mt-5 aspect-[4/3] overflow-hidden rounded-2xl bg-bg">
+      <div className="relative mt-5 aspect-[4/3] overflow-hidden rounded-2xl bg-bg-elevated [clip-path:inset(0_round_1rem)]">
         <CoverMedia
           poster={card.coverImage}
           video={still ? undefined : card.coverVideo}

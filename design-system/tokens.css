@@ -1,0 +1,230 @@
+/* tokens.css: proposed design tokens for meghgupta.in (Phase 2).
+ *
+ * Generated from the same spec as tokens.json. Every value was found in
+ * the as-built code (see 01-inventory.md); near-duplicates are folded into
+ * the value listed. NOT imported by the site. Phase 3 decides migration.
+ *
+ * Existing variable names (--bg, --fg, --accent, ...) are kept as the
+ * semantic layer so a future swap into app/globals.css is drop-in.
+ */
+
+:root {
+  /* color.primitive */
+  --oatmeal-200: #e8dcc6;
+  --oatmeal-100: #f3ebd9;
+  --oatmeal-300: #d4c4a8;
+  --pine-900: #1f3b2e;
+  --pine-700: #3a5544;
+  --pine-500: #506758;
+  --lilac-300: #cbb3e8;
+  --lilac-400: #b89cdc;
+  --cream-50: #fdf7ee;
+
+  /* color.semantic */
+  --bg: var(--oatmeal-200);
+  --bg-elevated: var(--oatmeal-100);
+  --fg: var(--pine-900);
+  --fg-muted: var(--pine-700);
+  --fg-subtle: var(--pine-500);
+  --border: var(--oatmeal-300);
+  --border-hairline: color-mix(in oklab, var(--border) 70%, var(--highlight) 30%);
+  --accent: var(--pine-900);
+  --accent-fg: var(--oatmeal-200);
+  --highlight: var(--lilac-300);
+  --highlight-strong: var(--lilac-400);
+  --ring-offset: var(--bg);
+  --surface-band: var(--cream-50);
+
+  /* color.dataviz */
+  --venn-user: #c1497f;
+  --venn-tech: #4a72b0;
+  --venn-biz: #c77e3b;
+  --venn-ink: var(--cream-50);
+
+  /* color.content */
+  --brand-linkedin: #0a66c2;
+  --brand-bondscanner: #182f8c;
+  --brand-ultra: #171513;
+  --brand-moveinsync: #3dae2b;
+  --brand-moveinsync-ink: #10240e;
+
+  /* font.family */
+  --font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  --font-display: var(--font-sans);
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-hand: "Kalam", "Kalam Fallback", cursive;
+
+  /* font.weight */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  /* font.size */
+  --text-micro: 0.625rem;
+  --text-label: 0.75rem;
+  --text-small: 0.875rem;
+  --text-body-compact: 0.9375rem;
+  --text-body: 1rem;
+  --text-lead: 1.125rem;
+  --text-title-sm: 1.25rem;
+  --text-title: 1.5rem;
+  --text-head-xs: 1.75rem;
+  --text-head-sm: 1.875rem;
+  --text-head-md: 2.25rem;
+  --text-head-lg: 3rem;
+  --text-head-xl: 4rem;
+
+  /* font.role */
+  --role-display: var(--text-head-md);
+  --role-section: var(--text-head-sm);
+  --role-article: var(--text-head-xs);
+  --role-contact: var(--text-head-lg);
+
+  /* font.lineHeight */
+  --leading-none: 1;
+  --leading-display: 1.05;
+  --leading-heading: 1.1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-body: 1.6;
+
+  /* font.letterSpacing */
+  --tracking-display: -0.025em;
+  --tracking-display-tight: -0.04em;
+  --tracking-mono: 0.05em;
+  --tracking-label: 0.2em;
+  --tracking-eyebrow: 0.24em;
+
+  /* space */
+  --spacing: 0.25rem;
+  --gutter: 1.5rem;
+  --section-y: 6rem;
+  --scroll-offset: 80px;
+  --hero-avatar-gap: 1rem;
+
+  /* size.container */
+  --container-content: 64rem;
+  --container-wide: 72rem;
+  --container-prose: 46rem;
+  --container-rail: 15.5rem;
+
+  /* radius */
+  --radius-focus: 2px;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-card: 1.75rem;
+  --radius-full: 9999px;
+
+  /* border.width */
+  --border-width-hairline: 1px;
+  --border-width-strong: 2px;
+  --border-width-bar: 4px;
+
+  /* shadow */
+  --shadow-xs: 0 1px 0 color-mix(in srgb, var(--fg) 12%, transparent);
+  --shadow-sm: 0 2px 8px rgba(31, 59, 46, 0.18);
+  --shadow-md: 0 10px 30px -12px rgba(31, 59, 46, 0.45);
+  --shadow-lg: 0 18px 32px -22px rgba(31, 59, 46, 0.28);
+  --shadow-focus: 0 0 0 4px color-mix(in srgb, var(--highlight) 30%, transparent);
+
+  /* opacity */
+  --opacity-hover: 0.9;
+  --opacity-disabled: 0.6;
+
+  /* zIndex */
+  --z-behind: -1;
+  --z-raised: 20;
+  --z-menu: 40;
+  --z-nav: 50;
+  --z-floating: 60;
+  --z-tooltip: 70;
+  --z-drag: 80;
+
+  /* motion.duration */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-moderate: 300ms;
+  --duration-slow: 400ms;
+  --duration-slower: 500ms;
+  --duration-emphasis: 650ms;
+  --duration-scene: 900ms;
+  --interval-chip: 4800ms;
+  --interval-carousel: 10000ms;
+
+  /* motion.easing */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-emphasized: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in: ease-in;
+
+  /* breakpoint */
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-nav-chip: 53.75rem;
+  --breakpoint-booker: 69rem;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --role-display: var(--text-head-lg);
+    --role-section: var(--text-head-lg);
+    --role-article: var(--text-head-md);
+    --role-contact: var(--text-head-xl);
+    --gutter: 2rem;
+    --section-y: 8rem;
+  }
+}
+
+/* Lock flow only (/unlock). Approved scoped exceptions: denied red and dawn sky. */
+.bp-stage, .lock-scope {
+  --status-danger: #b23a48;
+  --ticket-stub: var(--bg);
+  --sky-1: #b7cde1;
+  --sky-2: #ccdae7;
+  --sky-3: #e3dfcf;
+  --sky-4: #f1e6ce;
+  --sky-5: #f6ecd1;
+  --sky-glow: rgba(255, 239, 200, 0.85);
+  --sky-cloud: #ffffff;
+  --sky-cloud-shadow: #d5dbe3;
+  --weight-bold: 700;
+}
+
+/* Proposed mapping for the AI Call pipeline iframe (public/artifacts/ai-call-pipeline.html).
+   Applied inside the artifact, not here. --success and --warning are an approved exception and keep their values. */
+/*
+:root {
+  --bg: var(--bg-elevated);
+  --surface: var(--bg);
+  --surface-2: var(--bg-elevated);
+  --surface-3: var(--bg);
+  --border: var(--border);
+  --border-strong: var(--fg-subtle);
+  --text: var(--fg);
+  --text-muted: var(--fg-muted);
+  --text-faint: var(--fg-subtle);
+  --accent: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--highlight) 45%, transparent);
+  --accent-glow: color-mix(in srgb, var(--highlight) 30%, transparent);
+  --node-bg: var(--bg-elevated);
+  --node-active-bg: color-mix(in srgb, var(--highlight) 22%, transparent);
+  --node-dim: color-mix(in srgb, var(--fg) 4%, transparent);
+  --success: #16a34a;
+  --warning: #d97706;
+}
+*/
+
+/* Migration note (Tailwind v4): names that Tailwind reads (--text-*, --shadow-*,
+   --radius-*, --font-*, --ease-*, --breakpoint-*) belong inside @theme, not :root.
+   Do NOT write @theme inline { --x: var(--x) }: a variable that points at itself
+   is invalid (the same bug as --font-hand today, app/globals.css:45). Colour roles
+   keep the existing --color-* bridge (app/globals.css:28-36) plus two additions:
+   --color-border-hairline: var(--border-hairline);
+   --color-highlight-strong: var(--highlight-strong);
+*/

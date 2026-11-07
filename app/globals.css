@@ -182,6 +182,40 @@ p [data-hl-word]::before {
   }
 }
 
+/* Case study index, two marks of the same chisel stroke.
+   "row" (v3.1) covers the whole active item.
+   "text" (v3) sits behind the words only, one stroke per line.
+   Both are already settled, so a scroll does not replay the sweep. */
+nav[data-index-mark="row"] a[aria-current="location"]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0.2rem;
+  right: 0;
+  bottom: 0.2rem;
+  left: 0;
+  background-image: url("/images/v3/highlighter.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  pointer-events: none;
+}
+
+nav[data-index-mark="text"] [data-hl-word] {
+  display: inline;
+  padding: 0.04em 0.12em;
+  background-image: url("/images/v3/highlighter.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 78%;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+nav[data-index-mark="text"] [data-hl-word]::before {
+  content: none;
+}
+
 /* Text selection — dragging to select paints the highlight in
    lilac with Pine foreground kept for legibility. */
 ::selection {
