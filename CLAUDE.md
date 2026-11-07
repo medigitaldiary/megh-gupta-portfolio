@@ -60,6 +60,15 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
 
 **Rule:** No other colors. If a design needs a fifth family, ask first. The Oatmeal / Pine / Lilac palette was promoted from the `/preview/v3` experiment, so earlier commits may still show the retired `#FAFAF7 / #111111 / #1F4D3A` stack. Treat the values here as the source of truth. Lilac stays decorative (highlighter marks, focus rings, hover washes); never as text that carries meaning.
 
+**Approved exceptions to the three-colour rule.** Two sets of hex values live outside the Oatmeal / Pine / Lilac palette on purpose. They are the only exceptions. Any new one needs to be added here before it ships.
+
+| Where | Hex values | What it's for | Why the brand palette doesn't work |
+|---|---|---|---|
+| `app/globals.css` → `--venn-user`, `--venn-tech`, `--venn-biz`. Used only by `components/product-venn.tsx` in the hero fold. | `#c1497f` (User, pink-red), `#4a72b0` (Technology, blue), `#c77e3b` (Business, amber) | Semantic three-circle Venn in the hero. User / Technology / Business each carry a distinct meaning and need to read as three categories at a glance. | A single-hue Venn would lose the semantic separation that the diagram's whole point. |
+| `components/backstage-pass.tsx` → constant `DENIED_INK`. Used only on the `/unlock` screen in three places: input underline on a wrong password (`:197`), status text for the "Not quite…" / "Still not it…" / "lock isn't set up" messages (`:279`), and the DENIED rubber stamp that slams onto the ticket (`:317`). | `#b23a48` (denied red) | Password error state and the stamp that lands on a denied attempt. | The brand palette has no red-adjacent hue; error states need a colour that reads as "wrong" instantly. The `/unlock` screen is a utility gate, not a brand surface, so a semantic red is cheap and clear. |
+
+Neither exception leaks onto `/`, `/work/*`, `/preview/*`, or any other brand surface.
+
 ### Type scale
 Nominal sizes (desktop target). Mobile sizes derive from the fluid-type rule below.
 
