@@ -17,7 +17,7 @@
 
 | Family | Tokens | Edits to adopt |
 |---|---:|---:|
-| color | 41 | 75 |
+| color | 41 | 76 |
 | font | 36 | 108 |
 | space | 5 | 5 |
 | size | 4 | 2 |
@@ -29,9 +29,9 @@
 | motion | 15 | 69 |
 | breakpoint | 6 | 7 |
 | island | 17 | 15 |
-| **Total** | **149** | **319** |
+| **Total** | **149** | **320** |
 
-**21 of the 148 tokens change something a visitor would notice** (§3). Everything else is a rename or a refactor with identical output.
+**22 of the 149 tokens change something a visitor would notice** (§3). Everything else is a rename or a refactor with identical output.
 
 ---
 
@@ -134,7 +134,7 @@ Every token, with what it replaces and how many places change. The same data is 
 | `--oatmeal-300` | `#d4c4a8` | #d4c4a8 (--border) | 0 |  | app/globals.css:14 |
 | `--pine-900` | `#1f3b2e` | #1f3b2e (--fg, --accent); PINE constant; text-/bg-[#1f3b2e]; #1F4D3A (retired pine, Cal embed) | 0 |  | app/globals.css:11,15 |
 | `--pine-700` | `#3a5544` | #3a5544 (--fg-muted) | 0 |  | app/globals.css:12 |
-| `--pine-500` | `#556b5d` | #556b5d (--fg-subtle) | 0 |  | app/globals.css:13 |
+| `--pine-500` | `#506758` | #556b5d (--fg-subtle) | 1 | Captions, dates and eyebrows a shade darker. **Approved by Megh.** | app/globals.css:13 |
 | `--lilac-300` | `#cbb3e8` | #cbb3e8 (--highlight); rgba(203,179,232,a) x7 | 0 |  | app/globals.css:17 |
 | `--lilac-400` | `#b89cdc` | #b89cdc (--highlight-strong) | 0 |  | app/globals.css:18 |
 | `--cream-50` | `#fdf7ee` | #fdf7ee (--venn-cream); rgba(253,247,238,0.6) | 0 |  | app/globals.css:24 |
@@ -392,29 +392,30 @@ Adopting the set is invisible **except** for these. Each one comes from folding 
 
 | # | Token | What a visitor would notice |
 |---:|---|---|
-| V1 | `--bg-elevated` | Timeline tooltip turns from white to oat. **Approved by Megh.** |
-| V2 | `--fg-muted` | Tooltip body and unlock body copy shift to pine. **Approved by Megh.** |
-| V3 | `--fg-subtle` | Unlock mono labels become solid pine-500 instead of translucent pine. **Approved by Megh.** |
-| V4 | `--accent` | Cal booker buttons move from the retired green #1F4D3A to current pine. **Approved by Megh.** |
-| V5 | `--ring-offset` | Focus-ring gap turns oat instead of white (if the pine ring is the one that renders, Phase 4). **Approved by Megh.** |
-| V6 | `--ticket-stub` | Stub darkens by about 2% luminance. Check in Phase 4. **Approved by Megh.** |
-| V7 | `--text-micro` | Unlock labels move to 10px (from 9.6 and 10.4px); About tip kicker grows 0.7px; relock pill shrinks 0.9px. **Approved by Megh.** |
-| V8 | `--text-label` | 11px dates and stack pills grow to 12px. **Approved by Megh.** |
-| V9 | `--text-head-md` | Experience role H3 at md+ drops from 40px to 36px. **Approved by Megh.** |
-| V10 | `--text-head-lg` | Hero H1 at 1024px+ drops from 52px to 48px. **Approved by Megh.** |
-| V11 | `--leading-display` | Hero H1 lines sit about 1.4px closer at 48px. **Approved by Megh.** |
-| V12 | `--leading-body` | Case-study prose tightens 0.4px per line at 16px. Entry-detail body tightens from 1.7. **Approved by Megh.** |
-| V13 | `--tracking-label` | Small. 'View all' and card eyebrows widen from 0.16em. **Approved by Megh.** |
-| V14 | `--tracking-eyebrow` | Unlock brand and stub labels tighten from 0.3em. **Approved by Megh.** |
-| V15 | `--hero-avatar-gap` | 2px narrower at md+. **Approved by Megh.** |
-| V16 | `--radius-2xl` | Tooltip and ticket corners 2px tighter. **Approved by Megh.** |
-| V17 | `--shadow-sm` | Nav pill and chips get a pine-tinted shadow instead of grey. **Approved by Megh.** |
-| V18 | `--shadow-md` | Timeline tooltip shadow gets noticeably stronger (0.18 to 0.45 alpha). **Approved by Megh.** |
-| V19 | `--shadow-lg` | Cal booker shadow shrinks and turns pine. **Approved by Megh.** |
-| V20 | `--interval-carousel` | Carousel advances every 10s instead of 4.5s. **Approved by Megh (set to 10s).** |
-| V21 | `--breakpoint-booker` | Contact copy break moves from 1100 to 1104px. **Approved by Megh.** |
+| V1 | `--pine-500` | Captions, dates and eyebrows a shade darker. **Approved by Megh.** |
+| V2 | `--bg-elevated` | Timeline tooltip turns from white to oat. **Approved by Megh.** |
+| V3 | `--fg-muted` | Tooltip body and unlock body copy shift to pine. **Approved by Megh.** |
+| V4 | `--fg-subtle` | Unlock mono labels become solid pine-500 instead of translucent pine. **Approved by Megh.** |
+| V5 | `--accent` | Cal booker buttons move from the retired green #1F4D3A to current pine. **Approved by Megh.** |
+| V6 | `--ring-offset` | Focus-ring gap turns oat instead of white (if the pine ring is the one that renders, Phase 4). **Approved by Megh.** |
+| V7 | `--ticket-stub` | Stub darkens by about 2% luminance. Check in Phase 4. **Approved by Megh.** |
+| V8 | `--text-micro` | Unlock labels move to 10px (from 9.6 and 10.4px); About tip kicker grows 0.7px; relock pill shrinks 0.9px. **Approved by Megh.** |
+| V9 | `--text-label` | 11px dates and stack pills grow to 12px. **Approved by Megh.** |
+| V10 | `--text-head-md` | Experience role H3 at md+ drops from 40px to 36px. **Approved by Megh.** |
+| V11 | `--text-head-lg` | Hero H1 at 1024px+ drops from 52px to 48px. **Approved by Megh.** |
+| V12 | `--leading-display` | Hero H1 lines sit about 1.4px closer at 48px. **Approved by Megh.** |
+| V13 | `--leading-body` | Case-study prose tightens 0.4px per line at 16px. Entry-detail body tightens from 1.7. **Approved by Megh.** |
+| V14 | `--tracking-label` | Small. 'View all' and card eyebrows widen from 0.16em. **Approved by Megh.** |
+| V15 | `--tracking-eyebrow` | Unlock brand and stub labels tighten from 0.3em. **Approved by Megh.** |
+| V16 | `--hero-avatar-gap` | 2px narrower at md+. **Approved by Megh.** |
+| V17 | `--radius-2xl` | Tooltip and ticket corners 2px tighter. **Approved by Megh.** |
+| V18 | `--shadow-sm` | Nav pill and chips get a pine-tinted shadow instead of grey. **Approved by Megh.** |
+| V19 | `--shadow-md` | Timeline tooltip shadow gets noticeably stronger (0.18 to 0.45 alpha). **Approved by Megh.** |
+| V20 | `--shadow-lg` | Cal booker shadow shrinks and turns pine. **Approved by Megh.** |
+| V21 | `--interval-carousel` | Carousel advances every 10s instead of 4.5s. **Approved by Megh (set to 10s).** |
+| V22 | `--breakpoint-booker` | Contact copy break moves from 1100 to 1104px. **Approved by Megh.** |
 
-**All 21 approved by Megh.** V10 and V18 were reviewed against single before/after mock-ups, the other 19 against grouped mock-ups. V20 was approved at a new value, 10s (Megh's call, so the cover videos have time to play), not the 4.8s first proposed. V19 (Cal booker shadow) was approved even though Claude flagged that a pine shadow barely shows on the pine Contact fold; Phase 4 checks how it reads on the real page.
+**All 22 approved by Megh.** V22 (`--pine-500` → #506758) was added and approved in Phase 3 to fix caption contrast (03-gaps G-A1). V10 and V18 were reviewed against single before/after mock-ups, the other 19 against grouped mock-ups. V20 was approved at a new value, 10s (Megh's call, so the cover videos have time to play), not the 4.8s first proposed. V19 (Cal booker shadow) was approved even though Claude flagged that a pine shadow barely shows on the pine Contact fold; Phase 4 checks how it reads on the real page.
 
 ---
 
@@ -441,7 +442,7 @@ Recorded in `02-decisions.md`, with the ready-to-review diffs in `patches/`.
 
 | # | Decision | Status |
 |---|---|---|
-| D1 | Visible changes (§3) | **All 21 approved** (V20 at 10s). |
+| D1 | Visible changes (§3) | **All 22 approved** (V20 at 10s; V22 from Phase 3). |
 | D2 | Unused `@theme` type scale, `app/globals.css:47-58` | **Approved: delete.** Docs keep the nominal sizes. Heading-size tokens here are renamed `--text-head-*` so no proposed token reuses a deleted name with a different value. |
 | D3 | AI Call iframe status colours | **Approved: scoped exception.** `--success` / `--warning` keep their values inside the iframe (§2.22). |
 | D4 | `font-serif` → `font-display` | **Approved.** Repo-wide sweep is 47 lines in 27 files, including 4 SVG `var(--font-serif)` references, not the 14 in-scope classes first counted. |

@@ -50,7 +50,7 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
   --bg-elevated: #F3EBD9; /* lightened oatmeal — cards, modals */
   --fg: #1F3B2E;          /* Pine Green — body, headings, CTA fill */
   --fg-muted: #3A5544;    /* lighter pine — secondary text */
-  --fg-subtle: #556B5D;   /* muted pine — captions */
+  --fg-subtle: #556B5D;   /* muted pine, captions. Approved change to #506758 for 4.5:1 on --bg; ships with the token code PR */
   --border: #D4C4A8;      /* toasted oat — hairlines */
   --accent: #1F3B2E;      /* same hue as --fg: monochrome brand */
   --accent-fg: #E8DCC6;   /* Oatmeal — text on Pine buttons */
@@ -123,6 +123,11 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 - 150ms ease-out hover transitions on cards and links.
 
 **Not acceptable** without explicit ask: parallax, scroll-jacking, cursor effects, mouse-tracking glows, page transitions.
+
+**Approved exceptions (explicit asks, confirmed by Megh):**
+- `/unlock` ticket tilts toward a mouse pointer (`components/backstage-pass.tsx`, `pointerType === "mouse"` only, off under reduced motion).
+- About collage is scroll-scrubbed: photos fly out and torn strips slide as the visitor scrolls a sticky stage (`components/about-collage.tsx` / `.css`; static under reduced motion).
+- v3.1 Product Venn chips are draggable (`components/product-venn-travel.tsx`).
 
 ---
 
