@@ -5,12 +5,12 @@
 | # | Decision | Status | Artefact |
 |---|---|---|---|
 | D1 | Visible changes V1 to V21 | All 21 approved | `02-tokens.md` §3 |
-| D2 | Delete the unused `@theme` type scale | Approved | `patches/D2-delete-theme-type-scale.diff` + CLAUDE.md text |
+| D2 | Delete the unused `@theme` type scale | **Shipped** (branch `mxg/design-system-patches`) | `patches/D2-delete-theme-type-scale.diff` + CLAUDE.md text |
 | D3 | AI Call diagram status colours | Approved as a scoped exception | `tokens.json` → `island.ai-call-pipeline` + CLAUDE.md text |
-| D4 | Rename `font-serif` → `font-display` | Approved | `patches/D4-font-serif-to-font-display.diff` |
-| D5 | Kalam inline styles → `font-hand` class | Approved in principle, diff for review | `patches/D5-font-hand-class.diff` |
-| D6 | Work carousel advances every 10s | Approved (Megh), phone trade-off accepted | `patches/D6-carousel-interval-10s.diff` |
-| D7 | Move next/font variables from `<body>` to `<html>` so body text renders in Geist | **Proposed (Phase 4), needs Megh** | `patches/D7-font-variables-on-html.diff` |
+| D4 | Rename `font-serif` → `font-display` | **Shipped** (same branch) | `patches/D4-font-serif-to-font-display.diff` |
+| D5 | Kalam inline styles → `font-hand` class | **Shipped** (same branch) | `patches/D5-font-hand-class.diff` |
+| D6 | Work carousel advances every 10s | **Shipped** (same branch); phone trade-off accepted | `patches/D6-carousel-interval-10s.diff` |
+| D7 | Move next/font variables from `<body>` to `<html>` so body text renders in Geist | **Shipped** (same branch, recommended by Claude, own commit so it can be dropped); with the G-C18 chip spacing fix | `patches/D7-font-variables-on-html.diff` |
 
 ---
 
@@ -71,7 +71,7 @@
 **Checked in a scratch copy:**
 - applies cleanly;
 - `tsc --noEmit` passes;
-- Biome reports 20 issues before and 20 after, all pre-existing (`noImportantStyles` in `app/preview/v2.1/scope.css` and similar), so no new issues.
+- Biome: the first comparison counted issue lines and missed two formatting errors D5 introduced (`experience.tsx`, `backstage-pass.tsx`). Caught while opening the code PR and fixed in the D5 commit; the branch now reports the same 2 errors and 25 warnings as `main`, all pre-existing.
 
 **Runtime check (corrected in Phase 4):** Phase 2 said the Venn's SVG `var(--font-serif)` references resolve to Geist. They don't. Tailwind does emit `--font-serif` on `:root`, but its value points at next/font's variable, which only exists on `<body>`, so on `:root` it resolves to nothing and the labels render in the system font. The rename itself is still safe: Phase 4 rendered the patched build and it matches today's build pixel for pixel (see below). The font problem is separate and is fixed by D7.
 
@@ -99,7 +99,7 @@ Every element inside `<body>` inherits the real value, so the class renders the 
 
 The SVG attribute at `product-venn-travel.tsx:821` is untouched.
 
-**Checked:** applies cleanly together with D2 and D4; `tsc` passes; no new Biome issues. **Not yet checked:** the rendered font. Phase 4 confirms the computed `font-family` at all seven spots before merge.
+**Checked:** applies cleanly together with D2 and D4; `tsc` passes; Biome clean after the formatting fix noted under D4. **Not yet checked:** the rendered font. Phase 4 confirms the computed `font-family` at all seven spots before merge.
 
 ---
 

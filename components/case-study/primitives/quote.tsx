@@ -14,7 +14,7 @@ export function Quote({
 }) {
   return (
     <figure className="my-14 border-l-2 border-accent pl-6">
-      <blockquote className="font-serif text-2xl leading-snug text-fg md:text-3xl">
+      <blockquote className="font-display text-2xl leading-snug text-fg md:text-3xl">
         {children}
       </blockquote>
       {attribution ? (

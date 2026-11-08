@@ -72,7 +72,7 @@ export function ComingSoonWithPaper({ variant }: { variant: Variant }) {
 
       <div className="flex max-w-2xl flex-col items-center">
         <h1
-          className="whitespace-nowrap font-serif text-fg leading-[1.05]"
+          className="whitespace-nowrap font-display text-fg leading-[1.05]"
           style={{
             letterSpacing: "-0.04em",
             fontSize: "clamp(2.25rem, 9vw, 5rem)",
@@ -82,7 +82,7 @@ export function ComingSoonWithPaper({ variant }: { variant: Variant }) {
         </h1>
 
         <p
-          className="mt-6 font-serif text-fg leading-[1.4]"
+          className="mt-6 font-display text-fg leading-[1.4]"
           style={{ fontSize: "clamp(1rem, 2.6vw, 1.5rem)" }}
         >
           Building a new home for my work &amp; ideas.

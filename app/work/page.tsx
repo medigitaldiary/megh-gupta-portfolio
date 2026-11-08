@@ -54,7 +54,7 @@ export default async function WorkIndexPage({
         <p className="mt-8 font-mono text-xs uppercase tracking-[0.24em] text-fg-subtle">
           Work
         </p>
-        <h1 className="mt-3 max-w-3xl font-serif text-3xl leading-[1.1] tracking-tight text-fg md:text-5xl">
+        <h1 className="mt-3 max-w-3xl font-display text-3xl leading-[1.1] tracking-tight text-fg md:text-5xl">
           Things I've built and shipped.
         </h1>
         <div className="mt-12 md:mt-16">

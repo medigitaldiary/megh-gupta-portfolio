@@ -51,8 +51,8 @@ const CHIPS: Chip[] = [
   { label: "Adoption", zone: "biz", cx: 690, cy: 715 },
   { label: "Stakeholder", zone: "biz", cx: 475, cy: 765 },
   { label: "Growth loops", zone: "biz", cx: 655, cy: 765 },
-  { label: "Experimentation", zone: "biz", cx: 505, cy: 812 },
-  { label: "Monetization", zone: "biz", cx: 650, cy: 812 },
+  { label: "Experimentation", zone: "biz", cx: 495, cy: 812 },
+  { label: "Monetization", zone: "biz", cx: 660, cy: 812 },
 ];
 
 export function ProductVenn({
@@ -469,7 +469,7 @@ export function ProductVenn({
             y={c.cy}
             textAnchor="middle"
             dominantBaseline="central"
-            fontFamily="var(--font-serif), serif"
+            fontFamily="var(--font-display), serif"
             fontSize="36"
             fill="var(--fg)"
             style={{ opacity: settled ? 1 : 0 }}
@@ -561,7 +561,7 @@ export function ProductVenn({
         data-role="marker-label"
         x={hideMarker ? 1048 : 1040}
         y={hideMarker ? 464 : 477}
-        fontFamily="var(--font-serif), serif"
+        fontFamily="var(--font-display), serif"
         fontStyle="italic"
         fontSize={hideMarker ? 24 : 30}
         fill="var(--accent)"

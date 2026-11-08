@@ -20,7 +20,7 @@ export function MarkdownH2({ children }: { children?: ReactNode }) {
   return (
     <h2
       id={id}
-      className="scroll-mt-24 font-serif text-[1.75rem] leading-tight text-fg md:text-[2.25rem]"
+      className="scroll-mt-24 font-display text-[1.75rem] leading-tight text-fg md:text-[2.25rem]"
     >
       {children}
     </h2>

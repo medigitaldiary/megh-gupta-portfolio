@@ -37,7 +37,7 @@ export default function CaseStudyKitPage() {
         <p className="font-mono text-xs uppercase tracking-[0.24em] text-fg-subtle">
           Preview
         </p>
-        <h1 className="mt-2 font-serif text-3xl leading-tight text-fg md:text-4xl">
+        <h1 className="mt-2 font-display text-3xl leading-tight text-fg md:text-4xl">
           Case study design system: kit
         </h1>
         <p className="mt-4 text-base leading-relaxed text-fg-muted">

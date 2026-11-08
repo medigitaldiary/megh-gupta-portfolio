@@ -425,7 +425,7 @@ function renderCallout({
     return (
       <div>
         {eyebrow("Portal · 0→1 experiments")}
-        <p className="mt-1 font-serif text-base text-white">
+        <p className="mt-1 font-display text-base text-white">
           Where new experiments walk out onto the workbench.
         </p>
         <p className="mt-1 text-sm text-white/70">
@@ -438,7 +438,7 @@ function renderCallout({
     return (
       <div>
         {eyebrow(`Workbench · Claude · ${efficiency.length} skills loaded`)}
-        <p className="mt-1 font-serif text-base text-white">
+        <p className="mt-1 font-display text-base text-white">
           Efficiency tools running on the workstation.
         </p>
         <p className="mt-1 text-sm text-white/70">
@@ -455,7 +455,7 @@ function renderCallout({
         {eyebrow(
           `Side Quest · ${card.stage ? LAB_STAGE_LABEL[card.stage] : "experiment"}`,
         )}
-        <p className="mt-1 font-serif text-base text-white">{card.title}</p>
+        <p className="mt-1 font-display text-base text-white">{card.title}</p>
         <p className="mt-1 text-sm text-white/70">{card.description}</p>
       </div>
     );
@@ -464,7 +464,7 @@ function renderCallout({
     return (
       <div>
         {eyebrow("GitHub · last 26 weeks")}
-        <p className="mt-1 font-serif text-base text-white">
+        <p className="mt-1 font-display text-base text-white">
           Contribution grid pinned to the wall.
         </p>
         <p className="mt-1 text-sm text-white/70">
@@ -477,7 +477,7 @@ function renderCallout({
     return (
       <div>
         {eyebrow("Pegboard · apps I use")}
-        <p className="mt-1 font-serif text-base text-white">
+        <p className="mt-1 font-display text-base text-white">
           Every-day tools hanging by category.
         </p>
         <p className="mt-1 text-sm text-white/70">
@@ -490,7 +490,7 @@ function renderCallout({
     return (
       <div>
         {eyebrow("My Stack · red-string investigation")}
-        <p className="mt-1 font-serif text-base text-white">
+        <p className="mt-1 font-display text-base text-white">
           What this site (and the tools) are built with.
         </p>
         <p className="mt-1 text-sm text-white/70">
