@@ -192,7 +192,7 @@ export function BackstagePass({
                           style={{
                             borderColor: denied
                               ? DENIED_INK
-                              : "rgba(31,59,46,0.35)",
+                              : "var(--fg-subtle)",
                             color: reveal ? PINE : "transparent",
                             caretColor: reveal ? PINE : "transparent",
                           }}

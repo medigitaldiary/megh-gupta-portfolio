@@ -450,8 +450,8 @@ export function ProductVenn({
             r={CIRCLE_R}
             fill="none"
             stroke={c.color}
-            strokeWidth={2}
-            strokeOpacity={0.85}
+            strokeWidth={3}
+            strokeOpacity={1}
             pathLength={1}
             style={{ opacity: settled ? 1 : 0 }}
           />
