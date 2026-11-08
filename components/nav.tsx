@@ -239,6 +239,8 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
   const [focusWithin, setFocusWithin] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState<string>("");
+  const menuRef = useRef<HTMLDivElement>(null);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
   // Collapse the status chip + right CTAs once past the hero, unless the viewer
   // is hovering or keyboard-focused in the nav. The pill stays anchored.
   const collapsed = scrolled && !hovered && !focusWithin;
@@ -304,13 +306,70 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
     };
   }, [menuOpen]);
 
+  // Mark everything outside <nav> as inert while the drawer is open, so a
+  // keyboard user can only reach drawer items. Reverse on close.
+  useEffect(() => {
+    const siblings = Array.from(document.body.children) as HTMLElement[];
+    const toggled: HTMLElement[] = [];
+    for (const el of siblings) {
+      if (el.tagName === "NAV" || el.contains(document.activeElement)) continue;
+      if (menuOpen && !el.hasAttribute("inert")) {
+        el.setAttribute("inert", "");
+        toggled.push(el);
+      }
+    }
+    return () => {
+      for (const el of toggled) el.removeAttribute("inert");
+    };
+  }, [menuOpen]);
+
+  // Move focus into the drawer on open; return it to the hamburger on close.
+  useEffect(() => {
+    if (menuOpen) {
+      const first = menuRef.current?.querySelector<HTMLElement>("a,button");
+      first?.focus();
+    } else if (hamburgerRef.current) {
+      // Only refocus if the user hasn't moved elsewhere already.
+      if (
+        document.activeElement === document.body ||
+        document.activeElement == null
+      ) {
+        hamburgerRef.current.focus();
+      }
+    }
+  }, [menuOpen]);
+
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setMenuOpen(false);
+      if (e.key === "Escape") {
+        if (menuOpen) {
+          e.preventDefault();
+          setMenuOpen(false);
+          hamburgerRef.current?.focus();
+        }
+        return;
+      }
+      if (e.key !== "Tab" || !menuOpen) return;
+      const drawer = menuRef.current;
+      if (!drawer) return;
+      const focusables = drawer.querySelectorAll<HTMLElement>(
+        "a[href],button:not([disabled])",
+      );
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (e.shiftKey && (active === first || !drawer.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [menuOpen]);
 
   function scrollToTop(e: React.MouseEvent) {
     e.preventDefault();
@@ -424,6 +483,7 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
 
           {/* Mobile: hamburger */}
           <button
+            ref={hamburgerRef}
             type="button"
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
@@ -441,6 +501,10 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
       {menuOpen && (
         <div
           id="mobile-menu"
+          ref={menuRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site menu"
           className="fixed inset-x-0 top-16 bottom-0 z-40 flex flex-col items-center justify-center gap-6 bg-bg md:hidden"
         >
           {navItems.map((item) => (

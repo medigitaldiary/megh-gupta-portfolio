@@ -116,6 +116,10 @@ function WorkCarousel({
   const indexRef = useRef(0);
   const frameRef = useRef<number | null>(null);
   const [paused, setPaused] = useState(false);
+  // Explicit, sticky stop: set by the pause button or by any manual arrow
+  // / swipe. Overrides hover- and focus-based `paused`. Once set, the
+  // carousel never auto-advances again until the viewer presses play.
+  const [stopped, setStopped] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -180,13 +184,25 @@ function WorkCarousel({
       carouselStops(viewport),
       viewport.scrollLeft,
     );
+    // Any scroll that completes outside of the programmatic `scrollByCard`
+    // animation came from the viewer (touch swipe or trackpad). Stop auto-
+    // advance for the rest of the session.
+    if (!stopped) setStopped(true);
   };
 
   useEffect(() => {
-    if (reduced || paused) return;
+    if (reduced || paused || stopped) return;
     const id = window.setInterval(() => scrollByCard(1), STEP_MS);
     return () => window.clearInterval(id);
-  }, [reduced, paused, scrollByCard]);
+  }, [reduced, paused, stopped, scrollByCard]);
+
+  // A swipe stops auto-advance for the rest of the session. The scroll-end
+  // handler already fires on every swipe; here we flip `stopped` once the
+  // user has moved the carousel by hand (either via the arrow buttons or
+  // a touch swipe).
+  const onManualMove = () => {
+    if (!stopped) setStopped(true);
+  };
 
   return (
     <div
@@ -221,20 +237,41 @@ function WorkCarousel({
           ))}
         </ul>
       </section>
-      <div className="mt-4 flex justify-end gap-2">
+      <div className="mt-4 flex items-center justify-end gap-2">
+        {!reduced && (
+          <button
+            type="button"
+            aria-label={
+              stopped ? "Play case study carousel" : "Pause case study carousel"
+            }
+            aria-pressed={stopped}
+            onClick={() => setStopped((v) => !v)}
+            className="mr-1 inline-flex size-10 items-center justify-center rounded-full border border-border text-fg transition-colors duration-150 hover:bg-bg-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+          >
+            <span aria-hidden="true" className="font-mono text-xs">
+              {stopped ? "▶" : "❙❙"}
+            </span>
+          </button>
+        )}
         <button
           type="button"
           aria-label="Previous case study"
-          onClick={() => scrollByCard(-1)}
-          className="inline-flex size-10 items-center justify-center rounded-full border border-border text-fg transition-colors duration-150 hover:bg-bg-elevated"
+          onClick={() => {
+            onManualMove();
+            scrollByCard(-1);
+          }}
+          className="inline-flex size-10 items-center justify-center rounded-full border border-border text-fg transition-colors duration-150 hover:bg-bg-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
         >
           ←
         </button>
         <button
           type="button"
           aria-label="Next case study"
-          onClick={() => scrollByCard(1)}
-          className="inline-flex size-10 items-center justify-center rounded-full border border-border text-fg transition-colors duration-150 hover:bg-bg-elevated"
+          onClick={() => {
+            onManualMove();
+            scrollByCard(1);
+          }}
+          className="inline-flex size-10 items-center justify-center rounded-full border border-border text-fg transition-colors duration-150 hover:bg-bg-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
         >
           →
         </button>
