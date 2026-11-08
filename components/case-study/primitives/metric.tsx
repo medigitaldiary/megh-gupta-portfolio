@@ -20,7 +20,7 @@ export function Metric({
 }) {
   const body = (
     <>
-      <p className="font-serif text-3xl leading-none text-fg md:text-4xl">
+      <p className="font-display text-3xl leading-none text-fg md:text-4xl">
         {value}
       </p>
       <Eyebrow variant="micro" className="mt-2">

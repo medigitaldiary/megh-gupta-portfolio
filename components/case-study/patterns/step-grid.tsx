@@ -79,7 +79,7 @@ function Cell({
               )}
             </Eyebrow>
           ) : null}
-          <h3 className="mt-3 font-serif text-xl leading-tight text-fg">
+          <h3 className="mt-3 font-display text-xl leading-tight text-fg">
             {title}
           </h3>
         </div>

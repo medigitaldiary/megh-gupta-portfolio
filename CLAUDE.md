@@ -76,7 +76,7 @@ Third-party and product brand marks (LinkedIn blue, the BondScanner / Ultra / Mo
 ### Type scale
 Nominal sizes (desktop target) for reasoning about hierarchy. Mobile sizes derive from the fluid-type rule below.
 
-These are **not live tokens.** The `@theme` entries that mirrored them (`text-display`, `text-h1` … `text-small` in `app/globals.css`) are referenced by no component; PR #110 (D2 patch) removes them. Components use Tailwind's scale, arbitrary values, or the fluid `clamp()` triples below. The as-built size set is documented in `design-system/02-tokens.md` §2.7.
+These are **not live tokens.** The `@theme` entries that mirrored them (`text-display`, `text-h1` … `text-small` in `app/globals.css`) were used by no component and have been removed (decision D2 in PR #110, `design-system/02-decisions.md`). Components use Tailwind's scale, arbitrary values, or the fluid `clamp()` triples below. The as-built size set is documented in `design-system/02-tokens.md` §2.7.
 
 - `display`: 4rem / 64px, Geist Sans, line-height 1.05 (hero only)
 - `h1`: 2.5rem / 40px, Geist Sans, line-height 1.1

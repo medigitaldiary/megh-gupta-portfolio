@@ -31,7 +31,7 @@ export default function PreviewIndex() {
       <p className="mb-3 font-mono text-fg-subtle text-xs uppercase tracking-wider">
         Preview · coming-soon variants
       </p>
-      <h1 className="font-serif text-4xl">Pick a flavor.</h1>
+      <h1 className="font-display text-4xl">Pick a flavor.</h1>
       <p className="mt-4 text-fg-muted">
         Three ways to combine the paper effect with the coming-soon copy.
         Compare and pick one; I&apos;ll wire it into <code>/</code> and delete
@@ -46,7 +46,7 @@ export default function PreviewIndex() {
               className="group block rounded-lg border border-border p-5 transition-colors hover:border-fg/40"
             >
               <div className="flex items-baseline justify-between gap-4">
-                <h2 className="font-serif text-2xl">{v.label}</h2>
+                <h2 className="font-display text-2xl">{v.label}</h2>
                 <span className="font-mono text-accent text-xs uppercase tracking-wider group-hover:underline">
                   Open →
                 </span>

@@ -13,8 +13,6 @@ import {
   toDecimalYear,
 } from "@/lib/experience";
 
-const hand = { fontFamily: "var(--font-hand), cursive" } as const;
-
 type View = "timeline" | "list";
 
 export function Experience() {
@@ -28,7 +26,7 @@ export function Experience() {
         <div className="mb-10 flex flex-col gap-6 md:mb-14 md:flex-row md:items-end md:justify-between">
           <SectionHeader eyebrow="Experience" title="Where I've been." />
           <div className="flex items-center gap-3 md:mb-2">
-            <span className="text-lg leading-none text-accent" style={hand}>
+            <span className="font-hand text-lg leading-none text-accent">
               try this
             </span>
             <span aria-hidden="true" className="text-accent">
@@ -228,7 +226,7 @@ function LogoTile({
         ) : (
           <span
             aria-hidden="true"
-            className={`flex h-full w-full items-center justify-center font-serif ${dims.text} ${logoBg ? "text-accent-fg" : "text-fg-subtle"}`}
+            className={`flex h-full w-full items-center justify-center font-display ${dims.text} ${logoBg ? "text-accent-fg" : "text-fg-subtle"}`}
           >
             {fallback.slice(0, 1).toUpperCase()}
           </span>
@@ -316,7 +314,7 @@ function EntryDetail({
               {company}
             </p>
           )}
-          <h3 className="font-serif text-3xl leading-[1.05] tracking-tight text-fg md:text-[2.5rem]">
+          <h3 className="font-display text-3xl leading-[1.05] tracking-tight text-fg md:text-[2.5rem]">
             {role}
           </h3>
         </div>
@@ -559,10 +557,7 @@ function TimelineView({ entries }: { entries: ExperienceEntry[] }) {
         onToggle={toggle}
       />
       {openKey === null && (
-        <p
-          className="mt-6 text-center text-sm text-fg-subtle lg:hidden"
-          style={hand}
-        >
+        <p className="mt-6 text-center font-hand text-sm text-fg-subtle lg:hidden">
           open a card for the detail
         </p>
       )}
@@ -664,9 +659,7 @@ function DesktopTimeline({ items }: { items: TimelineItem[] }) {
               height: bandHeight,
             }}
           >
-            <span className="mb-1 text-sm text-accent" style={hand}>
-              now
-            </span>
+            <span className="mb-1 font-hand text-sm text-accent">now</span>
             <div
               className="w-px flex-1"
               style={{
@@ -715,10 +708,7 @@ function DesktopTimeline({ items }: { items: TimelineItem[] }) {
           </div>
         </div>
       </div>
-      <p
-        className="mt-6 text-center text-sm text-fg-subtle md:text-base"
-        style={hand}
-      >
+      <p className="mt-6 text-center font-hand text-sm text-fg-subtle md:text-base">
         hover any card to see what I built there
       </p>
     </div>
@@ -961,9 +951,7 @@ function TimelineCard({
       <p className="shrink-0 text-xs leading-snug text-fg-muted">{item.role}</p>
       <p className="shrink-0 font-mono text-[11px] text-fg-subtle">
         {item.current && (
-          <span className="mr-1 text-accent" style={hand}>
-            now
-          </span>
+          <span className="mr-1 font-hand text-accent">now</span>
         )}
         {dates}
         {item.employer ? ` · ${item.employer}` : null}

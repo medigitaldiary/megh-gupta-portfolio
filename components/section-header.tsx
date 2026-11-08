@@ -15,7 +15,7 @@ export function SectionHeader({
         <span data-hl-word>{eyebrow}</span>
       </p>
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-        <h2 className="max-w-3xl font-serif text-3xl leading-[1.1] tracking-tight text-fg md:text-5xl">
+        <h2 className="max-w-3xl font-display text-3xl leading-[1.1] tracking-tight text-fg md:text-5xl">
           {title}
         </h2>
         {action ? (

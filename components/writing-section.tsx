@@ -65,7 +65,7 @@ function WritingCard({ entry }: { entry: WritingEntry }) {
             </>
           )}
         </div>
-        <h3 className="font-serif text-xl leading-[1.2] text-fg line-clamp-2 group-hover:text-accent">
+        <h3 className="font-display text-xl leading-[1.2] text-fg line-clamp-2 group-hover:text-accent">
           {entry.title}
         </h3>
         <p className="mt-3 text-sm leading-[1.55] text-fg-muted line-clamp-3">

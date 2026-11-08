@@ -53,7 +53,7 @@ export function WorkCard({ card }: { card: WorkCardType }) {
         ) : (
           // Fallback for a card without cover art yet
           <div className="absolute inset-0 flex items-end bg-bg-elevated p-5">
-            <h3 className="font-serif text-xl leading-snug text-fg">
+            <h3 className="font-display text-xl leading-snug text-fg">
               {card.title}
             </h3>
           </div>
@@ -79,7 +79,7 @@ export function WorkCard({ card }: { card: WorkCardType }) {
           <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-fg/70">
             {card.eyebrow} · {card.company}
           </p>
-          <h3 className="mt-1 font-serif text-base leading-snug text-accent-fg md:text-lg">
+          <h3 className="mt-1 font-display text-base leading-snug text-accent-fg md:text-lg">
             {card.title}
           </h3>
           <p className="mt-2 flex items-center gap-2 text-xs text-accent-fg/80">

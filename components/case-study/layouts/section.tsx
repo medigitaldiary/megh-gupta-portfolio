@@ -52,7 +52,7 @@ export function Section({
           {eyebrow}
         </Eyebrow>
       ) : null}
-      <h2 className="font-serif text-[1.75rem] leading-tight text-fg md:text-[2.25rem]">
+      <h2 className="font-display text-[1.75rem] leading-tight text-fg md:text-[2.25rem]">
         {heading}
       </h2>
     </header>

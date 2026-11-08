@@ -110,7 +110,7 @@ function AboutIntro() {
         <p className="mt-10 font-mono text-xs uppercase tracking-[0.3em] text-[#F3EEE2]/60">
           A little about me
         </p>
-        <h2 className="mt-5 font-serif text-4xl leading-[1.05] text-[#F3EEE2] md:text-5xl">
+        <h2 className="mt-5 font-display text-4xl leading-[1.05] text-[#F3EEE2] md:text-5xl">
           Old-school taste. Always something new to explore.
         </h2>
         <p className="mt-6 max-w-sm text-sm leading-relaxed text-[#F3EEE2]/75 md:text-base">
@@ -269,7 +269,7 @@ function StoryCard({ story, index }: { story: Story; index: number }) {
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#F3EEE2]/55">
           {story.category}
         </p>
-        <h3 className="font-serif text-lg leading-tight text-[#F3EEE2] md:text-xl">
+        <h3 className="font-display text-lg leading-tight text-[#F3EEE2] md:text-xl">
           {story.heading}
         </h3>
         <p className="text-xs leading-relaxed text-[#F3EEE2]/70 md:text-sm">
@@ -295,7 +295,7 @@ function AboutLookingAhead() {
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent">
               Looking ahead
             </p>
-            <h3 className="mt-4 font-serif text-3xl leading-tight text-fg md:text-[2.25rem]">
+            <h3 className="mt-4 font-display text-3xl leading-tight text-fg md:text-[2.25rem]">
               Financial products, from the ground up.
             </h3>
             <p className="mt-6 max-w-xl text-base leading-relaxed text-fg-muted md:text-lg">
