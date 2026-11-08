@@ -13,6 +13,16 @@ export function HeroLink() {
     const section = document.getElementById("hero");
     if (!section) return;
 
+    // Below `lg` the Venn is display:none (see components/hero.tsx:
+    // design-system/03-gaps.md G-A3). Without a visible marker, the
+    // measure() loop would spin forever waiting for a bounding box
+    // that never resolves. Bail early so phones pay no animation
+    // cost for a diagram they never see.
+    if (!window.matchMedia("(min-width: 1024px)").matches) {
+      document.documentElement.dataset.heroPin = "1";
+      return;
+    }
+
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;

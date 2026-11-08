@@ -86,9 +86,14 @@ export function Hero({
           </div>
         </div>
 
+        {/* Venn is hidden below the `lg` breakpoint so the chip text
+            doesn't shrink to the unreadable ~4px seen in the audit
+            (design-system/03-gaps.md · G-A3). Phones get heading +
+            CTA only; the Venn earns its place on viewports wide
+            enough to render the chips at legible sizes. */}
         <div
           data-hero-reveal
-          className={`min-w-0 ${handoff ? "opacity-0" : ""}`}
+          className={`hidden min-w-0 lg:block ${handoff ? "opacity-0" : ""}`}
         >
           {link === "travel" ? (
             <ProductVennTravel variant="travel" />
