@@ -11,7 +11,7 @@ export function SectionHeader({
 }) {
   return (
     <div className="mb-12 md:mb-16">
-      <p className="mb-3 font-mono text-xs uppercase tracking-[0.24em] text-fg-subtle">
+      <p className="mb-3 font-mono text-xs uppercase tracking-[0.24em] text-fg-muted">
         <span data-hl-word>{eyebrow}</span>
       </p>
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">

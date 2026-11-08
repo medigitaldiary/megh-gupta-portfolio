@@ -18,7 +18,7 @@ export default function PortfolioV3Preview() {
   return (
     <>
       <Nav hide={["lab", "writing"]} />
-      <main>
+      <main id="main">
         <Hero />
         <Experience />
         <SelectedWorkShelf mark="text" />

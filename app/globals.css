@@ -10,7 +10,7 @@
   --bg-elevated: #f3ebd9; /* Lightened Oatmeal — cards, modals */
   --fg: #1f3b2e; /* Pine — body, headings, CTA fill */
   --fg-muted: #3a5544; /* Lighter pine — secondary text */
-  --fg-subtle: #556b5d; /* Muted pine — captions */
+  --fg-subtle: #506758; /* Muted pine, captions. 4.52:1 on --bg, 5.17:1 on --bg-elevated (G-A1). */
   --border: #d4c4a8; /* Toasted oat — hairlines */
   --accent: #1f3b2e; /* Same hue as --fg — monochrome brand */
   --accent-fg: #e8dcc6; /* Oatmeal — text on Pine buttons */
@@ -225,11 +225,19 @@ nav[data-index-mark="text"] [data-hl-word]::before {
 
 /* Focus rings — keyboard navigation gets a lilac ring with a
    soft outer glow, distinct from the Pine CTA fill. */
+/* Focus rings: pine outline on light surfaces (G-A6, fixes U1/U2 contrast
+   from 1.75:1 to 8.99:1 against --bg). Lilac stays as the outer glow only.
+   border-radius removed so pills/circles keep their own radius under focus
+   (G-A18). The pine-background #connect fold overrides the outline to
+   --accent-fg since pine-on-pine would be 1:1 (U5). */
 *:focus-visible {
-  outline: 2px solid var(--highlight-strong);
+  outline: 2px solid var(--fg);
   outline-offset: 2px;
   box-shadow: 0 0 0 4px rgba(203, 179, 232, 0.3);
-  border-radius: 2px;
+}
+
+#connect *:focus-visible {
+  outline-color: var(--accent-fg);
 }
 
 /* Link hover — body/nav/footer links grow a lilac underline. */
