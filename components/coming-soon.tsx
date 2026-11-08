@@ -107,7 +107,7 @@ export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
         </p>
 
         <h1
-          className="whitespace-nowrap font-serif leading-[1]"
+          className="whitespace-nowrap font-display leading-[1]"
           style={{
             color: t.headline,
             letterSpacing: "-0.04em",
@@ -118,7 +118,7 @@ export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
         </h1>
 
         <p
-          className="mt-6 font-serif italic leading-[1.35]"
+          className="mt-6 font-display italic leading-[1.35]"
           style={{
             color: t.subtitle,
             fontSize: "clamp(1rem, 2.6vw, 1.5rem)",

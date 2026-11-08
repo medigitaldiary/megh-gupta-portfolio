@@ -29,7 +29,7 @@ export default function PortfolioV21Layout({
 }) {
   // The `.v21-scope` wrapper is the surface that scope.css targets.
   // Everything inside — the Nav, every fold, the footer — resolves
-  // --font-serif / --font-sans / --font-mono / --font-hand to Geist
+  // --font-display / --font-sans / --font-mono / --font-hand to Geist
   // instead of the Oswald + Satoshi + JetBrains Mono + Kalam stack,
   // and picks up the DS v1 type scale, 16px card radii, and
   // tighter card padding. Everything outside this wrapper (the rest

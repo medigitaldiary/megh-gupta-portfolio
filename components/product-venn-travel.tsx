@@ -66,8 +66,8 @@ const CHIPS: Chip[] = [
   { label: "Adoption", zone: "biz", cx: 690, cy: 715 },
   { label: "Stakeholder", zone: "biz", cx: 475, cy: 765 },
   { label: "Growth loops", zone: "biz", cx: 655, cy: 765 },
-  { label: "Experimentation", zone: "biz", cx: 505, cy: 812 },
-  { label: "Monetization", zone: "biz", cx: 650, cy: 812 },
+  { label: "Experimentation", zone: "biz", cx: 495, cy: 812 },
+  { label: "Monetization", zone: "biz", cx: 660, cy: 812 },
 ];
 
 // Slow sway around each circle. Chips only drift inward from home,
@@ -723,7 +723,7 @@ export function ProductVennTravel({
             y={c.cy}
             textAnchor="middle"
             dominantBaseline="central"
-            fontFamily="var(--font-serif), serif"
+            fontFamily="var(--font-display), serif"
             fontSize="36"
             fill="var(--fg)"
             pointerEvents="none"
@@ -819,7 +819,7 @@ export function ProductVennTravel({
         fontFamily={
           variant === "stage"
             ? "var(--font-hand), cursive"
-            : "var(--font-serif), serif"
+            : "var(--font-display), serif"
         }
         fontStyle={variant === "stage" ? "normal" : "italic"}
         fontSize={variant === "stage" ? 28 : 30}

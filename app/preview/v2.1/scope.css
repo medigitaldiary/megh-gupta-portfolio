@@ -1,3 +1,7 @@
+/* biome-ignore-all lint/complexity/noImportantStyles: this file's job
+   is to beat Tailwind's utility specificity inside .v21-scope.
+   Dropping !important would silently undo every rule below. */
+
 /* ============================================================
  * Preview v2.1 — scoped visual override layer
  * ============================================================
@@ -15,9 +19,9 @@
 /* ---- Font remap (leaf-variable override) -------------------
  * globals.css uses `@theme inline`, which in Tailwind v4 inlines
  * each theme token's *value* into the utility class and strips the
- * --font-serif / --font-sans / --font-mono variables themselves.
+ * --font-display / --font-sans / --font-mono variables themselves.
  * So Tailwind utilities compile to e.g. `font-family: var(--font-oswald)`,
- * not `font-family: var(--font-serif)`.
+ * not `font-family: var(--font-display)`.
  *
  * Which means the only reliable override is on the leaf variables
  * that next/font/local sets on <body>: --font-oswald, --font-satoshi,

@@ -31,7 +31,7 @@ export function LabSection() {
         >
           The Lab
         </p>
-        <h2 className="mt-3 font-serif text-3xl leading-tight text-white md:text-4xl">
+        <h2 className="mt-3 font-display text-3xl leading-tight text-white md:text-4xl">
           Where I test, build, and break things.
         </h2>
         <p className="mt-3 max-w-2xl text-sm text-white/60 md:text-base">

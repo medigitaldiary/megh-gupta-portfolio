@@ -17,7 +17,7 @@ export default function PaperPreviewPage() {
         <p className="font-mono text-xs uppercase tracking-wider text-fg-subtle">
           Preview · 3D Paper
         </p>
-        <h1 className="mt-2 font-serif text-3xl md:text-4xl">
+        <h1 className="mt-2 font-display text-3xl md:text-4xl">
           Four certificates, suspended.
         </h1>
         <p className="mt-2 max-w-xl text-sm text-fg-muted">

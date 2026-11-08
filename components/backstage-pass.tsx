@@ -140,10 +140,7 @@ export function BackstagePass({
                     </span>
                   </div>
 
-                  <p
-                    className="mt-7 text-xl leading-none md:text-2xl"
-                    style={{ fontFamily: "var(--font-hand), cursive" }}
-                  >
+                  <p className="mt-7 font-hand text-xl leading-none md:text-2xl">
                     psst… this room is still being painted.
                   </p>
 
