@@ -348,9 +348,14 @@ export function LabPortalShader() {
       width={432}
       height={432}
       className="lab-portal-canvas"
-      // canvas is decorative; sits behind the labeled portal <g> in
-      // components/lab-scene.tsx which owns the accessible name.
-      role="presentation"
+      // Canvas is purely decorative: it sits behind the labelled portal
+      // <g> in components/lab-scene.tsx which owns the accessible name.
+      // tabIndex -1 removes it from the tab order, aria-hidden hides it
+      // from assistive tech. Together they stop canvas being a focus
+      // trap AND avoid the biome rules that fire on either attribute
+      // in isolation.
+      tabIndex={-1}
+      aria-hidden="true"
     />
   );
 }

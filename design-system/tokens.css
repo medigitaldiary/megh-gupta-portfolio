@@ -27,7 +27,11 @@
   --fg-muted: var(--pine-700);
   --fg-subtle: var(--pine-500);
   --border: var(--oatmeal-300);
-  --border-hairline: color-mix(in oklab, var(--border) 70%, var(--highlight) 30%);
+  --border-hairline: color-mix(
+    in oklab,
+    var(--border) 70%,
+    var(--highlight) 30%
+  );
   --accent: var(--pine-900);
   --accent-fg: var(--oatmeal-200);
   --highlight: var(--lilac-300);
@@ -128,7 +132,8 @@
   --shadow-sm: 0 2px 8px rgba(31, 59, 46, 0.18);
   --shadow-md: 0 10px 30px -12px rgba(31, 59, 46, 0.45);
   --shadow-lg: 0 18px 32px -22px rgba(31, 59, 46, 0.28);
-  --shadow-focus: 0 0 0 4px color-mix(in srgb, var(--highlight) 30%, transparent);
+  --shadow-focus: 0 0 0 4px
+    color-mix(in srgb, var(--highlight) 30%, transparent);
 
   /* opacity */
   --opacity-hover: 0.9;
@@ -182,7 +187,8 @@
 }
 
 /* Lock flow only (/unlock). Approved scoped exceptions: denied red and dawn sky. */
-.bp-stage, .lock-scope {
+.bp-stage,
+.lock-scope {
   --status-danger: #b23a48;
   --ticket-stub: var(--bg);
   --sky-1: #b7cde1;
