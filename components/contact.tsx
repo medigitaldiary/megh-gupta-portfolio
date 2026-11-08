@@ -15,7 +15,7 @@ export function Contact() {
 
         <p className="mt-8 text-base leading-[1.6] text-accent-fg/85 md:text-lg">
           If you&apos;re working in fintech/wealthtech, product, or the
-          early-stage startup world - I&apos;d love to hear from you.
+          early-stage startup world. I&apos;d love to hear from you.
           <br className="hidden min-[1100px]:block" />
           Whether it&apos;s to swap notes, jam on a product problem, or talk
           about fixed income and financial access.

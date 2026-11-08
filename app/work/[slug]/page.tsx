@@ -105,7 +105,7 @@ export default async function WorkCaseStudy({
           <h1 className="mt-3 font-display text-4xl leading-tight text-fg md:text-5xl">
             {study?.frontmatter.title ?? card.title}
           </h1>
-          <p className="mt-6 text-lg leading-relaxed text-fg-muted">
+          <p className="mt-6 text-xl leading-relaxed text-fg-muted">
             {card.oneLiner}
           </p>
 

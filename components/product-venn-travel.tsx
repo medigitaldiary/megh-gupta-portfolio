@@ -260,8 +260,8 @@ export function ProductVennTravel({
       for (const ring of rings) {
         const hot = hover.zone !== null && zoneOf(ring) === hover.zone;
         ring.style.strokeOpacity =
-          hover.zone === null ? "0.85" : hot ? "1" : "0.28";
-        ring.setAttribute("stroke-width", hot ? "3" : "2");
+          hover.zone === null ? "1" : hot ? "1" : "0.28";
+        ring.setAttribute("stroke-width", hot ? "3" : "3");
       }
     };
 
@@ -559,8 +559,8 @@ export function ProductVennTravel({
         op: 0,
       }));
       const ringMotion: RingMotion[] = rings.map(() => ({
-        op: 0.85,
-        width: 2,
+        op: 1,
+        width: 3,
       }));
       const phases: Phase[] = chipGroups.map((_, i) => ({
         px: (i * 1.37) % (Math.PI * 2),
@@ -577,8 +577,8 @@ export function ProductVennTravel({
           const breathe =
             0.58 + 0.36 * (0.5 + 0.5 * Math.sin(dt * 0.7 + RING_PHASE[zone]));
           const drawn = clamp01((dt - 1.35) / 0.45);
-          let targetOp = 0.85 * (1 - drawn) + breathe * drawn;
-          let targetW = 2;
+          let targetOp = 1 * (1 - drawn) + breathe * drawn;
+          let targetW = 3;
           if (hover.zone) {
             const hot = zone === hover.zone;
             targetOp = hot ? 1 : 0.28;
@@ -704,8 +704,8 @@ export function ProductVennTravel({
             r={CIRCLE_R}
             fill="none"
             stroke={c.color}
-            strokeWidth={2}
-            strokeOpacity={0.85}
+            strokeWidth={3}
+            strokeOpacity={1}
             pathLength={1}
             pointerEvents="none"
             style={{ opacity: 0 }}
