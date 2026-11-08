@@ -195,7 +195,10 @@ function StatusChip({
           isCta ? "bg-accent-fg" : "bg-fg"
         }`}
       />
-      <span className="relative h-5 min-w-0 flex-1 overflow-hidden" aria-hidden="true">
+      <span
+        className="relative h-5 min-w-0 flex-1 overflow-hidden"
+        aria-hidden="true"
+      >
         <span className="invisible whitespace-nowrap">{line.text}</span>
         {outgoing !== null && !reduceMotion ? (
           <span className="nav-chip-out absolute inset-0 flex items-center whitespace-nowrap">

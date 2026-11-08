@@ -18,7 +18,7 @@ export default function PortfolioV31Preview() {
   return (
     <>
       <Nav hide={["lab", "writing"]} />
-      <main>
+      <main id="main">
         <Hero link="travel" />
         <Experience />
         <SelectedWorkShelf mark="row" />

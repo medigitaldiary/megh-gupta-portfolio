@@ -50,7 +50,7 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
   --bg-elevated: #F3EBD9; /* lightened oatmeal — cards, modals */
   --fg: #1F3B2E;          /* Pine Green — body, headings, CTA fill */
   --fg-muted: #3A5544;    /* lighter pine — secondary text */
-  --fg-subtle: #556B5D;   /* muted pine, captions. Approved change to #506758 for 4.5:1 on --bg; ships with the token code PR */
+  --fg-subtle: #506758;   /* muted pine, captions (4.52:1 on --bg, 5.17:1 on --bg-elevated) */
   --border: #D4C4A8;      /* toasted oat — hairlines */
   --accent: #1F3B2E;      /* same hue as --fg: monochrome brand */
   --accent-fg: #E8DCC6;   /* Oatmeal — text on Pine buttons */
@@ -58,7 +58,7 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
 }
 ```
 
-**Rule:** No other colors. If a design needs a fifth family, ask first. The Oatmeal / Pine / Lilac palette was promoted from the `/preview/v3` experiment, so earlier commits may still show the retired `#FAFAF7 / #111111 / #1F4D3A` stack. Treat the values here as the source of truth. Lilac stays decorative (highlighter marks, focus rings, hover washes); never as text that carries meaning.
+**Rule:** No other colors. If a design needs a fifth family, ask first. The Oatmeal / Pine / Lilac palette was promoted from the `/preview/v3` experiment, so earlier commits may still show the retired `#FAFAF7 / #111111 / #1F4D3A` stack. Treat the values here as the source of truth. Lilac stays decorative (highlighter marks, outer focus-ring glow, hover washes); never as text or as the focus-ring outline itself (focus-ring outline is pine on light surfaces, oatmeal on pine; G-A6 + G-C16). Never a colour that carries meaning.
 
 **Approved exceptions to the three-colour rule.** Four sets of hex values live outside the Oatmeal / Pine / Lilac palette on purpose. They are the only exceptions. Any new one needs to be added here before it ships.
 
@@ -76,7 +76,7 @@ Third-party and product brand marks (LinkedIn blue, the BondScanner / Ultra / Mo
 ### Type scale
 Nominal sizes (desktop target) for reasoning about hierarchy. Mobile sizes derive from the fluid-type rule below.
 
-These are **not live tokens.** The `@theme` entries that mirrored them (`text-display`, `text-h1` … `text-small` in `app/globals.css`) were used by no component and have been removed (decision D2, `design-system/02-decisions.md`). Components use Tailwind's scale, arbitrary values, or the fluid `clamp()` triples below. The as-built size set is documented in `design-system/02-tokens.md` §2.7.
+These are **not live tokens.** The `@theme` entries that mirrored them (`text-display`, `text-h1` … `text-small` in `app/globals.css`) were used by no component and have been removed (decision D2 in PR #110, `design-system/02-decisions.md`). Components use Tailwind's scale, arbitrary values, or the fluid `clamp()` triples below. The as-built size set is documented in `design-system/02-tokens.md` §2.7.
 
 - `display`: 4rem / 64px, Geist Sans, line-height 1.05 (hero only)
 - `h1`: 2.5rem / 40px, Geist Sans, line-height 1.1
