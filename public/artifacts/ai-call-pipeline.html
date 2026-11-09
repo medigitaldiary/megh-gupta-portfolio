@@ -15,7 +15,7 @@
   --border-strong: rgba(0, 0, 0, 0.22);
   --text: #0a0a0a;
   --text-muted: #666666;
-  --text-faint: #999999;
+  --text-faint: #595959;
   --accent: #635bff;
   --accent-soft: rgba(99, 91, 255, 0.12);
   --accent-glow: rgba(99, 91, 255, 0.3);
@@ -41,7 +41,7 @@
     --border-strong: rgba(255, 255, 255, 0.22);
     --text: #fafafa;
     --text-muted: #9a9aa2;
-    --text-faint: #666672;
+    --text-faint: #a1a1a8;
     --accent: #8b7cff;
     --accent-soft: rgba(139, 124, 255, 0.14);
     --accent-glow: rgba(139, 124, 255, 0.4);
@@ -64,7 +64,7 @@
   --border-strong: rgba(255, 255, 255, 0.22);
   --text: #fafafa;
   --text-muted: #9a9aa2;
-  --text-faint: #666672;
+  --text-faint: #a1a1a8;
   --accent: #8b7cff;
   --accent-soft: rgba(139, 124, 255, 0.14);
   --accent-glow: rgba(139, 124, 255, 0.4);
@@ -667,6 +667,17 @@ footer { font-size: 10.5px; color: var(--text-faint); line-height: 1.5; margin-t
 .step-visual .highlight { color: var(--accent); font-weight: 600; }
 .step-visual .warning-text { color: var(--warning); font-weight: 600; }
 .step-visual .success-text { color: var(--success); font-weight: 600; }
+.step-visual .warning-text::before,
+.step-visual .success-text::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: 1px;
+  background: currentColor;
+}
 
 .branch-toggle {
   display: inline-flex;
