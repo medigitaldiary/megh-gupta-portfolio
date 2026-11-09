@@ -10,7 +10,7 @@ import { ComingSoon } from "@/components/coming-soon";
  * coming-soon component.
  */
 export const metadata: Metadata = {
-  title: "Coming-soon — ownCloud DS palette test",
+  title: "Coming-soon · ownCloud DS palette test",
   description:
     "Sanity-check the ownCloud Design System v14 palette on the coming-soon page.",
   robots: { index: false, follow: false },

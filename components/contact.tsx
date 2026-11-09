@@ -10,7 +10,7 @@ export function Contact() {
     >
       <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
         <h2 className="font-display text-[3rem] leading-[1.05] tracking-tight md:text-[4rem]">
-          Let&apos;s Connect.
+          Let&apos;s connect.
         </h2>
 
         <p className="mt-8 text-base leading-[1.6] text-accent-fg/85 md:text-lg">

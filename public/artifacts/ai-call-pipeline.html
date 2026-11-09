@@ -1094,7 +1094,7 @@ const nodeDetails = {
     input: "Cleaned transcript + scoring prompt",
     processing: "One API call. Claude scores against the propensity model (parameters: discovery questions, risk-return clarity, objection handling, next-step commitments, empathy, pace), extracts action items with deadlines, and flags objections",
     output: "Structured JSON response",
-    why: "This is the brain of the pipeline. Doing scoring, action-item extraction, and objection flagging in one call keeps latency and cost low. The rubric itself (not Claude) is where the product thinking lives — the LLM just executes it."
+    why: "This is the brain of the pipeline. Doing scoring, action-item extraction, and objection flagging in one call keeps latency and cost low. The rubric itself (not Claude) is where the product thinking lives; the LLM just executes it."
   },
   json: {
     badge: "Pipeline Output",
@@ -1124,7 +1124,7 @@ const nodeDetails = {
     input: "Call score + RM ID + user ID + timestamp",
     processing: "Appends a scored interaction row to the user's timeline in Radar",
     output: "Updated user profile visible to managers and the RM team",
-    why: "Managers coach based on patterns, not single calls. Having scores on every user interaction lets a manager see how an RM performed across different kinds of prospects — not just the one call they happened to overhear."
+    why: "Managers coach based on patterns, not single calls. Having scores on every user interaction lets a manager see how an RM performed across different kinds of prospects, not just the one call they happened to overhear."
   },
   "radar-tasks": {
     badge: "Destination",
@@ -1488,7 +1488,7 @@ Queue:
     stepLabel: "Step 3 · Transcription",
     title: "Audio becomes text",
     caption: "Each recording is sent to Sarvam, which converts speech to text. Priya and Rohit were talking in a mix of Hindi and English, which Sarvam handles natively without translation.",
-    visual: `<span class="data-label">Sarvam transcript (snippet)</span>[00:04:12] Priya: Rohit ji, main aapko bata rahi thi — 
+    visual: `<span class="data-label">Sarvam transcript (snippet)</span>[00:04:12] Priya: Rohit ji, main aapko bata rahi thi,
           yeh 10.5% corporate bond hai, AA rated.
 [00:04:28] Rohit: Haan haan, lekin AA kya hota hai 
           exactly? Safe hai?
@@ -1502,7 +1502,7 @@ Queue:
     connId: "conn-3",
     stepLabel: "Step 4 · Pre-processing",
     title: "The transcript gets cleaned up",
-    caption: "Fillers, long silences, and repeated acknowledgements get stripped before the transcript goes to Claude. The meaning stays the same, but the token count drops by about a third — which keeps the API bill sensible.",
+    caption: "Fillers, long silences, and repeated acknowledgements get stripped before the transcript goes to Claude. The meaning stays the same, but the token count drops by about a third, which keeps the API bill sensible.",
     visual: `<span class="data-label">Before · 2,847 tokens</span>"...umm, haan haan haan, so basically, 
 umm, what I was saying was... (3 sec pause)... 
 the yield is, umm, 10.5%, haan..."
@@ -1535,7 +1535,7 @@ and extract action items. Return as JSON.
     connId: "conn-5",
     stepLabel: "Step 6 · Fan-out",
     title: "One response, three destinations",
-    caption: "The structured JSON gets parsed. Different parts of it get sent to different places in parallel — the score goes to the user's profile, the action items become tasks for Priya, and the objections feed into the marketing digest.",
+    caption: "The structured JSON gets parsed. Different parts of it get sent to different places in parallel: the score goes to the user's profile, the action items become tasks for Priya, and the objections feed into the marketing digest.",
     visual: `<span class="data-label">Routing</span>{
   "call_score": 7.2       ─────→  <span class="highlight">User Profile</span>
   "action_items": [
