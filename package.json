@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "check": "biome check",
+    "check": "biome check && ./scripts/check-emdash.sh",
+    "check:emdash": "./scripts/check-emdash.sh",
     "lint": "biome check",
     "format": "biome format --write"
   },

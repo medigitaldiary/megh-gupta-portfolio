@@ -21,7 +21,7 @@ export const stackTools: StackTool[] = [
     name: "claude code",
     icon: "claude",
     oneLiner:
-      "my second engineer — ships internal tools while the team ships product.",
+      "my second engineer: ships internal tools while the team ships product.",
     featured: true,
     order: 2,
   },

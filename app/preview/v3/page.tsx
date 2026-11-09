@@ -8,7 +8,7 @@ import { SelectedWorkShelf } from "@/components/selected-work-shelf";
 import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
-  title: "Portfolio v3 preview — Megh Gupta",
+  title: "Portfolio v3 preview · Megh Gupta",
   description:
     "Third preview of the portfolio under an Oatmeal / Pine Green / Soft Lilac palette, Geist typography inherited from v2, with hero word highlights, a lilac sun greeting, and ambient lavender tints.",
   robots: { index: false, follow: false },

@@ -518,7 +518,7 @@ function PortalZone({
     <g
       role="button"
       tabIndex={0}
-      aria-label="Portal — 0→1 experiments"
+      aria-label="Portal: 0→1 experiments"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onFocus={onEnter}
@@ -662,7 +662,7 @@ function CrtZone({
     <g
       role="button"
       tabIndex={0}
-      aria-label="CRT stack — Claude with skill files loaded"
+      aria-label="CRT stack: Claude with skill files loaded"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onFocus={onEnter}
@@ -853,7 +853,7 @@ function GithubZone({
     <g
       role="button"
       tabIndex={0}
-      aria-label="GitHub — last 26 weeks of activity"
+      aria-label="GitHub: last 26 weeks of activity"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onFocus={onEnter}
@@ -1145,7 +1145,7 @@ function PegboardZone({
     <g
       role="button"
       tabIndex={0}
-      aria-label="Pegboard — apps I build with"
+      aria-label="Pegboard: apps I build with"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onFocus={onEnter}
@@ -1278,7 +1278,7 @@ function BulletinZone({
     <g
       role="button"
       tabIndex={0}
-      aria-label="Bulletin board — my stack"
+      aria-label="Bulletin board: my stack"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onFocus={onEnter}

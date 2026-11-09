@@ -55,6 +55,7 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
   --accent: #1F3B2E;      /* same hue as --fg: monochrome brand */
   --accent-fg: #E8DCC6;   /* Oatmeal — text on Pine buttons */
   --highlight: #CBB3E8;   /* Soft Lilac — decorative tint, never chrome */
+  --highlight-strong: #B89CDC; /* Stronger lilac — focus-ring glow, link-hover underlines */
 }
 ```
 
@@ -122,7 +123,7 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 ### Motion
 **Sparing.** Acceptable:
 - Fade-up on scroll for section reveals (use `framer-motion` only if requested; otherwise pure CSS).
-- 150ms ease-out hover transitions on cards and links.
+- 150ms hover transitions on cards and links. Tailwind's default curve (`cubic-bezier(0.4, 0, 0.2, 1)`) is acceptable; the few places that read `ease-out` are also fine. Pick one per component and keep siblings consistent.
 
 **Not acceptable** without explicit ask: parallax, scroll-jacking, cursor effects, mouse-tracking glows, page transitions.
 
@@ -130,6 +131,12 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 - `/unlock` ticket tilts toward a mouse pointer (`components/backstage-pass.tsx`, `pointerType === "mouse"` only, off under reduced motion).
 - About collage is scroll-scrubbed: photos fly out and torn strips slide as the visitor scrolls a sticky stage (`components/about-collage.tsx` / `.css`; static under reduced motion).
 - v3.1 Product Venn chips are draggable (`components/product-venn-travel.tsx`).
+
+### Iconography
+Inline SVG only, no icon library. Every icon sits on a 24×24 grid, strokes are 1.8px (round caps and joins), colour is `currentColor` so a parent text colour drives it. Fills are the exception, used only when the mark reads as a filled shape (LinkedIn, success tick). Keep each icon in the same file as its one consumer, or group a handful in a shared `-icons.tsx` when they repeat across sections. Do not pull a new icon from a library at a different weight or grid.
+
+### Imagery and texture
+Cover media uses a 4:3 frame with a looping muted `<video>` plus a poster-image fallback that carries the same crop. Grain is `/images/about/grain.svg` only, overlaid at low opacity on the About collage; it is not for chrome. Torn-paper edges use the clip-paths in `about-collage.css`; no other component invents a new torn edge. The highlighter mark is one hand-drawn SVG tinted with `--highlight`. Paper, grain and torn edges stay inside the About and `/unlock` worlds; the rest of the site is flat on `--bg` or `--bg-elevated`.
 
 ---
 

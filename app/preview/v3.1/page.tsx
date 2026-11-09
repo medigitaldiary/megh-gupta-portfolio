@@ -8,7 +8,7 @@ import { SelectedWorkShelf } from "@/components/selected-work-shelf";
 import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
-  title: "Portfolio v3.1 — pin leaves the portrait",
+  title: "Portfolio v3.1 · pin leaves the portrait",
   description:
     "Preview where a pine dot leaves the portrait and lands on the I'm here pin.",
   robots: { index: false, follow: false },
