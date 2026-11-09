@@ -312,7 +312,16 @@ export function ProductVennTravel({
       return pt.matrixTransform(ctm);
     };
 
+    // Drag is a fine-pointer-only affordance. On touch devices the chips
+    // would steal vertical scroll from the hero (G-A13), so the chips stay
+    // static and the page scrolls normally. `pointer: fine` covers mouse,
+    // trackpad and stylus; coarse pointers fall through.
+    const supportsFinePointer =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(pointer: fine)").matches === true;
+
     const attachDrag = () => {
+      if (!supportsFinePointer) return;
       for (const g of chipGroups) {
         g.style.cursor = "grab";
         g.style.touchAction = "none";
@@ -743,7 +752,7 @@ export function ProductVennTravel({
             data-label={chip.label}
             data-zone={chip.zone}
             transform={`translate(${chip.cx} ${chip.cy})`}
-            style={{ opacity: 0, cursor: "grab", touchAction: "none" }}
+            style={{ opacity: 0 }}
           >
             <rect
               x="-40"

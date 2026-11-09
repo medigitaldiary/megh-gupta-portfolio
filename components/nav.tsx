@@ -85,10 +85,19 @@ function StatusChip({
     };
   }, []);
 
+  // Stop after one full cycle through the four lines. WCAG 2.2.2 for
+  // auto-updating content: finite duration or an explicit pause. The
+  // chip also pauses on hover and focus via the existing `paused` prop.
+  const cycled = useRef(false);
   useEffect(() => {
-    if (paused || reduceMotion || pageHidden) return;
+    if (paused || reduceMotion || pageHidden || cycled.current) return;
     const id = window.setInterval(() => {
-      setIndex((current) => (current + 1) % CHIP_LINES.length);
+      setIndex((current) => {
+        const next = (current + 1) % CHIP_LINES.length;
+        // First return to index 0 marks one full cycle complete.
+        if (next === 0) cycled.current = true;
+        return next;
+      });
     }, CHIP_HOLD_MS);
     return () => window.clearInterval(id);
   }, [paused, reduceMotion, pageHidden]);

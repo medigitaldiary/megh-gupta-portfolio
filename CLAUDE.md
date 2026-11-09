@@ -139,6 +139,28 @@ Inline SVG only, no icon library. Every icon sits on a 24×24 grid, strokes are 
 ### Imagery and texture
 Cover media uses a 4:3 frame with a looping muted `<video>` plus a poster-image fallback that carries the same crop. Grain is `/images/about/grain.svg` only, overlaid at low opacity on the About collage; it is not for chrome. Torn-paper edges use the clip-paths in `about-collage.css`; no other component invents a new torn edge. The highlighter mark is one hand-drawn SVG tinted with `--highlight`. Paper, grain and torn edges stay inside the About and `/unlock` worlds; the rest of the site is flat on `--bg` or `--bg-elevated`.
 
+### Other token families
+Full as-built values in `design-system/02-tokens.md`; the shape rules below live here.
+- **Radius:** 4px (chips, small cards) · 8px (cards, inputs) · 12px (large cards) · 18px (hero elements) · 999px (pills). No arbitrary values; pick the nearest step.
+- **Shadow:** pine-tinted family (`rgba(31, 59, 46, …)`), never neutral grey. `shadow-sm` for hairline lift, `shadow-md` for cards, custom pine-tinted shadow for the Contact pill. `--shadow-sm` and `--shadow-md` tokens land in `02-tokens.md §2.11`.
+- **Z-index:** nav 50 · drawer / modal 40 · tooltip 70 · toast 80. No raw `z-index` above these.
+- **Breakpoints:** Tailwind defaults (`sm` 640, `md` 768, `lg` 1024, `xl` 1280). Two custom thresholds exist on purpose: 860px (nav chip visibility) and 1104px (Cal booker layout). Add a custom breakpoint only with a row in `02-tokens.md`.
+- **Easing / duration:** 150ms hover (see Motion); `cubic-bezier(0.22, 0.61, 0.36, 1)` for 400-500ms nav collapses; `cubic-bezier(0.4, 0, 0.2, 1)` for shorter transitions.
+
+### Component states and primitives
+Every interactive primitive carries idle / hover / focus-visible / active / disabled, with loading and error on form fields. Full spec in `design-system/02-components.md` (buttons, links, tags, cards, segmented controls, tooltips, carousel, form fields). When a component changes, update the spec in the same PR; CLAUDE.md §12 enforces this.
+
+### Form-field pattern (unlock lock)
+The only form today is the `/unlock` password field. States, in order of life cycle:
+1. **Idle**: pine-subtle underline, no helper text, caret pine, autofocus on page load.
+2. **Revealed**: eye-icon toggle flips the input to plain text (not password dots).
+3. **Loading**: submit button shows a spinner + "Checking…"; input stays enabled but visually dimmed.
+4. **Error (`denied`)**: underline switches to `DENIED_INK` (`#b23a48`), status line shows the "Not quite" / "Still not it" copy, DENIED rubber-stamp animates in once per attempt.
+5. **Disabled** (`unconfigured`): both input and submit disabled, status line explains why.
+6. **Success**: ADMITTED stamp, submit re-labels "Welcome in", redirect fires.
+
+Reuse this pattern for any future lock flow (G-M7): extract the field + submit + status line into a shared component before building the second flow.
+
 ---
 
 ## 4. Repository structure
@@ -227,12 +249,17 @@ Body structure (in this order, even if some sections are short):
 6. **Reflection** — 1 paragraph, what I'd do differently.
 7. **What I owned vs. team owned** — honest attribution.
 
-Custom MDX components available:
-- `<Metric value="2x" label="organic clicks" />` — big number block
-- `<Figure src="..." caption="..." />` — screenshot with caption
-- `<Callout type="insight | tradeoff | learning">...</Callout>` — pull quote
-- `<LoomEmbed id="..." />` — Loom video embed
-- `<FigmaEmbed url="..." />` — Figma file embed
+Custom MDX components available (full spec: `design-system/02-components.md` §17):
+- `<TLDR>...</TLDR>` — three-bullet summary above the first `<Section>`. Children are `<li>` items.
+- `<Section variant="narrative | deepDive | ..." eyebrow="..." heading="...">...</Section>` — the one block layout wrapper.
+- `<Metric value="2x" label="organic clicks" />` plus `<MetricRow>` — number blocks.
+- `<Figure src="..." caption="..." variant="prose | wide | svg | annotated" />` — image, SVG, or diagram with caption.
+- `<Callout variant="insight | result | decision | caution | learning">...</Callout>` — pull quote. Five labels, two visual treatments (accent / muted left border).
+- `<Quote>...</Quote>` — longer pull-out, one per section.
+- `<Pipeline stages={[...]} />` plus `<AiCallPipeline />` — flow diagram for the AI Call Analysis case study.
+- `<Timeline>`, `<StepGrid>`, `<ScreenshotStack>` (alias `<Screenshots>`), `<DataTable>`, `<Pill>`, `<Eyebrow>`.
+
+Not built yet: `<LoomEmbed>`, `<FigmaEmbed>`. Earlier `<Callout type="tradeoff">` is retired; use `caution` or `learning`.
 
 ---
 
@@ -374,7 +401,7 @@ pnpm dev                      # opens at localhost:3000
 - **Do not use `any` in TypeScript.** Use `unknown` + narrowing, or define the type.
 - **Do not commit secrets.** Use `.env.local` (gitignored). Reference via `process.env.X`.
 - **Do not use client components when server components work.** Default to server. Add `"use client"` only when needed (state, effects, browser APIs).
-- **Do not write CSS files** beyond `globals.css`. All styling in Tailwind.
+- **Do not write CSS files** beyond `globals.css`. All styling in Tailwind. Two approved exceptions: `components/about-collage.css` (torn-paper clip-paths and the scroll-scrubbed stage; Tailwind arbitrary values can't express the paths) and `app/unlock/backstage.css` (ticket perforation, stamp timing and barcode mask). Any new CSS file needs the same treatment: added here before it ships.
 - **Do not add `<form>` tags inside React without a clear onSubmit handler** — they cause full page reloads if not handled.
 - **Do not over-engineer.** This is a portfolio. It does not need a state management library, a CMS, an i18n framework, or a service worker.
 
