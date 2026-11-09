@@ -75,17 +75,17 @@ None of them leaks beyond the surface listed: none becomes chrome on `/`, `/work
 Third-party and product brand marks (LinkedIn blue, the BondScanner / Ultra / MoveInSync work-card spines) are content, not palette: they keep their true colours. Full as-built token set: `design-system/02-tokens.md`.
 
 ### Type scale
-Nominal sizes (desktop target) for reasoning about hierarchy. Mobile sizes derive from the fluid-type rule below.
+Role pairs that describe what the site actually renders. Pick a role by the fold the type lives in, not by HTML tag depth. Full as-built value set in `design-system/02-tokens.md` §2.7 to §2.8; the `@theme` mirror entries were removed in PR #110 (decision D2 in `design-system/02-decisions.md`).
 
-These are **not live tokens.** The `@theme` entries that mirrored them (`text-display`, `text-h1` … `text-small` in `app/globals.css`) were used by no component and have been removed (decision D2 in PR #110, `design-system/02-decisions.md`). Components use Tailwind's scale, arbitrary values, or the fluid `clamp()` triples below. The as-built size set is documented in `design-system/02-tokens.md` §2.7.
+- `display` (hero only): Geist Sans, 36px → 48px at `md` (stepped), tight tracking, line-height 1.05
+- `section` (homepage section H2s): Geist Sans, 30px → 48px at `md`, line-height 1.1
+- `contact` (contact fold H2): Geist Sans, 48px → 64px at `md`, line-height 1.05
+- `article` (case-study and markdown H2s): Geist Sans, 22px → 30px at `md`, line-height 1.2
+- `body`: Geist Sans, 16px, line-height 1.6
+- `small`: Geist Sans, 14px, line-height 1.5
+- `mono tags`: Geist Mono, 10px to 12px, tracking 0.08em to 0.24em, uppercase
 
-- `display`: 4rem / 64px, Geist Sans, line-height 1.05 (hero only)
-- `h1`: 2.5rem / 40px, Geist Sans, line-height 1.1
-- `h2`: 1.75rem / 28px, Geist Sans, line-height 1.2
-- `h3`: 1.25rem / 20px, Geist Sans Semibold, line-height 1.3
-- `body`: 1rem / 16px, Geist Sans, line-height 1.6
-- `small`: 0.875rem / 14px, Geist Sans, line-height 1.5
-- `mono`: 0.875rem / 14px, Geist Mono (tags, metrics annotations)
+Mobile sizes derive from the fluid-type rule below. Clamp `display` and `contact` headings; stepped `md:` jumps are fine for `section` and `article`.
 
 ### Fluid typography rule (mobile-hierarchy guarantee)
 
@@ -131,6 +131,7 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 - `/unlock` ticket tilts toward a mouse pointer (`components/backstage-pass.tsx`, `pointerType === "mouse"` only, off under reduced motion).
 - About collage is scroll-scrubbed: photos fly out and torn strips slide as the visitor scrolls a sticky stage (`components/about-collage.tsx` / `.css`; static under reduced motion).
 - v3.1 Product Venn chips are draggable (`components/product-venn-travel.tsx`).
+- Work-card hinge uses `motion/react` (Framer Motion 14.4.0) for the 3D flip on hover and focus in `components/work-thumbnails.tsx`. Scoped to this one component. Reduced-motion keeps the card closed.
 
 ### Iconography
 Inline SVG only, no icon library. Every icon sits on a 24×24 grid, strokes are 1.8px (round caps and joins), colour is `currentColor` so a parent text colour drives it. Fills are the exception, used only when the mark reads as a filled shape (LinkedIn, success tick). Keep each icon in the same file as its one consumer, or group a handful in a shared `-icons.tsx` when they repeat across sections. Do not pull a new icon from a library at a different weight or grid.
@@ -478,19 +479,19 @@ The coming-soon page is one screen with no scroll story. The full portfolio is n
 4. **Every fold has one lead-in and one lead-out** — a hook the previous fold left dangling, and a hook this fold plants for the next. No fold ends flat.
 5. **Storyboard the sequence before writing components.** Owner (Megh) writes the fold list first, one line each — headline + job + question answered. Only after that list is approved does the code get written.
 
-**The default storyboard for launch (change with an explicit ask, don't drift):**
+**The launch storyboard (change with an explicit ask, don't drift):**
+
+Four content folds plus the contact CTA. Lab, Writing and the Stack half of About are deferred to post-launch; the full seven-fold aspiration lives in `docs/deferred-folds.md`.
 
 | Fold | Job | Question it answers |
 |---|---|---|
 | 1 · Hero | Hook | "Who is this and why should I keep scrolling?" |
 | 2 · Experience (§7.7) | Trajectory | "Where has this person been?" |
 | 3 · Selected Work | Proof | "What have they actually shipped, with numbers?" |
-| 4 · The Lab | Range | "Do they build outside their day job?" |
-| 5 · Writing (§7.6) | Thought | "How do they think about product?" |
-| 6 · About + Stack (§7.1) | Person + Craft | "Would I want to work with them, and what do they build with?" |
-| 7 · Let's connect (§7.2) | Action | "Okay, how do I reach them?" |
+| 4 · About (§7.1) | Person | "Would I want to work with them?" |
+| CTA · Let's connect (§7.2) | Action | "Okay, how do I reach them?" |
 
-Nav (when nav exists) must mirror this order and use the same section names — the map should not contradict the territory.
+Nav (when nav exists) must mirror this order and use the same section names — the map should not contradict the territory. Lab and Writing stay hidden via `Nav hide={["lab","writing"]}` until they ship.
 
 **How this interacts with mobile (~60% of traffic per §1):** on phones a "fold" is smaller and stacks vertically; the *sequence* stays identical, only the internal layout collapses to one column. Do not reorder folds by breakpoint.
 
