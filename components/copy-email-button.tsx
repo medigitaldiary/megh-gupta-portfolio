@@ -4,6 +4,8 @@ import { useState } from "react";
 
 type Props = {
   email: string;
+  /** Visible text at rest. Defaults to the address itself. */
+  label?: string;
   className?: string;
   style?: React.CSSProperties;
 };
@@ -14,7 +16,7 @@ type Props = {
  * label for ~1.8s after a successful copy. Falls back to a mailto: on
  * browsers without the async clipboard API (very old Safari, etc.).
  */
-export function CopyEmailButton({ email, className, style }: Props) {
+export function CopyEmailButton({ email, label, className, style }: Props) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -45,7 +47,7 @@ export function CopyEmailButton({ email, className, style }: Props) {
       }
       title={copied ? "Copied" : "Click to copy"}
     >
-      <span>{copied ? "Copied to clipboard" : email}</span>
+      <span>{copied ? "Copied to clipboard" : (label ?? email)}</span>
       {copied ? <CheckIcon /> : <CopyIcon />}
     </button>
   );

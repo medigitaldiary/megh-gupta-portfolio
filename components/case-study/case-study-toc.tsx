@@ -11,7 +11,14 @@ type Props = {
   mark?: IndexMark;
 };
 
-export function CaseStudyToc({ items, className = "", mark = "row" }: Props) {
+/**
+ * Tracks which case-study section is in view. Shared by the desktop
+ * "On this page" rail and the mobile index bar so both highlight the
+ * same section.
+ */
+export function useActiveSection(
+  items: TocItem[],
+): [string, (id: string) => void] {
   const [activeId, setActiveId] = useState(items[0]?.id ?? "");
 
   useEffect(() => {
@@ -20,25 +27,37 @@ export function CaseStudyToc({ items, className = "", mark = "row" }: Props) {
       .filter((node): node is HTMLElement => node !== null);
     if (sections.length === 0) return;
 
-    const visible = new Set<string>();
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) visible.add(entry.target.id);
-          else visible.delete(entry.target.id);
-        }
-        let currentId = "";
-        for (const item of items) {
-          if (visible.has(item.id)) currentId = item.id;
-        }
-        if (currentId) setActiveId(currentId);
-      },
-      { rootMargin: "-96px 0px -80% 0px", threshold: 0 },
-    );
+    // Active = the last section whose top has passed the reading line
+    // (just under the sticky bars). Works for normal scrolling and for a
+    // page that opens mid-way or jumps straight to the end.
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      let currentId = sections[0]?.id ?? "";
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top < 120) currentId = section.id;
+      }
+      if (currentId) setActiveId(currentId);
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
 
-    for (const section of sections) observer.observe(section);
-    return () => observer.disconnect();
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
   }, [items]);
+
+  return [activeId, setActiveId];
+}
+
+export function CaseStudyToc({ items, className = "", mark = "row" }: Props) {
+  const [activeId, setActiveId] = useActiveSection(items);
 
   if (items.length === 0) return null;
 

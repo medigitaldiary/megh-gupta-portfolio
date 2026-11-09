@@ -117,7 +117,7 @@ Every display-size heading (hero display, H1, H2 inside a hero or fold) MUST pre
    - `components/section-header.tsx` H2 (`text-3xl md:text-5xl`) — stepped, mobile at 30px, hierarchy ≥ 1.9× body.
 
 ### Spacing
-Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepage, use `py-24 md:py-32`. Section max-width: `max-w-5xl`. Case study pages use a `max-w-6xl` shell: a prose column of `max-w-[46rem]` (~736px) with a sticky "On this page" rail beside it from `xl` up (the 46rem column and 15.5rem rail do not fit side by side at the `lg` breakpoint). Paragraphs stay in that column (readability over fill). Wide figures stay in the column too, so they do not slide under the rail.
+Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepage, use `py-24 md:py-32`. Section max-width: `max-w-5xl`. Case study pages use a `max-w-6xl` shell: a prose column of `max-w-[46rem]` (~736px) with a sticky "On this page" rail beside it from `xl` up (the 46rem column and 15.5rem rail do not fit side by side at the `lg` breakpoint). Below `xl` the index is a one-line bar pinned to the top of the screen that drops the full list down on tap (`components/case-study/case-study-index-bar.tsx`). Every case study also carries a slim top bar (back to work + "Let's connect", sticky from `xl`), an end-of-study contact block and the site footer, so a visitor on a shared link always has a way to reach Megh. Paragraphs stay in that column (readability over fill). Wide figures stay in the column too, so they do not slide under the rail.
 
 ### Motion
 **Sparing.** Acceptable:
