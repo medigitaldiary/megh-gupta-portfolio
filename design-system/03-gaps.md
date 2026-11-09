@@ -44,7 +44,7 @@
 3. **G-A10 · Skip link is broken on `/preview/v3` and `/preview/v3.1`**: `<main>` has no `id="main"`. Two attributes. *(High, S · shipped PR #112)*
 4. **G-A1 · Caption grey fails contrast on the page background** (4.25:1, needs 4.5:1). It's used in 24 places: dates, eyebrows, footer. One token value. *(High, S · shipped PR #112)*
 5. **G-A3 · Hero Venn chips are unreadable on phones** (they render at about 4px). This is the first screen 60% of visitors see. *(High, M · shipped in PR below: Venn hidden below `lg` on all hero variants; phones get heading + CTA only. Contrast subproblem moot because the chips never render on the failing viewport.)*
-6. **G-M1 · A case-study page has no way to get in touch**: no nav, no footer, no contact CTA. A recruiter who opens a shared link can only go "back". *(High, M · shipped PR below: options #1 end block, #2 footer, #3 top bar, #5 mobile index bar)*
+6. **G-M1 · A case-study page has no way to get in touch**: no nav, no footer, no contact CTA. A recruiter who opens a shared link can only go "back". *(High, M · ✅ Closed: shipped in PR #119, live via #120. Options #1 end block, #2 footer, #3 top bar, #5 mobile index bar)*
 
 ---
 
@@ -244,8 +244,8 @@ Judged against the job in CLAUDE.md §1: move a recruiter or hiring PM from skim
 
 | ID | Issue | Evidence | Severity | Proposed fix | Effort |
 |---|---|---|---|---|---|
-| **G-M1** | No path to contact from a case study | Case-study pages render no nav, no footer and no contact CTA when the study has a body (`app/work/[slug]/page.tsx:80-205`; the CTA at `:193-198` shows only on coming-soon studies). A recruiter who opens a shared study link can only press 'Back'. | High *(Shipped PR below: end-of-study block with Book 20 min, Copy email and LinkedIn; site footer on every `/work/*` page; slim top bar with "Let's connect", sticky from `xl`, scrolls away below it. Also fixed a 9px sideways overflow on phones: the case-study grid had no column cap below `xl`.)* | Add an end-of-study CTA block (reuse the primary pill: 'Let's talk about it →' to `/#connect` and `mailto:`), plus the site nav or a slim top bar. | M |
-| **G-M2** | Long case studies have no in-page navigation on phones | Below 1280px 'On this page' is a list above the article, not sticky (`page.tsx:145-151`). The AI Call study is long (351 lines of MDX), so a phone reader has no way to jump or get back to the top. | Medium *(Shipped PR below: below `xl` the index is a one-line bar pinned to the top that names the current section and drops the full list down on tap. The inline list it replaces is hidden below `xl`.)* | A sticky 'On this page' pill that opens the index as a sheet below `xl`, or a back-to-top button. | M |
+| **G-M1** ✅ Closed | No path to contact from a case study | Case-study pages render no nav, no footer and no contact CTA when the study has a body (`app/work/[slug]/page.tsx:80-205`; the CTA at `:193-198` shows only on coming-soon studies). A recruiter who opens a shared study link can only press 'Back'. | High *(Closed. Shipped PR #119, live via #120: end-of-study block with Book 20 min, Copy email and LinkedIn; site footer on every `/work/*` page; slim top bar with "Let's connect", sticky from `xl`, scrolls away below it. Also fixed a 9px sideways overflow on phones: the case-study grid had no column cap below `xl`.)* | Add an end-of-study CTA block (reuse the primary pill: 'Let's talk about it →' to `/#connect` and `mailto:`), plus the site nav or a slim top bar. | M |
+| **G-M2** | Long case studies have no in-page navigation on phones | Below 1280px 'On this page' is a list above the article, not sticky (`page.tsx:145-151`). The AI Call study is long (351 lines of MDX), so a phone reader has no way to jump or get back to the top. | Medium *(Shipped PR #119, live via #120: below `xl` the index is a one-line bar pinned to the top that names the current section and drops the full list down on tap. The inline list it replaces is hidden below `xl`.)* | A sticky 'On this page' pill that opens the index as a sheet below `xl`, or a back-to-top button. | M |
 | **G-M3** | Branded 404 page | No `app/not-found.tsx`, so `notFound()` (`page.tsx:81`) and mistyped links show Next's default page. | Medium | A one-screen 404 in the site's voice, with links to Selected Work and Contact. | S |
 | **G-M5** | Loading state for the Cal booker | The booker is a white `min-height: 560px` box until Cal's script loads (`cal-embed.tsx:25-29`), the last thing a recruiter sees before booking. | Medium | A skeleton (month grid outline) plus the `mailto:` fallback visible from the start. | S |
 | **G-M6** | Shared UI primitives | Button, Link, Tag, IconButton, SegmentedControl, Tooltip. Three different tooltip implementations exist (timeline portal, About torn tip, native `title`). | Medium | Build with G-C5; one Tooltip pattern. | M |
@@ -263,7 +263,7 @@ Every issue above in one list, sorted by severity then effort. Cross-references 
 | ID | Area | Issue | Severity | Effort | Needs Megh? |
 |---|---|---|---|---|---|
 | G-A3 | Contrast | Venn chip text: contrast and size | High | M |  |
-| G-M1 | Missing piece | No path to contact from a case study | High | M |  |
+| G-M1 | Missing piece | No path to contact from a case study (✅ closed, PR #119) | High | M |  |
 | G-A1 | Contrast | Caption grey fails on the page background | High | S |  |
 | G-A10 | Focus / keyboard | Skip link broken on the preview pages | High | S |  |
 | G-A6 | Contrast | Focus outline is nearly invisible on oat | High | S |  |
