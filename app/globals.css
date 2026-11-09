@@ -678,3 +678,11 @@ section {
     opacity: 1;
   }
 }
+
+/* Print page setup for /resume */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
+  }
+}
