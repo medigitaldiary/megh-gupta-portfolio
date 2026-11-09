@@ -250,7 +250,7 @@ Five button patterns exist. None is a shared component; each is a class string r
 
 ## 14. Footer
 
-- **Anatomy:** 4 ghost icon links (LinkedIn, X, GitHub, Email) + meta text: "megh gupta · {live IST clock}" and "made with zero em dashes".
+- **Anatomy:** 3 ghost icon links (LinkedIn, GitHub, Email; X removed) + meta text: "megh gupta · {live IST clock}" and "made with zero em dashes".
 - **States:** icon hover goes to pine; pine focus ring. **X and GitHub link to `#`** (`site-footer.tsx:17,26`).
 - **Mobile:** centred stack; a row from `sm`.
 - **Tokens:** `--fg-subtle`, `--fg`, `--text-label`, `--leading-body`, `--container-content`.

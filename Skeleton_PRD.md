@@ -348,7 +348,7 @@ export type LabCard = {
 **Behavior:**
 - Final section before footer. Larger vertical padding than other sections to give it visual weight.
 - Single CTA above the fold: large `Get in touch` button → `mailto:`.
-- Below CTA: a row of social/contact links (email, LinkedIn, Twitter/X, GitHub).
+- Below CTA: a row of social/contact links (email, LinkedIn, GitHub).
 - Background: optionally use `--accent` color for the whole section to make it pop visually. Test both ways.
 
 **Structure:**
