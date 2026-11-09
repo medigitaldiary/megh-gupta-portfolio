@@ -3,10 +3,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import * as caseStudy from "@/components/case-study";
+import { CaseStudyContact } from "@/components/case-study/case-study-contact";
+import { CaseStudyIndexBar } from "@/components/case-study/case-study-index-bar";
 import {
   CaseStudyToc,
   type IndexMark,
 } from "@/components/case-study/case-study-toc";
+import { CaseStudyTopBar } from "@/components/case-study/case-study-top-bar";
 import { WorkThumbnails } from "@/components/work-thumbnails";
 import { getCaseStudy } from "@/lib/case-study";
 import { extractToc, readingMinutes } from "@/lib/case-study-toc";
@@ -49,6 +52,13 @@ function readMark(value: string | undefined): IndexMark | null {
   return value === "text" || value === "row" ? value : null;
 }
 
+/** The page a study was opened from: a preview build or the homepage. */
+function homeHref(mark: IndexMark | null, hash: "work" | "connect"): string {
+  if (mark === "text") return `/preview/v3#${hash}`;
+  if (mark === "row") return `/preview/v3.1#${hash}`;
+  return `/#${hash}`;
+}
+
 export default async function WorkCaseStudy({
   params,
   searchParams,
@@ -76,115 +86,124 @@ export default async function WorkCaseStudy({
   const team = study?.frontmatter.team;
   const stack = study?.frontmatter.stack ?? [];
 
+  const backHref = homeHref(previewMark, "work");
+  const connectHref = homeHref(previewMark, "connect");
+
   return (
-    <main id="main" className="px-6 py-24 md:px-8 md:py-32">
-      <div
-        className={`mx-auto grid w-full max-w-[46rem] ${
-          toc.length > 0
-            ? "xl:max-w-6xl xl:grid-cols-[minmax(0,46rem)_15.5rem] xl:justify-center xl:gap-x-16"
-            : ""
-        }`}
+    <>
+      <CaseStudyTopBar backHref={backHref} connectHref={connectHref} />
+      <CaseStudyIndexBar items={toc} />
+      <main
+        id="main"
+        className="px-6 pt-12 pb-24 md:px-8 md:pt-16 md:pb-32 xl:pt-20"
       >
-        <header className={proseColumn}>
-          <Link
-            href={
-              previewMark === "text"
-                ? "/preview/v3#work"
-                : previewMark === "row"
-                  ? "/preview/v3.1#work"
-                  : "/#work"
-            }
-            className="inline-flex items-center gap-2 rounded-sm text-sm text-fg-muted underline underline-offset-4 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-          >
-            <span aria-hidden="true">←</span> Back to selected work
-          </Link>
+        <div
+          className={`mx-auto grid w-full max-w-[46rem] grid-cols-[minmax(0,1fr)] ${
+            toc.length > 0
+              ? "xl:max-w-6xl xl:grid-cols-[minmax(0,46rem)_15.5rem] xl:justify-center xl:gap-x-16"
+              : ""
+          }`}
+        >
+          <header className={proseColumn}>
+            <Link
+              href={backHref}
+              className="inline-flex items-center gap-2 rounded-sm text-sm text-fg-muted underline underline-offset-4 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            >
+              <span aria-hidden="true">←</span> Back to selected work
+            </Link>
 
-          <p className="mt-8 font-mono text-xs uppercase tracking-wider text-accent">
-            {kicker.join(" · ")}
-          </p>
-          <h1 className="mt-3 font-display text-4xl leading-tight text-fg md:text-5xl">
-            {study?.frontmatter.title ?? card.title}
-          </h1>
-          <p className="mt-6 text-xl leading-relaxed text-fg-muted">
-            {card.oneLiner}
-          </p>
+            <p className="mt-8 font-mono text-xs uppercase tracking-wider text-accent">
+              {kicker.join(" · ")}
+            </p>
+            <h1 className="mt-3 font-display text-4xl leading-tight text-fg md:text-5xl">
+              {study?.frontmatter.title ?? card.title}
+            </h1>
+            <p className="mt-6 text-xl leading-relaxed text-fg-muted">
+              {card.oneLiner}
+            </p>
 
-          {team ? <p className="mt-4 text-sm text-fg-muted">{team}</p> : null}
-          {stack.length ? (
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {stack.map((item) => (
-                <li
-                  key={item}
-                  className="inline-flex items-center rounded-full border border-border px-2.5 py-1 font-mono text-[11px] text-fg-muted"
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
+            {team ? <p className="mt-4 text-sm text-fg-muted">{team}</p> : null}
+            {stack.length ? (
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {stack.map((item) => (
+                  <li
+                    key={item}
+                    className="inline-flex items-center rounded-full border border-border px-2.5 py-1 font-mono text-[11px] text-fg-muted"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </header>
+
+          {toc.length > 0 ? (
+            <aside className="hidden xl:col-start-2 xl:row-span-6 xl:row-start-1 xl:block xl:self-stretch">
+              <CaseStudyToc
+                items={toc}
+                mark={mark}
+                className="xl:sticky xl:top-[5.5rem] xl:max-h-[calc(100svh-7rem)] xl:overflow-y-auto"
+              />
+            </aside>
           ) : null}
-        </header>
 
-        {toc.length > 0 ? (
-          <aside className="mt-10 xl:col-start-2 xl:row-span-5 xl:row-start-1 xl:mt-0 xl:self-stretch">
-            <CaseStudyToc
-              items={toc}
-              mark={mark}
-              className="xl:sticky xl:top-8 xl:max-h-[calc(100svh-4rem)] xl:overflow-y-auto"
-            />
-          </aside>
-        ) : null}
+          {study ? (
+            <>
+              <div
+                className={`mt-10 rounded-xl border border-border bg-bg-elevated p-6 md:p-8 ${proseColumn}`}
+              >
+                <p className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
+                  Headline metric
+                </p>
+                <p className="mt-2 font-display text-2xl text-fg md:text-3xl">
+                  {study.frontmatter.headline_metric}
+                </p>
+                {study.frontmatter.supporting_metrics?.length ? (
+                  <ul className="mt-4 space-y-1 text-sm text-fg-muted">
+                    {study.frontmatter.supporting_metrics.map((metric) => (
+                      <li key={metric}>· {metric}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
 
-        {study ? (
-          <>
+              <article className={articleClass}>
+                <MDXRemote source={study.body} components={caseStudy} />
+              </article>
+
+              <CaseStudyContact
+                connectHref={connectHref}
+                className={proseColumn}
+              />
+            </>
+          ) : (
             <div
               className={`mt-10 rounded-xl border border-border bg-bg-elevated p-6 md:p-8 ${proseColumn}`}
             >
               <p className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
-                Headline metric
+                Case study
               </p>
-              <p className="mt-2 font-display text-2xl text-fg md:text-3xl">
-                {study.frontmatter.headline_metric}
+              <p className="mt-2 font-display text-2xl text-fg">
+                Coming soon. I&apos;m writing it up.
               </p>
-              {study.frontmatter.supporting_metrics?.length ? (
-                <ul className="mt-4 space-y-1 text-sm text-fg-muted">
-                  {study.frontmatter.supporting_metrics.map((metric) => (
-                    <li key={metric}>· {metric}</li>
-                  ))}
-                </ul>
-              ) : null}
+              <p className="mt-3 text-sm text-fg-muted">
+                The full breakdown (context, decisions, tradeoffs, and numbers)
+                drops here shortly. In the meantime, feel free to reach out and
+                I&apos;ll walk you through it live.
+              </p>
+              <Link
+                href={connectHref}
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm text-accent-fg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              >
+                Let&apos;s talk about it →
+              </Link>
             </div>
+          )}
 
-            <article className={articleClass}>
-              <MDXRemote source={study.body} components={caseStudy} />
-            </article>
-          </>
-        ) : (
-          <div
-            className={`mt-10 rounded-xl border border-border bg-bg-elevated p-6 md:p-8 ${proseColumn}`}
-          >
-            <p className="font-mono text-[10px] uppercase tracking-wider text-fg-subtle">
-              Case study
-            </p>
-            <p className="mt-2 font-display text-2xl text-fg">
-              Coming soon. I&apos;m writing it up.
-            </p>
-            <p className="mt-3 text-sm text-fg-muted">
-              The full breakdown (context, decisions, tradeoffs, and numbers)
-              drops here shortly. In the meantime, feel free to reach out and
-              I&apos;ll walk you through it live.
-            </p>
-            <Link
-              href="/#connect"
-              className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm text-accent-fg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-            >
-              Let&apos;s talk about it →
-            </Link>
-          </div>
-        )}
-
-        <KeepReading cards={more} mark={previewMark} />
-      </div>
-    </main>
+          <KeepReading cards={more} mark={previewMark} />
+        </div>
+      </main>
+    </>
   );
 }
 
