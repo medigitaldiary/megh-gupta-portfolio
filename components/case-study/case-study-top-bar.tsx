@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ButtonLink } from "@/components/ui";
 
 type Props = {
   /** Where "Megh Gupta · Work" goes (homepage or the preview it came from). */
@@ -27,12 +28,9 @@ export function CaseStudyTopBar({ backHref, connectHref }: Props) {
             <span className="text-fg-muted"> · Work</span>
           </span>
         </Link>
-        <Link
-          href={connectHref}
-          className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-accent px-4 text-[13px] text-accent-fg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-        >
+        <ButtonLink href={connectHref} size="sm">
           Let&apos;s connect <span aria-hidden="true">→</span>
-        </Link>
+        </ButtonLink>
       </div>
     </div>
   );

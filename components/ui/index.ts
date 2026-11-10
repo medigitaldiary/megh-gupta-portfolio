@@ -4,3 +4,7 @@
 
 export type { ButtonSize, ButtonVariant } from "./button";
 export { Button, ButtonLink } from "./button";
+export type { IconButtonSize, IconButtonVariant } from "./icon-button";
+export { IconButton } from "./icon-button";
+export type { TagVariant } from "./tag";
+export { Tag } from "./tag";
