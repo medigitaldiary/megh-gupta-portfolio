@@ -110,7 +110,7 @@ function Placeholder({
       <code className="px-4 text-center font-mono text-xs text-fg-subtle">
         {src}
         <br />
-        placeholder — {aspectRatio.replace("/", " × ")}
+        placeholder: {aspectRatio.replace("/", " × ")}
       </code>
     </div>
   );

@@ -19,7 +19,7 @@ export function Quote({
       </blockquote>
       {attribution ? (
         <figcaption className="mt-4 font-mono text-xs uppercase tracking-wider text-fg-subtle">
-          <span aria-hidden="true">— </span>
+          <span aria-hidden="true">– </span>
           {attribution}
         </figcaption>
       ) : null}
