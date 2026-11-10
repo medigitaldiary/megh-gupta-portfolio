@@ -122,10 +122,7 @@ function AboutIntro() {
       {/* Handwritten closer, pinned to the bottom of the panel to echo the
           reference layout. Uses the --font-hand variable so a reduced-font
           build still falls back cleanly to a cursive system font. */}
-      <p
-        className="mt-10 max-w-xs text-base italic leading-snug text-[#D9D0B8]/85 md:text-lg"
-        style={{ fontFamily: "var(--font-hand), 'Caveat', cursive" }}
-      >
+      <p className="mt-10 max-w-xs font-hand text-base italic leading-snug text-[#D9D0B8]/85 md:text-lg">
         Exploring new places, new ideas, and a better version of myself.
       </p>
     </div>
