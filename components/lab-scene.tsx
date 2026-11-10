@@ -37,10 +37,10 @@ type HoverKey =
   | null;
 
 const FLASK_COLORS: Record<NonNullable<LabCard["stage"]>, string> = {
-  v1: "#1F4D3A",
+  v1: "#1F3B2E",
   building: "#C77E3B",
   testing: "#4A72B0",
-  shipped: "#1F4D3A",
+  shipped: "#1F3B2E",
 };
 
 const APPS = [
@@ -740,7 +740,7 @@ function CrtZone({
                   y="0"
                   fontFamily="var(--font-mono), monospace"
                   fontSize="7.5"
-                  fill="#1F4D3A"
+                  fill="#1F3B2E"
                   letterSpacing="0.06em"
                 >
                   {card.title}
@@ -983,7 +983,7 @@ function FlasksZone({
       {positions.map((pos, i) => {
         const card = sideQuest[i];
         if (!card) return null;
-        const color = card.stage ? FLASK_COLORS[card.stage] : "#1F4D3A";
+        const color = card.stage ? FLASK_COLORS[card.stage] : "#1F3B2E";
         const stageLabel = card.stage ? LAB_STAGE_LABEL[card.stage] : "";
         const desc = card.description;
         return (
@@ -1043,7 +1043,7 @@ function FlasksZone({
                 textAnchor="middle"
                 fontFamily="var(--font-sans), sans-serif"
                 fontSize="8"
-                fill="#1F4D3A"
+                fill="#1F3B2E"
               >
                 {stageLabel}
               </text>
@@ -1053,7 +1053,7 @@ function FlasksZone({
                 textAnchor="middle"
                 fontFamily="var(--font-sans), sans-serif"
                 fontSize="8"
-                fill="#1F4D3A"
+                fill="#1F3B2E"
               >
                 {desc.slice(0, 44)}
               </text>

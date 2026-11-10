@@ -72,7 +72,7 @@
 .bp-body,
 .bp-stub {
   --bp-notch: 14px;
-  background-color: #f3ebd9;
+  background-color: var(--bg-elevated);
   background-image:
     radial-gradient(rgba(31, 59, 46, 0.035) 1px, transparent 1px),
     linear-gradient(
