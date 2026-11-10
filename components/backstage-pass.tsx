@@ -67,7 +67,14 @@ export function BackstagePass({
       "(prefers-reduced-motion: reduce)",
     ).matches;
     const t = setTimeout(
-      () => window.location.replace(state.next),
+      () => {
+        const hash = window.location.hash;
+        const dest =
+          hash && !state.next.includes("#")
+            ? `${state.next}${hash}`
+            : state.next;
+        window.location.replace(dest);
+      },
       reduce ? 350 : 1650,
     );
     return () => clearTimeout(t);
@@ -132,10 +139,7 @@ export function BackstagePass({
                     <p className="font-mono text-[0.65rem] uppercase tracking-[0.3em]">
                       Megh Gupta · Studio
                     </p>
-                    <span
-                      className="rounded-full px-2.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.2em]"
-                      style={{ background: "rgba(203,179,232,0.45)" }}
-                    >
+                    <span className="rounded-full bg-highlight/45 px-2.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.2em]">
                       Works in progress
                     </span>
                   </div>
@@ -245,7 +249,7 @@ export function BackstagePass({
                         className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
                         style={{
                           background: PINE,
-                          color: "#e8dcc6",
+                          color: "var(--accent-fg)",
                           boxShadow: "0 10px 24px -10px rgba(31,59,46,0.6)",
                         }}
                       >

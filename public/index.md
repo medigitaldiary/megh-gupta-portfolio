@@ -20,7 +20,7 @@ BITS Goa grad, a year and a half into fintech, and lately I've been playing with
 ## Reach me
 
 - Email: [megh.bpgc@gmail.com](mailto:megh.bpgc@gmail.com)
-- LinkedIn: [in/megh-gupta-917280200](https://www.linkedin.com/in/megh-gupta-917280200)
+- LinkedIn: [in/meghxgupta](https://www.linkedin.com/in/meghxgupta)
 - Book time: Cal.com widget embedded in the Contact fold.
 
 ## Site

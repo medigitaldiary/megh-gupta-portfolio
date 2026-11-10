@@ -397,7 +397,7 @@ pnpm dev                      # opens at localhost:3000
 
 - **Do not add dependencies casually.** Every new package is a long-term cost. Ask if it's worth it. Prefer writing 30 lines yourself over adding a 50KB dep.
 - **Do not introduce new design tokens** (colors, fonts, spacing units) without flagging it.
-- **Do not write inline styles.** Tailwind classes only.
+- **Do not write inline styles.** Tailwind classes only. One exception: runtime-computed values (positions, timeline widths, SVG geometry, measured rects, animation keyframe targets) go through `style={{ ... }}` with CSS variables or inline values; those cannot live in a class. Static styling — colours, fonts, shadows, gradients — belongs in a class or token.
 - **Do not use `any` in TypeScript.** Use `unknown` + narrowing, or define the type.
 - **Do not commit secrets.** Use `.env.local` (gitignored). Reference via `process.env.X`.
 - **Do not use client components when server components work.** Default to server. Add `"use client"` only when needed (state, effects, browser APIs).

@@ -27,7 +27,7 @@ function PillButton() {
       type="submit"
       disabled={pending}
       title="Delete your 24h pass and lock these pages again"
-      className="group inline-flex items-center gap-2 rounded-full border border-[#1f3b2e]/15 bg-[#f3ebd9]/85 px-3.5 py-2 font-mono text-[0.68rem] text-[#1f3b2e] uppercase tracking-[0.18em] shadow-[0_10px_30px_-12px_rgba(31,59,46,0.45)] backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#1f3b2e] hover:text-[#e8dcc6] disabled:opacity-60"
+      className="group inline-flex items-center gap-2 rounded-full border border-fg/15 bg-bg-elevated/85 px-3.5 py-2 font-mono text-[0.68rem] text-fg uppercase tracking-[0.18em] shadow-[0_10px_30px_-12px_rgba(31,59,46,0.45)] backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:bg-fg hover:text-accent-fg disabled:opacity-60"
     >
       <svg
         viewBox="0 0 24 24"

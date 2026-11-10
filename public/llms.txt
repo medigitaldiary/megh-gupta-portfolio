@@ -35,7 +35,7 @@ The homepage embeds a JSON-LD `@graph` (`Person` + `WebSite` + `ProfilePage`) wi
 ## Contact
 
 - Email: megh.bpgc@gmail.com
-- LinkedIn: https://www.linkedin.com/in/megh-gupta-917280200
+- LinkedIn: https://www.linkedin.com/in/meghxgupta
 - Book time: via the embedded Cal.com widget in the Contact fold.
 
 ## Content policy

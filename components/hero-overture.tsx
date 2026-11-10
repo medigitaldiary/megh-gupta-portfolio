@@ -402,9 +402,8 @@ export function HeroOverture() {
           <p
             ref={lineRef}
             aria-hidden={flying}
-            className="pointer-events-none fixed z-[61] whitespace-nowrap text-accent"
+            className="pointer-events-none fixed z-[61] whitespace-nowrap font-hand text-accent"
             style={{
-              fontFamily: "var(--font-hand), cursive",
               fontSize: "4.15rem",
               lineHeight: 1,
               opacity: 0,

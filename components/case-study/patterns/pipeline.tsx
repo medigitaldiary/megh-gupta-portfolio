@@ -277,12 +277,11 @@ function PipelineStageItem({
         <div className="flex items-start gap-2">
           <span
             aria-hidden="true"
-            className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[9px] font-medium ${
+            className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full font-medium font-mono text-[9px] ${
               isReached
                 ? "bg-accent text-accent-fg"
                 : "bg-bg text-fg-subtle ring-1 ring-border"
             }`}
-            style={{ fontFamily: "var(--font-mono), monospace" }}
           >
             {number}
           </span>

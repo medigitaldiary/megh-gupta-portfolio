@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui";
 
 export function SectionHeader({
   eyebrow,
@@ -19,12 +19,15 @@ export function SectionHeader({
           {title}
         </h2>
         {action ? (
-          <Link
+          <ButtonLink
             href={action.href}
-            className="inline-flex shrink-0 items-center gap-2 rounded-full border border-fg px-4 py-2 font-mono text-xs uppercase tracking-[0.16em] text-fg transition-colors duration-150 hover:bg-fg hover:text-accent-fg"
+            variant="outline"
+            size="sm"
+            mono
+            className="shrink-0 tracking-[0.16em]"
           >
             {action.label}
-          </Link>
+          </ButtonLink>
         ) : null}
       </div>
     </div>

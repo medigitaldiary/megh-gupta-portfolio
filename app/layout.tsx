@@ -129,7 +129,7 @@ const jsonLd = {
         name: "India",
       },
       email: "mailto:megh.bpgc@gmail.com",
-      sameAs: ["https://www.linkedin.com/in/megh-gupta-917280200"],
+      sameAs: ["https://www.linkedin.com/in/meghxgupta"],
     },
     {
       "@type": "WebSite",

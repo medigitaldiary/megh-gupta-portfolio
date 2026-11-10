@@ -31,6 +31,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 1,
     },
+    {
+      url: `${SITE}/resume`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
     ...(LOCK_WORK ? [] : workEntries),
   ];
 }
