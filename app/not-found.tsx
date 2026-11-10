@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -33,24 +33,15 @@ export default function NotFound() {
         somewhere real.
       </p>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-mono text-xs uppercase tracking-[0.14em] text-accent-fg transition-opacity duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-        >
+        <ButtonLink href="/" size="lg" mono>
           Home
-        </Link>
-        <Link
-          href="/#work"
-          className="inline-flex items-center gap-2 rounded-full border border-fg px-6 py-3 font-mono text-xs uppercase tracking-[0.14em] text-fg transition-colors duration-150 ease-out hover:bg-fg hover:text-accent-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-        >
+        </ButtonLink>
+        <ButtonLink href="/#work" variant="outline" size="lg" mono>
           Selected Work
-        </Link>
-        <Link
-          href="/#connect"
-          className="inline-flex items-center gap-2 rounded-full border border-fg px-6 py-3 font-mono text-xs uppercase tracking-[0.14em] text-fg transition-colors duration-150 ease-out hover:bg-fg hover:text-accent-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-        >
+        </ButtonLink>
+        <ButtonLink href="/#connect" variant="outline" size="lg" mono>
           Contact
-        </Link>
+        </ButtonLink>
       </div>
     </main>
   );

@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect } from "react";
+import { Button, ButtonLink } from "@/components/ui";
 
 // Next.js App Router error boundary. Fires when a client component throws
 // (Venn stage, About collage, carousel, etc.). Minimal branded shell with a
@@ -55,19 +55,12 @@ export default function ErrorBoundary({
         ) : null}
       </p>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-        <button
-          type="button"
-          onClick={reset}
-          className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-mono text-xs uppercase tracking-[0.14em] text-accent-fg transition-opacity duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-        >
+        <Button onClick={reset} size="lg" mono>
           Try again
-        </button>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 rounded-full border border-fg px-6 py-3 font-mono text-xs uppercase tracking-[0.14em] text-fg transition-colors duration-150 ease-out hover:bg-fg hover:text-accent-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-        >
+        </Button>
+        <ButtonLink href="/" variant="outline" size="lg" mono>
           Home
-        </Link>
+        </ButtonLink>
       </div>
     </main>
   );

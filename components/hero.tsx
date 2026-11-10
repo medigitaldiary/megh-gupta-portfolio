@@ -2,6 +2,7 @@ import Image from "next/image";
 import { HeroLink } from "@/components/hero-link";
 import { ProductVenn } from "@/components/product-venn";
 import { ProductVennTravel } from "@/components/product-venn-travel";
+import { ButtonLink } from "@/components/ui";
 
 export function Hero({
   link,
@@ -77,12 +78,9 @@ export function Hero({
             data-hero-reveal
             className={`mt-8 ${handoff ? "opacity-0" : ""}`}
           >
-            <a
-              href="#connect"
-              className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm text-accent-fg transition-opacity duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-            >
+            <ButtonLink href="#connect" size="lg">
               Let&apos;s connect →
-            </a>
+            </ButtonLink>
           </div>
         </div>
 
