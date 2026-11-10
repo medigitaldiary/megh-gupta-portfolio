@@ -137,11 +137,11 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 Inline SVG only, no icon library. Every icon sits on a 24×24 grid, strokes are 1.8px (round caps and joins), colour is `currentColor` so a parent text colour drives it. Fills are the exception, used only when the mark reads as a filled shape (LinkedIn, success tick). Keep each icon in the same file as its one consumer, or group a handful in a shared `-icons.tsx` when they repeat across sections. Do not pull a new icon from a library at a different weight or grid.
 
 ### Imagery and texture
-Cover media uses a 4:3 frame with a looping muted `<video>` plus a poster-image fallback that carries the same crop. Grain is `/images/about/grain.svg` only, overlaid at low opacity on the About collage; it is not for chrome. Torn-paper edges use the clip-paths in `about-collage.css`; no other component invents a new torn edge. The highlighter mark is one hand-drawn SVG tinted with `--highlight`. Paper, grain and torn edges stay inside the About and `/unlock` worlds; the rest of the site is flat on `--bg` or `--bg-elevated`.
+Cover media uses a 4:3 frame with a looping muted `<video>` plus a poster-image fallback that carries the same crop. Grain is `/images/about/grain.svg` only, overlaid at low opacity on the About collage; it is not for chrome. Torn-paper edges use the clip-paths in `about-collage.css`; no other component invents a new torn edge. The highlighter mark is one hand-drawn SVG tinted with `--highlight`. Paper, grain and torn edges stay inside the About and `/unlock` worlds; the rest of the site is flat on `--bg` or `--bg-elevated`. One more approved world: the bento board (`/preview/bento`) lays grain and pooled lilac light under its tiles, and uses frosted glass on small elements only (pills, buttons, the scan switch), never on whole tiles.
 
 ### Other token families
 Full as-built values in `design-system/02-tokens.md`; the shape rules below live here.
-- **Radius:** 4px (chips, small cards) · 8px (cards, inputs) · 12px (large cards) · 18px (hero elements) · 999px (pills). No arbitrary values; pick the nearest step.
+- **Radius:** 4px (chips, small cards) · 8px (cards, inputs) · 12px (large cards) · 18px (hero elements) · 999px (pills). No arbitrary values; pick the nearest step. Approved exception: bento tiles use 28px (`--bento-radius` in `app/preview/bento/bento.css`), on the bento board only.
 - **Shadow:** pine-tinted family (`rgba(31, 59, 46, …)`), never neutral grey. `shadow-sm` for hairline lift, `shadow-md` for cards, custom pine-tinted shadow for the Contact pill. `--shadow-sm` and `--shadow-md` tokens land in `02-tokens.md §2.11`.
 - **Z-index:** nav 50 · drawer / modal 40 · tooltip 70 · toast 80. No raw `z-index` above these.
 - **Breakpoints:** Tailwind defaults (`sm` 640, `md` 768, `lg` 1024, `xl` 1280). Two custom thresholds exist on purpose: 860px (nav chip visibility) and 1104px (Cal booker layout). Add a custom breakpoint only with a row in `02-tokens.md`.
@@ -401,7 +401,7 @@ pnpm dev                      # opens at localhost:3000
 - **Do not use `any` in TypeScript.** Use `unknown` + narrowing, or define the type.
 - **Do not commit secrets.** Use `.env.local` (gitignored). Reference via `process.env.X`.
 - **Do not use client components when server components work.** Default to server. Add `"use client"` only when needed (state, effects, browser APIs).
-- **Do not write CSS files** beyond `globals.css`. All styling in Tailwind. Two approved exceptions: `components/about-collage.css` (torn-paper clip-paths and the scroll-scrubbed stage; Tailwind arbitrary values can't express the paths) and `app/unlock/backstage.css` (ticket perforation, stamp timing and barcode mask). Any new CSS file needs the same treatment: added here before it ships.
+- **Do not write CSS files** beyond `globals.css`. All styling in Tailwind. Three approved exceptions: `app/preview/bento/bento.css` (bento grid areas, glass shadows, route and flip animations), `components/about-collage.css` (torn-paper clip-paths and the scroll-scrubbed stage; Tailwind arbitrary values can't express the paths) and `app/unlock/backstage.css` (ticket perforation, stamp timing and barcode mask). Any new CSS file needs the same treatment: added here before it ships.
 - **Do not add `<form>` tags inside React without a clear onSubmit handler** — they cause full page reloads if not handled.
 - **Do not over-engineer.** This is a portfolio. It does not need a state management library, a CMS, an i18n framework, or a service worker.
 
