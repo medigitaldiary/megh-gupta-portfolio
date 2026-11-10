@@ -286,9 +286,10 @@ export function ResumeDocument() {
 
             <Block
               section="lede"
-              agent="Editor"
+              agent="Research"
               code="<Education />"
-              log="added education"
+              log="wrote education"
+              type="title"
             >
               <section
                 className="print:break-inside-avoid"
@@ -301,13 +302,19 @@ export function ResumeDocument() {
                   Education
                 </h2>
                 <div className="mt-2.5 text-sm text-fg-muted print:mt-1 print:text-[7.5pt]">
-                  <p className="font-medium text-fg print:text-[8pt]">
+                  <p
+                    className="font-medium text-fg print:text-[8pt]"
+                    data-type-target=""
+                  >
                     BITS Pilani, Goa Campus
                   </p>
-                  <p className="mt-0.5 leading-snug">
+                  <p className="mt-0.5 leading-snug" data-type-target="">
                     B.E. Chemical Engineering + M.Sc. Biological Sciences
                   </p>
-                  <time className="mt-1 block font-mono text-[11px] text-fg-subtle print:text-[7pt]">
+                  <time
+                    className="mt-1 block font-mono text-[11px] text-fg-subtle print:text-[7pt]"
+                    data-type-target=""
+                  >
                     2020 – 2025
                   </time>
                 </div>
@@ -340,13 +347,20 @@ export function ResumeDocument() {
                     agent="Product"
                     code='<Role company="Tap Invest" />'
                     log="opened Tap Invest"
+                    type="title"
                   >
                     <div className="flex flex-wrap items-baseline justify-between gap-1 border-b border-border/50 pb-1.5 print:pb-0.5">
                       <div>
-                        <h3 className="font-display text-[18px] font-semibold md:text-[20px] text-fg print:text-[10pt]">
+                        <h3
+                          className="font-display text-[18px] font-semibold md:text-[20px] text-fg print:text-[10pt]"
+                          data-type-target=""
+                        >
                           Associate Product Manager
                         </h3>
-                        <p className="text-sm font-medium text-fg-muted print:text-[8.5pt]">
+                        <p
+                          className="text-sm font-medium text-fg-muted print:text-[8.5pt]"
+                          data-type-target=""
+                        >
                           Tap Invest
                         </p>
                       </div>
@@ -357,228 +371,319 @@ export function ResumeDocument() {
                   </Block>
 
                   {/* Product 1: BondScanner */}
-                  <Block
-                    section="bond"
-                    agent="Product"
-                    code='<Product name="BondScanner" />'
-                    log="built BondScanner"
-                  >
-                    <div className="mt-3 pl-0 sm:pl-3 border-l-0 sm:border-l-2 sm:border-border/60 print:pl-2 print:border-l print:mt-1.5">
+                  <div className="mt-3 border-l-0 pl-0 sm:border-l-2 sm:border-border/60 sm:pl-3 print:mt-1.5 print:border-l print:pl-2">
+                    <Block
+                      section="bond"
+                      agent="Product"
+                      code='<Product name="BondScanner" />'
+                      log="named BondScanner"
+                      type="title"
+                    >
                       <div className="flex flex-wrap items-baseline justify-between gap-1">
-                        <h4 className="text-[15px] font-medium md:text-base text-fg print:text-[8.5pt]">
-                          BondScanner{" "}
+                        <h4 className="text-[15px] font-medium text-fg md:text-base print:text-[8.5pt]">
+                          <span data-type-target="">BondScanner</span>{" "}
                           <span className="font-normal text-fg-subtle">
                             · SEBI-registered online bond platform
                           </span>
                         </h4>
-                        <span className="font-mono text-[10px] sm:text-[11px] text-fg-subtle print:text-[7pt]">
+                        <span className="font-mono text-[10px] text-fg-subtle sm:text-[11px] print:text-[7pt]">
                           Nov 2025 – Oct 2026 (12 mos)
                         </span>
                       </div>
+                    </Block>
+                    <ul className="mt-2 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:space-y-0.5 print:pl-3 print:text-[7.5pt]">
+                      <Line
+                        section="bond"
+                        agent="Growth"
+                        log="wrote the launch line"
+                      >
+                        Built BondScanner 0 to 1 as founding PM, launching
+                        awareness and acquisition journeys on web and mobile
+                        within 2 months.
+                      </Line>
+                      <Line
+                        section="bond"
+                        agent="Growth"
+                        log="wrote the SEO line"
+                      >
+                        Owned SEO as a product surface, shipping a Strapi blog
+                        revamp, a site-wide SEO SOP and an internal linking
+                        graph that lifted link health 50–60% in 2 months,
+                        helping drive ~2x daily organic clicks.
+                      </Line>
+                      <Line
+                        section="bond"
+                        agent="Growth"
+                        log="wrote the newsletter line"
+                      >
+                        Launched and grew the Bond Bytes newsletter to 200+
+                        editions. It reached 20% of all sign-ups, grew reach
+                        3.5x month on month and converted 7% of push
+                        notifications into KYC and payment completions.
+                      </Line>
+                      <Line
+                        section="bond"
+                        agent="Product"
+                        log="wrote the watchlist line"
+                      >
+                        Shipped Watchlist, the first native bond-tracking tool
+                        among Indian bond platforms. About 5,000 users adopted
+                        it in the first two weeks, adding bonds at a 3:1 ratio
+                        to removals.
+                      </Line>
+                      <Line
+                        section="bond"
+                        agent="Research"
+                        log="wrote the data line"
+                      >
+                        Led a third-party bond data partnership from vendor
+                        evaluation to API integration, automating 80% of 35+
+                        deal creation fields and removing manual ops entry.
+                      </Line>
+                      <Line
+                        section="bond"
+                        agent="Design"
+                        log="wrote the deal page line"
+                      >
+                        Revamped the Deal Detail page with secondary market
+                        activity, covenants and security data that no other
+                        retail bond platform shows, so investors can judge a
+                        bond at institutional depth.
+                      </Line>
+                      <Line
+                        section="bond"
+                        agent="Editor"
+                        log="wrote the support line"
+                      >
+                        Set up support workflows on Freshdesk with SLAs and
+                        ticket automations, cutting manual support effort by
+                        40%.
+                      </Line>
+                      <Line
+                        section="bond"
+                        agent="Metrics"
+                        log="wrote the call analysis line"
+                      >
+                        Built an AI call analysis pipeline with Sarvam STT and
+                        Claude that scores RM calls and writes action items,
+                        lifting team quality scores by about 15% in 30 days.
+                      </Line>
+                    </ul>
+                  </div>
 
-                      <ul className="mt-2 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3">
-                        <li>
-                          Built BondScanner 0 to 1 as founding PM, launching
-                          awareness and acquisition journeys on web and mobile
-                          within 2 months.
-                        </li>
-                        <li>
-                          Owned SEO as a product surface, shipping a Strapi blog
-                          revamp, a site-wide SEO SOP and an internal linking
-                          graph that lifted link health 50–60% in 2 months,
-                          helping drive ~2x daily organic clicks.
-                        </li>
-                        <li>
-                          Launched and grew the Bond Bytes newsletter to 200+
-                          editions. It reached 20% of all sign-ups, grew reach
-                          3.5x month on month and converted 7% of push
-                          notifications into KYC and payment completions.
-                        </li>
-                        <li>
-                          Shipped Watchlist, the first native bond-tracking tool
-                          among Indian bond platforms. About 5,000 users adopted
-                          it in the first two weeks, adding bonds at a 3:1 ratio
-                          to removals.
-                        </li>
-                        <li>
-                          Led a third-party bond data partnership from vendor
-                          evaluation to API integration, automating 80% of 35+
-                          deal creation fields and removing manual ops entry.
-                        </li>
-                        <li>
-                          Revamped the Deal Detail page with secondary market
-                          activity, covenants and security data that no other
-                          retail bond platform shows, so investors can judge a
-                          bond at institutional depth.
-                        </li>
-                        <li>
-                          Set up support workflows on Freshdesk with SLAs and
-                          ticket automations, cutting manual support effort by
-                          40%.
-                        </li>
-                        <li>
-                          Built an AI call analysis pipeline with Sarvam STT and
-                          Claude that scores RM calls and writes action items,
-                          lifting team quality scores by about 15% in 30 days.
-                        </li>
-                      </ul>
-                    </div>
-                  </Block>
-
-                  {/* Product 2: Ultra */}
-                  <Block
-                    section="ultra"
-                    agent="Product"
-                    code='<Product name="ultra" />'
-                    log="built ultra"
-                  >
-                    <div className="mt-4 pl-0 sm:pl-3 border-l-0 sm:border-l-2 sm:border-border/60 print:pl-2 print:border-l print:mt-2">
+                  {/* Product 2: ultra */}
+                  <div className="mt-4 border-l-0 pl-0 sm:border-l-2 sm:border-border/60 sm:pl-3 print:mt-2 print:border-l print:pl-2">
+                    <Block
+                      section="ultra"
+                      agent="Product"
+                      code='<Product name="ultra" />'
+                      log="named ultra"
+                      type="title"
+                    >
                       <div className="flex flex-wrap items-baseline justify-between gap-1">
-                        <h4 className="text-[15px] font-medium md:text-base text-fg print:text-[8.5pt]">
-                          ultra{" "}
+                        <h4 className="text-[15px] font-medium text-fg md:text-base print:text-[8.5pt]">
+                          <span data-type-target="">ultra</span>{" "}
                           <span className="font-normal text-fg-subtle">
                             · Alternative investment app
                           </span>
                         </h4>
-                        <span className="font-mono text-[10px] sm:text-[11px] text-fg-subtle print:text-[7pt]">
+                        <span className="font-mono text-[10px] text-fg-subtle sm:text-[11px] print:text-[7pt]">
                           Mar 2025 – Oct 2025 (6 mos)
                         </span>
                       </div>
-
-                      <ul className="mt-2 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3">
-                        <li>
-                          Built a GIFT City NRI FD MVP under IFSCA rules,
-                          closing 3 bank partnerships and onboarding 5 pilot
-                          accounts.
-                        </li>
-                        <li>
-                          Launched Flexi Invoice Discounting, a variable-tenure
-                          product for early liquidity, adding ~₹50 Cr AUM in 3
-                          months.
-                        </li>
-                        <li>
-                          Redesigned the referral flow in onboarding, reaching
-                          40% referral adoption and 20% acquisition growth in 3
-                          months.
-                        </li>
-                        <li>
-                          Expanded ultra from mobile to web (invest, wallet,
-                          KYC), driving 15–20% True AUM growth and 30% of Q3
-                          sign-ups.
-                        </li>
-                        <li>
-                          Shipped Strapi CMS so the marketing team could publish
-                          on their own, cutting turnaround time by about 30%.
-                        </li>
-                      </ul>
-                    </div>
-                  </Block>
+                    </Block>
+                    <ul className="mt-2 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:space-y-0.5 print:pl-3 print:text-[7.5pt]">
+                      <Line
+                        section="ultra"
+                        agent="Product"
+                        log="wrote the GIFT City line"
+                      >
+                        Built a GIFT City NRI FD MVP under IFSCA rules, closing
+                        3 bank partnerships and onboarding 5 pilot accounts.
+                      </Line>
+                      <Line
+                        section="ultra"
+                        agent="Metrics"
+                        log="wrote the AUM line"
+                      >
+                        Launched Flexi Invoice Discounting, a variable-tenure
+                        product for early liquidity, adding ~₹50 Cr AUM in 3
+                        months.
+                      </Line>
+                      <Line
+                        section="ultra"
+                        agent="Growth"
+                        log="wrote the referral line"
+                      >
+                        Redesigned the referral flow in onboarding, reaching 40%
+                        referral adoption and 20% acquisition growth in 3
+                        months.
+                      </Line>
+                      <Line
+                        section="ultra"
+                        agent="Design"
+                        log="wrote the web line"
+                      >
+                        Expanded ultra from mobile to web (invest, wallet, KYC),
+                        driving 15–20% True AUM growth and 30% of Q3 sign-ups.
+                      </Line>
+                      <Line
+                        section="ultra"
+                        agent="Editor"
+                        log="wrote the CMS line"
+                      >
+                        Shipped Strapi CMS so the marketing team could publish
+                        on their own, cutting turnaround time by about 30%.
+                      </Line>
+                    </ul>
+                  </div>
                 </div>
 
                 {/* MoveInSync */}
-                <Block
-                  section="move"
-                  agent="Proof"
-                  code='<Role company="MoveInSync" />'
-                  log="added MoveInSync"
-                >
-                  <div className="print:break-inside-avoid">
+                <div className="print:break-inside-avoid">
+                  <Block
+                    section="move"
+                    agent="Proof"
+                    code='<Role company="MoveInSync" />'
+                    log="opened MoveInSync"
+                    type="title"
+                  >
                     <div className="flex flex-wrap items-baseline justify-between gap-1 border-b border-border/50 pb-1.5 print:pb-0.5">
                       <div>
-                        <h3 className="font-display text-[18px] font-semibold md:text-[20px] text-fg print:text-[10pt]">
+                        <h3
+                          className="font-display text-[18px] font-semibold text-fg md:text-[20px] print:text-[10pt]"
+                          data-type-target=""
+                        >
                           Product Intern
                         </h3>
-                        <p className="text-sm font-medium text-fg-muted print:text-[8.5pt]">
+                        <p
+                          className="text-sm font-medium text-fg-muted print:text-[8.5pt]"
+                          data-type-target=""
+                        >
                           MoveInSync
                         </p>
                       </div>
-                      <time className="font-mono text-[11px] sm:text-xs text-fg-subtle print:text-[7.5pt]">
+                      <time className="font-mono text-[11px] text-fg-subtle sm:text-xs print:text-[7.5pt]">
                         Jun 2024 – Feb 2025 (9 mos)
                       </time>
                     </div>
-
-                    <ul className="mt-2.5 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3 print:mt-1">
-                      <li>
-                        Worked across PMs, marketing and customer success,
-                        turning client-built features into upsells and
-                        cross-sells.
-                      </li>
-                      <li>
-                        Built pricing for Safety Toolkit and DMS-ADAS premium
-                        features, pitched to 50+ clients at Chennai Prodcon
-                        Summit.
-                      </li>
-                    </ul>
-                  </div>
-                </Block>
+                  </Block>
+                  <ul className="mt-2.5 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:mt-1 print:space-y-0.5 print:pl-3 print:text-[7.5pt]">
+                    <Line
+                      section="move"
+                      agent="Proof"
+                      log="wrote the upsell line"
+                    >
+                      Worked across PMs, marketing and customer success, turning
+                      client-built features into upsells and cross-sells.
+                    </Line>
+                    <Line
+                      section="move"
+                      agent="Growth"
+                      log="wrote the pricing line"
+                    >
+                      Built pricing for Safety Toolkit and DMS-ADAS premium
+                      features, pitched to 50+ clients at Chennai Prodcon
+                      Summit.
+                    </Line>
+                  </ul>
+                </div>
 
                 {/* Department of Backstage and Infrastructure Management */}
-                <Block
-                  section="backstage"
-                  agent="Proof"
-                  code='<Role company="Backstage" />'
-                  log="added Backstage"
-                >
-                  <div className="print:break-inside-avoid">
+                <div className="print:break-inside-avoid">
+                  <Block
+                    section="backstage"
+                    agent="Proof"
+                    code='<Role company="Backstage" />'
+                    log="opened Backstage"
+                    type="title"
+                  >
                     <div className="flex flex-wrap items-baseline justify-between gap-1 border-b border-border/50 pb-1.5 print:pb-0.5">
                       <div>
-                        <h3 className="font-display text-[18px] font-semibold md:text-[20px] text-fg print:text-[10pt]">
+                        <h3
+                          className="font-display text-[18px] font-semibold text-fg md:text-[20px] print:text-[10pt]"
+                          data-type-target=""
+                        >
                           Chief Coordinator
                         </h3>
-                        <p className="text-sm font-medium text-fg-muted print:text-[8.5pt]">
+                        <p
+                          className="text-sm font-medium text-fg-muted print:text-[8.5pt]"
+                          data-type-target=""
+                        >
                           Department of Backstage and Infrastructure Mgmt.
                         </p>
                       </div>
-                      <time className="font-mono text-[11px] sm:text-xs text-fg-subtle print:text-[7.5pt]">
+                      <time className="font-mono text-[11px] text-fg-subtle sm:text-xs print:text-[7.5pt]">
                         May 2022 – Jun 2023 (13 mos)
                       </time>
                     </div>
-
-                    <ul className="mt-2.5 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3 print:mt-1">
-                      <li>
-                        Led production, infrastructure and tech support for two
-                        national fests, managing 50+ members and 30k+ attendees.
-                      </li>
-                      <li>
-                        Delivered WAVES&apos;22 for 6,000+ students nationwide
-                        on a ~₹1.25 Cr budget, 25% higher than the previous
-                        offline fest.
-                      </li>
-                    </ul>
-                  </div>
-                </Block>
+                  </Block>
+                  <ul className="mt-2.5 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:mt-1 print:space-y-0.5 print:pl-3 print:text-[7.5pt]">
+                    <Line
+                      section="backstage"
+                      agent="Proof"
+                      log="wrote the fests line"
+                    >
+                      Led production, infrastructure and tech support for two
+                      national fests, managing 50+ members and 30k+ attendees.
+                    </Line>
+                    <Line
+                      section="backstage"
+                      agent="Metrics"
+                      log="wrote the WAVES line"
+                    >
+                      Delivered WAVES&apos;22 for 6,000+ students nationwide on
+                      a ~₹1.25 Cr budget, 25% higher than the previous offline
+                      fest.
+                    </Line>
+                  </ul>
+                </div>
               </div>
             </section>
 
-            <Block
-              section="projects"
-              agent="Proof"
-              code="<AIProjects />"
-              log="added AI projects"
-            >
-              <section aria-labelledby="resume-ai-title">
+            <section aria-labelledby="resume-ai-title">
+              <Block
+                section="projects"
+                agent="Research"
+                code="<AIProjects />"
+                log="opened AI projects"
+                type="title"
+              >
                 <h2
                   id="resume-ai-title"
                   className="font-mono text-xs uppercase tracking-wider text-accent font-semibold print:text-[8.5pt]"
+                  data-type-target=""
                 >
                   AI projects
                 </h2>
-                <ul className="mt-2.5 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3 print:mt-1">
-                  <li>
-                    Built 5 Claude-powered tools for ops, sales and marketing,
-                    including a deal QC tool that checked ~60 deals in 15 days.
-                  </li>
-                  <li>
-                    Built internal funnel dashboards on MoEngage MCP and user
-                    data, going deeper than MoEngage&apos;s built-in analytics.
-                  </li>
-                  <li>
-                    Built an AI compliance agent that checks every blog draft
-                    against NSE and SEBI rules before it reaches human review.
-                  </li>
-                </ul>
-              </section>
-            </Block>
+              </Block>
+              <ul className="mt-2.5 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:mt-1 print:space-y-0.5 print:pl-3 print:text-[7.5pt]">
+                <Line
+                  section="projects"
+                  agent="Research"
+                  log="wrote the Claude tools line"
+                >
+                  Built 5 Claude-powered tools for ops, sales and marketing,
+                  including a deal QC tool that checked ~60 deals in 15 days.
+                </Line>
+                <Line
+                  section="projects"
+                  agent="Metrics"
+                  log="wrote the dashboard line"
+                >
+                  Built internal funnel dashboards on MoEngage MCP and user
+                  data, going deeper than MoEngage&apos;s built-in analytics.
+                </Line>
+                <Line
+                  section="projects"
+                  agent="Research"
+                  log="wrote the compliance line"
+                >
+                  Built an AI compliance agent that checks every blog draft
+                  against NSE and SEBI rules before it reaches human review.
+                </Line>
+              </ul>
+            </section>
 
             <Block
               section="skills"
@@ -674,6 +779,35 @@ export function ResumeDocument() {
   );
 }
 
+function Line({
+  section,
+  agent,
+  log,
+  children,
+}: {
+  section: string;
+  agent: string;
+  log: string;
+  children: ReactNode;
+}) {
+  return (
+    <li
+      data-block=""
+      data-section={section}
+      data-agent={agent}
+      data-code="<Line />"
+      data-log={log}
+      data-type="line"
+    >
+      <span className="agents-fill block">
+        <span className="block" data-type-target="">
+          {children}
+        </span>
+      </span>
+    </li>
+  );
+}
+
 function Block({
   section,
   agent,
@@ -686,7 +820,7 @@ function Block({
   agent: string;
   code: string;
   log: string;
-  type?: "name" | "fast";
+  type?: "name" | "fast" | "title";
   children: ReactNode;
 }) {
   return (

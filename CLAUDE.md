@@ -132,7 +132,7 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 - About collage is scroll-scrubbed: photos fly out and torn strips slide as the visitor scrolls a sticky stage (`components/about-collage.tsx` / `.css`; static under reduced motion).
 - v3.1 Product Venn chips are draggable (`components/product-venn-travel.tsx`).
 - Work-card hinge uses `motion/react` (Framer Motion 14.4.0) for the 3D flip on hover and focus in `components/work-thumbnails.tsx`. Scoped to this one component. Reduced-motion keeps the card closed.
-- `/preview/resume` is built live by six named cursors (`components/resume-agents/`). Preview only, behind the pass. Reduced motion, or no JavaScript, shows the finished resume. Explicit ask, 10 Nov 2026.
+- `/preview/resume` is built live by ten named cursors (`components/resume-agents/`). Preview only, behind the pass. Reduced motion, or no JavaScript, shows the finished resume. Explicit ask, 10 Nov 2026.
 
 ### Iconography
 Inline SVG only, no icon library. Every icon sits on a 24×24 grid, strokes are 1.8px (round caps and joins), colour is `currentColor` so a parent text colour drives it. Fills are the exception, used only when the mark reads as a filled shape (LinkedIn, success tick). Keep each icon in the same file as its one consumer, or group a handful in a shared `-icons.tsx` when they repeat across sections. Do not pull a new icon from a library at a different weight or grid.
