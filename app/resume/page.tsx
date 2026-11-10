@@ -60,25 +60,6 @@ const jsonLd = {
 
 const CONTACT_ITEMS = [
   {
-    label: "Bengaluru",
-    href: undefined,
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-3.5 w-3.5"
-        aria-hidden="true"
-      >
-        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-        <circle cx="12" cy="10" r="3" />
-      </svg>
-    ),
-  },
-  {
     label: "megh.bpgc@gmail.com",
     href: "mailto:megh.bpgc@gmail.com",
     icon: (
@@ -137,17 +118,39 @@ const CONTACT_ITEMS = [
     ),
   },
   {
-    label: "linkedin.com/in/meghxgupta",
+    label: "LinkedIn",
     href: "https://www.linkedin.com/in/meghxgupta",
     external: true,
     icon: (
       <svg
         viewBox="0 0 24 24"
         fill="currentColor"
+        className="h-4 w-4"
+        aria-hidden="true"
+      >
+        <path
+          fillRule="evenodd"
+          d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.063 2.063 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+        />
+      </svg>
+    ),
+  },
+  {
+    label: "Bengaluru",
+    href: undefined,
+    icon: (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         className="h-3.5 w-3.5"
         aria-hidden="true"
       >
-        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.65 1.65 0 1 0 0-3.3 1.65 1.65 0 0 0 0 3.3m1.4 9.74V9.89H5.06v8.61h2.8z" />
+        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+        <circle cx="12" cy="10" r="3" />
       </svg>
     ),
   },
@@ -256,18 +259,27 @@ export default function ResumePage() {
                   key={item.label}
                   className="inline-flex items-center gap-1.5"
                 >
-                  <span className="text-fg-subtle">{item.icon}</span>
                   {item.href ? (
                     <a
                       href={item.href}
                       target={item.external ? "_blank" : undefined}
                       rel={item.external ? "noopener noreferrer" : undefined}
-                      className="inline-flex min-h-11 items-center underline underline-offset-2 transition-colors duration-150 hover:text-fg"
+                      className={`inline-flex min-h-11 items-center gap-1.5 underline underline-offset-2 transition-colors duration-150 hover:text-fg ${
+                        item.label === "LinkedIn" ? "text-fg-subtle" : ""
+                      }`}
                     >
+                      {item.label === "LinkedIn" ? (
+                        item.icon
+                      ) : (
+                        <span className="text-fg-subtle">{item.icon}</span>
+                      )}
                       {item.label}
                     </a>
                   ) : (
-                    <span>{item.label}</span>
+                    <>
+                      <span className="text-fg-subtle">{item.icon}</span>
+                      <span>{item.label}</span>
+                    </>
                   )}
                 </li>
               ))}
