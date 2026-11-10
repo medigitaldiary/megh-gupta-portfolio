@@ -132,10 +132,7 @@ export function BackstagePass({
                     <p className="font-mono text-[0.65rem] uppercase tracking-[0.3em]">
                       Megh Gupta · Studio
                     </p>
-                    <span
-                      className="rounded-full px-2.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.2em]"
-                      style={{ background: "rgba(203,179,232,0.45)" }}
-                    >
+                    <span className="rounded-full bg-highlight/45 px-2.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.2em]">
                       Works in progress
                     </span>
                   </div>

@@ -20,10 +20,7 @@ export function Hero({
       width={128}
       height={128}
       priority
-      className="h-[44px] w-[44px] shrink-0 rounded-full md:h-[56px] md:w-[56px]"
-      style={{
-        filter: "drop-shadow(0 2px 8px rgba(31, 59, 46, 0.18))",
-      }}
+      className="h-[44px] w-[44px] shrink-0 rounded-full drop-shadow-[0_2px_8px_rgba(31,59,46,0.18)] md:h-[56px] md:w-[56px]"
     />
   );
 

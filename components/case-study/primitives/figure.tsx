@@ -82,12 +82,7 @@ function CaptionBar({
         </p>
       ) : null}
       {note ? (
-        <p
-          className="mt-2 text-sm leading-snug text-fg-subtle"
-          style={{
-            fontFamily: "var(--font-hand), var(--font-caveat), cursive",
-          }}
-        >
+        <p className="mt-2 font-hand text-sm leading-snug text-fg-subtle">
           {note}
         </p>
       ) : null}
