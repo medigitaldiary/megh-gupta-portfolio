@@ -10,7 +10,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { WritingSection } from "@/components/writing-section";
 
 export const metadata: Metadata = {
-  title: "Portfolio v1 preview — Megh Gupta",
+  title: "Portfolio v1 preview · Megh Gupta",
   description:
     "First real-fidelity build of the full 7-fold portfolio per PRD v3.",
   robots: { index: false, follow: false },

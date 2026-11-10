@@ -1,4 +1,5 @@
 import { RelockButton } from "@/components/relock-button";
+import { SiteFooter } from "@/components/site-footer";
 
 // Case studies are locked until launch (middleware.ts). Remove "/work"
 // from the middleware matcher + PROTECTED_PREFIXES, and this layout,
@@ -11,6 +12,7 @@ export default function WorkLayout({
   return (
     <>
       {children}
+      <SiteFooter />
       <RelockButton />
     </>
   );

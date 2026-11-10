@@ -82,12 +82,7 @@ function CaptionBar({
         </p>
       ) : null}
       {note ? (
-        <p
-          className="mt-2 text-sm leading-snug text-fg-subtle"
-          style={{
-            fontFamily: "var(--font-hand), var(--font-caveat), cursive",
-          }}
-        >
+        <p className="mt-2 font-hand text-sm leading-snug text-fg-subtle">
           {note}
         </p>
       ) : null}
@@ -110,7 +105,7 @@ function Placeholder({
       <code className="px-4 text-center font-mono text-xs text-fg-subtle">
         {src}
         <br />
-        placeholder — {aspectRatio.replace("/", " × ")}
+        placeholder: {aspectRatio.replace("/", " × ")}
       </code>
     </div>
   );

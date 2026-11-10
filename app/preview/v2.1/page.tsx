@@ -10,9 +10,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { WritingSection } from "@/components/writing-section";
 
 export const metadata: Metadata = {
-  title: "Portfolio v2.1 preview — Megh Gupta",
+  title: "Portfolio v2.1 preview · Megh Gupta",
   description:
-    "The full seven-fold portfolio rendered under the new design system — Geist typography, tighter spacing, 16px card radii — scoped to /preview/v2.1 only.",
+    "The full seven-fold portfolio rendered under the new design system (Geist typography, tighter spacing, 16px card radii), scoped to /preview/v2.1 only.",
   robots: { index: false, follow: false },
 };
 

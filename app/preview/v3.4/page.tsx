@@ -8,7 +8,7 @@ import { SelectedWorkShelf } from "@/components/selected-work-shelf";
 import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
-  title: "Portfolio v3.4 — opening",
+  title: "Portfolio v3.4 · opening",
   description:
     "Preview of the opening: a full-screen Venn with the portrait in the center, then the current hero fold.",
   robots: { index: false, follow: false },

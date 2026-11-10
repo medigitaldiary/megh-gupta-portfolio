@@ -40,7 +40,7 @@ export const labCards: LabCard[] = [
     kind: "personal-tool",
     section: "efficiency",
     description:
-      "Claude Code + Supabase tracker for the whole job search — pipeline, notes, follow-ups in one place.",
+      "Claude Code + Supabase tracker for the whole job search: pipeline, notes, follow-ups in one place.",
     stack: ["claude-code", "supabase", "next.js"],
     featured: true,
     order: 1,
@@ -52,7 +52,7 @@ export const labCards: LabCard[] = [
     kind: "personal-tool",
     section: "efficiency",
     description:
-      "Investopedia-style glossary hub for BondScanner — 200+ terms, each anchored to a high-intent keyword.",
+      "Investopedia-style glossary hub for BondScanner. 200+ terms, each anchored to a high-intent keyword.",
     stack: ["next.js", "programmatic-seo"],
     featured: true,
     order: 2,
@@ -114,7 +114,7 @@ export const labCards: LabCard[] = [
     kind: "github-project",
     section: "side-quest",
     description:
-      "Find and compare AI tools by use case, role, or industry — with real user experiences layered on top.",
+      "Find and compare AI tools by use case, role, or industry, with real user experiences layered on top.",
     stack: ["next.js", "claude-api"],
     stage: "building",
     featured: true,
@@ -140,7 +140,7 @@ export const labCards: LabCard[] = [
     kind: "github-project",
     section: "side-quest",
     description:
-      "Crawls a website and renders a visual map of its pages and internal links — an SEO x-ray in one view.",
+      "Crawls a website and renders a visual map of its pages and internal links: an SEO x-ray in one view.",
     stack: ["next.js", "d3"],
     stage: "testing",
     featured: true,

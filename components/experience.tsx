@@ -768,7 +768,14 @@ function TimelineChip({
           {chip}
         </a>
       ) : (
-        chip
+        <button
+          type="button"
+          aria-describedby={item.summary ? tipId : undefined}
+          aria-label={item.role ? `${item.label} - ${item.role}` : item.label}
+          className="block h-full w-full cursor-default rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+        >
+          {chip}
+        </button>
       )}
     </ChipWithTooltip>
   );
@@ -877,19 +884,19 @@ function TimelineTooltip({
         animation: "tl-tip-in 160ms ease-out both",
       }}
     >
-      <div className="rounded-[18px] border border-slate-200/70 bg-white/95 p-4 shadow-[0_12px_28px_-10px_rgba(15,23,42,0.18)] backdrop-blur-sm">
-        <p className="text-[15px] leading-relaxed text-slate-600">
+      <div className="rounded-[18px] border border-border bg-bg-elevated/95 p-4 shadow-[0_12px_28px_-10px_rgba(31,59,46,0.25)] backdrop-blur-sm">
+        <p className="text-[15px] leading-relaxed text-fg-muted">
           {item.summary}
         </p>
-        <div className="mt-3 border-slate-200/80 border-t pt-3">
-          <p className="font-mono text-[12px] tracking-wide text-slate-500">
+        <div className="mt-3 border-border border-t pt-3">
+          <p className="font-mono text-[12px] tracking-wide text-fg-subtle">
             {dateRange}
           </p>
         </div>
       </div>
       <span
         aria-hidden="true"
-        className="absolute block h-[10px] w-[10px] rotate-45 border-slate-200/70 border-r border-b bg-white/95"
+        className="absolute block h-[10px] w-[10px] rotate-45 border-border border-r border-b bg-bg-elevated/95"
         style={{ left: notchLeft - 5, bottom: -5 }}
       />
       <style>{`

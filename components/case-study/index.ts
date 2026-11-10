@@ -44,3 +44,4 @@ export { Metric, MetricRow } from "./primitives/metric";
 export type { PillVariant } from "./primitives/pill";
 export { Pill } from "./primitives/pill";
 export { Quote } from "./primitives/quote";
+export { TLDR } from "./primitives/tldr";

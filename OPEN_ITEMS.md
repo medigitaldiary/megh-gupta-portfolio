@@ -13,7 +13,7 @@ Last updated: 2026-09-22 (post PR #18 merge — /preview/v1 shipped).
 3. **Real Writing entries.** `lib/writing.ts` has 4 seed titles + excerpts, no bodies. Either author 4–6 real entries (per PRD §7.5 launch order) or hide the fold at launch until 3 are ready — the section auto-hides if fewer than 3 published.
 4. **Real external URLs on every Work card.** All 4 cards in `lib/work.ts` currently point at `#`. Fill `externalUrl` with the deck / PRD / Loom / dashboard for each, or wait for `/work/[slug]` detail pages (PRD §6.2).
 5. **Real external URLs on every Lab card.** Same problem in `lib/lab.ts` — 6 cards, all `#`. Every Lab entry needs a real `url` per PRD §7.4.
-6. **Real social URLs in the Connect fold.** LinkedIn is real; X, GitHub, Read.cv are `#` in `components/contact.tsx`. Fill them or drop the row.
+6. ~~**Real social URLs in the Connect fold.**~~ Done: the site footer links LinkedIn, GitHub (github.com/medigitaldiary) and email. X is dropped everywhere; Read.cv is no longer on the site.
 7. **Connect fold delivery decision.** Pick one per PRD Appendix A — Cal.com (meetings), Tally (messages), or Resend + custom (full control). Currently the fold is mailto-only. Recommendation stands: Cal.com if the goal is meetings, Tally if the goal is messages.
 8. **Real MoveInSync bullets in `lib/experience.ts`.** One entry has a literal `TODO:` string as its bullet. Replace with real 2–4 bullets from your résumé, or drop the entry from v1.
 
