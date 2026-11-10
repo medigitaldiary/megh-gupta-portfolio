@@ -7,6 +7,8 @@ import { relock } from "@/app/unlock/actions";
 /** Floating "Lock again" pill shown on every locked page. */
 export function RelockButton() {
   const next = usePathname();
+  // The resume preview puts its own log and Skip control in this corner.
+  if (next === "/preview/resume") return null;
 
   return (
     <form
