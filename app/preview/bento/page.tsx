@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BentoBoard } from "@/components/bento/bento-board";
@@ -32,6 +34,11 @@ export const metadata: Metadata = {
     "Megh Gupta on one board: the route, the work, the numbers and how to reach him.",
   robots: { index: false, follow: false },
 };
+
+// The BITS mark shows on the Goa stop once the file is added to the repo.
+const BITS_LOGO = "/images/logos/bits-goa.png";
+const hasBitsLogo = () =>
+  fs.existsSync(path.join(process.cwd(), "public", BITS_LOGO));
 
 const lensesFor = (key: string) => (BENTO_TILE_LENSES[key] ?? []).join(" ");
 
@@ -110,6 +117,7 @@ export default async function BentoPreviewPage() {
           {/* Tile 2: trajectory. Where has this person been? */}
           <RouteTile
             jobs={routeJobs()}
+            bitsLogo={hasBitsLogo() ? BITS_LOGO : undefined}
             goa={
               goa
                 ? {

@@ -86,9 +86,11 @@ export type RoutePhoto = { src: string; alt: string; caption: string };
 export function RouteTile({
   jobs,
   goa,
+  bitsLogo,
 }: {
   jobs: RouteJob[];
   goa?: RoutePhoto;
+  bitsLogo?: string;
 }) {
   const [stop, setStop] = useState<RouteStopId>("blr");
 
@@ -168,7 +170,7 @@ export function RouteTile({
       <div className="bento-stub flex min-h-[13.5rem] flex-col justify-between gap-3 p-5 md:w-[44%] md:p-7">
         <div aria-live="polite" className="min-w-0">
           {stop === "lko" ? <LucknowStop /> : null}
-          {stop === "goi" ? <GoaStop photo={goa} /> : null}
+          {stop === "goi" ? <GoaStop photo={goa} logo={bitsLogo} /> : null}
           {stop === "blr" ? <BengaluruStop jobs={jobs} /> : null}
         </div>
         <div className="flex items-end justify-between gap-3">
@@ -210,29 +212,48 @@ function LucknowStop() {
   );
 }
 
-function GoaStop({ photo }: { photo?: RoutePhoto }) {
+function GoaStop({ photo, logo }: { photo?: RoutePhoto; logo?: string }) {
   return (
-    <div className="flex items-start gap-4">
-      {photo ? (
-        <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-[18px] md:h-28 md:w-28">
-          <Image
-            src={photo.src}
-            alt={photo.alt}
-            fill
-            sizes="112px"
-            className="object-cover"
-          />
+    <div>
+      <div className="flex items-start gap-4">
+        {photo ? (
+          <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[18px]">
+            <Image
+              src={photo.src}
+              alt={photo.alt}
+              fill
+              sizes="80px"
+              className="object-cover"
+            />
+          </div>
+        ) : null}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-3">
+            <p className="bento-eyebrow">Stop 02 · College</p>
+            {logo ? (
+              <span className="relative block h-7 w-[4.5rem] shrink-0">
+                <Image
+                  src={logo}
+                  alt="BITS Pilani, K K Birla Goa Campus"
+                  fill
+                  sizes="72px"
+                  className="object-contain object-right"
+                />
+              </span>
+            ) : null}
+          </div>
+          <p className="mt-2 font-display text-fg text-xl leading-tight tracking-tight">
+            BITS Goa, class of 2025.
+          </p>
         </div>
-      ) : null}
-      <div className="min-w-0">
-        <p className="bento-eyebrow">Stop 02 · College</p>
-        <p className="mt-2 font-display text-fg text-xl leading-tight tracking-tight">
-          BITS Goa, class of 2025.
-        </p>
-        <p className="mt-2 text-fg-muted text-sm leading-normal">
-          Quieter roads. A two-wheeler, no fixed plan.
-        </p>
       </div>
+      <p className="mt-3 font-medium text-fg text-sm leading-snug">
+        Chief Coordinator, Backstage.
+      </p>
+      <p className="mt-1 text-fg-muted text-sm leading-normal">
+        Hosted the best DJ nights on campus. Managed Waves &apos;22, one of
+        India&apos;s largest cultural festivals.
+      </p>
     </div>
   );
 }
