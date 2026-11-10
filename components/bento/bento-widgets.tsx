@@ -228,22 +228,21 @@ function GoaStop({ photo, logo }: { photo?: RoutePhoto; logo?: string }) {
           </div>
         ) : null}
         <div className="min-w-0 flex-1">
-          <div className="flex items-center justify-between gap-3">
-            <p className="bento-eyebrow">Stop 02 · College</p>
-            {logo ? (
-              <span className="relative block h-7 w-[4.5rem] shrink-0">
+          <p className="bento-eyebrow">Stop 02 · College</p>
+          <p className="mt-2 font-display text-fg text-xl leading-[1.45] tracking-tight">
+            Class of 2025 at{" "}
+            <span className="bento-glass inline-flex items-center gap-1.5 whitespace-nowrap px-2.5 py-0.5 align-middle text-base">
+              {logo ? (
                 <Image
                   src={logo}
-                  alt="BITS Pilani, K K Birla Goa Campus"
-                  fill
-                  sizes="72px"
-                  className="object-contain object-right"
+                  alt=""
+                  width={40}
+                  height={40}
+                  className="h-5 w-5 rounded-full object-contain"
                 />
-              </span>
-            ) : null}
-          </div>
-          <p className="mt-2 font-display text-fg text-xl leading-tight tracking-tight">
-            BITS Goa, class of 2025.
+              ) : null}
+              BITS Goa
+            </span>
           </p>
         </div>
       </div>
