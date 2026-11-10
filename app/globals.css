@@ -17,6 +17,9 @@
   --highlight: #cbb3e8; /* Soft Lilac — decorative tint, never chrome */
   --highlight-strong: #b89cdc; /* Stronger lilac — focus rings, link underlines */
 
+  /* Pine card shadow. CLAUDE.md §3, 02-tokens.md §2.15 --shadow-md. */
+  --shadow-md: 0 10px 30px -12px rgba(31, 59, 46, 0.45);
+
   /* Product Venn palette — used only by components/product-venn.tsx */
   --venn-user: #c1497f;
   --venn-tech: #4a72b0;
@@ -676,5 +679,13 @@ section {
   }
   .lab-flask-slot:hover .lab-smoke {
     opacity: 1;
+  }
+}
+
+/* Print page setup for /resume */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
   }
 }
