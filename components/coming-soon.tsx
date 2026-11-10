@@ -3,7 +3,7 @@ import { CloudBackground } from "@/components/cloud-background";
 import { CopyEmailButton } from "@/components/copy-email-button";
 
 const CONTACT_EMAIL = "megh.bpgc@gmail.com";
-const LINKEDIN_URL = "https://www.linkedin.com/in/megh-gupta-917280200";
+const LINKEDIN_URL = "https://www.linkedin.com/in/meghxgupta";
 const RESUME_URL = "/resume.pdf";
 
 type Palette = "dawn" | "blue" | "ods";

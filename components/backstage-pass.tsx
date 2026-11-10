@@ -67,7 +67,14 @@ export function BackstagePass({
       "(prefers-reduced-motion: reduce)",
     ).matches;
     const t = setTimeout(
-      () => window.location.replace(state.next),
+      () => {
+        const hash = window.location.hash;
+        const dest =
+          hash && !state.next.includes("#")
+            ? `${state.next}${hash}`
+            : state.next;
+        window.location.replace(dest);
+      },
       reduce ? 350 : 1650,
     );
     return () => clearTimeout(t);

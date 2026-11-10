@@ -34,7 +34,7 @@ export const DEFAULT_NAV_ITEMS: NavItem[] = [
   { id: "connect", label: "Contact", href: "#connect", Icon: MailIcon },
 ];
 
-const LINKEDIN_URL = "https://www.linkedin.com/in/megh-gupta-917280200";
+const LINKEDIN_URL = "https://www.linkedin.com/in/meghxgupta";
 const RESUME_URL = "/resume.pdf";
 
 // The hero greeting already says the name. These four lines take turns

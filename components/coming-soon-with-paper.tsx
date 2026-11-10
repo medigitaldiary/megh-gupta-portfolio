@@ -5,7 +5,7 @@ import { PaperFallback } from "@/components/paper-fallback";
 import { ThreeDPaper } from "@/components/three-d-paper";
 
 const CONTACT_EMAIL = "hi@meghgupta.com";
-const LINKEDIN_URL = "https://www.linkedin.com/in/megh-gupta-917280200";
+const LINKEDIN_URL = "https://www.linkedin.com/in/meghxgupta";
 const RESUME_URL = "/resume.pdf";
 
 type Variant = "A" | "B" | "C";
