@@ -274,301 +274,295 @@ export default function ResumePage() {
             </ul>
           </header>
 
-          {/* Two-column layout: Experience (left) & Sidebar (right) */}
-          <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_17.5rem] lg:gap-12 print:grid-cols-[minmax(0,1fr)_15rem] print:gap-6 print:mt-3">
-            {/* Primary Column: Experience & Projects */}
-            <div className="space-y-8 print:space-y-3.5">
-              {/* Summary Section */}
-              <section aria-labelledby="resume-summary-title">
-                <h2
-                  id="resume-summary-title"
-                  className="font-mono text-xs uppercase tracking-wider text-accent font-semibold print:text-[8.5pt]"
-                >
-                  Summary
-                </h2>
-                <div className="mt-2.5 text-[15px] leading-relaxed text-fg-muted print:mt-1 print:text-[8pt] md:text-base">
-                  <p>
-                    Product manager who builds regulated fintech products from 0
-                    to 1. Founding PM at BondScanner, a SEBI-registered bond
-                    platform opening up India&apos;s bond market for retail
-                    investors, and before that platform and retention PM on Tap
-                    Invest&apos;s ultra app with 25+ feature launches across
-                    onboarding, wallet, referral and retention.
-                  </p>
-                </div>
-              </section>
+          {/* Fold: summary and education share one row. Everything below is one column. */}
+          <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,2.1fr)_minmax(0,1fr)] md:items-start md:gap-12 print:mt-3 print:grid-cols-[minmax(0,2.1fr)_minmax(0,1fr)] print:gap-6">
+            <section aria-labelledby="resume-summary-title">
+              <h2
+                id="resume-summary-title"
+                className="font-mono text-xs uppercase tracking-wider text-accent font-semibold print:text-[8.5pt]"
+              >
+                Summary
+              </h2>
+              <div className="mt-2.5 text-[15px] leading-relaxed text-fg-muted print:mt-1 print:text-[8pt] md:text-base">
+                <p>
+                  Product manager who builds regulated fintech products from 0
+                  to 1. Founding PM at BondScanner, a SEBI-registered bond
+                  platform opening up India&apos;s bond market for retail
+                  investors, and before that platform and retention PM on Tap
+                  Invest&apos;s ultra app with 25+ feature launches across
+                  onboarding, wallet, referral and retention.
+                </p>
+              </div>
+            </section>
 
-              {/* Work Experience Section */}
-              <section aria-labelledby="resume-experience-title">
-                <h2
-                  id="resume-experience-title"
-                  className="font-mono text-xs uppercase tracking-wider text-accent font-semibold print:text-[8.5pt]"
-                >
-                  Experience
-                </h2>
-
-                <div className="mt-4 space-y-7 print:mt-2 print:space-y-3">
-                  {/* Tap Invest */}
-                  <div className="print:break-inside-avoid">
-                    <div className="flex flex-wrap items-baseline justify-between gap-1 border-b border-border/50 pb-1.5 print:pb-0.5">
-                      <div>
-                        <h3 className="font-display text-[18px] font-semibold md:text-[20px] text-fg print:text-[10pt]">
-                          Associate Product Manager
-                        </h3>
-                        <p className="text-sm font-medium text-fg-muted print:text-[8.5pt]">
-                          Tap Invest
-                        </p>
-                      </div>
-                      <time className="font-mono text-[11px] sm:text-xs text-fg-subtle print:text-[7.5pt]">
-                        Mar 2025 – Oct 2026 (18 mos)
-                      </time>
-                    </div>
-
-                    {/* Product 1: BondScanner */}
-                    <div className="mt-3 pl-0 sm:pl-3 border-l-0 sm:border-l-2 sm:border-border/60 print:pl-2 print:border-l print:mt-1.5">
-                      <div className="flex flex-wrap items-baseline justify-between gap-1">
-                        <h4 className="text-[15px] font-medium md:text-base text-fg print:text-[8.5pt]">
-                          BondScanner{" "}
-                          <span className="font-normal text-fg-subtle">
-                            · SEBI-registered online bond platform
-                          </span>
-                        </h4>
-                        <span className="font-mono text-[10px] sm:text-[11px] text-fg-subtle print:text-[7pt]">
-                          Nov 2025 – Oct 2026 (12 mos)
-                        </span>
-                      </div>
-
-                      <ul className="mt-2 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3">
-                        <li>
-                          Built BondScanner 0 to 1 as founding PM, launching
-                          awareness and acquisition journeys on web and mobile
-                          within 2 months.
-                        </li>
-                        <li>
-                          Owned SEO as a product surface, shipping a Strapi blog
-                          revamp, a site-wide SEO SOP and an internal linking
-                          graph that lifted link health 50–60% in 2 months,
-                          helping drive ~2x daily organic clicks.
-                        </li>
-                        <li>
-                          Launched and grew the Bond Bytes newsletter to 200+
-                          editions. It reached 20% of all sign-ups, grew reach
-                          3.5x month on month and converted 7% of push
-                          notifications into KYC and payment completions.
-                        </li>
-                        <li>
-                          Shipped Watchlist, the first native bond-tracking tool
-                          among Indian bond platforms. About 5,000 users adopted
-                          it in the first two weeks, adding bonds at a 3:1 ratio
-                          to removals.
-                        </li>
-                        <li>
-                          Led a third-party bond data partnership from vendor
-                          evaluation to API integration, automating 80% of 35+
-                          deal creation fields and removing manual ops entry.
-                        </li>
-                        <li>
-                          Revamped the Deal Detail page with secondary market
-                          activity, covenants and security data that no other
-                          retail bond platform shows, so investors can judge a
-                          bond at institutional depth.
-                        </li>
-                        <li>
-                          Set up support workflows on Freshdesk with SLAs and
-                          ticket automations, cutting manual support effort by
-                          40%.
-                        </li>
-                        <li>
-                          Built an AI call analysis pipeline with Sarvam STT and
-                          Claude that scores RM calls and writes action items,
-                          lifting team quality scores by about 15% in 30 days.
-                        </li>
-                      </ul>
-                    </div>
-
-                    {/* Product 2: Ultra */}
-                    <div className="mt-4 pl-0 sm:pl-3 border-l-0 sm:border-l-2 sm:border-border/60 print:pl-2 print:border-l print:mt-2">
-                      <div className="flex flex-wrap items-baseline justify-between gap-1">
-                        <h4 className="text-[15px] font-medium md:text-base text-fg print:text-[8.5pt]">
-                          ultra{" "}
-                          <span className="font-normal text-fg-subtle">
-                            · Alternative investment app
-                          </span>
-                        </h4>
-                        <span className="font-mono text-[10px] sm:text-[11px] text-fg-subtle print:text-[7pt]">
-                          Mar 2025 – Oct 2025 (6 mos)
-                        </span>
-                      </div>
-
-                      <ul className="mt-2 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3">
-                        <li>
-                          Built a GIFT City NRI FD MVP under IFSCA rules,
-                          closing 3 bank partnerships and onboarding 5 pilot
-                          accounts.
-                        </li>
-                        <li>
-                          Launched Flexi Invoice Discounting, a variable-tenure
-                          product for early liquidity, adding ~₹50 Cr AUM in 3
-                          months.
-                        </li>
-                        <li>
-                          Redesigned the referral flow in onboarding, reaching
-                          40% referral adoption and 20% acquisition growth in 3
-                          months.
-                        </li>
-                        <li>
-                          Expanded ultra from mobile to web (invest, wallet,
-                          KYC), driving 15–20% True AUM growth and 30% of Q3
-                          sign-ups.
-                        </li>
-                        <li>
-                          Shipped Strapi CMS so the marketing team could publish
-                          on their own, cutting turnaround time by about 30%.
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* MoveInSync */}
-                  <div className="print:break-inside-avoid">
-                    <div className="flex flex-wrap items-baseline justify-between gap-1 border-b border-border/50 pb-1.5 print:pb-0.5">
-                      <div>
-                        <h3 className="font-display text-[18px] font-semibold md:text-[20px] text-fg print:text-[10pt]">
-                          Product Intern
-                        </h3>
-                        <p className="text-sm font-medium text-fg-muted print:text-[8.5pt]">
-                          MoveInSync
-                        </p>
-                      </div>
-                      <time className="font-mono text-[11px] sm:text-xs text-fg-subtle print:text-[7.5pt]">
-                        Jun 2024 – Feb 2025 (9 mos)
-                      </time>
-                    </div>
-
-                    <ul className="mt-2.5 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3 print:mt-1">
-                      <li>
-                        Worked across PMs, marketing and customer success,
-                        turning client-built features into upsells and
-                        cross-sells.
-                      </li>
-                      <li>
-                        Built pricing for Safety Toolkit and DMS-ADAS premium
-                        features, pitched to 50+ clients at Chennai Prodcon
-                        Summit.
-                      </li>
-                    </ul>
-                  </div>
-
-                  {/* Department of Backstage and Infrastructure Management */}
-                  <div className="print:break-inside-avoid">
-                    <div className="flex flex-wrap items-baseline justify-between gap-1 border-b border-border/50 pb-1.5 print:pb-0.5">
-                      <div>
-                        <h3 className="font-display text-[18px] font-semibold md:text-[20px] text-fg print:text-[10pt]">
-                          Chief Coordinator
-                        </h3>
-                        <p className="text-sm font-medium text-fg-muted print:text-[8.5pt]">
-                          Department of Backstage and Infrastructure Mgmt.
-                        </p>
-                      </div>
-                      <time className="font-mono text-[11px] sm:text-xs text-fg-subtle print:text-[7.5pt]">
-                        May 2022 – Jun 2023 (13 mos)
-                      </time>
-                    </div>
-
-                    <ul className="mt-2.5 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3 print:mt-1">
-                      <li>
-                        Led production, infrastructure and tech support for two
-                        national fests, managing 50+ members and 30k+ attendees.
-                      </li>
-                      <li>
-                        Delivered WAVES&apos;22 for 6,000+ students nationwide
-                        on a ~₹1.25 Cr budget, 25% higher than the previous
-                        offline fest.
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </section>
-
-              <section aria-labelledby="resume-ai-title">
-                <h2
-                  id="resume-ai-title"
-                  className="font-mono text-xs uppercase tracking-wider text-accent font-semibold print:text-[8.5pt]"
-                >
-                  AI projects
-                </h2>
-                <ul className="mt-2.5 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3 print:mt-1">
-                  <li>
-                    Built 5 Claude-powered tools for ops, sales and marketing,
-                    including a deal QC tool that checked ~60 deals in 15 days.
-                  </li>
-                  <li>
-                    Built internal funnel dashboards on MoEngage MCP and user
-                    data, going deeper than MoEngage&apos;s built-in analytics.
-                  </li>
-                  <li>
-                    Built an AI compliance agent that checks every blog draft
-                    against NSE and SEBI rules before it reaches human review.
-                  </li>
-                </ul>
-              </section>
-            </div>
-
-            {/* Sidebar Column: Skills, Education, Case Studies */}
-            <aside
-              className="space-y-7 print:space-y-3"
-              aria-label="Skills and Education"
+            <section
+              className="print:break-inside-avoid"
+              aria-labelledby="resume-education-title"
             >
-              <section className="print:break-inside-avoid">
-                <h2 className="font-mono text-xs uppercase tracking-wider text-accent font-semibold print:text-[8pt]">
-                  Tools
-                </h2>
-                <div className="mt-2.5 flex flex-wrap gap-1.5 print:mt-1 print:gap-1">
-                  {SKILL_TOOLS.map((tool) => (
-                    <span
-                      key={tool}
-                      className="inline-flex items-center rounded border border-border/80 bg-bg/60 px-2 py-0.5 font-mono text-sm text-fg-muted print:border-border/60 print:px-1.5 print:py-0 print:text-[7.5pt]"
-                    >
-                      {tool}
-                    </span>
-                  ))}
-                </div>
-              </section>
+              <h2
+                id="resume-education-title"
+                className="font-mono text-xs uppercase tracking-wider text-accent font-semibold print:text-[8pt]"
+              >
+                Education
+              </h2>
+              <div className="mt-2.5 text-sm text-fg-muted print:mt-1 print:text-[7.5pt]">
+                <p className="font-medium text-fg print:text-[8pt]">
+                  BITS Pilani, Goa Campus
+                </p>
+                <p className="mt-0.5 leading-snug">
+                  B.E. Chemical Engineering + M.Sc. Biological Sciences
+                </p>
+                <time className="mt-1 block font-mono text-[11px] text-fg-subtle print:text-[7pt]">
+                  2020 – 2025
+                </time>
+              </div>
+            </section>
+          </div>
 
-              <section className="print:break-inside-avoid">
-                <h2 className="font-mono text-xs uppercase tracking-wider text-accent font-semibold print:text-[8pt]">
-                  Methods
-                </h2>
-                <div className="mt-2.5 flex flex-wrap gap-1.5 print:mt-1 print:gap-1">
-                  {SKILL_METHODS.map((method) => (
-                    <span
-                      key={method}
-                      className="inline-flex items-center rounded border border-border/80 bg-bg/60 px-2 py-0.5 text-sm text-fg print:border-border/60 print:px-1.5 print:py-0 print:text-[7.5pt]"
-                    >
-                      {method}
-                    </span>
-                  ))}
-                </div>
-              </section>
+          <div className="mt-8 space-y-8 print:mt-3 print:space-y-3.5">
+            {/* Work Experience Section */}
+            <section aria-labelledby="resume-experience-title">
+              <h2
+                id="resume-experience-title"
+                className="font-mono text-xs uppercase tracking-wider text-accent font-semibold print:text-[8.5pt]"
+              >
+                Experience
+              </h2>
 
-              {/* Education */}
-              <section className="print:break-inside-avoid">
-                <h2 className="font-mono text-xs uppercase tracking-wider text-accent font-semibold print:text-[8pt]">
-                  Education
-                </h2>
-                <div className="mt-2.5 text-sm text-fg-muted print:mt-1 print:text-[7.5pt]">
-                  <p className="font-medium text-fg print:text-[8pt]">
-                    BITS Pilani, Goa Campus
-                  </p>
-                  <p className="mt-0.5 leading-snug">
-                    B.E. Chemical Engineering + M.Sc. Biological Sciences
-                  </p>
-                  <time className="mt-1 block font-mono text-[11px] text-fg-subtle print:text-[7pt]">
-                    2020 – 2025
-                  </time>
+              <div className="mt-4 space-y-7 print:mt-2 print:space-y-3">
+                {/* Tap Invest */}
+                <div className="print:break-inside-avoid">
+                  <div className="flex flex-wrap items-baseline justify-between gap-1 border-b border-border/50 pb-1.5 print:pb-0.5">
+                    <div>
+                      <h3 className="font-display text-[18px] font-semibold md:text-[20px] text-fg print:text-[10pt]">
+                        Associate Product Manager
+                      </h3>
+                      <p className="text-sm font-medium text-fg-muted print:text-[8.5pt]">
+                        Tap Invest
+                      </p>
+                    </div>
+                    <time className="font-mono text-[11px] sm:text-xs text-fg-subtle print:text-[7.5pt]">
+                      Mar 2025 – Oct 2026 (18 mos)
+                    </time>
+                  </div>
+
+                  {/* Product 1: BondScanner */}
+                  <div className="mt-3 pl-0 sm:pl-3 border-l-0 sm:border-l-2 sm:border-border/60 print:pl-2 print:border-l print:mt-1.5">
+                    <div className="flex flex-wrap items-baseline justify-between gap-1">
+                      <h4 className="text-[15px] font-medium md:text-base text-fg print:text-[8.5pt]">
+                        BondScanner{" "}
+                        <span className="font-normal text-fg-subtle">
+                          · SEBI-registered online bond platform
+                        </span>
+                      </h4>
+                      <span className="font-mono text-[10px] sm:text-[11px] text-fg-subtle print:text-[7pt]">
+                        Nov 2025 – Oct 2026 (12 mos)
+                      </span>
+                    </div>
+
+                    <ul className="mt-2 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3">
+                      <li>
+                        Built BondScanner 0 to 1 as founding PM, launching
+                        awareness and acquisition journeys on web and mobile
+                        within 2 months.
+                      </li>
+                      <li>
+                        Owned SEO as a product surface, shipping a Strapi blog
+                        revamp, a site-wide SEO SOP and an internal linking
+                        graph that lifted link health 50–60% in 2 months,
+                        helping drive ~2x daily organic clicks.
+                      </li>
+                      <li>
+                        Launched and grew the Bond Bytes newsletter to 200+
+                        editions. It reached 20% of all sign-ups, grew reach
+                        3.5x month on month and converted 7% of push
+                        notifications into KYC and payment completions.
+                      </li>
+                      <li>
+                        Shipped Watchlist, the first native bond-tracking tool
+                        among Indian bond platforms. About 5,000 users adopted
+                        it in the first two weeks, adding bonds at a 3:1 ratio
+                        to removals.
+                      </li>
+                      <li>
+                        Led a third-party bond data partnership from vendor
+                        evaluation to API integration, automating 80% of 35+
+                        deal creation fields and removing manual ops entry.
+                      </li>
+                      <li>
+                        Revamped the Deal Detail page with secondary market
+                        activity, covenants and security data that no other
+                        retail bond platform shows, so investors can judge a
+                        bond at institutional depth.
+                      </li>
+                      <li>
+                        Set up support workflows on Freshdesk with SLAs and
+                        ticket automations, cutting manual support effort by
+                        40%.
+                      </li>
+                      <li>
+                        Built an AI call analysis pipeline with Sarvam STT and
+                        Claude that scores RM calls and writes action items,
+                        lifting team quality scores by about 15% in 30 days.
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Product 2: Ultra */}
+                  <div className="mt-4 pl-0 sm:pl-3 border-l-0 sm:border-l-2 sm:border-border/60 print:pl-2 print:border-l print:mt-2">
+                    <div className="flex flex-wrap items-baseline justify-between gap-1">
+                      <h4 className="text-[15px] font-medium md:text-base text-fg print:text-[8.5pt]">
+                        ultra{" "}
+                        <span className="font-normal text-fg-subtle">
+                          · Alternative investment app
+                        </span>
+                      </h4>
+                      <span className="font-mono text-[10px] sm:text-[11px] text-fg-subtle print:text-[7pt]">
+                        Mar 2025 – Oct 2025 (6 mos)
+                      </span>
+                    </div>
+
+                    <ul className="mt-2 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3">
+                      <li>
+                        Built a GIFT City NRI FD MVP under IFSCA rules, closing
+                        3 bank partnerships and onboarding 5 pilot accounts.
+                      </li>
+                      <li>
+                        Launched Flexi Invoice Discounting, a variable-tenure
+                        product for early liquidity, adding ~₹50 Cr AUM in 3
+                        months.
+                      </li>
+                      <li>
+                        Redesigned the referral flow in onboarding, reaching 40%
+                        referral adoption and 20% acquisition growth in 3
+                        months.
+                      </li>
+                      <li>
+                        Expanded ultra from mobile to web (invest, wallet, KYC),
+                        driving 15–20% True AUM growth and 30% of Q3 sign-ups.
+                      </li>
+                      <li>
+                        Shipped Strapi CMS so the marketing team could publish
+                        on their own, cutting turnaround time by about 30%.
+                      </li>
+                    </ul>
+                  </div>
                 </div>
-              </section>
-            </aside>
+
+                {/* MoveInSync */}
+                <div className="print:break-inside-avoid">
+                  <div className="flex flex-wrap items-baseline justify-between gap-1 border-b border-border/50 pb-1.5 print:pb-0.5">
+                    <div>
+                      <h3 className="font-display text-[18px] font-semibold md:text-[20px] text-fg print:text-[10pt]">
+                        Product Intern
+                      </h3>
+                      <p className="text-sm font-medium text-fg-muted print:text-[8.5pt]">
+                        MoveInSync
+                      </p>
+                    </div>
+                    <time className="font-mono text-[11px] sm:text-xs text-fg-subtle print:text-[7.5pt]">
+                      Jun 2024 – Feb 2025 (9 mos)
+                    </time>
+                  </div>
+
+                  <ul className="mt-2.5 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3 print:mt-1">
+                    <li>
+                      Worked across PMs, marketing and customer success, turning
+                      client-built features into upsells and cross-sells.
+                    </li>
+                    <li>
+                      Built pricing for Safety Toolkit and DMS-ADAS premium
+                      features, pitched to 50+ clients at Chennai Prodcon
+                      Summit.
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Department of Backstage and Infrastructure Management */}
+                <div className="print:break-inside-avoid">
+                  <div className="flex flex-wrap items-baseline justify-between gap-1 border-b border-border/50 pb-1.5 print:pb-0.5">
+                    <div>
+                      <h3 className="font-display text-[18px] font-semibold md:text-[20px] text-fg print:text-[10pt]">
+                        Chief Coordinator
+                      </h3>
+                      <p className="text-sm font-medium text-fg-muted print:text-[8.5pt]">
+                        Department of Backstage and Infrastructure Mgmt.
+                      </p>
+                    </div>
+                    <time className="font-mono text-[11px] sm:text-xs text-fg-subtle print:text-[7.5pt]">
+                      May 2022 – Jun 2023 (13 mos)
+                    </time>
+                  </div>
+
+                  <ul className="mt-2.5 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3 print:mt-1">
+                    <li>
+                      Led production, infrastructure and tech support for two
+                      national fests, managing 50+ members and 30k+ attendees.
+                    </li>
+                    <li>
+                      Delivered WAVES&apos;22 for 6,000+ students nationwide on
+                      a ~₹1.25 Cr budget, 25% higher than the previous offline
+                      fest.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <section aria-labelledby="resume-ai-title">
+              <h2
+                id="resume-ai-title"
+                className="font-mono text-xs uppercase tracking-wider text-accent font-semibold print:text-[8.5pt]"
+              >
+                AI projects
+              </h2>
+              <ul className="mt-2.5 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-fg-muted print:text-[7.5pt] print:space-y-0.5 print:pl-3 print:mt-1">
+                <li>
+                  Built 5 Claude-powered tools for ops, sales and marketing,
+                  including a deal QC tool that checked ~60 deals in 15 days.
+                </li>
+                <li>
+                  Built internal funnel dashboards on MoEngage MCP and user
+                  data, going deeper than MoEngage&apos;s built-in analytics.
+                </li>
+                <li>
+                  Built an AI compliance agent that checks every blog draft
+                  against NSE and SEBI rules before it reaches human review.
+                </li>
+              </ul>
+            </section>
+
+            <section className="print:break-inside-avoid">
+              <h2 className="font-mono text-xs uppercase tracking-wider text-accent font-semibold print:text-[8pt]">
+                Tools
+              </h2>
+              <div className="mt-2.5 flex flex-wrap gap-1.5 print:mt-1 print:gap-1">
+                {SKILL_TOOLS.map((tool) => (
+                  <span
+                    key={tool}
+                    className="inline-flex items-center rounded border border-border/80 bg-bg/60 px-2 py-0.5 font-mono text-sm text-fg-muted print:border-border/60 print:px-1.5 print:py-0 print:text-[7.5pt]"
+                  >
+                    {tool}
+                  </span>
+                ))}
+              </div>
+            </section>
+
+            <section className="print:break-inside-avoid">
+              <h2 className="font-mono text-xs uppercase tracking-wider text-accent font-semibold print:text-[8pt]">
+                Methods
+              </h2>
+              <div className="mt-2.5 flex flex-wrap gap-1.5 print:mt-1 print:gap-1">
+                {SKILL_METHODS.map((method) => (
+                  <span
+                    key={method}
+                    className="inline-flex items-center rounded border border-border/80 bg-bg/60 px-2 py-0.5 text-sm text-fg print:border-border/60 print:px-1.5 print:py-0 print:text-[7.5pt]"
+                  >
+                    {method}
+                  </span>
+                ))}
+              </div>
+            </section>
           </div>
 
           {/* Bottom Action Bar: Download CTA */}
