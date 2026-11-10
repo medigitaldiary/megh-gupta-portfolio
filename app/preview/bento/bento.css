@@ -1,0 +1,559 @@
+/* Bento board, scoped to .bento. Palette stays the site tokens; the
+   only new values are tints of those tokens (glass shine, pine shadows).
+   Approved exception to "no CSS files" and to the 18px radius cap:
+   see CLAUDE.md §3 and §9. */
+
+.bento {
+  --bento-radius: 28px;
+  --bento-shine: color-mix(in srgb, var(--bg-elevated) 35%, white);
+  --bento-ink-soft: rgba(31, 59, 46, 0.12);
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+/* Lilac light pooled under the board, so the glass has something to
+   catch. Decorative only. */
+.bento::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(
+      ellipse 38% 26% at 62% 12%,
+      rgba(203, 179, 232, 0.55),
+      rgba(203, 179, 232, 0) 70%
+    ),
+    radial-gradient(
+      ellipse 34% 22% at 12% 58%,
+      rgba(203, 179, 232, 0.45),
+      rgba(203, 179, 232, 0) 70%
+    ),
+    radial-gradient(
+      ellipse 40% 24% at 86% 78%,
+      rgba(184, 156, 220, 0.4),
+      rgba(184, 156, 220, 0) 70%
+    );
+  pointer-events: none;
+}
+
+/* Paper grain over the base, under the tiles. */
+.bento::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: url("/images/about/grain.svg");
+  background-size: 180px 180px;
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* ── Grid ─────────────────────────────────────────────────── */
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  grid-template-areas:
+    "intro intro"
+    "route route"
+    "seo seo"
+    "ultra ultra"
+    "venn nums"
+    "bytes bytes"
+    "prints prints"
+    "scan now"
+    "bench bench"
+    "connect connect";
+}
+
+.bento-area-intro {
+  grid-area: intro;
+}
+.bento-area-route {
+  grid-area: route;
+}
+.bento-area-seo {
+  grid-area: seo;
+}
+.bento-area-ultra {
+  grid-area: ultra;
+  min-height: 26rem;
+}
+.bento-area-bytes {
+  grid-area: bytes;
+}
+.bento-area-prints {
+  grid-area: prints;
+}
+.bento-area-venn {
+  grid-area: venn;
+  min-height: 13.5rem;
+}
+.bento-area-nums {
+  grid-area: nums;
+  min-height: 13.5rem;
+}
+.bento-area-scan {
+  grid-area: scan;
+  min-height: 8.5rem;
+}
+.bento-area-now {
+  grid-area: now;
+  min-height: 8.5rem;
+}
+.bento-area-bench {
+  grid-area: bench;
+}
+.bento-area-connect {
+  grid-area: connect;
+}
+
+/* Desktop: 12 columns, 10 rows. Five rows fill one screen, so the whole
+   board is two folds. */
+@media (min-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: clamp(8.25rem, calc((100svh - 9.5rem) / 5), 10.75rem);
+    gap: 20px;
+    grid-template-areas:
+      "seo seo seo seo route route route route route route route route"
+      "seo seo seo seo route route route route route route route route"
+      "seo seo seo seo intro intro intro intro ultra ultra ultra ultra"
+      "seo seo seo seo intro intro intro intro ultra ultra ultra ultra"
+      "seo seo seo seo intro intro intro intro ultra ultra ultra ultra"
+      "prints prints prints bytes bytes bytes bytes bytes venn venn nums nums"
+      "prints prints prints bytes bytes bytes bytes bytes venn venn nums nums"
+      "prints prints prints bytes bytes bytes bytes bytes scan scan now now"
+      "bench bench bench bench bench bench connect connect connect connect connect connect"
+      "bench bench bench bench bench bench connect connect connect connect connect connect";
+  }
+
+  .bento-area-ultra,
+  .bento-area-venn,
+  .bento-area-nums,
+  .bento-area-scan,
+  .bento-area-now {
+    min-height: 0;
+  }
+}
+
+/* ── Tile ─────────────────────────────────────────────────── */
+
+.bento-tile {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--bento-radius);
+  background: var(--bg-elevated);
+  box-shadow:
+    inset 0 1px 0 var(--bento-shine),
+    0 1px 2px rgba(31, 59, 46, 0.06),
+    0 22px 40px -30px rgba(31, 59, 46, 0.5);
+  transition:
+    transform 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    filter 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-tile-pine {
+  background: var(--fg);
+  box-shadow:
+    inset 0 1px 0 rgba(232, 220, 198, 0.18),
+    0 22px 40px -26px rgba(31, 59, 46, 0.7);
+}
+
+.bento-link:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 1px 0 var(--bento-shine),
+    0 2px 4px rgba(31, 59, 46, 0.08),
+    0 30px 44px -28px rgba(31, 59, 46, 0.6);
+}
+
+.bento-link:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+.bento-eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.625rem;
+  line-height: 1.4;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+
+.bento-eyebrow-on-pine {
+  color: var(--accent-fg);
+  opacity: 0.75;
+}
+
+/* Soft dark foot under captions that sit on a cover. */
+.bento-scrim {
+  background: linear-gradient(
+    to top,
+    rgba(31, 59, 46, 0.97) 35%,
+    rgba(31, 59, 46, 0.7) 65%,
+    rgba(31, 59, 46, 0)
+  );
+}
+
+/* ── Glass ────────────────────────────────────────────────── */
+/* Only on small things: pills, buttons, the switch. The big tiles stay
+   solid so phones are not asked to blur half the screen. */
+
+.bento-glass {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-elevated) 55%, transparent);
+  box-shadow:
+    inset 0 1.5px 1px var(--bento-shine),
+    inset 0 -1.5px 1px var(--bento-ink-soft),
+    0 0 0 1px rgba(31, 59, 46, 0.07),
+    0 5px 8px -4px rgba(31, 59, 46, 0.3);
+  -webkit-backdrop-filter: blur(8px) saturate(1.5);
+  backdrop-filter: blur(8px) saturate(1.5);
+}
+
+.bento-glass-lilac {
+  background: color-mix(in srgb, var(--highlight) 55%, transparent);
+}
+
+.bento-glass-dark {
+  color: var(--accent-fg);
+  background: rgba(232, 220, 198, 0.12);
+  box-shadow:
+    inset 0 1.5px 1px rgba(232, 220, 198, 0.35),
+    inset 0 -1.5px 1px rgba(31, 59, 46, 0.4),
+    0 0 0 1px rgba(232, 220, 198, 0.12),
+    0 5px 8px -4px rgba(31, 59, 46, 0.5);
+}
+
+.bento-btn {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0 1.25rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--fg);
+  white-space: nowrap;
+  transition:
+    transform 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-btn.bento-glass-dark {
+  color: var(--accent-fg);
+}
+
+.bento-btn:hover {
+  transform: translateY(-1px);
+}
+
+.bento-btn:active {
+  transform: translateY(1px);
+}
+
+.bento-btn:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.bento-tile-pine .bento-btn:focus-visible {
+  outline-color: var(--accent-fg);
+}
+
+.bento-btn-solid {
+  background: var(--accent-fg);
+  color: var(--fg);
+  box-shadow:
+    inset 0 1.5px 1px var(--bento-shine),
+    0 6px 10px -5px rgba(31, 59, 46, 0.6);
+}
+
+.bento-live-dot {
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent);
+}
+
+/* ── Route ────────────────────────────────────────────────── */
+
+.bento-stub {
+  border-top: 1.5px dashed var(--border);
+  background: color-mix(in srgb, var(--bg) 45%, transparent);
+}
+
+@media (min-width: 768px) {
+  .bento-stub {
+    border-top: 0;
+    border-left: 1.5px dashed var(--border);
+  }
+}
+
+.bento-code {
+  padding: 0.1em 0.22em;
+  border-radius: 8px;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-code[data-active="true"] {
+  background: color-mix(in srgb, var(--highlight) 75%, transparent);
+}
+
+.bento-plane {
+  offset-path: path("M100 78 Q200 -6 300 78 Q400 -6 500 78");
+  offset-rotate: auto;
+  offset-distance: 100%;
+  animation: bento-fly 9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes bento-fly {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  38% {
+    offset-distance: 50%;
+  }
+  48% {
+    offset-distance: 50%;
+  }
+  82% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  96% {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+.bento-barcode {
+  display: block;
+  width: 5.5rem;
+  height: 1.75rem;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--fg) 0 2px,
+    transparent 2px 4px,
+    var(--fg) 4px 5px,
+    transparent 5px 9px,
+    var(--fg) 9px 12px,
+    transparent 12px 14px
+  );
+  opacity: 0.7;
+}
+
+/* Split-flap line: two faces, one folds away as the other folds in. */
+.bento-flip {
+  position: relative;
+  display: grid;
+  perspective: 600px;
+}
+
+.bento-flip > span {
+  grid-area: 1 / 1;
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  transform: rotateX(-90deg);
+  opacity: 0;
+  transition:
+    transform 450ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-flip > span[data-on="true"] {
+  transform: rotateX(0deg);
+  opacity: 1;
+  transition-delay: 220ms;
+}
+
+/* ── Print stack ──────────────────────────────────────────── */
+
+.bento-print {
+  box-shadow: 0 10px 22px -14px rgba(31, 59, 46, 0.6);
+  transition:
+    transform 400ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.bento-print[data-pos="0"] {
+  z-index: 4;
+  transform: rotate(-2deg);
+}
+.bento-print[data-pos="1"] {
+  z-index: 3;
+  transform: translate(7%, 2%) rotate(5deg);
+}
+.bento-print[data-pos="2"] {
+  z-index: 2;
+  transform: translate(-7%, 3%) rotate(-7deg);
+}
+.bento-print[data-pos="3"] {
+  z-index: 1;
+  transform: translate(0, 4%) rotate(2deg);
+  opacity: 0;
+}
+
+/* ── Venn ─────────────────────────────────────────────────── */
+
+.bento-venn-circle {
+  cursor: pointer;
+  mix-blend-mode: multiply;
+  fill-opacity: 0.18;
+  stroke-width: 1.5;
+  stroke-opacity: 0.5;
+  transition: fill-opacity 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-venn-circle[data-active="true"] {
+  fill-opacity: 0.62;
+}
+
+.bento-venn-circle[data-venn="user"] {
+  fill: var(--venn-user);
+  stroke: var(--venn-user);
+}
+.bento-venn-circle[data-venn="tech"] {
+  fill: var(--venn-tech);
+  stroke: var(--venn-tech);
+}
+.bento-venn-circle[data-venn="business"] {
+  fill: var(--venn-biz);
+  stroke: var(--venn-biz);
+}
+
+/* A lens is on: tiles that do not answer to it step back. */
+.bento[data-lens="user"] [data-lenses]:not([data-lenses~="user"]),
+.bento[data-lens="tech"] [data-lenses]:not([data-lenses~="tech"]),
+.bento[data-lens="business"] [data-lenses]:not([data-lenses~="business"]) {
+  opacity: 0.3;
+  filter: saturate(0.5);
+}
+
+/* ── Numbers ──────────────────────────────────────────────── */
+
+.bento-roll {
+  animation: bento-roll 450ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@keyframes bento-roll {
+  from {
+    transform: translateY(0.9rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ── Workbench ────────────────────────────────────────────── */
+
+.bento-stage-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--fg);
+}
+
+.bento-stage-dot[data-stage="testing"] {
+  background: linear-gradient(90deg, var(--fg) 50%, transparent 50%);
+}
+
+.bento-stage-dot[data-stage="shipped"] {
+  background: var(--fg);
+}
+
+/* ── Scan mode ────────────────────────────────────────────── */
+
+.bento-switch {
+  position: relative;
+  width: 3.25rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  box-shadow:
+    inset 0 2px 3px rgba(31, 59, 46, 0.22),
+    inset 0 -1px 1px var(--bento-shine),
+    0 0 0 1px rgba(31, 59, 46, 0.08);
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-switch[aria-checked="true"] {
+  background: var(--fg);
+}
+
+.bento-switch-knob {
+  position: absolute;
+  top: 0.1875rem;
+  left: 0.1875rem;
+  width: 1.625rem;
+  height: 1.625rem;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  box-shadow:
+    inset 0 1.5px 1px var(--bento-shine),
+    inset 0 -1.5px 1px var(--bento-ink-soft),
+    0 3px 5px -2px rgba(31, 59, 46, 0.5);
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-switch[aria-checked="true"] .bento-switch-knob {
+  transform: translateX(1.25rem);
+}
+
+.bento [data-scan-show] {
+  display: none;
+}
+
+.bento[data-scan="on"] [data-scan-show] {
+  display: flex;
+}
+
+.bento[data-scan="on"] [data-scan-dim] {
+  opacity: 0.3;
+  filter: saturate(0.5);
+}
+
+/* ── Reduced motion ───────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .bento-plane,
+  .bento-roll {
+    animation: none;
+  }
+
+  .bento-tile,
+  .bento-btn,
+  .bento-print,
+  .bento-flip > span,
+  .bento-switch-knob {
+    transition: none;
+  }
+
+  .bento-link:hover,
+  .bento-btn:hover {
+    transform: none;
+  }
+}
