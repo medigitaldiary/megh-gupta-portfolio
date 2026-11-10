@@ -1,4 +1,5 @@
 import { CalEmbed } from "@/components/cal-embed";
+import { CopyEmailButton } from "@/components/copy-email-button";
 
 const FALLBACK_EMAIL = "megh.bpgc@gmail.com";
 
@@ -10,7 +11,7 @@ export function Contact() {
     >
       <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
         <h2 className="font-display text-[3rem] leading-[1.05] tracking-tight md:text-[4rem]">
-          Let&apos;s Connect.
+          Let&apos;s connect.
         </h2>
 
         <p className="mt-8 text-base leading-[1.6] text-accent-fg/85 md:text-lg">
@@ -37,6 +38,11 @@ export function Contact() {
         >
           {FALLBACK_EMAIL}
         </a>{" "}
+        <CopyEmailButton
+          email={FALLBACK_EMAIL}
+          label="Copy"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-2 align-middle text-accent-fg/85 underline decoration-accent-fg/50 underline-offset-4 transition-opacity duration-150 hover:opacity-90"
+        />{" "}
         works just as well.
       </p>
     </section>

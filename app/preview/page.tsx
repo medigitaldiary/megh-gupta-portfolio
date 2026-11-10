@@ -11,7 +11,7 @@ const VARIANTS = [
   {
     slug: "a",
     label: "A · Live paper (WebGL)",
-    body: "Full animated bent-glass scene, on every device. Cinematic. Heavy on mobile — Lighthouse ~78–88.",
+    body: "Full animated bent-glass scene, on every device. Cinematic. Heavy on mobile (Lighthouse ~78–88).",
   },
   {
     slug: "b",

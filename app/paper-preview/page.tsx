@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ThreeDPaper } from "@/components/three-d-paper";
 
 export const metadata: Metadata = {
-  title: "3D Paper — preview",
+  title: "3D Paper · preview",
   description: "Preview route for the 3D Paper effect.",
   robots: { index: false, follow: false },
 };

@@ -17,7 +17,7 @@ import type { Metadata } from "next";
  */
 
 export const metadata: Metadata = {
-  title: "Homepage skeleton — full portfolio wireframe",
+  title: "Homepage skeleton · full portfolio wireframe",
   description: "Wireframe-fidelity mockup of the full portfolio, fold by fold.",
   robots: { index: false, follow: false },
 };

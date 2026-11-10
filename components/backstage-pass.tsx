@@ -129,7 +129,7 @@ export function BackstagePass({
                   </svg>
 
                   <div className="flex items-center justify-between gap-4">
-                    <p className="font-mono text-[0.65rem] uppercase tracking-[0.3em] opacity-70">
+                    <p className="font-mono text-[0.65rem] uppercase tracking-[0.3em]">
                       Megh Gupta · Studio
                     </p>
                     <span
@@ -165,7 +165,7 @@ export function BackstagePass({
                     <input type="hidden" name="next" value={next} />
                     <label
                       htmlFor="bp-password"
-                      className="font-mono text-[0.65rem] uppercase tracking-[0.25em] opacity-60"
+                      className="font-mono text-[0.65rem] uppercase tracking-[0.25em]"
                     >
                       Password
                     </label>
@@ -291,11 +291,11 @@ export function BackstagePass({
                     className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-dashed pt-5 text-xs"
                     style={{ borderColor: "rgba(31,59,46,0.2)" }}
                   >
-                    <p className="font-mono opacity-70">
+                    <p className="font-mono">
                       <span className="uppercase tracking-[0.2em]">
                         Heading to
                       </span>{" "}
-                      <span className="opacity-100">→ {next}</span>
+                      <span>→ {next}</span>
                     </p>
                     <Link
                       href="/"
@@ -336,13 +336,13 @@ export function BackstagePass({
                   <span className="bp-perf" />
 
                   <div className="md:text-center">
-                    <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em] opacity-60">
+                    <p className="font-mono text-[0.6rem] uppercase tracking-[0.3em]">
                       Admit
                     </p>
                     <p className="font-semibold text-4xl leading-none tracking-tight md:text-5xl">
                       One
                     </p>
-                    <p className="mt-2 font-mono text-[0.6rem] uppercase tracking-[0.25em] opacity-60">
+                    <p className="mt-2 font-mono text-[0.6rem] uppercase tracking-[0.25em]">
                       Studio access
                     </p>
                   </div>
@@ -370,7 +370,7 @@ export function BackstagePass({
                         />
                       ))}
                     </div>
-                    <p className="mt-1.5 font-mono text-[0.6rem] tracking-[0.3em] opacity-60">
+                    <p className="mt-1.5 font-mono text-[0.6rem] tracking-[0.3em]">
                       No. {serial}
                     </p>
                   </div>

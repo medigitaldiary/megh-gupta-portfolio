@@ -69,7 +69,7 @@ export const workCards: WorkCard[] = [
     title: "Bond Bytes",
     eyebrow: "Content · Retention",
     oneLiner:
-      "A daily bite of India's bond market — the retention lever we built into BondScanner.",
+      "A daily bite of India's bond market: the retention lever we built into BondScanner.",
     role: "Growth PM",
     company: "BondScanner",
     timeline: "2026",
@@ -103,7 +103,7 @@ export const workCards: WorkCard[] = [
     title: "Support Stack",
     eyebrow: "Ops · Support",
     oneLiner:
-      "Building the inbound support stack — Freshdesk + workflows + SLAs.",
+      "Building the inbound support stack: Freshdesk, workflows and SLAs.",
     role: "Founding PM",
     company: "BondScanner",
     timeline: "2025",

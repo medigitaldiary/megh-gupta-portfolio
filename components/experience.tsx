@@ -768,7 +768,14 @@ function TimelineChip({
           {chip}
         </a>
       ) : (
-        chip
+        <button
+          type="button"
+          aria-describedby={item.summary ? tipId : undefined}
+          aria-label={item.role ? `${item.label} - ${item.role}` : item.label}
+          className="block h-full w-full cursor-default rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+        >
+          {chip}
+        </button>
       )}
     </ChipWithTooltip>
   );
