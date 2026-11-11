@@ -21,7 +21,12 @@ type BoardState = {
   setLens: (lens: BentoLens | null) => void;
   scan: boolean;
   setScan: (scan: boolean) => void;
+  // Crossfader: "day" is the work side, "night" is after hours.
+  mode: BentoMode;
+  setMode: (mode: BentoMode) => void;
 };
+
+export type BentoMode = "day" | "night";
 
 const BoardContext = createContext<BoardState | null>(null);
 
@@ -34,7 +39,11 @@ export function useBentoBoard(): BoardState {
 export function BentoBoard({ children }: { children: ReactNode }) {
   const [lens, setLens] = useState<BentoLens | null>(null);
   const [scan, setScan] = useState(false);
-  const value = useMemo(() => ({ lens, setLens, scan, setScan }), [lens, scan]);
+  const [mode, setMode] = useState<BentoMode>("day");
+  const value = useMemo(
+    () => ({ lens, setLens, scan, setScan, mode, setMode }),
+    [lens, scan, mode],
+  );
 
   return (
     <BoardContext.Provider value={value}>
@@ -42,6 +51,7 @@ export function BentoBoard({ children }: { children: ReactNode }) {
         className="bento"
         data-lens={lens ?? "all"}
         data-scan={scan ? "on" : "off"}
+        data-mode={mode}
       >
         {children}
       </div>

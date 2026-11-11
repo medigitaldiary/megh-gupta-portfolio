@@ -1,0 +1,477 @@
+"use client";
+
+import { useReducedMotion } from "motion/react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useBentoBoard } from "@/components/bento/bento-board";
+
+// Card lab: six object cards to try before any of them joins the board.
+// Values marked PLACEHOLDER are stand-ins until Megh supplies the real
+// ones.
+
+// ── 1. Call card ───────────────────────────────────────────────
+// The AI call pipeline in one loop: a call plays, gets scored, and
+// turns into follow-ups. The call shown is a made-up sample.
+
+const WAVE = [
+  34, 58, 42, 76, 90, 52, 38, 66, 84, 48, 30, 62, 94, 70, 44, 56, 80, 36, 60,
+  88, 50, 32, 72, 96, 54, 40, 68, 82, 46, 28, 64, 92, 58, 38, 74, 86, 48, 34,
+  62, 78, 44, 30, 56, 70, 40, 26,
+];
+
+const RUBRIC = [
+  { label: "Opening", score: 4 },
+  { label: "Discovery", score: 3 },
+  { label: "Compliance", score: 5 },
+];
+
+const ACTIONS = [
+  "Send the two-bond comparison",
+  "Call back Thursday, 11 am",
+  "Flag missing KYC document",
+];
+
+const CALL_STEPS = ["Listening", "Scoring", "Done"] as const;
+
+export function CallCard() {
+  const reduced = useReducedMotion() ?? false;
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    if (reduced) {
+      setStep(2);
+      return;
+    }
+    const waits = [3200, 1400, 5200];
+    const id = window.setTimeout(
+      () => setStep((s) => (s + 1) % 3),
+      waits[step],
+    );
+    return () => window.clearTimeout(id);
+  }, [step, reduced]);
+
+  return (
+    <Link
+      href="/work/ai-call-analysis-pipeline"
+      aria-label="AI call analysis pipeline: a sample call being scored. Read the case study."
+      data-side="work"
+      className="bento-tile bento-link flex h-full flex-col gap-4 p-5 md:flex-row md:gap-6 md:p-6"
+    >
+      <div className="flex min-w-0 flex-1 flex-col justify-between gap-4">
+        <div className="flex items-center justify-between gap-3">
+          <p className="bento-eyebrow">Sample call · RM outbound · 06:42</p>
+          <span className="bento-glass inline-flex min-h-7 items-center gap-1.5 px-3 text-fg text-xs">
+            <span
+              className="bento-live-dot"
+              data-pulse={step < 2}
+              aria-hidden="true"
+            />
+            {CALL_STEPS[step]}
+          </span>
+        </div>
+
+        <div
+          className="bento-wave"
+          data-playing={step === 0}
+          aria-hidden="true"
+        >
+          {WAVE.map((h, i) => (
+            <span
+              // biome-ignore lint/suspicious/noArrayIndexKey: fixed decorative bars, never reordered.
+              key={i}
+              style={{ height: `${h}%`, animationDelay: `${(i % 9) * -110}ms` }}
+            />
+          ))}
+        </div>
+
+        <p className="text-fg-muted text-sm leading-snug">
+          Every night, about 8 hours of recordings go in. Scores and follow-up
+          tasks come out.
+        </p>
+      </div>
+
+      <div className="flex shrink-0 flex-col justify-between gap-3 rounded-[18px] bg-bg/60 p-4 md:w-[44%]">
+        {step < 2 ? (
+          <div className="flex flex-1 flex-col justify-center gap-2.5">
+            <p className="bento-eyebrow">
+              {step === 0 ? "Transcribing" : "Scoring against the rubric"}
+            </p>
+            <span className="bento-skeleton w-[85%]" />
+            <span className="bento-skeleton w-[60%]" />
+            <span className="bento-skeleton w-[72%]" />
+          </div>
+        ) : (
+          <div className="bento-roll flex flex-1 flex-col justify-between gap-3">
+            <div className="flex items-end justify-between gap-3">
+              <div>
+                <p className="bento-eyebrow">Call quality</p>
+                <p className="mt-1 font-display text-[2.5rem] text-fg leading-none tracking-tight">
+                  82
+                  <span className="text-base text-fg-subtle"> / 100</span>
+                </p>
+              </div>
+              <ul className="flex flex-col gap-1">
+                {RUBRIC.map((r) => (
+                  <li
+                    key={r.label}
+                    className="flex items-center justify-end gap-2 font-mono text-[0.625rem] text-fg-muted uppercase tracking-[0.08em]"
+                  >
+                    {r.label}
+                    <span className="flex gap-0.5" aria-hidden="true">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <span
+                          key={n}
+                          className={`h-1.5 w-2.5 rounded-full ${n <= r.score ? "bg-fg" : "bg-border"}`}
+                        />
+                      ))}
+                    </span>
+                    <span className="sr-only">{r.score} of 5</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <ul className="flex flex-col gap-1.5 border-border border-t pt-3">
+              {ACTIONS.map((a) => (
+                <li
+                  key={a}
+                  className="flex items-center gap-2 text-fg text-sm leading-tight"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.8}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-4 w-4 shrink-0"
+                    aria-hidden="true"
+                    role="presentation"
+                  >
+                    <rect x="4" y="4" width="16" height="16" rx="4" />
+                    <path d="M8.5 12.5l2.5 2.5 4.5-5" />
+                  </svg>
+                  {a}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </Link>
+  );
+}
+
+// ── 2. GT650 odometer ──────────────────────────────────────────
+
+// PLACEHOLDER reading. Swap for the real one.
+const ODO_READING = "012650";
+const ODO_DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
+export function OdometerCard() {
+  const reduced = useReducedMotion() ?? false;
+  const [rolled, setRolled] = useState(false);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => setRolled(true), 500);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  return (
+    <section
+      aria-label={`GT650 odometer: ${Number(ODO_READING).toLocaleString("en-IN")} kilometres`}
+      data-side="life"
+      className="bento-tile flex h-full flex-col justify-between gap-4 p-5 md:p-6"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <p className="bento-eyebrow">GT650 · odometer</p>
+        <p className="bento-eyebrow">km</p>
+      </div>
+
+      <div className="bento-odo bento-object" aria-hidden="true">
+        {ODO_READING.split("").map((d, i) => (
+          <span
+            // biome-ignore lint/suspicious/noArrayIndexKey: digit wheels are positional.
+            key={i}
+            className="bento-odo-cell"
+            data-last={i === ODO_READING.length - 1}
+          >
+            <span
+              className="bento-odo-wheel"
+              style={{
+                transform: `translateY(-${(rolled || reduced ? Number(d) : 0) * 10}%)`,
+                transitionDelay: `${(ODO_READING.length - 1 - i) * 120}ms`,
+              }}
+            >
+              {ODO_DIGITS.map((n) => (
+                <span key={n}>{n}</span>
+              ))}
+            </span>
+          </span>
+        ))}
+      </div>
+
+      <p className="text-fg-muted text-sm leading-snug lg:hidden">
+        Not a collection. New cities at my own pace.
+      </p>
+    </section>
+  );
+}
+
+// ── 3. HYROX race bib ──────────────────────────────────────────
+
+// PLACEHOLDER bib number. Swap for the real one.
+const BIB_NUMBER = "1107";
+
+export function RaceBibCard() {
+  return (
+    <section
+      aria-label="HYROX race bib: Delhi finished, Noida next"
+      data-side="life"
+      className="bento-tile flex h-full flex-col gap-4 p-5 md:p-6"
+    >
+      <p className="bento-eyebrow">Hybrid athlete, in training</p>
+
+      <div className="flex flex-1 items-center justify-center py-2">
+        <div className="bento-bib bento-object">
+          <span className="bento-bib-hole" data-corner="tl" />
+          <span className="bento-bib-hole" data-corner="tr" />
+          <span className="bento-bib-hole" data-corner="bl" />
+          <span className="bento-bib-hole" data-corner="br" />
+          <div className="flex items-center justify-between bg-fg px-6 py-2 font-mono text-[0.625rem] text-accent-fg uppercase tracking-[0.14em]">
+            <span>HYROX · Delhi</span>
+            <span>Finisher</span>
+          </div>
+          <p className="px-4 pt-3 text-center font-display font-semibold text-[4.25rem] text-fg leading-none tracking-tight">
+            {BIB_NUMBER}
+          </p>
+          <p className="pb-3 text-center font-display text-fg text-xl tracking-[0.3em]">
+            MEGH
+          </p>
+          <div className="flex items-center justify-between gap-3 border-border border-t border-dashed px-4 py-2">
+            <span className="font-mono text-[0.625rem] text-fg-muted uppercase tracking-[0.1em]">
+              Next start · Noida · Jan
+            </span>
+            <span className="bento-barcode" aria-hidden="true" />
+          </div>
+        </div>
+      </div>
+
+      <p className="text-fg-muted text-sm leading-snug">
+        Delhi is done. Noida is next.
+      </p>
+    </section>
+  );
+}
+
+// ── 4. Cassette mixtape ────────────────────────────────────────
+
+const SIDES = {
+  a: {
+    title: "Side A: Work",
+    tracks: [
+      "SEO Engine (2x remix)",
+      "Ultra Web, four phases",
+      "Bond Bytes, daily",
+      "DERIDATA, 80% auto-fill",
+    ],
+  },
+  b: {
+    title: "Side B: Life",
+    tracks: [
+      "GT650, no itinerary",
+      "HYROX, Delhi cut",
+      "Guitar first",
+      "FIFA over football",
+    ],
+  },
+} as const;
+
+function CassetteFace({ title }: { title: string }) {
+  return (
+    <span className="bento-tape-face">
+      <span className="bento-tape-label">
+        <span className="font-hand text-[1.375rem] text-fg leading-none">
+          {title}
+        </span>
+        <span className="font-mono text-[0.5625rem] text-fg-subtle uppercase tracking-[0.14em]">
+          Megh · C60
+        </span>
+      </span>
+      <span className="bento-tape-window">
+        <span className="bento-reel" />
+        <span className="bento-tape-film" />
+        <span className="bento-reel" />
+      </span>
+      <span className="bento-tape-foot" />
+    </span>
+  );
+}
+
+export function CassetteCard() {
+  const [side, setSide] = useState<"a" | "b">("a");
+  const current = SIDES[side];
+
+  return (
+    <section
+      aria-label="Mixtape: side A is work, side B is life"
+      className="bento-tile flex h-full flex-col gap-4 p-5 md:p-6"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <p className="bento-eyebrow">The mixtape</p>
+        <button
+          type="button"
+          onClick={() => setSide(side === "a" ? "b" : "a")}
+          className="bento-glass inline-flex min-h-8 items-center px-3 text-fg text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          Flip the tape
+        </button>
+      </div>
+
+      <div className="flex flex-1 flex-col items-center gap-5 sm:flex-row">
+        <button
+          type="button"
+          onClick={() => setSide(side === "a" ? "b" : "a")}
+          aria-label={`Playing ${current.title}. Flip the tape.`}
+          className="bento-tape bento-object focus-visible:outline-none"
+          data-side-up={side}
+        >
+          <span className="bento-tape-inner">
+            <CassetteFace title={SIDES.a.title} />
+            <CassetteFace title={SIDES.b.title} />
+          </span>
+        </button>
+
+        <ol
+          key={side}
+          aria-live="polite"
+          className="bento-roll flex w-full min-w-0 flex-1 flex-col gap-2"
+        >
+          {current.tracks.map((t, i) => (
+            <li
+              key={t}
+              className="flex items-baseline gap-2.5 border-border border-b pb-2 text-fg text-sm leading-tight last:border-b-0"
+            >
+              <span className="font-mono text-[0.625rem] text-fg-subtle">
+                0{i + 1}
+              </span>
+              {t}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+// ── 5. Backstage crew pass ─────────────────────────────────────
+
+export function CrewPassCard() {
+  return (
+    <section
+      aria-label="Backstage crew pass: Waves 2022, Chief Coordinator, all access"
+      data-side="life"
+      className="bento-tile flex h-full flex-col items-center overflow-hidden px-5 pb-5 md:px-6 md:pb-6"
+    >
+      <span className="bento-strap" aria-hidden="true" />
+      <div className="bento-pass bento-object">
+        <span className="bento-pass-slot" aria-hidden="true" />
+        <p className="font-mono text-[0.625rem] text-fg-subtle uppercase tracking-[0.2em]">
+          BITS Goa presents
+        </p>
+        <p className="mt-1 font-display font-semibold text-[2rem] text-fg leading-none tracking-tight">
+          WAVES &apos;22
+        </p>
+        <div className="relative mt-4 h-20 w-20 overflow-hidden rounded-full border-2 border-fg">
+          <Image
+            src="/images/hero-portrait.webp"
+            alt=""
+            fill
+            sizes="80px"
+            className="object-cover"
+          />
+        </div>
+        <p className="mt-3 font-medium text-base text-fg leading-tight">
+          Megh Gupta
+        </p>
+        <p className="mt-0.5 text-center text-fg-muted text-xs leading-snug">
+          Chief Coordinator · Backstage
+        </p>
+        <p className="mt-4 w-full bg-fg py-1.5 text-center font-mono text-[0.6875rem] text-accent-fg uppercase tracking-[0.3em]">
+          All access
+        </p>
+        <span className="bento-barcode mt-3" aria-hidden="true" />
+      </div>
+    </section>
+  );
+}
+
+// ── 6. Crossfader ──────────────────────────────────────────────
+// A DJ fader between the day job and after hours. Past the middle,
+// the board goes dark and the life cards take the light.
+
+export function CrossfaderCard() {
+  const { mode, setMode } = useBentoBoard();
+  const [value, setValue] = useState(0);
+
+  const snap = () => setValue(mode === "night" ? 100 : 0);
+
+  return (
+    <section
+      aria-label="Crossfader: day job or after hours"
+      className="bento-tile flex h-full flex-col justify-between gap-4 p-5 md:p-6"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <p className="bento-eyebrow">Crossfader</p>
+        <p className="bento-eyebrow">
+          Now playing · {mode === "night" ? "After hours" : "Day job"}
+        </p>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => {
+            setMode("day");
+            setValue(0);
+          }}
+          className={`shrink-0 rounded-full px-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+            mode === "day" ? "font-medium text-fg" : "text-fg-subtle"
+          }`}
+        >
+          Day job
+        </button>
+        <div className="bento-fader">
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={value}
+            aria-label="Crossfade from day job to after hours"
+            aria-valuetext={mode === "night" ? "After hours" : "Day job"}
+            onChange={(e) => {
+              const v = Number(e.target.value);
+              setValue(v);
+              setMode(v > 50 ? "night" : "day");
+            }}
+            onPointerUp={snap}
+            onKeyUp={snap}
+            onBlur={snap}
+          />
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            setMode("night");
+            setValue(100);
+          }}
+          className={`shrink-0 rounded-full px-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+            mode === "night" ? "font-medium text-fg" : "text-fg-subtle"
+          }`}
+        >
+          After hours
+        </button>
+      </div>
+    </section>
+  );
+}
