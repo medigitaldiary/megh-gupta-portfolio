@@ -6,8 +6,8 @@ import {
   CassetteCard,
   CrewPassCard,
   CrossfaderCard,
-  OdometerCard,
   RaceBibCard,
+  SpeedoCard,
 } from "@/components/bento/bento-lab-cards";
 import "../bento.css";
 
@@ -36,14 +36,11 @@ export default function BentoLabPage() {
         </header>
 
         <div className="grid grid-cols-1 gap-3 lg:auto-rows-[9.75rem] lg:grid-cols-12 lg:gap-5">
-          <div className="lg:col-span-5">
-            <CrossfaderCard />
+          <div className="min-h-[19rem] lg:col-span-5 lg:row-span-2 lg:min-h-0">
+            <SpeedoCard />
           </div>
           <div className="lg:col-span-7 lg:row-span-2">
             <CallCard />
-          </div>
-          <div className="lg:col-span-5">
-            <OdometerCard />
           </div>
           <div className="lg:col-span-3 lg:row-span-3">
             <CrewPassCard />
@@ -51,7 +48,10 @@ export default function BentoLabPage() {
           <div className="lg:col-span-5 lg:row-span-3">
             <CassetteCard />
           </div>
-          <div className="lg:col-span-4 lg:row-span-3">
+          <div className="lg:col-span-4">
+            <CrossfaderCard />
+          </div>
+          <div className="lg:col-span-4 lg:row-span-2">
             <RaceBibCard />
           </div>
         </div>

@@ -162,56 +162,225 @@ export function CallCard() {
   );
 }
 
-// ── 2. GT650 odometer ──────────────────────────────────────────
+// ── 2. GT650 twin dials ────────────────────────────────────────
+// Retro twin-pod clocks: speedometer on the left, rev counter on the
+// right. The needles sweep once on load, like turning the key, and
+// jump when the card is tapped.
 
 // PLACEHOLDER reading. Swap for the real one.
-const ODO_READING = "012650";
-const ODO_DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+const ODO_READING = "12650";
 
-export function OdometerCard() {
+const SWEEP_START = 135;
+const SWEEP = 270;
+
+function polar(angle: number, radius: number): { x: number; y: number } {
+  const rad = (angle * Math.PI) / 180;
+  return {
+    x: Math.round((100 + radius * Math.cos(rad)) * 100) / 100,
+    y: Math.round((100 + radius * Math.sin(rad)) * 100) / 100,
+  };
+}
+
+function Dial({
+  max,
+  majorStep,
+  minorStep,
+  value,
+  unit,
+  redFrom,
+  readout,
+}: {
+  max: number;
+  majorStep: number;
+  minorStep: number;
+  value: number;
+  unit: string;
+  redFrom?: number;
+  readout?: string;
+}) {
+  const angleFor = (v: number) => SWEEP_START + (v / max) * SWEEP;
+  const ticks: { v: number; major: boolean }[] = [];
+  for (let v = 0; v <= max + 0.001; v += minorStep) {
+    const rounded = Math.round(v * 100) / 100;
+    ticks.push({
+      v: rounded,
+      major:
+        Math.abs(rounded / majorStep - Math.round(rounded / majorStep)) < 0.001,
+    });
+  }
+  const red =
+    redFrom === undefined
+      ? null
+      : { from: polar(angleFor(redFrom), 80), to: polar(angleFor(max), 80) };
+
+  return (
+    <svg
+      viewBox="0 0 200 200"
+      className="bento-dial bento-object block h-full w-auto max-w-full"
+      aria-hidden="true"
+      role="presentation"
+    >
+      <circle cx="100" cy="100" r="99" className="bento-dial-bezel" />
+      <circle cx="100" cy="100" r="92" className="bento-dial-rim" />
+      <circle cx="100" cy="100" r="88" className="bento-dial-face" />
+      {red ? (
+        <path
+          d={`M${red.from.x} ${red.from.y} A80 80 0 0 1 ${red.to.x} ${red.to.y}`}
+          className="bento-dial-red"
+        />
+      ) : null}
+      {ticks.map((t) => {
+        const a = angleFor(t.v);
+        const outer = polar(a, 84);
+        const inner = polar(a, t.major ? 72 : 78);
+        return (
+          <line
+            key={t.v}
+            x1={outer.x}
+            y1={outer.y}
+            x2={inner.x}
+            y2={inner.y}
+            className="bento-dial-tick"
+            data-major={t.major}
+          />
+        );
+      })}
+      {ticks
+        .filter((t) => t.major)
+        .map((t) => {
+          const pos = polar(angleFor(t.v), 58);
+          return (
+            <text
+              key={t.v}
+              x={pos.x}
+              y={pos.y}
+              className="bento-dial-num"
+              textAnchor="middle"
+              dominantBaseline="central"
+            >
+              {t.v}
+            </text>
+          );
+        })}
+      <text x="100" y="74" className="bento-dial-unit" textAnchor="middle">
+        {unit}
+      </text>
+      {readout ? (
+        <>
+          <rect
+            x="72"
+            y="128"
+            width="56"
+            height="20"
+            rx="4"
+            className="bento-dial-lcd"
+          />
+          <text
+            x="100"
+            y="138.5"
+            className="bento-dial-lcd-text"
+            textAnchor="middle"
+            dominantBaseline="central"
+          >
+            {readout}
+          </text>
+        </>
+      ) : null}
+      <g
+        className="bento-dial-needle"
+        style={{ transform: `rotate(${angleFor(value)}deg)` }}
+      >
+        <path
+          d="M-14 0 L0 -3 L74 -0.8 L74 0.8 L0 3 Z"
+          transform="translate(100 100)"
+        />
+      </g>
+      <circle cx="100" cy="100" r="9" className="bento-dial-hub" />
+      <circle cx="100" cy="100" r="3" className="bento-dial-pin" />
+    </svg>
+  );
+}
+
+const IDLE = { speed: 0, revs: 1.2 };
+const FULL = { speed: 200, revs: 8 };
+const REVVED = { speed: 110, revs: 6.4 };
+
+export function SpeedoCard() {
   const reduced = useReducedMotion() ?? false;
-  const [rolled, setRolled] = useState(false);
+  const [dials, setDials] = useState({ speed: 0, revs: 0 });
+  const [revving, setRevving] = useState(false);
+
+  // Key-on sweep: needles run to the stop and settle back.
+  useEffect(() => {
+    if (reduced) {
+      setDials(IDLE);
+      return;
+    }
+    const up = window.setTimeout(() => setDials(FULL), 400);
+    const down = window.setTimeout(() => setDials(IDLE), 1500);
+    return () => {
+      window.clearTimeout(up);
+      window.clearTimeout(down);
+    };
+  }, [reduced]);
 
   useEffect(() => {
-    const id = window.setTimeout(() => setRolled(true), 500);
+    if (!revving) return;
+    setDials(REVVED);
+    const id = window.setTimeout(() => {
+      setDials(IDLE);
+      setRevving(false);
+    }, 1300);
     return () => window.clearTimeout(id);
-  }, []);
+  }, [revving]);
 
   return (
     <section
-      aria-label={`GT650 odometer: ${Number(ODO_READING).toLocaleString("en-IN")} kilometres`}
+      aria-label={`GT650 clocks. Odometer: ${Number(ODO_READING).toLocaleString("en-IN")} kilometres.`}
       data-side="life"
-      className="bento-tile flex h-full flex-col justify-between gap-4 p-5 md:p-6"
+      className="bento-tile flex h-full flex-col gap-3 p-5 md:p-6"
     >
       <div className="flex items-center justify-between gap-3">
-        <p className="bento-eyebrow">GT650 · odometer</p>
-        <p className="bento-eyebrow">km</p>
+        <p className="bento-eyebrow">GT650 · the clocks</p>
+        <button
+          type="button"
+          onClick={() => setRevving(true)}
+          className="bento-glass inline-flex min-h-8 items-center px-3 text-fg text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          Twist the throttle
+        </button>
       </div>
 
-      <div className="bento-odo bento-object" aria-hidden="true">
-        {ODO_READING.split("").map((d, i) => (
-          <span
-            // biome-ignore lint/suspicious/noArrayIndexKey: digit wheels are positional.
-            key={i}
-            className="bento-odo-cell"
-            data-last={i === ODO_READING.length - 1}
-          >
-            <span
-              className="bento-odo-wheel"
-              style={{
-                transform: `translateY(-${(rolled || reduced ? Number(d) : 0) * 10}%)`,
-                transitionDelay: `${(ODO_READING.length - 1 - i) * 120}ms`,
-              }}
-            >
-              {ODO_DIGITS.map((n) => (
-                <span key={n}>{n}</span>
-              ))}
-            </span>
-          </span>
-        ))}
-      </div>
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-hidden="true"
+        onClick={() => setRevving(true)}
+        className="flex min-h-0 flex-1 items-center justify-center gap-3 md:gap-5"
+      >
+        <span className="flex aspect-square h-full max-h-[15rem] min-h-0 max-w-[48%] items-center justify-center">
+          <Dial
+            max={200}
+            majorStep={20}
+            minorStep={10}
+            value={dials.speed}
+            unit="km/h"
+            readout={ODO_READING}
+          />
+        </span>
+        <span className="flex aspect-square h-full max-h-[15rem] min-h-0 max-w-[48%] items-center justify-center">
+          <Dial
+            max={8}
+            majorStep={1}
+            minorStep={0.5}
+            value={dials.revs}
+            unit="x1000 rpm"
+            redFrom={7}
+          />
+        </span>
+      </button>
 
-      <p className="text-fg-muted text-sm leading-snug lg:hidden">
+      <p className="text-fg-muted text-sm leading-snug">
         Not a collection. New cities at my own pace.
       </p>
     </section>
@@ -257,7 +426,7 @@ export function RaceBibCard() {
         </div>
       </div>
 
-      <p className="text-fg-muted text-sm leading-snug">
+      <p className="text-fg-muted text-sm leading-snug lg:hidden">
         Delhi is done. Noida is next.
       </p>
     </section>
