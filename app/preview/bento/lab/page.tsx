@@ -57,8 +57,8 @@ export default function BentoLabPage() {
         </div>
 
         <p className="mt-6 text-center text-fg-subtle text-sm">
-          Stand-ins for now: the odometer reading, the bib number and the sample
-          call.
+          Stand-ins for now: the bib number and the sample call. The engine
+          note is synthesised.
         </p>
       </main>
     </BentoBoard>

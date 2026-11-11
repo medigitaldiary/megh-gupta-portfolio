@@ -167,8 +167,8 @@ export function CallCard() {
 // right. The needles sweep once on load, like turning the key, and
 // jump when the card is tapped.
 
-// PLACEHOLDER reading. Swap for the real one.
-const ODO_READING = "12650";
+// Roughly where the bike is today.
+const ODO_READING = "05000";
 
 const SWEEP_START = 135;
 const SWEEP = 270;
@@ -301,6 +301,72 @@ function Dial({
   );
 }
 
+// Engine note, built in the browser with Web Audio: no audio file. It is
+// a synthesised stand-in for a parallel twin, not a recording of the
+// bike. Plays only on a tap, never on load.
+let revAudio: AudioContext | null = null;
+
+function playRev() {
+  try {
+    const Ctor =
+      window.AudioContext ??
+      (window as unknown as { webkitAudioContext?: typeof AudioContext })
+        .webkitAudioContext;
+    if (!Ctor) return;
+    revAudio = revAudio ?? new Ctor();
+    const ctx = revAudio;
+    if (ctx.state === "suspended") void ctx.resume();
+    const t = ctx.currentTime;
+
+    const out = ctx.createGain();
+    out.gain.setValueAtTime(0.0001, t);
+    out.gain.exponentialRampToValueAtTime(0.22, t + 0.06);
+    out.gain.setValueAtTime(0.22, t + 0.95);
+    out.gain.exponentialRampToValueAtTime(0.0001, t + 1.5);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.Q.value = 4;
+    filter.frequency.setValueAtTime(260, t);
+    filter.frequency.exponentialRampToValueAtTime(1500, t + 0.5);
+    filter.frequency.exponentialRampToValueAtTime(240, t + 1.4);
+
+    // Soft clipping gives the exhaust its rasp.
+    const shaper = ctx.createWaveShaper();
+    const curve = new Float32Array(256);
+    for (let i = 0; i < curve.length; i++) {
+      const x = (i / (curve.length - 1)) * 2 - 1;
+      curve[i] = Math.tanh(3 * x);
+    }
+    shaper.curve = curve;
+
+    // Three voices: the firing note, the uneven thump half an octave
+    // down that a 270 degree twin has, and a thin edge on top.
+    const voices: [OscillatorType, number, number][] = [
+      ["sawtooth", 1, 0.5],
+      ["sawtooth", 0.5, 0.6],
+      ["square", 1.5, 0.08],
+    ];
+    for (const [type, ratio, level] of voices) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      gain.gain.value = level;
+      osc.frequency.setValueAtTime(42 * ratio, t);
+      osc.frequency.exponentialRampToValueAtTime(215 * ratio, t + 0.5);
+      osc.frequency.setValueAtTime(215 * ratio, t + 0.62);
+      osc.frequency.exponentialRampToValueAtTime(42 * ratio, t + 1.4);
+      osc.connect(gain).connect(shaper);
+      osc.start(t);
+      osc.stop(t + 1.55);
+    }
+
+    shaper.connect(filter).connect(out).connect(ctx.destination);
+  } catch {
+    // No sound is fine; the needles still move.
+  }
+}
+
 const IDLE = { speed: 0, revs: 1.2 };
 const FULL = { speed: 200, revs: 8 };
 const REVVED = { speed: 110, revs: 6.4 };
@@ -334,6 +400,11 @@ export function SpeedoCard() {
     return () => window.clearTimeout(id);
   }, [revving]);
 
+  const rev = () => {
+    playRev();
+    setRevving(true);
+  };
+
   return (
     <section
       aria-label={`GT650 clocks. Odometer: ${Number(ODO_READING).toLocaleString("en-IN")} kilometres.`}
@@ -344,7 +415,7 @@ export function SpeedoCard() {
         <p className="bento-eyebrow">GT650 · the clocks</p>
         <button
           type="button"
-          onClick={() => setRevving(true)}
+          onClick={rev}
           className="bento-glass inline-flex min-h-8 items-center px-3 text-fg text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           Twist the throttle
@@ -355,7 +426,7 @@ export function SpeedoCard() {
         type="button"
         tabIndex={-1}
         aria-hidden="true"
-        onClick={() => setRevving(true)}
+        onClick={rev}
         className="flex min-h-0 flex-1 items-center justify-center gap-3 md:gap-5"
       >
         <span className="flex aspect-square h-full max-h-[15rem] min-h-0 max-w-[48%] items-center justify-center">
