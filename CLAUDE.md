@@ -132,6 +132,7 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 - About collage is scroll-scrubbed: photos fly out and torn strips slide as the visitor scrolls a sticky stage (`components/about-collage.tsx` / `.css`; static under reduced motion).
 - v3.1 Product Venn chips are draggable (`components/product-venn-travel.tsx`).
 - Work-card hinge uses `motion/react` (Framer Motion 14.4.0) for the 3D flip on hover and focus in `components/work-thumbnails.tsx`. Scoped to this one component. Reduced-motion keeps the card closed.
+- `/preview/resume` is built live by ten named cursors (`components/resume-agents/`). Preview only, behind the pass. Reduced motion, or no JavaScript, shows the finished resume. Explicit ask, 10 Nov 2026.
 
 ### Iconography
 Inline SVG only, no icon library. Every icon sits on a 24×24 grid, strokes are 1.8px (round caps and joins), colour is `currentColor` so a parent text colour drives it. Fills are the exception, used only when the mark reads as a filled shape (LinkedIn, success tick). Keep each icon in the same file as its one consumer, or group a handful in a shared `-icons.tsx` when they repeat across sections. Do not pull a new icon from a library at a different weight or grid.
@@ -401,7 +402,7 @@ pnpm dev                      # opens at localhost:3000
 - **Do not use `any` in TypeScript.** Use `unknown` + narrowing, or define the type.
 - **Do not commit secrets.** Use `.env.local` (gitignored). Reference via `process.env.X`.
 - **Do not use client components when server components work.** Default to server. Add `"use client"` only when needed (state, effects, browser APIs).
-- **Do not write CSS files** beyond `globals.css`. All styling in Tailwind. Two approved exceptions: `components/about-collage.css` (torn-paper clip-paths and the scroll-scrubbed stage; Tailwind arbitrary values can't express the paths) and `app/unlock/backstage.css` (ticket perforation, stamp timing and barcode mask). Any new CSS file needs the same treatment: added here before it ships.
+- **Do not write CSS files** beyond `globals.css`. All styling in Tailwind. Three approved exceptions: `components/about-collage.css` (torn-paper clip-paths and the scroll-scrubbed stage; Tailwind arbitrary values can't express the paths), `app/unlock/backstage.css` (ticket perforation, stamp timing and barcode mask), and `components/resume-agents/agents.css` (marquee, skeleton, typing overlay, and the scripting / reduced-motion gate for `/preview/resume`). Any new CSS file needs the same treatment: added here before it ships.
 - **Do not add `<form>` tags inside React without a clear onSubmit handler** — they cause full page reloads if not handled.
 - **Do not over-engineer.** This is a portfolio. It does not need a state management library, a CMS, an i18n framework, or a service worker.
 
