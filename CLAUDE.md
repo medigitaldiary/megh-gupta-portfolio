@@ -61,7 +61,7 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
 
 **Rule:** No other colors. If a design needs a fifth family, ask first. The Oatmeal / Pine / Lilac palette was promoted from the `/preview/v3` experiment, so earlier commits may still show the retired `#FAFAF7 / #111111 / #1F4D3A` stack. Treat the values here as the source of truth. Lilac stays decorative (highlighter marks, outer focus-ring glow, hover washes); never as text or as the focus-ring outline itself (focus-ring outline is pine on light surfaces, oatmeal on pine; G-A6 + G-C16). Never a colour that carries meaning.
 
-**Approved exceptions to the three-colour rule.** Four sets of hex values live outside the Oatmeal / Pine / Lilac palette on purpose. They are the only exceptions. Any new one needs to be added here before it ships.
+**Approved exceptions to the three-colour rule.** Five sets of hex values live outside the Oatmeal / Pine / Lilac palette on purpose. They are the only exceptions. Any new one needs to be added here before it ships.
 
 | Where | Hex values | What it's for | Why the brand palette doesn't work |
 |---|---|---|---|
@@ -69,8 +69,9 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
 | `components/backstage-pass.tsx` → constant `DENIED_INK`. Used only on the `/unlock` screen in three places: input underline on a wrong password (`:197`), status text for the "Not quite…" / "Still not it…" / "lock isn't set up" messages (`:279`), and the DENIED rubber stamp that slams onto the ticket (`:317`). | `#b23a48` (denied red) | Password error state and the stamp that lands on a denied attempt. | The brand palette has no red-adjacent hue; error states need a colour that reads as "wrong" instantly. The `/unlock` screen is a utility gate, not a brand surface, so a semantic red is cheap and clear. |
 | `components/cloud-background.tsx` → `dawn` palette. Used only behind the ticket on `/unlock`. | Sky `#b7cde1` → `#ccdae7` → `#e3dfcf` → `#f1e6ce` → `#f6ecd1`, warm glow `rgba(255,239,200,.85)`, clouds `#ffffff` / `#d5dbe3` | Decorative dawn-sky backdrop for the lock screen. | A utility gate, not a brand surface; the sky sets it apart from the portfolio itself. Approved by Megh during the design-system audit. |
 | `public/artifacts/ai-call-pipeline.html` (iframe on the AI Call Analysis case study) → `--success`, `--warning`. | `#16a34a` (success, green), `#d97706` (warning, amber) | Semantic node states in the pipeline diagram: destination node (success), warning / fallback nodes (warning). | Status needs a meaning-carrying colour the palette doesn't have. Content diagram, not chrome. Use on badges, icons and dots; status *text* stays pine (contrast, `design-system/03-gaps.md` G-A5). Approved by Megh during the design-system audit. |
+| `components/github-graph/` → `LEVEL_INK` and `GRAPH_CARD`. Sandbox at `/preview/github-graph` until Megh picks a home. | `#ebedf0`, `#9be9a8`, `#40c463`, `#30a14e`, `#216e39` (GitHub contribution levels 0 to 4), card `#fffcf8` | The contribution pill: real year, the word hello, and a heart, plus the opened year card. | The graphic has to read as GitHub's contribution graph. Pine squares would lose that. Text on the card stays pine. These greens do not become chrome anywhere else. |
 
-None of them leaks beyond the surface listed: none becomes chrome on `/`, `/work/*`, `/preview/*`, or any other brand surface.
+None of them leaks beyond the surface listed in its row. They stay out of ordinary chrome on `/`, `/work/*`, and the rest of `/preview/*`.
 
 Third-party and product brand marks (LinkedIn blue, the BondScanner / Ultra / MoveInSync work-card spines) are content, not palette: they keep their true colours. Full as-built token set: `design-system/02-tokens.md`.
 

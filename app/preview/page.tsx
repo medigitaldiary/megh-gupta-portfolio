@@ -70,7 +70,11 @@ export default function PreviewIndex() {
         <Link className="underline" href="/coming-soon">
           /coming-soon
         </Link>{" "}
-        (the current photo-bg version).
+        (the current photo-bg version). Contribution pill:{" "}
+        <Link className="underline" href="/preview/github-graph">
+          /preview/github-graph
+        </Link>
+        .
       </p>
     </main>
   );
