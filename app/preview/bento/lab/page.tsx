@@ -9,11 +9,18 @@ import {
   RaceBibCard,
   SpeedoCard,
 } from "@/components/bento/bento-lab-cards";
+import {
+  ClockOutSwitch,
+  IgnitionSwitch,
+  PedalSwitch,
+  WindowShadeSwitch,
+} from "@/components/bento/bento-mode-switches";
 import "../bento.css";
 
 export const metadata: Metadata = {
   title: "Bento card lab",
-  description: "Six object cards to try before any of them joins the board.",
+  description:
+    "Object cards and mode switches to try before any of them joins the board.",
   robots: { index: false, follow: false },
 };
 
@@ -25,9 +32,9 @@ export default function BentoLabPage() {
       <main className="mx-auto max-w-[90rem] px-4 pt-6 pb-10 md:px-8 lg:px-12">
         <header className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="bento-eyebrow">Card lab · six to try</p>
+            <p className="bento-eyebrow">Card lab · four switches, six cards</p>
             <h1 className="mt-2 font-display text-[2.25rem] text-fg leading-[1.05] tracking-tight">
-              Slide the fader. Watch the room change.
+              Four ways to change the room.
             </h1>
           </div>
           <Link href="/preview/bento" className="bento-glass bento-btn">
@@ -35,6 +42,24 @@ export default function BentoLabPage() {
           </Link>
         </header>
 
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+          <div className="min-h-[21rem]">
+            <WindowShadeSwitch />
+          </div>
+          <div className="min-h-[21rem]">
+            <PedalSwitch />
+          </div>
+          <div className="min-h-[21rem]">
+            <IgnitionSwitch />
+          </div>
+          <div className="min-h-[21rem]">
+            <ClockOutSwitch />
+          </div>
+        </div>
+
+        <p className="bento-eyebrow mt-8 mb-3">
+          The six cards, with the fader for comparison
+        </p>
         <div className="grid grid-cols-1 gap-3 lg:auto-rows-[9.75rem] lg:grid-cols-12 lg:gap-5">
           <div className="min-h-[19rem] lg:col-span-5 lg:row-span-2 lg:min-h-0">
             <SpeedoCard />
@@ -57,8 +82,8 @@ export default function BentoLabPage() {
         </div>
 
         <p className="mt-6 text-center text-fg-subtle text-sm">
-          Stand-ins for now: the bib number and the sample call. The engine note
-          is synthesised.
+          Stand-ins for now: the bib number, the sample call and the clock-in
+          time. The engine note and the pedal click are synthesised.
         </p>
       </main>
     </BentoBoard>

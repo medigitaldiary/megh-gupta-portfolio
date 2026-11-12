@@ -306,7 +306,7 @@ function Dial({
 // bike. Plays only on a tap, never on load.
 let revAudio: AudioContext | null = null;
 
-function playRev() {
+export function playRev() {
   try {
     const Ctor =
       window.AudioContext ??
