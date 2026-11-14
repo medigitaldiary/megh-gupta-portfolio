@@ -78,6 +78,10 @@ export default function PreviewIndex() {
         <Link className="underline" href="/preview/experience-roadmap">
           /preview/experience-roadmap
         </Link>
+        . Experience as a version stepper:{" "}
+        <Link className="underline" href="/preview/v3.2">
+          /preview/v3.2
+        </Link>
         .
       </p>
     </main>

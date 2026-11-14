@@ -33,7 +33,6 @@ type Release = {
   start: number;
   end: number;
   current: boolean;
-  metric?: string;
   summary?: string;
   roleChips?: string[];
   narrative?: string[];
@@ -71,7 +70,6 @@ function toReleases(entries: ExperienceEntry[]): Release[] {
         start: monthIndex(entry.start),
         end: entry.end === "present" ? nowIndex() : monthIndex(entry.end) + 1,
         current: Boolean(entry.current),
-        metric: entry.metric,
         summary: entry.summary,
         roleChips: entry.roleChips,
         narrative: entry.narrative,
@@ -97,7 +95,6 @@ function toReleases(entries: ExperienceEntry[]): Release[] {
         start: monthIndex(startYm),
         end: endYm === "present" ? nowIndex() : monthIndex(endYm) + 1,
         current: Boolean(product.current),
-        metric: product.metric,
         summary: product.summary,
         roleChips: product.roleChips,
         narrative: product.narrative,
@@ -112,7 +109,12 @@ function toReleases(entries: ExperienceEntry[]): Release[] {
     .map((release, index) => ({ ...release, version: `v${index + 1}.0` }));
 }
 
-export function ExperienceRoadmap() {
+export function ExperienceRoadmap({
+  timeline = "roadmap",
+}: {
+  /** Which drawing the timeline view uses. The list view is the changelog either way. */
+  timeline?: "roadmap" | "stepper";
+}) {
   const [view, setView] = useState<View>("timeline");
   const releases = useMemo(() => toReleases(getAllExperience()), []);
 
@@ -158,7 +160,11 @@ export function ExperienceRoadmap() {
 
         <div ref={bodyRef}>
           {view === "timeline" ? (
-            <RoadmapView releases={releases} seen={seen} />
+            timeline === "stepper" ? (
+              <StepperView releases={releases} seen={seen} />
+            ) : (
+              <RoadmapView releases={releases} seen={seen} />
+            )
           ) : (
             <ChangelogView releases={releases} />
           )}
@@ -294,15 +300,6 @@ function StatusPill({
         <span className="relative h-1.5 w-1.5 rounded-full bg-current" />
       </span>
       Live now
-    </span>
-  );
-}
-
-function Milestone({ metric }: { metric: string }) {
-  return (
-    <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-fg-muted uppercase tracking-[0.08em]">
-      <span aria-hidden="true" className="h-1.5 w-1.5 rotate-45 bg-fg" />
-      {metric}
     </span>
   );
 }
@@ -516,7 +513,7 @@ function DesktopRoadmap({
               <p className="px-3 font-mono text-[10px] text-fg-subtle uppercase tracking-[0.16em]">
                 {lane.name}
               </p>
-              <div className="relative mt-2 h-[92px]">
+              <div className="relative mt-2 h-[72px]">
                 {lane.items.map((release) => {
                   const order = releases.indexOf(release);
                   const open = pinned === release.key;
@@ -565,11 +562,6 @@ function DesktopRoadmap({
                         >
                           {release.role}
                         </p>
-                        {release.metric && (
-                          <p className="mt-1 truncate">
-                            <Milestone metric={release.metric} />
-                          </p>
-                        )}
                       </div>
                     </div>
                   );
@@ -634,13 +626,13 @@ function ReleaseHeading({ release }: { release: Release }) {
         <h3 className="mt-1 font-display text-2xl text-fg leading-[1.1] tracking-tight md:text-3xl">
           {release.role}
         </h3>
-        {release.metric && (
-          <p className="mt-2">
-            <Milestone metric={release.metric} />
-          </p>
-        )}
+        <p className="mt-2 sm:hidden">
+          <StatusPill current={release.current} />
+        </p>
       </div>
-      <StatusPill current={release.current} />
+      <span className="hidden sm:block">
+        <StatusPill current={release.current} />
+      </span>
     </div>
   );
 }
@@ -694,11 +686,6 @@ function MobileRoadmap({
                     end: release.endYm,
                   })}
                 </span>
-                {release.metric && (
-                  <span className="mt-1.5 block">
-                    <Milestone metric={release.metric} />
-                  </span>
-                )}
               </span>
               <Chevron open={open} />
             </button>
@@ -715,6 +702,207 @@ function MobileRoadmap({
         );
       })}
     </ol>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Timeline view, second take = version stepper.
+// A release track with one stop per role. One release is in focus at a
+// time and gets the full width below. Same on phone and desktop.
+// ─────────────────────────────────────────────────────────────
+
+function StepperView({
+  releases,
+  seen,
+}: {
+  releases: Release[];
+  seen: boolean;
+}) {
+  const [index, setIndex] = useState(releases.length - 1);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const active = releases[index];
+  const last = releases.length - 1;
+
+  const go = (next: number, focus = false) => {
+    const clamped = Math.max(0, Math.min(last, next));
+    setIndex(clamped);
+    if (focus) tabRefs.current[clamped]?.focus();
+  };
+
+  const onKeyDown = (event: React.KeyboardEvent) => {
+    const moves: Record<string, number> = {
+      ArrowRight: index + 1,
+      ArrowLeft: index - 1,
+      Home: 0,
+      End: last,
+    };
+    if (!(event.key in moves)) return;
+    event.preventDefault();
+    go(moves[event.key], true);
+  };
+
+  // The rail runs from the centre of the first stop to the centre of the last.
+  const inset = `${100 / (releases.length * 2)}%`;
+  const progress = last === 0 ? 0 : (index / last) * 100;
+
+  return (
+    <div>
+      <div className="relative">
+        <div
+          aria-hidden="true"
+          className="absolute top-[2.375rem] h-px bg-border"
+          style={{ left: inset, right: inset }}
+        >
+          <div
+            className="h-px bg-fg transition-[width] duration-500 ease-out motion-reduce:transition-none"
+            style={{ width: `${seen ? progress : 0}%` }}
+          />
+        </div>
+
+        <div
+          role="tablist"
+          aria-label="Releases"
+          className="relative grid"
+          style={{ gridTemplateColumns: `repeat(${releases.length}, 1fr)` }}
+        >
+          {releases.map((release, i) => {
+            const selected = i === index;
+            const reached = i <= index;
+            return (
+              <button
+                key={release.key}
+                ref={(node) => {
+                  tabRefs.current[i] = node;
+                }}
+                type="button"
+                role="tab"
+                id={`stepper-tab-${release.key}`}
+                aria-selected={selected}
+                aria-controls="stepper-panel"
+                tabIndex={selected ? 0 : -1}
+                onClick={() => go(i)}
+                onKeyDown={onKeyDown}
+                className="group flex flex-col items-center gap-2.5 rounded-lg px-1 pb-2 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+              >
+                <span
+                  className={`rounded-full border px-2 py-0.5 font-mono text-xs transition-colors duration-150 ${
+                    selected
+                      ? "border-fg bg-fg text-bg"
+                      : "border-border bg-bg-elevated text-fg-muted group-hover:text-fg"
+                  }`}
+                >
+                  {release.version}
+                </span>
+                <span
+                  aria-hidden="true"
+                  className={`h-3 w-3 rotate-45 border border-fg transition-[background-color,scale] duration-300 motion-reduce:transition-none ${
+                    reached && seen ? "bg-fg" : "bg-bg"
+                  } ${selected ? "scale-125" : "group-hover:scale-110"}`}
+                />
+                <span
+                  className={`mt-1 flex flex-col items-center gap-1.5 transition-[opacity,translate] duration-150 group-hover:-translate-y-0.5 motion-reduce:transition-none sm:flex-row sm:gap-2.5 ${
+                    selected
+                      ? "opacity-100"
+                      : "opacity-60 group-hover:opacity-100"
+                  }`}
+                >
+                  <Logo release={release} size="sm" />
+                  <span className="text-left">
+                    <span className="block font-semibold text-fg text-sm leading-tight">
+                      {release.name}
+                    </span>
+                    <span className="hidden font-mono text-[11px] text-fg-subtle uppercase tracking-wider sm:block">
+                      {formatDateRange({
+                        start: release.startYm,
+                        end: release.endYm,
+                      })}
+                    </span>
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div
+        role="tabpanel"
+        id="stepper-panel"
+        aria-labelledby={`stepper-tab-${active.key}`}
+        className="mt-6 rounded-xl border border-border bg-bg-elevated p-5 md:mt-8 md:p-8"
+      >
+        {/* Keyed so each release fades up as it comes into focus. */}
+        <div
+          key={active.key}
+          className="transition-[opacity,translate] duration-300 ease-out motion-reduce:transition-none starting:translate-y-2 starting:opacity-0"
+        >
+          <ReleaseHeading release={active} />
+          <div className="mt-5">
+            <ReleaseNotes release={active} />
+          </div>
+        </div>
+
+        <div className="mt-8 flex items-center justify-between gap-4 border-border border-t pt-4 font-mono text-xs">
+          <StepButton
+            release={releases[index - 1]}
+            direction="prev"
+            onClick={() => go(index - 1)}
+          />
+          <span className="text-fg-subtle">
+            {index + 1} / {releases.length}
+          </span>
+          <StepButton
+            release={releases[index + 1]}
+            direction="next"
+            onClick={() => go(index + 1)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StepButton({
+  release,
+  direction,
+  onClick,
+}: {
+  release?: Release;
+  direction: "prev" | "next";
+  onClick: () => void;
+}) {
+  // Empty slot keeps the counter centred at either end of the track.
+  if (!release) return <span className="flex-1" />;
+  const prev = direction === "prev";
+  return (
+    <span className={`flex flex-1 ${prev ? "justify-start" : "justify-end"}`}>
+      <button
+        type="button"
+        onClick={onClick}
+        className="group inline-flex items-center gap-2 rounded-sm text-fg-muted transition-colors duration-150 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-elevated"
+      >
+        {prev && (
+          <span
+            aria-hidden="true"
+            className="transition-transform duration-150 group-hover:-translate-x-0.5 motion-reduce:transition-none"
+          >
+            ←
+          </span>
+        )}
+        <span>
+          <span className="sr-only">{prev ? "Previous: " : "Next: "}</span>
+          {release.version} {release.name}
+        </span>
+        {!prev && (
+          <span
+            aria-hidden="true"
+            className="transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none"
+          >
+            →
+          </span>
+        )}
+      </button>
+    </span>
   );
 }
 
@@ -777,11 +965,6 @@ function ChangelogView({ releases }: { releases: Release[] }) {
                   <span className="mt-0.5 block text-fg-muted text-sm md:text-base">
                     {release.role}
                   </span>
-                  {release.metric && (
-                    <span className="mt-2 block">
-                      <Milestone metric={release.metric} />
-                    </span>
-                  )}
                 </span>
                 <Chevron open={open} />
               </button>
