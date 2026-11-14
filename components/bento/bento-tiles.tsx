@@ -99,7 +99,9 @@ function StatusPill({ onDark = false }: { onDark?: boolean }) {
   return (
     <span
       className={`bento-glass absolute top-4 right-4 z-10 inline-flex min-h-7 items-center gap-1.5 px-3 text-xs ${
-        onDark ? "bento-glass-dark text-accent-fg" : "text-fg"
+        onDark
+          ? "bento-glass-dark bento-on-cover text-accent-fg"
+          : "bento-object text-fg"
       }`}
     >
       <span className="bento-live-dot" aria-hidden="true" />

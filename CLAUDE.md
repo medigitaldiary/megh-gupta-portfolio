@@ -132,6 +132,7 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 - About collage is scroll-scrubbed: photos fly out and torn strips slide as the visitor scrolls a sticky stage (`components/about-collage.tsx` / `.css`; static under reduced motion).
 - v3.1 Product Venn chips are draggable (`components/product-venn-travel.tsx`).
 - Bento board entrance (`components/bento/bento-entrance.tsx`, `/preview/bento`): tiles fly in one by one and snap into place as they scroll into view, then their small loops start. Plays once per visit, never on scroll back. Off under reduced motion.
+- Bento board ink bleed (`components/bento/bento-ink.ts`, `/preview/bento`): the day and night switch spreads from the toggle through a marbled mask over 2.2s, using the browser's View Transitions API. Plain colour fade where that is unsupported; instant under reduced motion.
 - Work-card hinge uses `motion/react` (Framer Motion 14.4.0) for the 3D flip on hover and focus in `components/work-thumbnails.tsx`. Scoped to this one component. Reduced-motion keeps the card closed.
 
 ### Iconography
@@ -301,7 +302,7 @@ This is the most important section. Megh speaks like a PM. You translate to code
 | "Add a Calendly link" | Add a secondary CTA button in the contact section linking to his Calendly URL. Ask for the URL if not provided. |
 | "Add SEO meta tags" | Use Next.js `metadata` export on each page. Generate per-case-study OG images via `next/og` route at `/api/og`. |
 | "Add a blog" | Push back. Suggest using the Lab section or linking to existing writing instead. A blog is a maintenance burden. Only build if he confirms. |
-| "Add dark mode" | Push back. Single light theme is locked. Ask if he wants to relitigate or scope a dark variant. |
+| "Add dark mode" | Push back. Single light theme is locked. Ask if he wants to relitigate or scope a dark variant. One approved exception: the bento board (`/preview/bento`) has a night mode that swaps the pine and oatmeal tokens under `.bento[data-mode="night"]`, with one sun and moon toggle. No new colours, and it does not reach any other page. |
 | "Add a CMS" | Push back hard. MDX in the repo IS the CMS. A headless CMS adds cost, latency, and a vendor for zero benefit at this scale. |
 | "Make it faster" | Run Lighthouse. Fix in this order: image optimization (`next/image`, AVIF), font loading (`display: swap`, subset), JS bundle (dynamic import heavy components), third-party scripts. Don't pre-optimize. |
 | "Add a search" | Push back. With 4-6 case studies, search is overkill. Reconsider only at 20+ entries. |

@@ -584,6 +584,174 @@
   }
 }
 
+/* ── Ink bleed (day and night) ────────────────────────────── */
+/* bento-ink.ts starts a view transition and sets --ink-x, --ink-y,
+   --ink-end and the four marble textures --ink-t1 to --ink-t4.
+   The new theme shows through a mask that grows from the click point:
+     disc 0                 solid ink
+     ring 1 through tex 1   dense marble
+     ring 2 through tex 2
+     ring 3 through tex 3
+     ring 4 through tex 4   a few loose streaks ahead of the front
+   Each texture is a subset of the one before, so the layers nest as
+   d0 + (t1 x (d1 + (t2 x (d2 + (t3 x (d3 + (t4 x d4))))))). */
+
+@property --ink-r {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+html[data-ink] .bento {
+  transition: none;
+}
+
+/* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view transition name, not a tag. */
+html[data-ink]::view-transition-old(root) {
+  z-index: 0;
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view transition name, not a tag. */
+html[data-ink]::view-transition-new(root) {
+  --ink-band: min(calc(var(--ink-r) * 0.34 + 26px), 280px);
+  --ink-feather: calc(var(--ink-band) * 0.22);
+  --ink-r0: max(0px, calc(var(--ink-r) - var(--ink-band)));
+  --ink-r1: max(0px, calc(var(--ink-r) - var(--ink-band) * 0.62));
+  --ink-r2: max(0px, calc(var(--ink-r) - var(--ink-band) * 0.26));
+  --ink-r3: calc(var(--ink-r) + var(--ink-band) * 0.12);
+  --ink-r4: calc(var(--ink-r) + var(--ink-band) * 0.55);
+  --ink-at: circle at var(--ink-x, 50%) var(--ink-y, 50%);
+  --ink-solid: linear-gradient(#000, #000);
+  z-index: 1;
+  animation: bento-ink 2200ms cubic-bezier(0.165, 0.84, 0.44, 1) both;
+  mix-blend-mode: normal;
+  mask-image:
+    radial-gradient(
+      var(--ink-at),
+      #000 var(--ink-r0),
+      transparent calc(var(--ink-r0) + 3px)
+    ), var(--ink-t1, var(--ink-solid)),
+    radial-gradient(
+      var(--ink-at),
+      #000 calc(var(--ink-r1) - var(--ink-feather)),
+      transparent var(--ink-r1)
+    ), var(--ink-t2, var(--ink-solid)),
+    radial-gradient(
+      var(--ink-at),
+      #000 calc(var(--ink-r2) - var(--ink-feather)),
+      transparent var(--ink-r2)
+    ), var(--ink-t3, var(--ink-solid)),
+    radial-gradient(
+      var(--ink-at),
+      #000 calc(var(--ink-r3) - var(--ink-feather)),
+      transparent var(--ink-r3)
+    ), var(--ink-t4, var(--ink-solid)),
+    radial-gradient(
+      var(--ink-at),
+      #000 calc(var(--ink-r4) - var(--ink-feather)),
+      transparent var(--ink-r4)
+    );
+  mask-composite:
+    add, intersect, add, intersect, add, intersect, add, intersect, add;
+  mask-size:
+    100% 100%,
+    cover,
+    100% 100%,
+    cover,
+    100% 100%,
+    cover,
+    100% 100%,
+    cover,
+    100% 100%;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+@keyframes bento-ink {
+  from {
+    --ink-r: 0px;
+  }
+  to {
+    --ink-r: var(--ink-end, 150vmax);
+  }
+}
+
+/* The toggle: a sun that turns into a moon. */
+
+.bento-mode-toggle {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 40;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  color: var(--fg);
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-mode-toggle:hover {
+  transform: translateY(-1px);
+}
+
+.bento-mode-toggle:active {
+  transform: translateY(1px);
+}
+
+.bento-mode-toggle:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.bento-mode-toggle svg {
+  width: 1.375rem;
+  height: 1.375rem;
+  overflow: visible;
+}
+
+.bento-mode-body {
+  fill: currentColor;
+  transform-origin: 12px 12px;
+  transition: transform 450ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.bento-mode-bite {
+  fill: black;
+  transform: translate(9px, -9px);
+  transition: transform 450ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.bento-mode-rays line {
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-mode-rays {
+  transform-origin: 12px 12px;
+  transition: transform 450ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.bento-mode-toggle[data-night="true"] .bento-mode-body {
+  transform: scale(1.5);
+}
+
+.bento-mode-toggle[data-night="true"] .bento-mode-bite {
+  transform: translate(3.5px, -3px);
+}
+
+.bento-mode-toggle[data-night="true"] .bento-mode-rays {
+  transform: rotate(60deg) scale(0.4);
+}
+
+.bento-mode-toggle[data-night="true"] .bento-mode-rays line {
+  opacity: 0;
+}
+
 /* ── Reduced motion ───────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
@@ -630,6 +798,17 @@
   --accent-fg: #1f3b2e;
   --bento-shine: rgba(232, 220, 198, 0.14);
   --bento-ink-soft: rgba(31, 59, 46, 0.5);
+}
+
+/* Captions that sit on a dark cover keep their light ink at night. */
+.bento[data-mode="night"] .bento-scrim,
+.bento[data-mode="night"] .bento-on-cover {
+  --accent-fg: #e8dcc6;
+}
+
+/* Multiply goes to black on a dark tile; screen keeps the Venn lit. */
+.bento[data-mode="night"] .bento-venn-circle {
+  mix-blend-mode: screen;
 }
 
 .bento[data-mode="night"]::after {

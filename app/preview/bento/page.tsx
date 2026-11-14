@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BentoBoard } from "@/components/bento/bento-board";
 import { BentoEntrance } from "@/components/bento/bento-entrance";
+import { ModeToggle } from "@/components/bento/bento-mode-toggle";
 import {
   ConnectTile,
   IntroTile,
@@ -191,6 +192,7 @@ export default async function BentoPreviewPage() {
           </Link>
         </footer>
       </main>
+      <ModeToggle />
     </BentoBoard>
   );
 }
