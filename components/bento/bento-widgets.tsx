@@ -26,7 +26,12 @@ export function CoverVideo({
   sizes: string;
   className?: string;
 }) {
-  const reduced = useReducedMotion() ?? false;
+  // The server cannot know the visitor's motion setting, so the first
+  // paint matches the server and the poster swap happens after mount.
+  const prefersReduced = useReducedMotion() ?? false;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const reduced = mounted && prefersReduced;
   const ref = useRef<HTMLVideoElement | null>(null);
   const play = Boolean(video) && !reduced;
 

@@ -131,6 +131,7 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 - `/unlock` ticket tilts toward a mouse pointer (`components/backstage-pass.tsx`, `pointerType === "mouse"` only, off under reduced motion).
 - About collage is scroll-scrubbed: photos fly out and torn strips slide as the visitor scrolls a sticky stage (`components/about-collage.tsx` / `.css`; static under reduced motion).
 - v3.1 Product Venn chips are draggable (`components/product-venn-travel.tsx`).
+- Bento board entrance (`components/bento/bento-entrance.tsx`, `/preview/bento`): tiles fly in one by one and snap into place as they scroll into view, then their small loops start. Plays once per visit, never on scroll back. Off under reduced motion.
 - Work-card hinge uses `motion/react` (Framer Motion 14.4.0) for the 3D flip on hover and focus in `components/work-thumbnails.tsx`. Scoped to this one component. Reduced-motion keeps the card closed.
 
 ### Iconography

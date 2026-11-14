@@ -3,6 +3,7 @@ import path from "node:path";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BentoBoard } from "@/components/bento/bento-board";
+import { BentoEntrance } from "@/components/bento/bento-entrance";
 import {
   ConnectTile,
   IntroTile,
@@ -110,7 +111,7 @@ export default async function BentoPreviewPage() {
   return (
     <BentoBoard>
       <main className="mx-auto max-w-[90rem] px-4 pt-4 pb-10 md:px-8 lg:px-12 lg:pt-6">
-        <div className="bento-grid">
+        <BentoEntrance className="bento-grid">
           {/* Tile 1: hook. Who is this? */}
           <IntroTile />
 
@@ -178,7 +179,7 @@ export default async function BentoPreviewPage() {
 
           {/* Tile 9: action. How do I reach them? */}
           <ConnectTile />
-        </div>
+        </BentoEntrance>
 
         <footer className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center text-fg-subtle text-sm">
           <p>© 2026 Megh Gupta</p>

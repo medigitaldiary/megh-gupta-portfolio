@@ -536,6 +536,54 @@
   filter: saturate(0.5);
 }
 
+/* ── Entrance ─────────────────────────────────────────────── */
+/* Tiles wait hidden, fly in one by one (bento-entrance.tsx sets the
+   direction and the delay), then snap. A tile's own animations are held
+   until it has landed. Only when motion is welcome: under reduced motion
+   none of this applies and the board is simply there. */
+
+@media (prefers-reduced-motion: no-preference) {
+  .bento-grid[data-entrance] > :not([data-fly]) {
+    opacity: 0;
+  }
+
+  .bento-grid[data-entrance] > [data-fly="in"] {
+    animation: bento-land 780ms cubic-bezier(0.22, 0.61, 0.36, 1)
+      var(--bento-fly-delay, 0ms) both;
+    will-change: transform, opacity;
+  }
+
+  .bento-grid[data-entrance] > :not([data-fly="done"]) * {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes bento-land {
+  0% {
+    opacity: 0;
+    transform: translate(var(--bento-fly-x, 0), var(--bento-fly-y, 3rem))
+      rotate(var(--bento-fly-turn, 0deg)) scale(0.84);
+  }
+  35% {
+    opacity: 1;
+  }
+  /* Overshoots its slot a touch, then snaps back. */
+  68% {
+    transform: translate(
+        calc(var(--bento-fly-x, 0) * -0.025),
+        calc(var(--bento-fly-y, 3rem) * -0.025)
+      )
+      rotate(calc(var(--bento-fly-turn, 0deg) * -0.12)) scale(1.02);
+  }
+  84% {
+    transform: scale(0.994);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* ── Reduced motion ───────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
