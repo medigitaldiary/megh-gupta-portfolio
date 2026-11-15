@@ -22,6 +22,18 @@
     li[data-block]:not([data-state="done"]):not([data-state="type"]) {
     list-style: none;
   }
+
+  .agents-page.is-idle
+    [data-block]:not([data-state="done"]):not([data-state="type"])
+    > .agents-fill {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .agents-page.is-idle
+    li[data-block]:not([data-state="done"]):not([data-state="type"]) {
+    list-style: revert;
+  }
 }
 
 .agents-page [data-block][data-state="rough"]::before {
@@ -319,4 +331,8 @@
   .agents-page [data-block]::after {
     display: none;
   }
+}
+
+.agents-page.is-idle .agents-cursors {
+  visibility: hidden;
 }
