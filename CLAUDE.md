@@ -61,7 +61,7 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
 
 **Rule:** No other colors. If a design needs a fifth family, ask first. The Oatmeal / Pine / Lilac palette was promoted from the `/preview/v3` experiment, so earlier commits may still show the retired `#FAFAF7 / #111111 / #1F4D3A` stack. Treat the values here as the source of truth. Lilac stays decorative (highlighter marks, outer focus-ring glow, hover washes); never as text or as the focus-ring outline itself (focus-ring outline is pine on light surfaces, oatmeal on pine; G-A6 + G-C16). Never a colour that carries meaning.
 
-**Approved exceptions to the three-colour rule.** Five sets of hex values live outside the Oatmeal / Pine / Lilac palette on purpose. They are the only exceptions. Any new one needs to be added here before it ships.
+**Approved exceptions to the three-colour rule.** Six sets of hex values live outside the Oatmeal / Pine / Lilac palette on purpose. They are the only exceptions. Any new one needs to be added here before it ships.
 
 | Where | Hex values | What it's for | Why the brand palette doesn't work |
 |---|---|---|---|
@@ -70,6 +70,7 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
 | `components/cloud-background.tsx` → `dawn` palette. Used only behind the ticket on `/unlock`. | Sky `#b7cde1` → `#ccdae7` → `#e3dfcf` → `#f1e6ce` → `#f6ecd1`, warm glow `rgba(255,239,200,.85)`, clouds `#ffffff` / `#d5dbe3` | Decorative dawn-sky backdrop for the lock screen. | A utility gate, not a brand surface; the sky sets it apart from the portfolio itself. Approved by Megh during the design-system audit. |
 | `public/artifacts/ai-call-pipeline.html` (iframe on the AI Call Analysis case study) → `--success`, `--warning`. | `#16a34a` (success, green), `#d97706` (warning, amber) | Semantic node states in the pipeline diagram: destination node (success), warning / fallback nodes (warning). | Status needs a meaning-carrying colour the palette doesn't have. Content diagram, not chrome. Use on badges, icons and dots; status *text* stays pine (contrast, `design-system/03-gaps.md` G-A5). Approved by Megh during the design-system audit. |
 | `components/github-graph/` → `LEVEL_INK` and `GRAPH_CARD`. Sandbox at `/preview/github-graph` until Megh picks a home. | `#ebedf0`, `#9be9a8`, `#40c463`, `#30a14e`, `#216e39` (GitHub contribution levels 0 to 4), card `#fffcf8` | The contribution pill: real year, the word hello, and a heart, plus the opened year card. | The graphic has to read as GitHub's contribution graph. Pine squares would lose that. Text on the card stays pine. These greens do not become chrome anywhere else. |
+| `app/globals.css` → `--venn-user-deep`, `--venn-biz-deep`, `--venn-tech-deep`, class `.cta-highlight`. Used only by `<Button variant="highlight">` (`components/ui/button.tsx`). | `#b5406f` (pink), `#a35f27` (amber), `#456ba6` (blue) | The highlight CTA: a flowing gradient pill for one time-bound moment (new, limited seats, a deadline). At most one on the whole site at a time. | Explicit ask by Megh, 15 Nov 2026. The Venn hues are deepened so the cream label holds 4.5:1 at every point of the gradient (cream on the original amber is 3.04). Spec: `design-system/02-components.md` §1f. |
 
 None of them leaks beyond the surface listed in its row. They stay out of ordinary chrome on `/`, `/work/*`, and the rest of `/preview/*`.
 
@@ -135,6 +136,7 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 - Work-card hinge uses `motion/react` (Framer Motion 14.4.0) for the 3D flip on hover and focus in `components/work-thumbnails.tsx`. Scoped to this one component. Reduced-motion keeps the card closed.
 - `/preview/resume` is built live by ten named cursors (`components/resume-agents/`). Preview only, behind the pass. Reduced motion, or no JavaScript, shows the finished resume. Explicit ask, 10 Nov 2026.
 - `/preview/resumev2` is the same build, started by one "Watch it get built" button. No log, skip, or replay. The walkthrough plays once and ends on the finished resume. Explicit ask, 15 Nov 2026.
+- The highlight CTA (`<Button variant="highlight">`, `.cta-highlight` in `app/globals.css`) runs a continuous 7s gradient flow with a matching glow. One on the site at a time. Holds still under reduced motion. Explicit ask, 15 Nov 2026.
 
 ### Iconography
 Inline SVG only, no icon library. Every icon sits on a 24×24 grid, strokes are 1.8px (round caps and joins), colour is `currentColor` so a parent text colour drives it. Fills are the exception, used only when the mark reads as a filled shape (LinkedIn, success tick). Keep each icon in the same file as its one consumer, or group a handful in a shared `-icons.tsx` when they repeat across sections. Do not pull a new icon from a library at a different weight or grid.

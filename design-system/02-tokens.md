@@ -165,6 +165,9 @@ Every token, with what it replaces and how many places change. The same data is 
 | `--venn-tech` | `#4a72b0` | (no change) | 0 |  | app/globals.css:22; product-venn.tsx:19; product-venn-travel.tsx:37 |
 | `--venn-biz` | `#c77e3b` | (no change) | 0 |  | app/globals.css:23; product-venn.tsx:20; product-venn-travel.tsx:38 |
 | `--venn-ink` | `var(--cream-50)` | var(--venn-cream) | 0 |  | product-venn.tsx:508; product-venn-travel.tsx:354,763 |
+| `--venn-user-deep` | `#b5406f` | (new) deepened `--venn-user` for the highlight CTA; cream label 5.02:1 | 0 | Explicit ask, 15 Nov 2026. | app/globals.css (.cta-highlight) |
+| `--venn-biz-deep` | `#a35f27` | (new) deepened `--venn-biz` for the highlight CTA; cream label 4.67:1 | 0 |  | app/globals.css (.cta-highlight) |
+| `--venn-tech-deep` | `#456ba6` | (new) deepened `--venn-tech` for the highlight CTA; cream label 5.05:1 | 0 |  | app/globals.css (.cta-highlight) |
 
 ### 2.4 Content colours (third-party and product brands, kept true)
 

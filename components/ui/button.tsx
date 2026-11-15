@@ -19,6 +19,10 @@ import {
 //             quietest ghost, used end-of-study where the eye should rest
 //             on the primary (Book 20 min) first.
 //   ghost     No chrome until hover. For dense button rows (nav).
+//   highlight Flowing Venn gradient with a matching glow. For one
+//             time-bound moment (new, limited seats, a deadline). At most
+//             one on the whole site at a time; it replaces the primary in
+//             its fold. Styles live in app/globals.css (.cta-highlight).
 //
 // Sizes
 //   sm        px-4  py-2       (nav resume, back-to-work)
@@ -29,7 +33,12 @@ import {
 // Modifiers
 //   mono      Switches body to font-mono, uppercase tracking.
 
-export type ButtonVariant = "primary" | "outline" | "hairline" | "ghost";
+export type ButtonVariant =
+  | "primary"
+  | "outline"
+  | "hairline"
+  | "ghost"
+  | "highlight";
 export type ButtonSize = "sm" | "md" | "lg" | "touch";
 
 type SharedProps = {
@@ -47,6 +56,7 @@ const VARIANT: Record<ButtonVariant, string> = {
   outline: "border border-fg text-fg hover:bg-fg hover:text-accent-fg",
   hairline: "border border-border text-fg hover:bg-bg",
   ghost: "text-fg hover:bg-bg-elevated",
+  highlight: "cta-highlight",
 };
 
 const SIZE_PAD: Record<ButtonSize, string> = {

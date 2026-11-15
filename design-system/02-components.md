@@ -33,7 +33,7 @@
 
 ## 1. Buttons
 
-Five button patterns exist. None is a shared component; each is a class string repeated at its call site.
+Six button patterns exist. None is a shared component; each is a class string repeated at its call site.
 
 ### 1a. Primary pill
 
@@ -82,6 +82,18 @@ Five button patterns exist. None is a shared component; each is a class string r
 | **Mobile** | Computed 28px tall per segment. Sits under the section H2 (header stacks). |
 | **Tokens** | `--bg-elevated`, `--border`, `--fg`, `--bg`, `--fg-muted`, `--text-label`, `--radius-full` |
 | **Usage rule** | Switches between views of the **same** content. Not for navigation. |
+
+### 1f. Highlight pill
+
+| | |
+|---|---|
+| **Anatomy** | Same pill as 1a. The fill is a gradient strip (deepened Venn pink → amber → blue → pink) twice the pill's width that slides through it on a 7s loop. A blurred copy of the same strip sits behind it as the glow. Cream label (`--venn-cream`), weight 500. |
+| **Where** | `<Button variant="highlight">` / `<ButtonLink variant="highlight">` (`components/ui/button.tsx`). Styles in `app/globals.css` (`.cta-highlight`). No call site yet. |
+| **Sizes** | Same `sm` / `md` / `lg` / `touch` as the other variants. |
+| **States** | Idle: gradient flows without a trigger, so phones see it (no hover on touch). Hover: glow opacity 0.8 → 1, 150ms. Focus: pine `ring-2` from the shared base. Reduced motion: gradient and glow hold still; the colour alone still sets it apart from primary. Disabled: `opacity-60` from the base. |
+| **Contrast** | Cream on the three stops: 5.02 (pink), 4.67 (amber), 5.05 (blue). Blends between stops stay above 4.9. The original Venn hues were not used because cream on `--venn-biz` is 3.04. |
+| **Tokens** | `--venn-user-deep`, `--venn-biz-deep`, `--venn-tech-deep`, `--venn-cream`, `--radius-full` |
+| **Usage rule** | For one time-bound moment: something new, limited seats, a deadline. **One on the whole site at a time.** It replaces the primary in its fold and never sits beside one. It always states the reason in or next to the label ("2 seats left"). Set the date it returns to a plain primary before it ships. |
 
 ---
 
