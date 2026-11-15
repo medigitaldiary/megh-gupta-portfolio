@@ -750,3 +750,45 @@ section {
     animation: none;
   }
 }
+
+/* Highlighted tertiary (TextLink highlight). The same Venn strip as the
+   highlight pill, drawn as a 2px underline that slides under the label.
+   The words keep their normal colour, so contrast never changes. On
+   pine the line uses the brighter Venn hues so it stays visible.
+   Spec: design-system/02-components.md §2b. */
+@keyframes link-highlight-flow {
+  to {
+    background-position: 200% 100%;
+  }
+}
+
+.link-highlight {
+  padding-bottom: 5px;
+  background-image: linear-gradient(
+    90deg,
+    var(--venn-user-deep),
+    var(--venn-biz-deep),
+    var(--venn-tech-deep),
+    var(--venn-user-deep)
+  );
+  background-repeat: repeat-x;
+  background-position: 0 100%;
+  background-size: 200% 2px;
+  animation: link-highlight-flow 7s linear infinite;
+}
+
+.link-highlight-pine {
+  background-image: linear-gradient(
+    90deg,
+    var(--venn-user),
+    var(--venn-biz),
+    var(--venn-tech),
+    var(--venn-user)
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-highlight {
+    animation: none;
+  }
+}

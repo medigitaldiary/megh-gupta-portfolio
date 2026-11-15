@@ -107,6 +107,29 @@ Six button patterns exist. None is a shared component; each is a class string re
 | **Tokens** | `--fg`, `--accent`, `--highlight-strong`, `--border-width-strong`, `--accent-fg` |
 | **Usage rule** | Links read as links at rest: underline or accent colour, never colour alone. External links use `target="_blank" rel="noopener noreferrer"` (all in scope do) and an `↗` when inline. |
 
+### 2a. Tertiary CTA (`TextLink`)
+
+| | |
+|---|---|
+| **Anatomy** | Label + small arrow icon (14px, 1.8px stroke). Label underlined at 1.5px, offset 5px. Geist Sans 14px, weight 500. The hit area is 44px tall; the underline hugs the text. |
+| **Where** | `<TextLink>` (`components/ui/text-link.tsx`). No call site yet; the hand-written text links listed above move onto it in a later PR. |
+| **Direction** | `onward` (arrow right, trailing; default). `external` (arrow up-right, trailing; adds `target="_blank" rel="noopener noreferrer"`). `back` (arrow left, leading). |
+| **States** | Hover: the global lilac underline (see States above). Focus: pine `ring-2`, oatmeal ring with `onPine`. |
+| **Tokens** | `--fg`, `--accent`, `--accent-fg`, `--text-small` |
+| **Usage rule** | The third rung under primary and secondary: "see more", "go back", "open elsewhere". Never the only way to do the main action of a fold. |
+
+### 2b. Highlighted tertiary
+
+| | |
+|---|---|
+| **Anatomy** | Same as 2a, but the underline is a 2px strip of the highlight gradient (deepened Venn pink → amber → blue) that slides under the label on a 7s loop. The words keep their normal colour. |
+| **Where** | `<TextLink highlight>`. Styles in `app/globals.css` (`.link-highlight`). No call site yet. |
+| **Variants** | `onPine`: oatmeal label; the line uses the original Venn hues (`--venn-user`, `--venn-biz`, `--venn-tech`) so it stays visible on pine. |
+| **States** | Idle: flows without a trigger. Reduced motion: the gradient line holds still and still sets it apart from 2a. Focus as 2a. |
+| **Contrast** | Unchanged from 2a. Only the line carries colour, so the label is pine on oatmeal or oatmeal on pine. |
+| **Tokens** | `--venn-user-deep`, `--venn-biz-deep`, `--venn-tech-deep`; on pine `--venn-user`, `--venn-biz`, `--venn-tech` |
+| **Usage rule** | Same as the highlight pill (§1f) and counted together with it: **one highlight on the whole site at a time**, pill or link. It states its reason and has an end date. |
+
 ---
 
 ## 3. Nav

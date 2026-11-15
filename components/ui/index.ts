@@ -8,3 +8,5 @@ export type { IconButtonSize, IconButtonVariant } from "./icon-button";
 export { IconButton } from "./icon-button";
 export type { TagVariant } from "./tag";
 export { Tag } from "./tag";
+export type { TextLinkDirection } from "./text-link";
+export { TextLink } from "./text-link";
