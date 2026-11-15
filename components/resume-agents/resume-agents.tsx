@@ -30,7 +30,15 @@ type LogLine = { t: string; agent: string; text: string };
 const DOCK_BUTTON =
   "mx-2 mb-2 inline-flex min-h-11 items-center justify-center rounded-lg bg-accent px-4 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-fg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2";
 
-export function ResumeAgents({ children }: { children: ReactNode }) {
+export function ResumeAgents({
+  children,
+  cta = false,
+  startRef,
+}: {
+  children: ReactNode;
+  cta?: boolean;
+  startRef?: { current: (() => void) | null };
+}) {
   const rootRef = useRef<HTMLDivElement>(null);
   const api = useRef({
     skip: () => {},
@@ -39,6 +47,7 @@ export function ResumeAgents({ children }: { children: ReactNode }) {
   const [lines, setLines] = useState<LogLine[]>([]);
   const [status, setStatus] = useState("Built 0 / 0");
   const [settled, setSettled] = useState(false);
+  const [idle, setIdle] = useState(cta);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -569,6 +578,40 @@ export function ResumeAgents({ children }: { children: ReactNode }) {
       await play(token);
     }
 
+    function clearBlocks() {
+      for (const block of blocks()) {
+        hideMarquee(block);
+        delete block.dataset.state;
+        delete block.dataset.wasTyped;
+        for (const node of block.querySelectorAll(".agents-caret")) {
+          node.remove();
+        }
+        for (const target of block.querySelectorAll<HTMLElement>(
+          "[data-type-target]",
+        )) {
+          delete target.dataset.typing;
+          delete target.dataset.typed;
+        }
+      }
+    }
+
+    async function begin() {
+      generation += 1;
+      const token = generation;
+      handed = false;
+      roaming = false;
+      running.clear();
+      setLines([]);
+      setStatus("Built 0 / 0");
+      setSettled(false);
+      stage.classList.remove("is-settled");
+      clearBlocks();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      await wait(280);
+      if (!alive || token !== generation) return;
+      await play(token);
+    }
+
     function handOver() {
       if (playLocked || handed) return;
       handed = true;
@@ -617,17 +660,25 @@ export function ResumeAgents({ children }: { children: ReactNode }) {
       }
     };
 
-    window.addEventListener("wheel", onWheel, { passive: true });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: true });
-    window.addEventListener("keydown", onKey);
-
-    api.current.skip = finishAll;
-    api.current.rebuild = () => {
-      void rebuild();
-    };
-
-    void play(generation);
+    if (cta) {
+      for (const block of blocks()) block.dataset.state = "done";
+      if (startRef) {
+        startRef.current = () => {
+          setIdle(false);
+          void begin();
+        };
+      }
+    } else {
+      window.addEventListener("wheel", onWheel, { passive: true });
+      window.addEventListener("touchstart", onTouchStart, { passive: true });
+      window.addEventListener("touchmove", onTouchMove, { passive: true });
+      window.addEventListener("keydown", onKey);
+      api.current.skip = finishAll;
+      api.current.rebuild = () => {
+        void rebuild();
+      };
+      void play(generation);
+    }
 
     return () => {
       alive = false;
@@ -640,14 +691,20 @@ export function ResumeAgents({ children }: { children: ReactNode }) {
       window.removeEventListener("keydown", onKey);
       for (const cleanup of cleanups) cleanup();
       for (const el of marquees.values()) el.remove();
+      if (startRef) startRef.current = null;
     };
-  }, []);
+  }, [cta, startRef]);
+
+  const stageClass = [
+    "agents-page",
+    settled ? "is-settled" : "",
+    idle ? "is-idle" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <div
-      ref={rootRef}
-      className={settled ? "agents-page is-settled" : "agents-page"}
-    >
+    <div ref={rootRef} className={stageClass}>
       {children}
       <div className="agents-cursors" aria-hidden="true">
         {CURSORS.map((name) => (
@@ -665,32 +722,36 @@ export function ResumeAgents({ children }: { children: ReactNode }) {
           </div>
         ))}
       </div>
-      <div className="agents-dock print:hidden">
-        <div className="agents-log-head">
-          <span>Agent log</span>
-          <span>{status}</span>
+      {cta ? null : (
+        <div className="agents-dock print:hidden">
+          <div className="agents-log-head">
+            <span>Agent log</span>
+            <span>{status}</span>
+          </div>
+          {lines.length > 0 ? (
+            <ol className="agents-log" aria-live="polite">
+              {lines.map((line) => (
+                <li key={`${line.t}-${line.agent}-${line.text}`}>
+                  <span className="agents-log-time">{line.t}</span>
+                  <span className="agents-chip" data-agent={line.agent}>
+                    {line.agent}
+                  </span>
+                  <span className="agents-log-text">{line.text}</span>
+                </li>
+              ))}
+            </ol>
+          ) : null}
+          <button
+            type="button"
+            className={DOCK_BUTTON}
+            onClick={() =>
+              settled ? api.current.rebuild() : api.current.skip()
+            }
+          >
+            {settled ? "Watch it build again" : "Skip"}
+          </button>
         </div>
-        {lines.length > 0 ? (
-          <ol className="agents-log" aria-live="polite">
-            {lines.map((line) => (
-              <li key={`${line.t}-${line.agent}-${line.text}`}>
-                <span className="agents-log-time">{line.t}</span>
-                <span className="agents-chip" data-agent={line.agent}>
-                  {line.agent}
-                </span>
-                <span className="agents-log-text">{line.text}</span>
-              </li>
-            ))}
-          </ol>
-        ) : null}
-        <button
-          type="button"
-          className={DOCK_BUTTON}
-          onClick={() => (settled ? api.current.rebuild() : api.current.skip())}
-        >
-          {settled ? "Watch it build again" : "Skip"}
-        </button>
-      </div>
+      )}
     </div>
   );
 }

@@ -155,7 +155,11 @@ const SKILL_METHODS = [
   "pricing",
 ];
 
-export function ResumeDocument() {
+export function ResumeDocument({
+  headerAside,
+}: {
+  headerAside?: ReactNode;
+} = {}) {
   return (
     <>
       <header className="sticky top-0 z-50 border-b border-border bg-bg print:hidden">
@@ -176,14 +180,17 @@ export function ResumeDocument() {
                 <span className="text-fg-muted"> · Resume</span>
               </span>
             </Link>
-            <a
-              href={RESUME_PDF}
-              download={RESUME_DOWNLOAD}
-              className={`${DOWNLOAD_BUTTON} px-4`}
-            >
-              <DownloadIcon />
-              <span>Download resume (PDF)</span>
-            </a>
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              {headerAside}
+              <a
+                href={RESUME_PDF}
+                download={RESUME_DOWNLOAD}
+                className={`${DOWNLOAD_BUTTON} px-4`}
+              >
+                <DownloadIcon />
+                <span>Download resume (PDF)</span>
+              </a>
+            </div>
           </div>
         </Block>
       </header>
