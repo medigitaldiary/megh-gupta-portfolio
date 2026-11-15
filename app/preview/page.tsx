@@ -78,7 +78,7 @@ export default function PreviewIndex() {
         <Link className="underline" href="/preview/experience-roadmap">
           /preview/experience-roadmap
         </Link>
-        . Experience as a version stepper:{" "}
+        . Experience as a segmented bar:{" "}
         <Link className="underline" href="/preview/v3.2">
           /preview/v3.2
         </Link>

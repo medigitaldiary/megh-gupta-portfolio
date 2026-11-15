@@ -135,6 +135,7 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 - v3.1 Product Venn chips are draggable (`components/product-venn-travel.tsx`).
 - Work-card hinge uses `motion/react` (Framer Motion 14.4.0) for the 3D flip on hover and focus in `components/work-thumbnails.tsx`. Scoped to this one component. Reduced-motion keeps the card closed.
 - `/preview/resume` is built live by ten named cursors (`components/resume-agents/`). Preview only, behind the pass. Reduced motion, or no JavaScript, shows the finished resume. Explicit ask, 10 Nov 2026.
+- Experience bar on `/preview/v3.2` carries a looping sheen across the current role (`components/experience-roadmap.tsx`, keyframes `exp-sheen` in `app/globals.css`). Off under reduced motion. Explicit ask, 15 Nov 2026.
 - `/preview/resumev2` is the same build, started by one "Watch it get built" button. No log, skip, or replay. The walkthrough plays once and ends on the finished resume. Explicit ask, 15 Nov 2026.
 - The highlight CTA (`<Button variant="highlight">`, `.cta-highlight` in `app/globals.css`) runs a continuous 7s gradient flow with a matching glow. Its tertiary form (`<TextLink highlight>`, `.link-highlight`) runs the same flow as a 2px underline. One on the site at a time, pill or link. Holds still under reduced motion. Explicit ask, 15 Nov 2026.
 
