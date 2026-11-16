@@ -55,7 +55,7 @@ export default function PortfolioV51Preview() {
         />
       </main>
       {/* CTA: action. How do I reach them? */}
-      <FooterSky flow={{ index: "04" }} wide aligned />
+      <FooterSky wide aligned />
     </div>
   );
 }
