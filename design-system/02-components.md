@@ -10,7 +10,7 @@
 
 | # | Component | File | Routes |
 |---|---|---|---|
-| 1 | [Buttons](#1-buttons) (primary pill, outline pill, icon button, ghost icon, segmented control) | several | all |
+| 1 | [Buttons](#1-buttons) (primary pill, secondary pill, icon button, ghost icon, segmented control) | `components/ui/button.tsx` | all |
 | 2 | [Text link](#2-text-link) | several | all |
 | 3 | [Nav](#3-nav) + status chip + mobile menu | `components/nav.tsx` | v3, v3.1 |
 | 4 | [Hero](#4-hero) | `components/hero.tsx` | v3, v3.1 |
@@ -33,29 +33,31 @@
 
 ## 1. Buttons
 
-Five button patterns exist. None is a shared component; each is a class string repeated at its call site.
+Three CTA tiers. Primary and secondary are `<Button>` and `<ButtonLink>` in `components/ui/button.tsx` (`buttonStyles()` for an element that cannot be either). Tertiary is `<TextLink>` / `<TextLinkButton>` in `components/ui/text-link.tsx` (§2a). Labels are sentence case in Geist Sans. Arrows are the shared 24-grid icon (`CtaArrow`), never a typed character. One primary is visible per fold. Highlight (§1f, §2b) is built and unused.
 
 ### 1a. Primary pill
 
 | | |
 |---|---|
-| **Anatomy** | Label + optional trailing glyph or icon (→, download, arrow). `rounded-full`, pine fill, oat text. |
-| **Sizes** | **L** `px-6 py-3 text-sm` (hero CTA, `hero.tsx:83`; unlock submit, `backstage-pass.tsx:248`). **M** `px-4 py-2 text-sm` (nav Resume, `nav.tsx:413`). **L-mobile** `px-6 py-3 text-base` (mobile-menu Resume, `nav.tsx:473`). **M-alt** `px-5 py-2.5` (case-study coming-soon CTA, not rendered on AI Call). |
-| **States** | Hover `opacity: var(--opacity-hover)` (0.9), 150ms. Focus: the classes ask for a pine `ring-2`, but the global lilac outline renders instead and squares the corners (Phase 4; fix in 03-gaps G-A6, G-A18). Unlock submit adds hover lift + shadow, **loading** (spinner + "Checking…"), **success** ("Welcome in"), **disabled** (`opacity` 0.5 → `--opacity-disabled`). No pressed / active state anywhere. |
-| **Mobile** | Hero CTA computed 44px tall. Nav Resume is hidden below `md`; the menu shows the L-mobile size (computed 48px). |
-| **Tokens** | `--accent`, `--accent-fg`, `--radius-full`, `--text-small`, `--opacity-hover`, `--duration-fast`, `--shadow-md` (unlock) |
-| **Usage rule** | One primary pill per fold. It is the only filled-pine control, so it always means "the main thing to do here". *(proposed)* Build it once as a shared component with `size="m" | "l"` and `state` props; today it is copied 5 times with drifting padding. |
+| **Anatomy** | Label, optional trailing icon (arrow or download). `rounded-full`, pine fill, oatmeal label, `shadow-[var(--shadow-md)]`. |
+| **Component** | `<Button>` / `<ButtonLink variant="primary">` (the default). Sizes `sm` `px-4 py-2`, `md` `px-5 py-2.5`, `lg` `px-6 py-3`, `touch` `min-h-11 px-5`. All `text-sm`. |
+| **Where** | Hero "Let's connect" (`hero.tsx`). Case-study "Book 20 min" (`case-study-contact.tsx`) and the coming-soon "Let's talk about it" (`app/work/[slug]/page.tsx`). 404 "Home" (`app/not-found.tsx`). Error "Try again" (`app/error.tsx`). Unlock "Get my pass" (`backstage-pass.tsx`), including loading, success and disabled. Resume "Download resume (PDF)", header and close (`resume-document.tsx`), via `buttonStyles()` because the link downloads a file. |
+| **States** | Hover opacity 0.9, 150ms. Focus: pine `ring-2` with offset. Disabled: opacity 0.6, no pointer events. Unlock keeps its spinner ("Checking…"), "Welcome in", and the disabled gate. |
+| **Mobile** | `lg` and `touch` clear 44px. `sm` is shorter and sits in the resume bar. |
+| **Tokens** | `--accent`, `--accent-fg`, `--shadow-md`, `--radius-full`, `--text-small`, `--duration-fast` |
+| **Usage rule** | The one most important action in view. One per fold. |
 
-### 1b. Outline pill
+### 1b. Secondary pill
 
 | | |
 |---|---|
-| **Anatomy** | Mono uppercase label, 1px pine border, `rounded-full`, `px-4 py-2 text-xs tracking-[0.16em]`. |
-| **Where** | "View all" in the section header (`section-header.tsx:24`). One use. |
-| **States** | Hover inverts to pine fill with oat text (150ms). Focus: global rule only (no component classes). |
-| **Mobile** | Computed 34px tall, under the 44px target. |
-| **Tokens** | `--fg`, `--accent-fg`, `--text-label`, `--tracking-label`, `--radius-full` |
-| **Usage rule** | Secondary navigation out of a fold ("see more"). Never next to a primary pill doing the same job. |
+| **Anatomy** | Sentence-case label, 1.5px pine border, `--bg-elevated` fill, pine label, `rounded-full`. |
+| **Component** | `<Button variant="secondary">` / `<ButtonLink variant="secondary">`. Same sizes as primary. |
+| **Where** | Nav "Resume", desktop and mobile menu (`nav.tsx`). Case-study top bar "Let's connect" (`case-study-top-bar.tsx`). "Copy email" (`case-study-contact.tsx`, `buttonStyles()` on `CopyEmailButton`). 404 "Selected work". Error "Home". Resume "Watch it get built" (`resume-walkthrough.tsx`). GitHub graph "Play" / "Pause" (`github-graph.tsx`). |
+| **States** | Hover inverts to pine fill with oatmeal text, 150ms. Focus: pine `ring-2`. Disabled: opacity 0.6. |
+| **Mobile** | Mobile-menu Resume uses `lg` (14px label, focus ring). |
+| **Tokens** | `--fg`, `--bg-elevated`, `--accent-fg`, `--radius-full`, `--text-small` |
+| **Usage rule** | A real alternative to the primary. Not a quieter copy of it, and not the only action in a fold. |
 
 ### 1c. Icon button (circle)
 
@@ -77,11 +79,23 @@ Five button patterns exist. None is a shared component; each is a class string r
 | | |
 |---|---|
 | **Anatomy** | Pill track (`rounded-full border bg-bg-elevated p-1 font-mono text-xs`) holding 2+ buttons (`rounded-full px-3 py-1.5`). |
-| **Where** | Experience view toggle "list / timeline" (`experience.tsx:51-87`); TapInvest product tabs (`experience.tsx:412-433`). |
+| **Where** | Experience view toggle "list / timeline" (`experience.tsx`); TapInvest product tabs (`experience.tsx`); contribution scene switch, Graph / Hello / Heart (`github-graph.tsx`). Play / Pause beside it is a secondary pill (§1b), not a segment. |
 | **States** | Active: `bg-fg text-bg` (inverted). Idle: `text-fg-muted hover:text-fg`. Focus: pine ring. ARIA: `role="tablist"` / `role="tab"` / `aria-selected`. |
 | **Mobile** | Computed 28px tall per segment. Sits under the section H2 (header stacks). |
 | **Tokens** | `--bg-elevated`, `--border`, `--fg`, `--bg`, `--fg-muted`, `--text-label`, `--radius-full` |
 | **Usage rule** | Switches between views of the **same** content. Not for navigation. |
+
+### 1f. Highlight pill
+
+| | |
+|---|---|
+| **Anatomy** | Same pill as 1a. The fill is a gradient strip (deepened Venn pink → amber → blue → pink) twice the pill's width that slides through it on a 7s loop. A blurred copy of the same strip sits behind it as the glow. Cream label (`--venn-cream`), weight 500. |
+| **Where** | `<Button variant="highlight">` / `<ButtonLink variant="highlight">` (`components/ui/button.tsx`). Styles in `app/globals.css` (`.cta-highlight`). No call site yet. |
+| **Sizes** | Same `sm` / `md` / `lg` / `touch` as the other variants. |
+| **States** | Idle: gradient flows without a trigger, so phones see it (no hover on touch). Hover: glow opacity 0.8 → 1, 150ms. Focus: pine `ring-2` from the shared base. Reduced motion: gradient and glow hold still; the colour alone still sets it apart from primary. Disabled: `opacity-60` from the base. |
+| **Contrast** | Cream on the three stops: 5.02 (pink), 4.67 (amber), 5.05 (blue). Blends between stops stay above 4.9. The original Venn hues were not used because cream on `--venn-biz` is 3.04. |
+| **Tokens** | `--venn-user-deep`, `--venn-biz-deep`, `--venn-tech-deep`, `--venn-cream`, `--radius-full` |
+| **Usage rule** | For one time-bound moment: something new, limited seats, a deadline. **One on the whole site at a time.** It replaces the primary in its fold and never sits beside one. It always states the reason in or next to the label ("2 seats left"). Set the date it returns to a plain primary before it ships. |
 
 ---
 
@@ -89,11 +103,35 @@ Five button patterns exist. None is a shared component; each is a class string r
 
 | | |
 |---|---|
-| **Variants** | **Prose link**: underlined, offset 4px, inherits colour (`[&_a]` in the case-study article, `app/work/[slug]/page.tsx:46`). **Accent link**: `text-accent` + 40% pine underline that goes solid on hover (`experience.tsx:389,1009`). **Reveal link**: no underline until hover (company names, `experience.tsx:256`; product link `:439`). **Back link**: `text-sm text-fg-muted underline` + `←` (`page.tsx:97`). **On-pine link**: oat underline at 50% (`contact.tsx:36`). |
-| **States** | A global rule adds a 2px lilac underline at offset 4px on hover for every link inside `main`, `nav` or `footer` (`app/globals.css:236-242`). Phase 4 confirmed unlayered global rules win over utilities, so this underline applies on top of each link's own hover. Focus: pine ring on back link, company name and timeline chip; global rule elsewhere. |
-| **Mobile** | Inline links are text-height (computed ≈ 20px). The back link is the only way off a case-study page (no nav there). |
-| **Tokens** | `--fg`, `--accent`, `--highlight-strong`, `--border-width-strong`, `--accent-fg` |
-| **Usage rule** | Links read as links at rest: underline or accent colour, never colour alone. External links use `target="_blank" rel="noopener noreferrer"` (all in scope do) and an `↗` when inline. |
+| **Variants** | **Tertiary CTA**: `<TextLink>` (§2a). **Prose link**: underlined, offset 4px, inherits colour (`[&_a]` in the case-study article). **On-pine link**: the email address in the contact fold (`contact.tsx`), left as its own treatment. **Name back link**: "Megh Gupta · Work" and "Megh Gupta · Resume" keep their own styling; only the typed arrow was swapped for `CtaArrow`. |
+| **States** | A global rule adds a 2px lilac underline at offset 4px on hover for every link inside `main`, `nav` or `footer`. Focus on tertiary links is a pine `ring-2`. |
+| **Mobile** | Tertiary hit area is 44px. Prose links stay text-height. |
+| **Tokens** | `--fg`, `--accent`, `--highlight-strong`, `--accent-fg` |
+| **Usage rule** | A tertiary link reads as a link at rest: underline visible, arrow icon, focus ring. External links use `target="_blank" rel="noopener noreferrer"`. |
+
+### 2a. Tertiary CTA (`TextLink`)
+
+| | |
+|---|---|
+| **Anatomy** | Label + small arrow icon (14px, 1.8px stroke, `currentColor`). Label underlined at 1.5px, offset 5px. Geist Sans 14px (`size="sm"`), weight 500. The hit area is 44px tall; the underline hugs the text. |
+| **Component** | `<TextLink>` for links. `<TextLinkButton>` for the same look on a button (Skip, replay). `size="xs"` (product tab) and `size="base"` with `weight="semibold"` (company name) when 14px would fight the surrounding type. `arrow={false}` only when a leading icon is already there and a second glyph would crowd it. |
+| **Where** | "View all work" (`section-header.tsx`, label from `selected-work-shelf.tsx`). Experience company name, product tab, and both link-outs (`experience.tsx`); the same link-out and "See what shipped" on the roadmap (`experience-roadmap.tsx`). Case-study "LinkedIn" (`case-study-contact.tsx`). 404 "Contact". "Back to selected work" and the work index back link (`app/work/[slug]/page.tsx`, `app/work/page.tsx`). Unlock "Not supposed to be here?" (`backstage-pass.tsx`). Hero overture "Skip" and the resume-agent dock "Skip" / "Watch it build again" (`hero-overture.tsx`, `resume-agents.tsx`). Resume contact row (`resume-document.tsx`): underline and focus ring on each link, new-tab arrow on LinkedIn only, leading icons kept, `print:min-h-0` so the printed sheet does not grow. |
+| **Direction** | `onward` (arrow right, trailing; default). `external` (arrow up-right, trailing; adds `target="_blank" rel="noopener noreferrer"`). `back` (arrow left, leading). |
+| **States** | Underline visible at rest. Hover: the global lilac underline. Focus: pine `ring-2`, oatmeal ring with `onPine`. |
+| **Tokens** | `--fg`, `--accent`, `--accent-fg`, `--text-small` |
+| **Usage rule** | The third rung: "see more", "go back", "open elsewhere". Never the only way to do the main action of a fold. Do not use `highlight` until a moment is named. |
+
+### 2b. Highlighted tertiary
+
+| | |
+|---|---|
+| **Anatomy** | Same as 2a, but the underline is a 2px strip of the highlight gradient (deepened Venn pink → amber → blue) that slides under the label on a 7s loop. The words keep their normal colour. |
+| **Where** | `<TextLink highlight>`. Styles in `app/globals.css` (`.link-highlight`). No call site yet. |
+| **Variants** | `onPine`: oatmeal label; the line uses the original Venn hues (`--venn-user`, `--venn-biz`, `--venn-tech`) so it stays visible on pine. |
+| **States** | Idle: flows without a trigger. Reduced motion: the gradient line holds still and still sets it apart from 2a. Focus as 2a. |
+| **Contrast** | Unchanged from 2a. Only the line carries colour, so the label is pine on oatmeal or oatmeal on pine. |
+| **Tokens** | `--venn-user-deep`, `--venn-biz-deep`, `--venn-tech-deep`; on pine `--venn-user`, `--venn-biz`, `--venn-tech` |
+| **Usage rule** | Same as the highlight pill (§1f) and counted together with it: **one highlight on the whole site at a time**, pill or link. It states its reason and has an end date. |
 
 ---
 
@@ -143,7 +181,7 @@ Five button patterns exist. None is a shared component; each is a class string r
 
 | | |
 |---|---|
-| **Anatomy** | Mono uppercase **eyebrow** (with a highlighter mark) → **H2** → optional **action** (outline pill), right-aligned on desktop. |
+| **Anatomy** | Mono uppercase **eyebrow** (with a highlighter mark) → **H2** → optional **action** (tertiary text link, §2a), right-aligned on desktop. |
 | **Eyebrow variants** | **section**: 12px, `--tracking-eyebrow`, `--fg-subtle` (homepage + case-study Section). **micro**: 10px, `--tracking-mono`, subtle (cards, captions, table labels). **accent**: 10px, pine (Callout positive, Timeline dates, ownership columns). |
 | **States** | Eyebrow mark draws as it scrolls into view (`animation-timeline: view()`; timed fallback). |
 | **Mobile** | H2 `role-section` 30px, 48px from `md`. Action wraps under the H2. |
@@ -201,9 +239,9 @@ Five button patterns exist. None is a shared component; each is a class string r
 | Header | Section header + Kalam "try this ↗" + view toggle | | Stacks |
 | **Mobile timeline** (default below `lg`) | Left spine, node dots, newest first; each node a **timeline card** (logo tile, label, chevron, role, mono dates with Kalam "now", optional metric marker) | Card open: `border-accent`, chevron rotates 90°, **entry detail** expands below. Hover: `border-fg/30`. Focus: pine ring. | **This is what phones see** |
 | **Desktop timeline** (`lg+`) | Cream band, year axis, lanes of chips positioned by date, dashed "now" line | Chip hover: lift 2px, `border-accent`, `shadow-md`; **tooltip** (portal, 280px, fade-up 160ms) on hover **or focus** | Hidden |
-| **List view** | Rows: logo tile, company (reveal link), role, dates, chevron | First row open; open rows expand the entry detail; hover `bg-bg-elevated`; inset focus ring | Dates move under the name below 640px |
+| **List view** | Rows: logo tile, company (tertiary external link, underlined at rest), role, dates, chevron | First row open; open rows expand the entry detail; hover `bg-bg-elevated`; inset focus ring | Dates move under the name below 640px |
 | **Entry detail card** | `rounded-2xl` sheet, mono company eyebrow, role H3 (30 → 40px), emoji-led lines (📅 dates, 🎖 role chips, 📢 headline), narrative, `*` bullets, link-out | Static | `p-6` |
-| **Product tabs** (TapInvest) | Segmented control + "{name} ↗" | Active tab | |
+| **Product tabs** (TapInvest) | Segmented control + tertiary external link | Active tab | |
 
 - **Tokens:** `--bg-elevated`, `--border`, `--accent`, `--fg-muted`, `--fg-subtle`, `--surface-band`, `--highlight`, `--radius-xl`, `--radius-2xl`, `--shadow-sm`, `--shadow-md`, `--z-tooltip`, `--text-body-compact`, `--leading-body`.
 - **Usage rule:** fold 2's job is trajectory. The timeline is the default because it answers "where has this person been" at a glance. The tooltip duplicates the card summary, so nothing is hover-only.

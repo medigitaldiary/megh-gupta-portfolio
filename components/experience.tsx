@@ -4,6 +4,7 @@ import Image from "next/image";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { SectionHeader } from "@/components/section-header";
+import { TextLink } from "@/components/ui";
 import {
   durationLabel,
   type ExperienceEntry,
@@ -246,15 +247,15 @@ function CompanyName({ entry }: { entry: ExperienceEntry }) {
   const className = "text-base font-semibold text-fg";
   if (entry.url) {
     return (
-      <a
+      <TextLink
         href={entry.url}
-        target="_blank"
-        rel="noopener noreferrer"
+        direction="external"
+        size="base"
+        weight="semibold"
         onClick={(e) => e.stopPropagation()}
-        className={`${className} underline decoration-transparent underline-offset-4 transition-[text-decoration-color] duration-150 hover:decoration-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-sm`}
       >
         {entry.company}
-      </a>
+      </TextLink>
     );
   }
   return <span className={className}>{entry.company}</span>;
@@ -380,14 +381,9 @@ function EntryDetail({
         {linkOut && (
           <p>
             {linkOut.label}{" "}
-            <a
-              href={linkOut.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
-            >
+            <TextLink href={linkOut.url} direction="external">
               {linkOut.display ?? linkOut.url}
-            </a>
+            </TextLink>
           </p>
         )}
       </div>
@@ -430,14 +426,11 @@ function TapInvestExpanded({ entry }: { entry: ExperienceEntry }) {
             );
           })}
         </div>
-        <a
-          href={active?.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-fg-subtle underline decoration-transparent underline-offset-4 hover:decoration-accent hover:text-fg"
-        >
-          {active?.name} ↗
-        </a>
+        {active?.url ? (
+          <TextLink href={active.url} direction="external" size="xs">
+            {active.name}
+          </TextLink>
+        ) : null}
       </div>
 
       {active && (
@@ -997,14 +990,9 @@ function TimelineDetail({ item, id }: { item: TimelineItem; id: string }) {
       />
       {item.url && !item.linkOut && (
         <p className="mt-3 text-sm">
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
-          >
-            {item.label} ↗
-          </a>
+          <TextLink href={item.url} direction="external">
+            {item.label}
+          </TextLink>
         </p>
       )}
     </div>

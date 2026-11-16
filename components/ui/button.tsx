@@ -6,47 +6,50 @@ import {
   type ReactNode,
 } from "react";
 
-// Button — the one pill used across the portfolio.
+// Button — the pill CTA.
 //
 // Two sibling components: <Button> renders a <button>, <ButtonLink> renders
 // a Next <Link>. They share classes through `buttonStyles()` below, so a
-// visual change to one updates every callsite.
+// visual change to one updates every callsite. Elements that cannot be
+// either (a copy button, a file download) take `buttonStyles()` as className.
 //
 // Variants
-//   primary   Pine fill, oatmeal text, hover:opacity-90. The dominant CTA.
-//   outline   Pine border on cream, invert on hover. Secondary CTA.
-//   hairline  Toasted-oat border, pine text, hover darkens to --bg. The
-//             quietest ghost, used end-of-study where the eye should rest
-//             on the primary (Book 20 min) first.
-//   ghost     No chrome until hover. For dense button rows (nav).
+//   primary    Pine fill, oatmeal label, --shadow-md. The one most
+//              important action in view. One per fold.
+//   secondary  1.5px pine border on --bg-elevated, pine label. Hover
+//              inverts to pine fill. A real alternative to the primary.
+//   highlight  Flowing Venn gradient with a matching glow. For one
+//              time-bound moment (new, limited seats, a deadline). At most
+//              one on the whole site at a time; it replaces the primary in
+//              its fold. Styles live in app/globals.css (.cta-highlight).
+//              Not used by any call site today.
 //
 // Sizes
-//   sm        px-4  py-2       (nav resume, back-to-work)
+//   sm        px-4  py-2       (nav resume)
 //   md        px-5  py-2.5     (hero, case-study CTA)
-//   lg        px-6  py-3       (not-found, error, mobile nav)
+//   lg        px-6  py-3       (not-found, error, mobile nav, unlock)
 //   touch     px-5 min-h-11    (end-of-study CTA, touch-first)
 //
-// Modifiers
-//   mono      Switches body to font-mono, uppercase tracking.
+// Labels are sentence case in Geist Sans. Tertiary actions are TextLink.
 
-export type ButtonVariant = "primary" | "outline" | "hairline" | "ghost";
+export type ButtonVariant = "primary" | "secondary" | "highlight";
 export type ButtonSize = "sm" | "md" | "lg" | "touch";
 
 type SharedProps = {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  mono?: boolean;
   className?: string;
 };
 
 const BASE =
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60";
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-sans text-sm transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60";
 
 const VARIANT: Record<ButtonVariant, string> = {
-  primary: "bg-accent text-accent-fg hover:opacity-90",
-  outline: "border border-fg text-fg hover:bg-fg hover:text-accent-fg",
-  hairline: "border border-border text-fg hover:bg-bg",
-  ghost: "text-fg hover:bg-bg-elevated",
+  primary:
+    "bg-accent text-accent-fg shadow-[var(--shadow-md)] hover:opacity-90",
+  secondary:
+    "border-[1.5px] border-solid border-fg bg-bg-elevated text-fg hover:bg-fg hover:text-accent-fg",
+  highlight: "cta-highlight",
 };
 
 const SIZE_PAD: Record<ButtonSize, string> = {
@@ -56,28 +59,12 @@ const SIZE_PAD: Record<ButtonSize, string> = {
   touch: "min-h-11 px-5",
 };
 
-const SIZE_TEXT: Record<ButtonSize, string> = {
-  sm: "text-sm",
-  md: "text-sm",
-  lg: "text-sm",
-  touch: "text-sm",
-};
-
-const MONO = "font-mono text-xs uppercase tracking-[0.14em]";
-
-function buttonStyles({
+export function buttonStyles({
   variant = "primary",
   size = "md",
-  mono = false,
   className = "",
 }: SharedProps) {
-  return [
-    BASE,
-    VARIANT[variant],
-    SIZE_PAD[size],
-    mono ? MONO : SIZE_TEXT[size],
-    className,
-  ]
+  return [BASE, VARIANT[variant], SIZE_PAD[size], className]
     .filter(Boolean)
     .join(" ");
 }
@@ -87,14 +74,14 @@ export const Button = forwardRef<
   SharedProps &
     ButtonHTMLAttributes<HTMLButtonElement> & { children: ReactNode }
 >(function Button(
-  { variant, size, mono, className, children, type = "button", ...rest },
+  { variant, size, className, children, type = "button", ...rest },
   ref,
 ) {
   return (
     <button
       ref={ref}
       type={type}
-      className={buttonStyles({ variant, size, mono, className })}
+      className={buttonStyles({ variant, size, className })}
       {...rest}
     >
       {children}
@@ -107,14 +94,11 @@ type ButtonLinkProps = SharedProps &
   LinkProps & { children: ReactNode };
 
 export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
-  function ButtonLink(
-    { variant, size, mono, className, children, ...rest },
-    ref,
-  ) {
+  function ButtonLink({ variant, size, className, children, ...rest }, ref) {
     return (
       <Link
         ref={ref}
-        className={buttonStyles({ variant, size, mono, className })}
+        className={buttonStyles({ variant, size, className })}
         {...rest}
       >
         {children}

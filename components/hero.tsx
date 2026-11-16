@@ -2,7 +2,7 @@ import Image from "next/image";
 import { HeroLink } from "@/components/hero-link";
 import { ProductVenn } from "@/components/product-venn";
 import { ProductVennTravel } from "@/components/product-venn-travel";
-import { ButtonLink } from "@/components/ui";
+import { ButtonLink, CtaArrow } from "@/components/ui";
 
 export function Hero({
   link,
@@ -76,7 +76,7 @@ export function Hero({
             className={`mt-8 ${handoff ? "opacity-0" : ""}`}
           >
             <ButtonLink href="#connect" size="lg">
-              Let&apos;s connect →
+              Let&apos;s connect <CtaArrow />
             </ButtonLink>
           </div>
         </div>
