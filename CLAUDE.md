@@ -59,7 +59,7 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
 }
 ```
 
-**Tone scopes (preview only).** `/preview/v4.1` and `/preview/v4.3` put one fold on pine with the class `tone-pine`, which re-points these same tokens at the swapped Oatmeal / Pine pair (`tone-oat` switches a subtree back). No new hue. Values and contrast: `design-system/02-tokens.md` §2.20.
+**Tone scopes (preview only).** `/preview/v4.1` and `/preview/v4.3` put one fold on pine with the class `tone-pine`, which re-points these same tokens at the swapped Oatmeal / Pine pair (`tone-oat` switches a subtree back). No new hue. Values and contrast: `design-system/02-tokens.md` §2.23.
 
 **Rule:** No other colors. If a design needs a fifth family, ask first. The Oatmeal / Pine / Lilac palette was promoted from the `/preview/v3` experiment, so earlier commits may still show the retired `#FAFAF7 / #111111 / #1F4D3A` stack. Treat the values here as the source of truth. Lilac stays decorative (highlighter marks, outer focus-ring glow, hover washes); never as text or as the focus-ring outline itself (focus-ring outline is pine on light surfaces, oatmeal on pine; G-A6 + G-C16). Never a colour that carries meaning.
 

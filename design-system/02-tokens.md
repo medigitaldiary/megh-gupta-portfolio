@@ -389,7 +389,7 @@ Every token, with what it replaces and how many places change. The same data is 
 
 ---
 
-### 2.20 Tone scopes (preview only: `/preview/v4.1`, `/preview/v4.3`)
+### 2.23 Tone scopes (preview only: `/preview/v4.1`, `/preview/v4.3`)
 
 A fold that sits on pine takes the class `tone-pine`. It adds no colour: it re-points the existing role tokens at the same Oatmeal / Pine pair with the roles swapped, so every utility inside the fold flips without a second set of classes. `tone-oat` switches a subtree back (the cream work cards on a pine fold). Defined in `app/globals.css`.
 

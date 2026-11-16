@@ -41,7 +41,7 @@
    component needs no second set of classes. .tone-oat (above) switches
    a subtree back, for cream cards on a pine fold.
    Contrast on --bg: --fg 8.99, --fg-muted 7.4, --fg-subtle 6.2.
-   --fg-subtle on --bg-elevated: 5.2. design-system/02-tokens.md §2.20. */
+   --fg-subtle on --bg-elevated: 5.2. design-system/02-tokens.md §2.23. */
 .tone-pine {
   --bg: #1f3b2e;
   --bg-elevated: #2f483a;
