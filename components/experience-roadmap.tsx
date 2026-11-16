@@ -114,10 +114,12 @@ export function ExperienceRoadmap({
   timeline = "roadmap",
 }: {
   /** Which drawing the timeline view uses. The list view is the changelog either way. */
-  timeline?: "roadmap" | "stepper";
+  timeline?: "roadmap" | "bar";
 }) {
   const [view, setView] = useState<View>("timeline");
   const releases = useMemo(() => toReleases(getAllExperience()), []);
+  // A role picked on the bar opens in the list view.
+  const [handoff, setHandoff] = useState<string | null>(null);
 
   // The roadmap draws itself once, the first time the fold is on screen.
   // Kept here so flipping the switcher does not replay it.
@@ -161,17 +163,29 @@ export function ExperienceRoadmap({
 
         <div ref={bodyRef}>
           {view === "timeline" ? (
-            timeline === "stepper" ? (
-              <StepperView releases={releases} seen={seen} />
+            timeline === "bar" ? (
+              <BarView
+                releases={releases}
+                seen={seen}
+                onOpen={(key) => {
+                  setHandoff(key);
+                  setView("list");
+                }}
+              />
             ) : (
               <RoadmapView releases={releases} seen={seen} />
             )
           ) : (
-            <ChangelogView releases={releases} />
+            <ChangelogView releases={releases} initialOpen={handoff} />
           )}
         </div>
 
-        <p className="mt-10 text-right">
+        {/* The bar is the short view: no lead-out under it, to keep the fold small. */}
+        <p
+          className={`mt-10 text-right ${
+            timeline === "bar" && view === "timeline" ? "hidden" : ""
+          }`}
+        >
           <TextLink href="#work">See what shipped</TextLink>
         </p>
       </div>
@@ -697,203 +711,179 @@ function MobileRoadmap({
 }
 
 // ─────────────────────────────────────────────────────────────
-// Timeline view, second take = version stepper.
-// A release track with one stop per role. One release is in focus at a
-// time and gets the full width below. Same on phone and desktop.
+// Timeline view, compact take = segmented bar.
+// One bar cut into pieces sized by how long each role lasted. It is a
+// summary on purpose: nothing opens here, a click hands the role over to
+// the list view. Phone gets three short rows instead of a bar.
 // ─────────────────────────────────────────────────────────────
 
-function StepperView({
+const FILL_MS_PER_MONTH = 62;
+
+function BarView({
   releases,
   seen,
+  onOpen,
 }: {
   releases: Release[];
   seen: boolean;
+  onOpen: (key: string) => void;
 }) {
-  const [index, setIndex] = useState(releases.length - 1);
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const active = releases[index];
   const last = releases.length - 1;
-
-  const go = (next: number, focus = false) => {
-    const clamped = Math.max(0, Math.min(last, next));
-    setIndex(clamped);
-    if (focus) tabRefs.current[clamped]?.focus();
-  };
-
-  const onKeyDown = (event: React.KeyboardEvent) => {
-    const moves: Record<string, number> = {
-      ArrowRight: index + 1,
-      ArrowLeft: index - 1,
-      Home: 0,
-      End: last,
-    };
-    if (!(event.key in moves)) return;
-    event.preventDefault();
-    go(moves[event.key], true);
-  };
-
-  // The rail runs from the centre of the first stop to the centre of the last.
-  const inset = `${100 / (releases.length * 2)}%`;
-  const progress = last === 0 ? 0 : (index / last) * 100;
+  let elapsed = 0;
+  const timed = releases.map((release) => {
+    const months = release.end - release.start;
+    const delay = elapsed * FILL_MS_PER_MONTH;
+    elapsed += months;
+    return { release, months, delay, duration: months * FILL_MS_PER_MONTH };
+  });
+  const label = (release: Release) =>
+    `${release.name}, ${release.role}, ${formatDateRange({
+      start: release.startYm,
+      end: release.endYm,
+    })}. Open in the list view.`;
 
   return (
-    <div>
-      <div className="relative">
-        <div
-          aria-hidden="true"
-          className="absolute top-[2.375rem] h-px bg-border"
-          style={{ left: inset, right: inset }}
-        >
-          <div
-            className="h-px bg-fg transition-[width] duration-500 ease-out motion-reduce:transition-none"
-            style={{ width: `${seen ? progress : 0}%` }}
-          />
-        </div>
-
-        <div
-          role="tablist"
-          aria-label="Releases"
-          className="relative grid"
-          style={{ gridTemplateColumns: `repeat(${releases.length}, 1fr)` }}
-        >
-          {releases.map((release, i) => {
-            const selected = i === index;
-            const reached = i <= index;
-            return (
-              <button
-                key={release.key}
-                ref={(node) => {
-                  tabRefs.current[i] = node;
-                }}
-                type="button"
-                role="tab"
-                id={`stepper-tab-${release.key}`}
-                aria-selected={selected}
-                aria-controls="stepper-panel"
-                tabIndex={selected ? 0 : -1}
-                onClick={() => go(i)}
-                onKeyDown={onKeyDown}
-                className="group flex flex-col items-center gap-2.5 rounded-lg px-1 pb-2 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
-              >
-                <span
-                  className={`rounded-full border px-2 py-0.5 font-mono text-xs transition-colors duration-150 ${
-                    selected
-                      ? "border-fg bg-fg text-bg"
-                      : "border-border bg-bg-elevated text-fg-muted group-hover:text-fg"
-                  }`}
-                >
-                  {release.version}
-                </span>
-                <span
-                  aria-hidden="true"
-                  className={`h-3 w-3 rotate-45 border border-fg transition-[background-color,scale] duration-300 motion-reduce:transition-none ${
-                    reached && seen ? "bg-fg" : "bg-bg"
-                  } ${selected ? "scale-125" : "group-hover:scale-110"}`}
-                />
-                <span
-                  className={`mt-1 flex flex-col items-center gap-1.5 transition-[opacity,translate] duration-150 group-hover:-translate-y-0.5 motion-reduce:transition-none sm:flex-row sm:gap-2.5 ${
-                    selected
-                      ? "opacity-100"
-                      : "opacity-60 group-hover:opacity-100"
-                  }`}
-                >
-                  <Logo release={release} size="sm" />
-                  <span className="text-left">
-                    <span className="block font-semibold text-fg text-sm leading-tight">
-                      {release.name}
-                    </span>
-                    <span className="hidden font-mono text-[11px] text-fg-subtle uppercase tracking-wider sm:block">
-                      {formatDateRange({
-                        start: release.startYm,
-                        end: release.endYm,
-                      })}
-                    </span>
-                  </span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
+    <>
       <div
-        role="tabpanel"
-        id="stepper-panel"
-        aria-labelledby={`stepper-tab-${active.key}`}
-        className="mt-6 rounded-xl border border-border bg-bg-elevated p-5 md:mt-8 md:p-8"
+        className="hidden gap-[3px] sm:grid [&:hover>button:not(:hover)]:opacity-50"
+        style={{
+          gridTemplateColumns: timed.map((t) => `${t.months}fr`).join(" "),
+        }}
       >
-        {/* Keyed so each release fades up as it comes into focus. */}
-        <div
-          key={active.key}
-          className="transition-[opacity,translate] duration-300 ease-out motion-reduce:transition-none starting:translate-y-2 starting:opacity-0"
-        >
-          <ReleaseHeading release={active} />
-          <div className="mt-5">
-            <ReleaseNotes release={active} />
-          </div>
-        </div>
+        {timed.map(({ release, delay, duration }, i) => (
+          <button
+            key={release.key}
+            type="button"
+            aria-label={label(release)}
+            onClick={() => onOpen(release.key)}
+            className="group relative min-w-0 rounded-lg text-left transition-opacity duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-bg"
+          >
+            {/* The piece itself. Fills left to right once, at a steady pace per month. */}
+            <span
+              className={`block transition-[clip-path] ease-linear motion-reduce:transition-none motion-reduce:[clip-path:none] ${
+                seen
+                  ? "[clip-path:inset(-4px_-4px_-4px_0)]"
+                  : "[clip-path:inset(-4px_100%_-4px_0)]"
+              }`}
+              style={{
+                transitionDuration: `${duration}ms`,
+                transitionDelay: `${delay}ms`,
+              }}
+            >
+              <span
+                className={`relative flex h-11 items-center gap-2 overflow-hidden border pr-3 pl-2 transition-[translate,border-color] duration-150 group-hover:-translate-y-0.5 group-focus-visible:-translate-y-0.5 motion-reduce:transition-none ${
+                  i === 0 ? "rounded-l-full" : "rounded-l-md"
+                } ${i === last ? "rounded-r-full" : "rounded-r-md"} ${
+                  release.current
+                    ? "border-fg bg-fg text-bg"
+                    : "border-border bg-bg-elevated text-fg group-hover:border-fg"
+                }`}
+              >
+                <Logo release={release} size="sm" />
+                <span className="min-w-0 flex-1 truncate font-semibold text-sm">
+                  {release.name}
+                </span>
+                {release.current && (
+                  <>
+                    <span
+                      aria-hidden="true"
+                      className="relative mr-1 flex h-1.5 w-1.5 shrink-0"
+                    >
+                      <span className="absolute inset-0 rounded-full bg-current opacity-60 motion-safe:animate-ping" />
+                      <span className="relative h-1.5 w-1.5 rounded-full bg-current" />
+                    </span>
+                    {/* Sheen: a slow highlight across the role still running. */}
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 -translate-x-full bg-[linear-gradient(100deg,transparent_35%,color-mix(in_srgb,var(--bg)_24%,transparent)_50%,transparent_65%)] motion-safe:animate-[exp-sheen_3.4s_ease-in-out_2.5s_infinite]"
+                    />
+                  </>
+                )}
+              </span>
+            </span>
 
-        <div className="mt-8 flex items-center justify-between gap-4 border-border border-t pt-4 font-mono text-xs">
-          <StepButton
-            release={releases[index - 1]}
-            direction="prev"
-            onClick={() => go(index - 1)}
-          />
-          <span className="text-fg-subtle">
-            {index + 1} / {releases.length}
-          </span>
-          <StepButton
-            release={releases[index + 1]}
-            direction="next"
-            onClick={() => go(index + 1)}
-          />
-        </div>
+            <span
+              aria-hidden="true"
+              className={`block px-2.5 pt-2 transition-[opacity,translate] duration-300 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none ${
+                seen ? "translate-y-0 opacity-100" : "translate-y-1.5 opacity-0"
+              }`}
+              style={{ transitionDelay: `${delay + 120}ms` }}
+            >
+              <span className="block text-fg-muted text-sm leading-snug">
+                {release.role}
+              </span>
+              <span className="mt-0.5 block font-mono text-[11px] text-fg-subtle uppercase tracking-wider">
+                {formatDateRange({
+                  start: release.startYm,
+                  end: release.endYm,
+                })}
+              </span>
+            </span>
+
+            {/* Floating card: detail without making the fold taller. */}
+            <span
+              aria-hidden="true"
+              className={`pointer-events-none absolute bottom-full z-[70] mb-3 block w-64 translate-y-1 rounded-xl border border-fg bg-bg-elevated p-3.5 opacity-0 shadow-[var(--shadow-md)] transition-[opacity,translate] duration-150 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:transition-none ${
+                i === last ? "right-0" : "left-0"
+              }`}
+            >
+              <span className="block font-semibold text-[15px] text-fg leading-snug">
+                {release.role}
+              </span>
+              <span className="mt-1 block font-mono text-[11px] text-fg-subtle uppercase tracking-wider">
+                {release.name} · {durationLabel(release.startYm, release.endYm)}
+              </span>
+              {release.summary && (
+                <span className="mt-2 block text-[13px] text-fg-muted leading-snug">
+                  {release.summary}
+                </span>
+              )}
+              <span className="mt-2 block font-hand text-fg-subtle text-sm">
+                click to open in the list
+              </span>
+            </span>
+          </button>
+        ))}
       </div>
-    </div>
-  );
-}
 
-function StepButton({
-  release,
-  direction,
-  onClick,
-}: {
-  release?: Release;
-  direction: "prev" | "next";
-  onClick: () => void;
-}) {
-  // Empty slot keeps the counter centred at either end of the track.
-  if (!release) return <span className="flex-1" />;
-  const prev = direction === "prev";
-  return (
-    <span className={`flex flex-1 ${prev ? "justify-start" : "justify-end"}`}>
-      <button
-        type="button"
-        onClick={onClick}
-        className="group inline-flex items-center gap-2 rounded-sm text-fg-muted transition-colors duration-150 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-elevated"
-      >
-        {prev && (
-          <span
-            aria-hidden="true"
-            className="transition-transform duration-150 group-hover:-translate-x-0.5 motion-reduce:transition-none"
-          >
-            ←
-          </span>
-        )}
-        <span>
-          <span className="sr-only">{prev ? "Previous: " : "Next: "}</span>
-          {release.version} {release.name}
-        </span>
-        {!prev && (
-          <span
-            aria-hidden="true"
-            className="transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none"
-          >
-            →
-          </span>
-        )}
-      </button>
-    </span>
+      <ol className="space-y-2 sm:hidden">
+        {[...releases].reverse().map((release) => (
+          <li key={release.key}>
+            <button
+              type="button"
+              aria-label={label(release)}
+              onClick={() => onOpen(release.key)}
+              className={`flex w-full items-center gap-3 rounded-full border py-1.5 pr-4 pl-1.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg ${
+                release.current
+                  ? "border-fg bg-fg text-bg"
+                  : "border-border bg-bg-elevated text-fg"
+              }`}
+            >
+              <Logo release={release} size="sm" />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-semibold text-sm leading-tight">
+                  {release.name}
+                </span>
+                <span
+                  className={`block truncate text-xs ${
+                    release.current ? "text-bg/80" : "text-fg-muted"
+                  }`}
+                >
+                  {release.role}
+                </span>
+              </span>
+              <span
+                className={`shrink-0 font-mono text-[10px] uppercase tracking-wider ${
+                  release.current ? "text-bg/80" : "text-fg-subtle"
+                }`}
+              >
+                {durationLabel(release.startYm, release.endYm)}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    </>
   );
 }
 
@@ -901,10 +891,17 @@ function StepButton({
 // List view = changelog. One release per role, newest first.
 // ─────────────────────────────────────────────────────────────
 
-function ChangelogView({ releases }: { releases: Release[] }) {
+function ChangelogView({
+  releases,
+  initialOpen,
+}: {
+  releases: Release[];
+  /** Role to open first, when the visitor arrives from the bar. */
+  initialOpen?: string | null;
+}) {
   const newestFirst = useMemo(() => [...releases].reverse(), [releases]);
   const [openKey, setOpenKey] = useState<string | null>(
-    newestFirst[0]?.key ?? null,
+    initialOpen ?? newestFirst[0]?.key ?? null,
   );
 
   return (

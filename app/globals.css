@@ -689,6 +689,18 @@ section {
   }
 }
 
+/* Experience bar: slow highlight across the role still running.
+   Used by components/experience-roadmap.tsx, motion-safe only. */
+@keyframes exp-sheen {
+  0% {
+    translate: -100% 0;
+  }
+  55%,
+  100% {
+    translate: 100% 0;
+  }
+}
+
 /* Print page setup for /resume */
 @media print {
   @page {
