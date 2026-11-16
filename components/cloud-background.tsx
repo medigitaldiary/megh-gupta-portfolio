@@ -7,6 +7,9 @@
  *   with a low warm sun-glow. The current live version.
  * - "blue": pure blue-and-white, no warm tones anywhere. A cooler,
  *   more editorial feel — for the experiment at /preview/sky.
+ * - "footer": the dawn sky turned upside down. It starts on the page
+ *   colour (--bg) and cools into blue at the bottom, so a footer can
+ *   grow out of the page with no visible seam. Sandbox: /preview/footer-sky.
  *
  * Scoped inline; nothing here leaks into the rest of the site.
  */
@@ -26,7 +29,7 @@ const CLOUDS = [
   { top: "88%", size: 440, opacity: 0.68, duration: 165, delay: -155 },
 ] as const;
 
-type Palette = "dawn" | "blue" | "ods";
+type Palette = "dawn" | "blue" | "ods" | "footer";
 
 const PALETTES: Record<
   Palette,
@@ -42,6 +45,13 @@ const PALETTES: Record<
     sky: "linear-gradient(180deg,#5E8BB7 0%,#7EA6CE 22%,#A9C5DE 48%,#D2E1EE 78%,#EDF3F8 100%)",
     glow: "radial-gradient(ellipse at center,rgba(255,255,255,0.75) 0%,rgba(255,255,255,0.25) 32%,transparent 62%)",
     shadowFill: "#B3C3D3",
+    highlight: "#FFFFFF",
+  },
+  // Same hues as dawn, reversed, with the page colour on top.
+  footer: {
+    sky: "linear-gradient(180deg,var(--bg) 0%,#F1E6CE 24%,#E3DFCF 48%,#CCDAE7 76%,#B7CDE1 100%)",
+    glow: "radial-gradient(ellipse at center,rgba(255,239,200,0.85) 0%,rgba(255,232,187,0.35) 28%,transparent 60%)",
+    shadowFill: "#D5DBE3",
     highlight: "#FFFFFF",
   },
   // ownCloud palette: brand navy at the top, steel-blue mid, near-white bottom.
@@ -73,10 +83,19 @@ function CloudSvg({ shadowFill }: { shadowFill: string }) {
   );
 }
 
-export function CloudBackground({ palette = "dawn" }: { palette?: Palette }) {
+export function CloudBackground({
+  palette = "dawn",
+  className = "",
+}: {
+  palette?: Palette;
+  className?: string;
+}) {
   const p = PALETTES[palette];
   return (
-    <div aria-hidden="true" className="-z-20 absolute inset-0 overflow-hidden">
+    <div
+      aria-hidden="true"
+      className={`-z-20 absolute inset-0 overflow-hidden ${className}`}
+    >
       <div className="absolute inset-0" style={{ background: p.sky }} />
       <div
         className="absolute inset-x-0 top-[55%] mx-auto h-[70vh] w-[85vw] max-w-4xl rounded-full blur-2xl"
