@@ -818,6 +818,7 @@ function BarView({
   seen: boolean;
   onOpen: (key: string) => void;
 }) {
+  // The most recent role is the filled piece, whether or not it is still running.
   const last = releases.length - 1;
   let elapsed = 0;
   const timed = releases.map((release) => {
@@ -864,7 +865,7 @@ function BarView({
                 className={`relative flex h-11 items-center gap-2 overflow-hidden border pr-3 pl-2 transition-[translate,border-color] duration-150 group-hover:-translate-y-0.5 group-focus-visible:-translate-y-0.5 motion-reduce:transition-none ${
                   i === 0 ? "rounded-l-full" : "rounded-l-md"
                 } ${i === last ? "rounded-r-full" : "rounded-r-md"} ${
-                  release.current
+                  i === last
                     ? "border-fg bg-fg text-bg"
                     : "border-border bg-bg-elevated text-fg group-hover:border-fg"
                 }`}
@@ -882,7 +883,8 @@ function BarView({
                       <span className="absolute inset-0 rounded-full bg-current opacity-60 motion-safe:animate-ping" />
                       <span className="relative h-1.5 w-1.5 rounded-full bg-current" />
                     </span>
-                    {/* Sheen: a slow highlight across the role still running. */}
+                    {/* Sheen: a slow highlight across a role still running. With no
+                        current role, the dot and the sheen both stay off. */}
                     <span
                       aria-hidden="true"
                       className="pointer-events-none absolute inset-0 -translate-x-full bg-[linear-gradient(100deg,transparent_35%,color-mix(in_srgb,var(--bg)_24%,transparent)_50%,transparent_65%)] motion-safe:animate-[exp-sheen_3.4s_ease-in-out_2.5s_infinite]"
@@ -937,14 +939,14 @@ function BarView({
       </div>
 
       <ol className="space-y-2 sm:hidden">
-        {[...releases].reverse().map((release) => (
+        {[...releases].reverse().map((release, i) => (
           <li key={release.key}>
             <button
               type="button"
               aria-label={label(release)}
               onClick={() => onOpen(release.key)}
               className={`flex w-full items-center gap-3 rounded-full border py-1.5 pr-4 pl-1.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg ${
-                release.current
+                i === 0
                   ? "border-fg bg-fg text-bg"
                   : "border-border bg-bg-elevated text-fg"
               }`}
@@ -956,7 +958,7 @@ function BarView({
                 </span>
                 <span
                   className={`block truncate text-xs ${
-                    release.current ? "text-bg/80" : "text-fg-muted"
+                    i === 0 ? "text-bg/80" : "text-fg-muted"
                   }`}
                 >
                   {release.role}
@@ -964,7 +966,7 @@ function BarView({
               </span>
               <span
                 className={`shrink-0 font-mono text-[10px] uppercase tracking-wider ${
-                  release.current ? "text-bg/80" : "text-fg-subtle"
+                  i === 0 ? "text-bg/80" : "text-fg-subtle"
                 }`}
               >
                 {durationLabel(release.startYm, release.endYm)}
