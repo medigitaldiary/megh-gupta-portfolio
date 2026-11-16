@@ -63,21 +63,14 @@ function useIstClock() {
 }
 
 export function SiteFooter({
-  tone,
   wide = false,
 }: {
-  /** Fold-flow previews: the footer joins the pine contact fold. */
-  tone?: "pine";
   /** Fold-flow previews: same max-w-6xl edge as the folds. */
   wide?: boolean;
 } = {}) {
   const clock = useIstClock();
   return (
-    <footer
-      className={`px-6 py-6 md:px-8 md:py-8 ${
-        tone === "pine" ? "tone-pine border-border border-t bg-bg" : ""
-      }`}
-    >
+    <footer className="px-6 py-6 md:px-8 md:py-8">
       <div
         className={`mx-auto flex flex-col items-center justify-between gap-4 sm:flex-row ${
           wide ? "max-w-6xl" : "max-w-5xl"

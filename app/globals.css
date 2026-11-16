@@ -36,8 +36,7 @@
 }
 
 /* Pine tone. The same palette with the roles swapped, for a fold that
-   sits on pine (preview v4.1 Experience, v4.3 Selected Work, the pine
-   footer). Every utility that reads a token flips with it, so a
+   sits on pine (preview v4.1 Experience, v4.3 Selected Work). Every utility that reads a token flips with it, so a
    component needs no second set of classes. .tone-oat (above) switches
    a subtree back, for cream cards on a pine fold.
    Contrast on --bg: --fg 8.99, --fg-muted 7.4, --fg-subtle 6.2.

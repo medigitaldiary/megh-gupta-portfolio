@@ -60,7 +60,7 @@ export default function PortfolioV43Preview() {
         {/* CTA: action. How do I reach them? */}
         <Contact flow={{ index: "04" }} />
       </main>
-      <SiteFooter tone="pine" wide />
+      <SiteFooter wide />
     </>
   );
 }
