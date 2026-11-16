@@ -24,7 +24,6 @@ type View = "timeline" | "list";
 
 type Release = {
   key: string;
-  version: string;
   name: string;
   lane: string;
   role: string;
@@ -57,7 +56,7 @@ function nowIndex(): number {
 }
 
 function toReleases(entries: ExperienceEntry[]): Release[] {
-  const flat: Omit<Release, "version">[] = [];
+  const flat: Release[] = [];
   for (const entry of entries) {
     const dated = (entry.products ?? []).filter((p) => p.start && p.end);
     if (dated.length === 0) {
@@ -108,9 +107,7 @@ function toReleases(entries: ExperienceEntry[]): Release[] {
       });
     }
   }
-  return flat
-    .sort((a, b) => a.start - b.start)
-    .map((release, index) => ({ ...release, version: `v${index + 1}.0` }));
+  return flat.sort((a, b) => a.start - b.start);
 }
 
 export function ExperienceRoadmap({
@@ -363,47 +360,6 @@ function Logo({ release, size }: { release: Release; size: "sm" | "md" }) {
   );
 }
 
-function StatusPill({
-  current,
-  onPine = false,
-}: {
-  current: boolean;
-  onPine?: boolean;
-}) {
-  const base =
-    "inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 font-mono text-[10px] uppercase leading-none tracking-[0.08em]";
-  if (!current) {
-    return (
-      <span className={`${base} border border-border text-fg-muted`}>
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-          className="h-2.5 w-2.5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M5 12.5l4.5 4.5L19 7.5" />
-        </svg>
-        <span className={onPine ? "sr-only @[13rem]:not-sr-only" : ""}>
-          Shipped
-        </span>
-      </span>
-    );
-  }
-  return (
-    <span className={`${base} ${onPine ? "bg-bg text-fg" : "bg-fg text-bg"}`}>
-      <span aria-hidden="true" className="relative flex h-1.5 w-1.5">
-        <span className="absolute inset-0 rounded-full bg-current opacity-60 motion-safe:animate-ping" />
-        <span className="relative h-1.5 w-1.5 rounded-full bg-current" />
-      </span>
-      Live now
-    </span>
-  );
-}
-
 function ReleaseNotes({ release }: { release: Release }) {
   return (
     <div className="space-y-4 text-[15px] text-fg-muted leading-[1.7] md:text-base">
@@ -641,7 +597,6 @@ function DesktopRoadmap({
                         <span className="min-w-0 flex-1 truncate font-semibold text-sm">
                           {release.name}
                         </span>
-                        <StatusPill current={release.current} onPine />
                       </button>
                       <div
                         className={`mt-2 px-1 transition-[opacity,translate] duration-500 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none ${
@@ -714,20 +669,14 @@ function ReleaseHeading({ release }: { release: Release }) {
       <Logo release={release} size="md" />
       <div className="min-w-0 flex-1">
         <p className="font-mono text-[11px] text-fg-subtle uppercase tracking-[0.16em]">
-          {release.version} · {release.name} ·{" "}
+          {release.name} ·{" "}
           {formatDateRange({ start: release.startYm, end: release.endYm })} ·{" "}
           {durationLabel(release.startYm, release.endYm)}
         </p>
         <h3 className="mt-1 font-display text-2xl text-fg leading-[1.1] tracking-tight md:text-3xl">
           {release.role}
         </h3>
-        <p className="mt-2 sm:hidden">
-          <StatusPill current={release.current} />
-        </p>
       </div>
-      <span className="hidden sm:block">
-        <StatusPill current={release.current} />
-      </span>
     </div>
   );
 }
@@ -770,7 +719,6 @@ function MobileRoadmap({
                   <span className="font-semibold text-base text-fg">
                     {release.name}
                   </span>
-                  <StatusPill current={release.current} />
                 </span>
                 <span className="mt-0.5 block text-fg-muted text-sm">
                   {release.role}
@@ -818,6 +766,7 @@ function BarView({
   seen: boolean;
   onOpen: (key: string) => void;
 }) {
+  // The most recent role is the filled piece, whether or not it is still running.
   const last = releases.length - 1;
   let elapsed = 0;
   const timed = releases.map((release) => {
@@ -864,7 +813,7 @@ function BarView({
                 className={`relative flex h-11 items-center gap-2 overflow-hidden border pr-3 pl-2 transition-[translate,border-color] duration-150 group-hover:-translate-y-0.5 group-focus-visible:-translate-y-0.5 motion-reduce:transition-none ${
                   i === 0 ? "rounded-l-full" : "rounded-l-md"
                 } ${i === last ? "rounded-r-full" : "rounded-r-md"} ${
-                  release.current
+                  i === last
                     ? "border-fg bg-fg text-bg"
                     : "border-border bg-bg-elevated text-fg group-hover:border-fg"
                 }`}
@@ -882,7 +831,8 @@ function BarView({
                       <span className="absolute inset-0 rounded-full bg-current opacity-60 motion-safe:animate-ping" />
                       <span className="relative h-1.5 w-1.5 rounded-full bg-current" />
                     </span>
-                    {/* Sheen: a slow highlight across the role still running. */}
+                    {/* Sheen: a slow highlight across a role still running. With no
+                        current role, the dot and the sheen both stay off. */}
                     <span
                       aria-hidden="true"
                       className="pointer-events-none absolute inset-0 -translate-x-full bg-[linear-gradient(100deg,transparent_35%,color-mix(in_srgb,var(--bg)_24%,transparent)_50%,transparent_65%)] motion-safe:animate-[exp-sheen_3.4s_ease-in-out_2.5s_infinite]"
@@ -937,14 +887,14 @@ function BarView({
       </div>
 
       <ol className="space-y-2 sm:hidden">
-        {[...releases].reverse().map((release) => (
+        {[...releases].reverse().map((release, i) => (
           <li key={release.key}>
             <button
               type="button"
               aria-label={label(release)}
               onClick={() => onOpen(release.key)}
               className={`flex w-full items-center gap-3 rounded-full border py-1.5 pr-4 pl-1.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg ${
-                release.current
+                i === 0
                   ? "border-fg bg-fg text-bg"
                   : "border-border bg-bg-elevated text-fg"
               }`}
@@ -956,7 +906,7 @@ function BarView({
                 </span>
                 <span
                   className={`block truncate text-xs ${
-                    release.current ? "text-bg/80" : "text-fg-muted"
+                    i === 0 ? "text-bg/80" : "text-fg-muted"
                   }`}
                 >
                   {release.role}
@@ -964,7 +914,7 @@ function BarView({
               </span>
               <span
                 className={`shrink-0 font-mono text-[10px] uppercase tracking-wider ${
-                  release.current ? "text-bg/80" : "text-fg-subtle"
+                  i === 0 ? "text-bg/80" : "text-fg-subtle"
                 }`}
               >
                 {durationLabel(release.startYm, release.endYm)}
@@ -1012,9 +962,6 @@ function ChangelogView({
             />
 
             <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-fg-subtle uppercase tracking-wider md:mb-0 md:flex-col md:items-end md:gap-1.5 md:text-right">
-              <span className="rounded-full border border-border bg-bg-elevated px-2 py-0.5 text-fg text-xs normal-case tracking-normal">
-                {release.version}
-              </span>
               <span>
                 {formatDateRange({
                   start: release.startYm,
@@ -1038,7 +985,6 @@ function ChangelogView({
                     <span className="font-display text-fg text-xl leading-tight tracking-tight underline decoration-transparent underline-offset-4 transition-[text-decoration-color] duration-150 group-hover:decoration-accent md:text-2xl">
                       {release.name}
                     </span>
-                    <StatusPill current={release.current} />
                   </span>
                   <span className="mt-0.5 block text-fg-muted text-sm md:text-base">
                     {release.role}

@@ -68,8 +68,7 @@ export const experienceEntries: ExperienceEntry[] = [
     logo: "/images/logos/tap-invest.png",
     logoBg: "bg-fg",
     start: "2025-03",
-    end: "present",
-    current: true,
+    end: "2026-10",
     tagline:
       "sebi-registered fintech behind bondscanner (retail bonds) and ultra (alternative investments).",
     products: [
@@ -105,8 +104,7 @@ export const experienceEntries: ExperienceEntry[] = [
         url: "https://bondscanner.com",
         logo: "/images/logos/bondscanner.jpg",
         start: "2025-11",
-        end: "present",
-        current: true,
+        end: "2026-10",
         role: "Founding Product Manager",
         summary:
           "0→1 founding PM. Onboarding in 2 months, SEO engine (~2× organic clicks), AI ops tools.",
