@@ -716,9 +716,16 @@
   );
 }
 
-/* The grain fades in from the top, so its edge does not draw a line. */
+/* The grain fades in at the top and out at the bottom, so neither edge
+   draws a line against the fold next to it. */
 .about-collage--flow .about-collage-stage::before {
-  mask-image: linear-gradient(to bottom, transparent, #000 14rem);
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 14rem,
+    #000 calc(100% - 12rem),
+    transparent
+  );
 }
 
 .about-collage-eyebrow {
