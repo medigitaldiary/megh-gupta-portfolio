@@ -69,7 +69,7 @@ export function FooterSky({
       <div className={`mx-auto ${wide ? "max-w-6xl" : "max-w-5xl"}`}>
         {flow && (
           <p className="mb-4 font-mono text-fg-muted text-xs uppercase tracking-[0.24em]">
-            <span className="border-highlight border-b pb-1">
+            <span data-hl-word>
               {flow.index ? `${flow.index} · Contact` : "Contact"}
             </span>
           </p>

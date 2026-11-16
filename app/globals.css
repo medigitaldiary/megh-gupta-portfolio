@@ -182,16 +182,22 @@ p [data-hl-word]::before {
   }
 }
 
-/* On pine the highlighter would sit behind oatmeal text (1.3:1), so
-   the eyebrow takes a lilac underline instead. */
-.tone-pine p [data-hl-word]::before {
-  top: auto;
-  bottom: -0.35em;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--highlight);
-  animation: none;
+/* On pine the eyebrow keeps the same marker stroke as on oatmeal. The
+   stroke is 60% lilac, which goes muddy over pine, so it is laid down
+   three times (about 94% cover) and the label switches to pine ink:
+   pine on the stroke is 6.0:1, where oatmeal on it would be 1.4:1.
+   --accent-fg is pine inside .tone-pine. p.tone-pine covers a label
+   on a pine fold that is not a tone scope (the Contact fold). */
+.tone-pine p [data-hl-word],
+p.tone-pine [data-hl-word] {
+  color: var(--accent-fg);
+}
+
+.tone-pine p [data-hl-word]::before,
+p.tone-pine [data-hl-word]::before {
+  background-image:
+    url("/images/v3/highlighter.svg"), url("/images/v3/highlighter.svg"),
+    url("/images/v3/highlighter.svg");
 }
 
 @keyframes v3-hl-sweep {

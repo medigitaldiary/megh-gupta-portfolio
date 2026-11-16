@@ -49,7 +49,6 @@ export default function PortfolioV51Preview() {
         {/* Fold 4: person. Would I want to work with them? */}
         <AboutCollage
           flow={{
-            index: "03",
             leadOut: { href: "#connect", label: "Say hello" },
           }}
         />

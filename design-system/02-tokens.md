@@ -404,7 +404,7 @@ A fold that sits on pine takes the class `tone-pine`. It adds no colour: it re-p
 | `--accent` / `--accent-fg` | pine / oatmeal | oatmeal / pine | 8.99 |
 | `--shadow-md` | pine .45 | deep pine `rgba(12, 26, 20, .7)` | n/a |
 
-Eyebrows inside `.tone-pine` drop the lilac highlighter (oatmeal on lilac is 1.3:1) for a 1px lilac underline. The Contact fold keeps its own `bg-accent` classes and is not a tone scope. Status: preview only, pending Megh's pick between v4.1 and v4.3.
+Eyebrows inside `.tone-pine` keep the lilac marker stroke used on oatmeal. The stroke is laid down three times so it holds its colour over pine, and the label switches to pine ink (6.0:1 on the stroke). `p.tone-pine` gives the Contact fold's label the same treatment. The Contact fold keeps its own `bg-accent` classes and is not a tone scope. Status: preview only, pending Megh's pick between v4.1 and v4.3.
 
 ## 3. Visible changes (all approved)
 
