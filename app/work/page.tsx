@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { TextLink } from "@/components/ui";
 import { type StudyMark, WorkThumbnails } from "@/components/work-thumbnails";
 import { withCoverVideos } from "@/lib/cover-video";
 import { getAllWorkCards } from "@/lib/work";
@@ -39,7 +39,7 @@ export default async function WorkIndexPage({
   return (
     <main className="px-6 py-24 md:px-8 md:py-32">
       <div className="mx-auto max-w-6xl">
-        <Link
+        <TextLink
           href={
             mark === "text"
               ? "/preview/v3#work"
@@ -47,10 +47,10 @@ export default async function WorkIndexPage({
                 ? "/preview/v3.1#work"
                 : "/#work"
           }
-          className="inline-flex items-center gap-2 text-sm text-fg-muted underline underline-offset-4 hover:text-fg"
+          direction="back"
         >
-          <span aria-hidden="true">←</span> Selected work
-        </Link>
+          Selected work
+        </TextLink>
         <p className="mt-8 font-mono text-xs uppercase tracking-[0.24em] text-fg-subtle">
           Work
         </p>

@@ -18,7 +18,7 @@ export function SelectedWorkShelf({ mark }: { mark?: StudyMark }) {
           title="Things I've built and shipped."
           action={{
             href: mark ? `/work?mark=${mark}` : "/work",
-            label: "View all",
+            label: "View all work",
           }}
         />
         <WorkThumbnails cards={cards} layout="carousel" mark={mark} />

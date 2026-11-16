@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import * as caseStudy from "@/components/case-study";
@@ -10,6 +9,7 @@ import {
   type IndexMark,
 } from "@/components/case-study/case-study-toc";
 import { CaseStudyTopBar } from "@/components/case-study/case-study-top-bar";
+import { ButtonLink, CtaArrow, TextLink } from "@/components/ui";
 import { WorkThumbnails } from "@/components/work-thumbnails";
 import { getCaseStudy } from "@/lib/case-study";
 import { extractToc, readingMinutes } from "@/lib/case-study-toc";
@@ -105,12 +105,9 @@ export default async function WorkCaseStudy({
           }`}
         >
           <header className={proseColumn}>
-            <Link
-              href={backHref}
-              className="inline-flex items-center gap-2 rounded-sm text-sm text-fg-muted underline underline-offset-4 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-            >
-              <span aria-hidden="true">←</span> Back to selected work
-            </Link>
+            <TextLink href={backHref} direction="back">
+              Back to selected work
+            </TextLink>
 
             <p className="mt-8 font-mono text-xs uppercase tracking-wider text-accent">
               {kicker.join(" · ")}
@@ -191,12 +188,9 @@ export default async function WorkCaseStudy({
                 drops here shortly. In the meantime, feel free to reach out and
                 I&apos;ll walk you through it live.
               </p>
-              <Link
-                href={connectHref}
-                className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm text-accent-fg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-              >
-                Let&apos;s talk about it →
-              </Link>
+              <ButtonLink href={connectHref} className="mt-6">
+                Let&apos;s talk about it <CtaArrow />
+              </ButtonLink>
             </div>
           )}
 

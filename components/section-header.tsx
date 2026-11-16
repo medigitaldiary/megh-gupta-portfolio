@@ -1,4 +1,4 @@
-import { ButtonLink } from "@/components/ui";
+import { TextLink } from "@/components/ui";
 
 export function SectionHeader({
   eyebrow,
@@ -19,15 +19,9 @@ export function SectionHeader({
           {title}
         </h2>
         {action ? (
-          <ButtonLink
-            href={action.href}
-            variant="outline"
-            size="sm"
-            mono
-            className="shrink-0 tracking-[0.16em]"
-          >
+          <TextLink href={action.href} className="shrink-0">
             {action.label}
-          </ButtonLink>
+          </TextLink>
         ) : null}
       </div>
     </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   useActionState,
   useCallback,
@@ -9,6 +8,7 @@ import {
   useState,
 } from "react";
 import { type UnlockState, unlock } from "@/app/unlock/actions";
+import { Button, CtaArrow, TextLink } from "@/components/ui";
 
 const PINE = "#1f3b2e";
 const DENIED_INK = "#b23a48";
@@ -242,16 +242,12 @@ export function BackstagePass({
                         </button>
                       </div>
 
-                      <button
+                      <Button
                         id="bp-submit"
                         type="submit"
+                        size="lg"
                         disabled={pending || admitted || !configured || !value}
-                        className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
-                        style={{
-                          background: PINE,
-                          color: "var(--accent-fg)",
-                          boxShadow: "0 10px 24px -10px rgba(31,59,46,0.6)",
-                        }}
+                        className="shrink-0"
                       >
                         {pending ? (
                           <>
@@ -261,13 +257,10 @@ export function BackstagePass({
                           "Welcome in"
                         ) : (
                           <>
-                            Get my pass
-                            <span className="transition-transform duration-200 group-hover:translate-x-1">
-                              →
-                            </span>
+                            Get my pass <CtaArrow />
                           </>
                         )}
-                      </button>
+                      </Button>
                     </div>
 
                     <p
@@ -301,12 +294,9 @@ export function BackstagePass({
                       </span>{" "}
                       <span>→ {next}</span>
                     </p>
-                    <Link
-                      href="/"
-                      className="underline underline-offset-4 opacity-70 hover:opacity-100"
-                    >
-                      ← Not supposed to be here?
-                    </Link>
+                    <TextLink href="/" direction="back">
+                      Not supposed to be here?
+                    </TextLink>
                   </div>
 
                   {/* Stamps */}

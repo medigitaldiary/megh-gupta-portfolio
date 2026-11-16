@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Hero } from "@/components/hero";
 import { ProductVenn } from "@/components/product-venn";
+import { TextLinkButton } from "@/components/ui";
 
 type Phase = "boot" | "venn" | "zoom" | "land" | "done";
 
@@ -413,13 +414,12 @@ export function HeroOverture() {
           </p>
           {flying ? null : (
             <>
-              <button
-                type="button"
-                className="fixed right-6 bottom-6 z-[62] font-mono text-xs text-fg-subtle"
+              <TextLinkButton
+                className="fixed right-6 bottom-6 z-[62]"
                 onClick={() => setPhase("done")}
               >
                 Skip
-              </button>
+              </TextLinkButton>
               <button
                 type="button"
                 aria-label="Skip opening"

@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { ButtonLink } from "@/components/ui";
 
 export type NavItem = {
   id: string;
@@ -476,18 +477,20 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
                 <LinkedInIcon />
               </span>
             </a>
-            <a
+            <ButtonLink
               href={RESUME_URL}
+              variant="secondary"
+              size="sm"
               target="_blank"
               rel="noopener noreferrer"
               tabIndex={collapsed ? -1 : 0}
-              className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-accent px-4 py-2 text-sm text-accent-fg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              className="shrink-0"
             >
               <span>Resume</span>
               <span className="h-3.5 w-3.5">
                 <DownloadIcon />
               </span>
-            </a>
+            </ButtonLink>
           </div>
 
           {/* Mobile: hamburger */}
@@ -541,18 +544,19 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
                 <LinkedInIcon />
               </span>
             </a>
-            <a
+            <ButtonLink
               href={RESUME_URL}
+              variant="secondary"
+              size="lg"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setMenuOpen(false)}
-              className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-base text-accent-fg"
             >
               Resume
               <span className="h-4 w-4">
                 <DownloadIcon />
               </span>
-            </a>
+            </ButtonLink>
           </div>
         </div>
       )}

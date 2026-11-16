@@ -1,12 +1,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/site-footer";
+import { buttonStyles, CtaArrow, TextLink } from "@/components/ui";
 
 const RESUME_PDF = "/resume.pdf";
 const RESUME_DOWNLOAD = "Megh.Gupta_Resume.pdf";
-
-const DOWNLOAD_BUTTON =
-  "inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-accent text-sm text-accent-fg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2";
 
 const CONTACT_ITEMS = [
   {
@@ -174,7 +172,7 @@ export function ResumeDocument({
               href="/"
               className="inline-flex min-h-11 items-center gap-2 rounded-sm text-sm text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             >
-              <span aria-hidden="true">←</span>
+              <CtaArrow direction="back" />
               <span>
                 <span className="font-semibold">Megh Gupta</span>
                 <span className="text-fg-muted"> · Resume</span>
@@ -185,10 +183,10 @@ export function ResumeDocument({
               <a
                 href={RESUME_PDF}
                 download={RESUME_DOWNLOAD}
-                className={`${DOWNLOAD_BUTTON} px-4`}
+                className={buttonStyles({ variant: "primary", size: "sm" })}
               >
-                <DownloadIcon />
                 <span>Download resume (PDF)</span>
+                <DownloadIcon />
               </a>
             </div>
           </div>
@@ -235,13 +233,15 @@ export function ResumeDocument({
                     className="inline-flex items-center gap-1.5"
                   >
                     {item.href ? (
-                      <a
+                      <TextLink
                         href={item.href}
+                        direction={
+                          item.label === "LinkedIn" ? "external" : "onward"
+                        }
+                        arrow={item.label === "LinkedIn"}
                         target={item.external ? "_blank" : undefined}
                         rel={item.external ? "noopener noreferrer" : undefined}
-                        className={`inline-flex min-h-11 items-center gap-1.5 underline underline-offset-2 transition-colors duration-150 hover:text-fg ${
-                          item.label === "LinkedIn" ? "text-fg-subtle" : ""
-                        }`}
+                        className="print:min-h-0 print:text-[8pt]"
                       >
                         {item.label === "LinkedIn" ? (
                           item.icon
@@ -249,7 +249,7 @@ export function ResumeDocument({
                           <span className="text-fg-subtle">{item.icon}</span>
                         )}
                         {item.label}
-                      </a>
+                      </TextLink>
                     ) : (
                       <>
                         <span className="text-fg-subtle">{item.icon}</span>
@@ -760,10 +760,10 @@ export function ResumeDocument({
                 <a
                   href={RESUME_PDF}
                   download={RESUME_DOWNLOAD}
-                  className={`${DOWNLOAD_BUTTON} px-6`}
+                  className={buttonStyles({ variant: "primary", size: "lg" })}
                 >
-                  <DownloadIcon />
                   <span>Download resume (PDF)</span>
+                  <DownloadIcon />
                 </a>
               </div>
             </div>
