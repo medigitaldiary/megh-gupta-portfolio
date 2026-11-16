@@ -11,6 +11,7 @@ export function Hero({
   handoff = false,
   wide = false,
   leadOut,
+  threeLine = false,
 }: {
   link?: "travel";
   settled?: boolean;
@@ -19,6 +20,14 @@ export function Hero({
   wide?: boolean;
   /** Fold-flow previews: the line that names the fold after the hero. */
   leadOut?: FoldLead;
+  /**
+   * /preview/v5.1: the headline sits on three lines wherever it fits
+   * (tablet, and desktop from `xl`). The text column takes the width its
+   * lines need and the Venn takes the rest. At `lg` the two columns are
+   * too tight for that, and on phones 36px type cannot hold a full line,
+   * so both keep the six-line wrap.
+   */
+  threeLine?: boolean;
 }) {
   const portrait = (
     <Image
@@ -43,7 +52,7 @@ export function Hero({
       <div
         className={`mx-auto grid items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] ${
           wide ? "max-w-6xl" : "max-w-5xl"
-        }`}
+        } ${threeLine ? "xl:grid-cols-[auto_minmax(0,1fr)]" : ""}`}
       >
         <div className="min-w-0">
           {/* Avatar + handwritten greeting sit on the same row; the
@@ -69,7 +78,11 @@ export function Hero({
 
           <h1
             data-hero-reveal
-            className={`font-display text-[2.25rem] leading-[1.08] tracking-tight text-fg md:text-[3rem] lg:text-[3.25rem] ${handoff ? "opacity-0" : ""}`}
+            className={`font-display text-[2.25rem] leading-[1.08] tracking-tight text-fg md:text-[3rem] ${
+              threeLine
+                ? "md:whitespace-nowrap lg:whitespace-normal lg:text-[3.25rem] xl:whitespace-nowrap xl:text-[3rem]"
+                : "lg:text-[3.25rem]"
+            } ${handoff ? "opacity-0" : ""}`}
           >
             <span className="block">
               I turn ideas into <span data-hl-word>features</span>,

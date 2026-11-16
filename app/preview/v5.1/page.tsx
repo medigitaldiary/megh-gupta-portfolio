@@ -26,6 +26,7 @@ export default function PortfolioV51Preview() {
         <Hero
           link="travel"
           wide
+          threeLine
           leadOut={{ href: "#experience", label: "Where I have done it" }}
         />
         {/* Fold 2: trajectory. Where has this person been? */}

@@ -139,11 +139,8 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 - `/preview/resume` is built live by ten named cursors (`components/resume-agents/`). Preview only, behind the pass. Reduced motion, or no JavaScript, shows the finished resume. Explicit ask, 10 Nov 2026.
 - Experience bar on `/preview/v3.2` carries a looping sheen across the current role (`components/experience-roadmap.tsx`, keyframes `exp-sheen` in `app/globals.css`). Off under reduced motion. Explicit ask, 15 Nov 2026.
 - `/preview/resumev2` is the same build, started by one "Watch it get built" button. No log, skip, or replay. The walkthrough plays once and ends on the finished resume. Explicit ask, 15 Nov 2026.
-<<<<<<< HEAD
 - Sky footer on `/preview/footer-sky`, `/preview/v5` and `/preview/v5.1` sits on a slow cloud drift (`components/footer-sky.tsx`, clouds from `components/cloud-background.tsx`, keyframes `cs-cloud-drift`). CSS only, no video file. Holds still under reduced motion. Explicit ask, 16 Nov 2026.
-=======
 - `/preview/v4.1`, `/preview/v4.3`, `/preview/v5` and `/preview/v5.1` run one shared rise-and-fade on each fold's header and content as it enters the screen (`.fold-flow [data-reveal]` in `app/globals.css`). Pure CSS, tied to scroll, static under reduced motion and in browsers without view timelines. This is the fade-up the list above already allows, recorded here because it is scroll-linked. Explicit ask, 16 Nov 2026.
->>>>>>> origin/dev
 - The highlight CTA (`<Button variant="highlight">`, `.cta-highlight` in `app/globals.css`) runs a continuous 7s gradient flow with a matching glow. Its tertiary form (`<TextLink highlight>`, `.link-highlight`) runs the same flow as a 2px underline. One on the site at a time, pill or link. Holds still under reduced motion. Explicit ask, 15 Nov 2026.
 
 ### Iconography
