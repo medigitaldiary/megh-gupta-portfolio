@@ -389,6 +389,23 @@ Every token, with what it replaces and how many places change. The same data is 
 
 ---
 
+### 2.23 Tone scopes (preview only: `/preview/v4.1`, `/preview/v4.3`)
+
+A fold that sits on pine takes the class `tone-pine`. It adds no colour: it re-points the existing role tokens at the same Oatmeal / Pine pair with the roles swapped, so every utility inside the fold flips without a second set of classes. `tone-oat` switches a subtree back (the cream work cards on a pine fold). Defined in `app/globals.css`.
+
+| Token | Light (root, `.tone-oat`) | `.tone-pine` | Contrast on pine `--bg` |
+|---|---|---|---|
+| `--bg` | `#e8dcc6` | `#1f3b2e` | n/a |
+| `--bg-elevated` | `#f3ebd9` | `#2f483a` (pine 92%, oatmeal 8%) | n/a |
+| `--fg` | `#1f3b2e` | `#e8dcc6` | 8.99 |
+| `--fg-muted` | `#3a5544` | `#d0c9b4` (oatmeal 88%) | 7.4 |
+| `--fg-subtle` | `#506758` | `#bcb9a5` (oatmeal 78%) | 6.2 (5.2 on `--bg-elevated`) |
+| `--border` | `#d4c4a8` | `#516354` (oatmeal 25%) | hairline |
+| `--accent` / `--accent-fg` | pine / oatmeal | oatmeal / pine | 8.99 |
+| `--shadow-md` | pine .45 | deep pine `rgba(12, 26, 20, .7)` | n/a |
+
+Eyebrows inside `.tone-pine` drop the lilac highlighter (oatmeal on lilac is 1.3:1) for a 1px lilac underline. The Contact fold keeps its own `bg-accent` classes and is not a tone scope. Status: preview only, pending Megh's pick between v4.1 and v4.3.
+
 ## 3. Visible changes (all approved)
 
 Adopting the set is invisible **except** for these. Each one comes from folding a near-duplicate onto its canonical value.

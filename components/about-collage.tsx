@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
+import { type FoldFlow, FoldLeadOut } from "@/components/fold-flow";
 import { ABOUT_VOX_CHAPTERS, framesFor } from "@/lib/about-vox";
 import "./about-collage.css";
 
@@ -219,7 +220,12 @@ const PIECES = ABOUT_VOX_CHAPTERS.map((chapter, i) => ({
   cut: chapter.cut || CUTS[i % CUTS.length],
 }));
 
-export function AboutCollage() {
+export function AboutCollage({
+  flow,
+}: {
+  /** Fold-flow previews: chapter number, handoff, and a see-through stage. */
+  flow?: Pick<FoldFlow, "index" | "leadOut">;
+} = {}) {
   const rootRef = useRef<HTMLElement>(null);
   const pausedRef = useRef(false);
   const [openTip, setOpenTip] = useState<string | null>(null);
@@ -369,7 +375,7 @@ export function AboutCollage() {
     <section
       ref={rootRef}
       id="about"
-      className="about-collage"
+      className={flow ? "about-collage about-collage--flow" : "about-collage"}
       aria-labelledby="about-heading"
     >
       <div className="about-collage-stage">
@@ -480,6 +486,11 @@ export function AboutCollage() {
         <div className="about-collage-bio">
           <article className="about-slip">
             <span className="about-slip-tape" aria-hidden="true" />
+            {flow?.index && (
+              <p className="about-collage-eyebrow">
+                <span data-hl-word>{flow.index} · About</span>
+              </p>
+            )}
             <h2 id="about-heading" className="about-collage-title">
               A bit about me.
             </h2>
@@ -503,6 +514,10 @@ export function AboutCollage() {
             </p>
           </article>
         </div>
+
+        {flow?.leadOut && (
+          <FoldLeadOut {...flow.leadOut} className="about-collage-leadout" />
+        )}
       </div>
     </section>
   );

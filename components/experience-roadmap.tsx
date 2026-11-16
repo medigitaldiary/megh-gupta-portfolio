@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { type FoldFlow, FoldLeadOut } from "@/components/fold-flow";
 import { SectionHeader } from "@/components/section-header";
 import { TextLink } from "@/components/ui";
+import { setCompanyFocus } from "@/lib/company-focus";
 import {
   durationLabel,
   type ExperienceEntry,
@@ -12,6 +14,7 @@ import {
   type NarrativeAchievements,
   type NarrativeLink,
 } from "@/lib/experience";
+import { getShelfWorkCards } from "@/lib/work";
 
 // Experiment for fold 2. Same data as components/experience.tsx, drawn as
 // two documents a PM lives in: a roadmap (timeline view) and a changelog
@@ -112,9 +115,14 @@ function toReleases(entries: ExperienceEntry[]): Release[] {
 
 export function ExperienceRoadmap({
   timeline = "roadmap",
+  flow,
 }: {
   /** Which drawing the timeline view uses. The list view is the changelog either way. */
   timeline?: "roadmap" | "bar";
+  /** Fold-flow previews: chapter number, pine tone, handoff, and the link to the work shelf. */
+  flow?: FoldFlow & {
+    workLink?: { direction: "down" | "up"; label: string };
+  };
 }) {
   const [view, setView] = useState<View>("timeline");
   const releases = useMemo(() => toReleases(getAllExperience()), []);
@@ -145,11 +153,24 @@ export function ExperienceRoadmap({
   }, []);
 
   return (
-    <section id="experience" className="px-6 py-24 md:px-8 md:py-32">
+    <section
+      id="experience"
+      className={`px-6 py-24 md:px-8 md:py-32 ${
+        flow?.tone === "pine" ? "tone-pine bg-bg text-fg" : ""
+      }`}
+    >
       {/* Fold 2: trajectory. Where has this person been? */}
-      <div className="mx-auto max-w-5xl">
-        <div className="mb-10 flex flex-col gap-6 md:mb-14 md:flex-row md:items-end md:justify-between">
-          <SectionHeader eyebrow="Experience" title="Where I've been." />
+      <div className={`mx-auto ${flow ? "max-w-6xl" : "max-w-5xl"}`}>
+        <div
+          data-reveal
+          className="mb-10 flex flex-col gap-6 md:mb-14 md:flex-row md:items-end md:justify-between"
+        >
+          <SectionHeader
+            eyebrow="Experience"
+            title="Where I've been."
+            index={flow?.index}
+            className={flow ? "" : undefined}
+          />
           <div className="flex items-center gap-3 md:mb-2">
             <span className="font-hand text-lg leading-none text-accent">
               try this
@@ -161,7 +182,7 @@ export function ExperienceRoadmap({
           </div>
         </div>
 
-        <div ref={bodyRef}>
+        <div ref={bodyRef} data-reveal>
           {view === "timeline" ? (
             timeline === "bar" ? (
               <BarView
@@ -180,16 +201,85 @@ export function ExperienceRoadmap({
           )}
         </div>
 
-        {/* The bar is the short view: no lead-out under it, to keep the fold small. */}
-        <p
-          className={`mt-10 text-right ${
-            timeline === "bar" && view === "timeline" ? "hidden" : ""
-          }`}
-        >
-          <TextLink href="#work">See what shipped</TextLink>
-        </p>
+        {flow ? (
+          <>
+            {flow.workLink && (
+              <WorkLinks releases={releases} {...flow.workLink} />
+            )}
+            {flow.leadOut && (
+              <FoldLeadOut
+                {...flow.leadOut}
+                className={flow.workLink ? "mt-4 md:mt-6" : undefined}
+              />
+            )}
+          </>
+        ) : (
+          /* The bar is the short view: no lead-out under it, to keep the fold small. */
+          <p
+            className={`mt-10 text-right ${
+              timeline === "bar" && view === "timeline" ? "hidden" : ""
+            }`}
+          >
+            <TextLink href="#work">See what shipped</TextLink>
+          </p>
+        )}
       </div>
     </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Link to the work shelf: one chip per company, with how many case
+// studies it has on the shelf. A chip jumps to the shelf and brings
+// that company's cards forward (lib/company-focus.ts).
+// ─────────────────────────────────────────────────────────────
+
+function WorkLinks({
+  releases,
+  direction,
+  label,
+}: {
+  releases: Release[];
+  direction: "down" | "up";
+  label: string;
+}) {
+  const companies = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const card of getShelfWorkCards(10)) {
+      counts.set(card.company, (counts.get(card.company) ?? 0) + 1);
+    }
+    const names = [...new Set(releases.map((release) => release.name))];
+    return names
+      .reverse()
+      .map((name) => ({ name, count: counts.get(name) ?? 0 }))
+      .filter((company) => company.count > 0);
+  }, [releases]);
+  if (companies.length === 0) return null;
+
+  return (
+    <div className="mt-10 flex flex-wrap items-center gap-x-3 gap-y-1 md:mt-12">
+      <span className="mr-1 font-mono text-fg-muted text-xs uppercase tracking-[0.16em]">
+        {label}{" "}
+        <span aria-hidden="true">{direction === "down" ? "↓" : "↑"}</span>
+      </span>
+      {companies.map(({ name, count }) => (
+        <button
+          key={name}
+          type="button"
+          onClick={() => {
+            setCompanyFocus(name);
+            document.getElementById("work")?.scrollIntoView();
+          }}
+          aria-label={`Show the ${count} case ${count === 1 ? "study" : "studies"} from ${name}`}
+          className="group inline-flex min-h-11 items-center"
+        >
+          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-bg-elevated px-3 py-1.5 text-fg text-sm transition-colors duration-150 group-hover:border-fg">
+            {name}
+            <span className="font-mono text-fg-subtle text-xs">{count}</span>
+          </span>
+        </button>
+      ))}
+    </div>
   );
 }
 

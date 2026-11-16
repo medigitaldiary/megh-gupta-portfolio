@@ -3,13 +3,30 @@ import { CopyEmailButton } from "@/components/copy-email-button";
 
 const FALLBACK_EMAIL = "megh.bpgc@gmail.com";
 
-export function Contact() {
+export function Contact({
+  flow,
+}: {
+  /** Fold-flow previews: chapter number and the shared fold padding. */
+  flow?: { index?: string };
+} = {}) {
   return (
     <section
       id="connect"
-      className="scroll-mt-16 bg-accent px-6 pt-32 pb-16 text-accent-fg md:px-8 md:pt-48 md:pb-24"
+      className={`scroll-mt-16 bg-accent px-6 text-accent-fg md:px-8 ${
+        flow ? "py-24 md:py-32" : "pt-32 pb-16 md:pt-48 md:pb-24"
+      }`}
     >
-      <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
+      <div
+        data-reveal
+        className="mx-auto flex max-w-5xl flex-col items-center text-center"
+      >
+        {flow && (
+          <p className="mb-4 font-mono text-accent-fg/85 text-xs uppercase tracking-[0.24em]">
+            <span className="border-highlight border-b pb-1">
+              {flow.index ? `${flow.index} · Contact` : "Contact"}
+            </span>
+          </p>
+        )}
         <h2 className="font-display text-[3rem] leading-[1.05] tracking-tight md:text-[4rem]">
           Let&apos;s connect.
         </h2>

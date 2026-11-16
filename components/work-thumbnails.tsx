@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { setCompanyFocus, useCompanyFocus } from "@/lib/company-focus";
 import type { WorkCard } from "@/lib/work";
 
 // Fold 3 — case-study thumbnails.
@@ -127,6 +128,24 @@ function WorkCarousel({
     };
   }, []);
 
+  // A company picked in the Experience fold (fold-flow previews only).
+  // Its first card comes to the front, the rest dim, auto-advance stops.
+  const focus = useCompanyFocus();
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!focus || !viewport) return;
+    const first = cards.findIndex((card) => card.company === focus);
+    const item = viewport.querySelectorAll("li")[first];
+    if (!item) return;
+    setStopped(true);
+    if (frameRef.current != null) cancelAnimationFrame(frameRef.current);
+    frameRef.current = null;
+    const max = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+    viewport.scrollLeft = Math.min(item.offsetLeft, max);
+  }, [focus, cards]);
+  // Leaving the page drops the pick, so a return visit starts clean.
+  useEffect(() => () => setCompanyFocus(null), []);
+
   // Native smooth scrolling never reaches the final snap-end stop, so
   // the arrow animates scrollLeft itself and lifts snap for that move.
   const scrollByCard = useCallback(
@@ -228,8 +247,12 @@ function WorkCarousel({
           {cards.map((card, index) => (
             <li
               key={card.slug}
-              className={`w-[calc((100cqw-1.5rem)/1.15)] shrink-0 sm:w-[calc((100cqw-3rem)/2.15)] lg:w-[calc((100cqw-4.5rem)/3.5)] ${
+              className={`w-[calc((100cqw-1.5rem)/1.15)] shrink-0 transition-opacity duration-300 motion-reduce:transition-none sm:w-[calc((100cqw-3rem)/2.15)] lg:w-[calc((100cqw-4.5rem)/3.5)] ${
                 index === cards.length - 1 ? "snap-end" : "snap-start"
+              } ${
+                focus && card.company !== focus
+                  ? "opacity-35 hover:opacity-100 focus-within:opacity-100"
+                  : ""
               }`}
             >
               <Thumbnail card={card} mark={mark} />
@@ -238,6 +261,19 @@ function WorkCarousel({
         </ul>
       </section>
       <div className="mt-4 flex items-center justify-end gap-2">
+        {focus && (
+          <p aria-live="polite" className="mr-auto text-fg-muted text-sm">
+            Showing work from{" "}
+            <span className="font-semibold text-fg">{focus}</span>.{" "}
+            <button
+              type="button"
+              onClick={() => setCompanyFocus(null)}
+              className="min-h-11 rounded-sm px-1 text-fg underline underline-offset-4"
+            >
+              Show all
+            </button>
+          </p>
+        )}
         {!reduced && (
           <button
             type="button"
@@ -335,7 +371,8 @@ function Thumbnail({
       onFocus={() => arm()}
       onBlur={() => disarm()}
     >
-      <div className="relative [perspective:1500px] [transform-style:preserve-3d]">
+      {/* tone-oat: the card stays cream when its fold is on pine. */}
+      <div className="tone-oat relative [perspective:1500px] [transform-style:preserve-3d]">
         <div
           aria-hidden="true"
           className={`absolute inset-0 [transform:translateZ(-1px)] ${back}`}

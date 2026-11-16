@@ -237,13 +237,30 @@ function StatusChip({
   );
 }
 
-export function Nav({ hide }: { hide?: string[] } = {}) {
+export function Nav({
+  hide,
+  order,
+  wide = false,
+}: {
+  hide?: string[];
+  /** Nav ids in the order the folds appear, when a page reorders them. */
+  order?: string[];
+  /** Fold-flow previews: the bar takes the folds' px-6 md:px-8 gutter. */
+  wide?: boolean;
+} = {}) {
   // `hide` is a list of nav ids to drop (e.g. `["lab", "writing"]`). Keeping
   // the filter here, not at the call site, means callers can be server
   // components without having to serialise the icon refs on NavItem.
-  const navItems = hide?.length
+  const visible = hide?.length
     ? DEFAULT_NAV_ITEMS.filter((i) => !hide.includes(i.id))
     : DEFAULT_NAV_ITEMS;
+  const rank = (id: string) => {
+    const at = order?.indexOf(id) ?? -1;
+    return at === -1 ? Number.MAX_SAFE_INTEGER : at;
+  };
+  const navItems = order?.length
+    ? [...visible].sort((a, b) => rank(a.id) - rank(b.id))
+    : visible;
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [focusWithin, setFocusWithin] = useState(false);
@@ -404,7 +421,13 @@ export function Nav({ hide }: { hide?: string[] } = {}) {
           and keeping a single surface across the scroll threshold removes the
           backdrop-filter transition that was causing the collapse jerk. */}
       <div>
-        <div className="mx-auto grid h-16 max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 md:h-[72px] md:px-6">
+        <div
+          className={`mx-auto grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-3 md:h-[72px] ${
+            // 76rem = the folds' 72rem column plus this bar's own gutters,
+            // so the chip and the Resume pill sit on the folds' edges.
+            wide ? "max-w-[76rem] px-6 md:px-8" : "max-w-6xl px-4 md:px-6"
+          }`}
+        >
           {/* Left: status chip. Four lines, the last one a contact CTA.
               The pill eases to the width of whichever line is showing.
               Hidden from md up to 860px so the longer lines don't push
