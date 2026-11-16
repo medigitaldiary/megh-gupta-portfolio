@@ -34,19 +34,34 @@ function CalendarIcon() {
   );
 }
 
-export function FooterSky() {
+export function FooterSky({
+  flow,
+  wide = false,
+}: {
+  /** Fold-flow previews: chapter number above the headline. */
+  flow?: { index?: string };
+  /** Fold-flow previews: same max-w-6xl edge as the folds. */
+  wide?: boolean;
+} = {}) {
   return (
     // Fold CTA: action. "Okay, how do I reach them?"
     <footer
       id="connect"
-      className="relative isolate overflow-hidden bg-bg px-6 pt-32 pb-6 md:px-8 md:pt-44 md:pb-8"
+      className="relative isolate scroll-mt-16 overflow-hidden bg-bg px-6 pt-32 pb-6 md:px-8 md:pt-44 md:pb-8"
     >
       <CloudBackground
         palette="footer"
         className="[mask-image:linear-gradient(to_bottom,transparent_0%,black_45%)]"
       />
 
-      <div className="mx-auto max-w-5xl">
+      <div className={`mx-auto ${wide ? "max-w-6xl" : "max-w-5xl"}`}>
+        {flow && (
+          <p className="mb-4 font-mono text-fg-muted text-xs uppercase tracking-[0.24em]">
+            <span className="border-highlight border-b pb-1">
+              {flow.index ? `${flow.index} · Contact` : "Contact"}
+            </span>
+          </p>
+        )}
         <h2 className="font-display text-[clamp(3rem,7vw,4rem)] leading-[1.05] tracking-tight text-fg">
           Let&apos;s connect.
         </h2>
