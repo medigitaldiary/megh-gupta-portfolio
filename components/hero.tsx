@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { type FoldLead, FoldLeadOut } from "@/components/fold-flow";
 import { HeroLink } from "@/components/hero-link";
 import { ProductVenn } from "@/components/product-venn";
 import { ProductVennTravel } from "@/components/product-venn-travel";
@@ -8,10 +9,16 @@ export function Hero({
   link,
   settled = false,
   handoff = false,
+  wide = false,
+  leadOut,
 }: {
   link?: "travel";
   settled?: boolean;
   handoff?: boolean;
+  /** Fold-flow previews: sit on the same max-w-6xl edge as every other fold. */
+  wide?: boolean;
+  /** Fold-flow previews: the line that names the fold after the hero. */
+  leadOut?: FoldLead;
 }) {
   const portrait = (
     <Image
@@ -33,7 +40,11 @@ export function Hero({
           : "px-6 py-20 md:px-8 md:py-28"
       }
     >
-      <div className="mx-auto grid max-w-5xl items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+      <div
+        className={`mx-auto grid items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] ${
+          wide ? "max-w-6xl" : "max-w-5xl"
+        }`}
+      >
         <div className="min-w-0">
           {/* Avatar + handwritten greeting sit on the same row; the
               avatar's left edge aligns with the H1 below. The avatar
@@ -97,6 +108,11 @@ export function Hero({
           )}
         </div>
       </div>
+      {leadOut && (
+        <div className={`mx-auto ${wide ? "max-w-6xl" : "max-w-5xl"}`}>
+          <FoldLeadOut {...leadOut} className="mt-10 md:mt-14" />
+        </div>
+      )}
       {link === "travel" ? <HeroLink /> : null}
     </section>
   );
