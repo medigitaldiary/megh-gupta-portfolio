@@ -94,6 +94,10 @@ export default function PreviewIndex() {
         <Link className="underline" href="/preview/v5">
           /preview/v5
         </Link>
+        . v5 with the sky footer brought into line:{" "}
+        <Link className="underline" href="/preview/v5.1">
+          /preview/v5.1
+        </Link>
         .
       </p>
     </main>
