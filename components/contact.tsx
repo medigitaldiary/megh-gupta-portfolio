@@ -21,8 +21,8 @@ export function Contact({
         className="mx-auto flex max-w-5xl flex-col items-center text-center"
       >
         {flow && (
-          <p className="mb-4 font-mono text-accent-fg/85 text-xs uppercase tracking-[0.24em]">
-            <span className="border-highlight border-b pb-1">
+          <p className="tone-pine mb-3 font-mono text-xs uppercase tracking-[0.24em]">
+            <span data-hl-word>
               {flow.index ? `${flow.index} · Contact` : "Contact"}
             </span>
           </p>

@@ -47,13 +47,12 @@ export default function PortfolioV5Preview() {
         {/* Fold 4: person. Would I want to work with them? */}
         <AboutCollage
           flow={{
-            index: "03",
             leadOut: { href: "#connect", label: "Say hello" },
           }}
         />
       </main>
       {/* CTA: action. How do I reach them? */}
-      <FooterSky flow={{ index: "04" }} wide />
+      <FooterSky flow={{ index: "03" }} wide />
     </>
   );
 }
