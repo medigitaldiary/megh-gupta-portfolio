@@ -345,6 +345,7 @@ Before declaring any task complete, verify:
 - [ ] All external links have `rel="noopener noreferrer"` and open in new tab where appropriate.
 - [ ] All interactive elements are keyboard-navigable and have focus states.
 - [ ] No hardcoded colors outside the CSS variables defined in Section 3.
+- [ ] For any UI or UX change: `pnpm audit:design` reports no errors, and the `design-auditor` agent has reviewed the diff (§16). Fix its blockers or say in the PR body why one stands.
 
 For a new case study specifically:
 - [ ] Frontmatter complete (no missing required fields).
@@ -588,5 +589,24 @@ Before merging any PR that touches `app/layout.tsx`, homepage content, or introd
 - Do not silently `noindex` a real page. If a page shouldn't be indexed, say so in the PR body.
 
 The detailed content spec for future sections' meta (case studies, Lab, Stack, Connect) lives in `PRD.md §7.5`. This file only holds the shape rules.
+
+---
+
+## 16. Design audit (run on every UI or UX change)
+
+Two layers check that a change follows this file and `design-system/`. Both look only at what changed against the base branch.
+
+| Layer | What it is | What it catches |
+|---|---|---|
+| `pnpm audit:design` | `scripts/design-audit.mjs`. Plain Node, no model, runs in any tool or in CI. | Pattern rules: hard-coded colours, hand-built pills and links, typed arrows, `<img>`, inline static styles, arbitrary radius and z-index, `any`, new fonts, new motion, new CSS files, `target="_blank"` without `rel`, more than one highlight CTA, a changed primitive or token with no spec update, a new page with no sitemap entry. |
+| `design-auditor` agent | `.claude/agents/design-auditor.md`. Read-only. Runs the script, then reviews the diff against the rules a pattern cannot judge. | One primary per fold, the right CTA tier, fold jobs, mobile type hierarchy, component states and focus rings, 44px touch targets, motion fallbacks, copy voice, SEO on new pages. |
+
+**When to run.** Before you call any change to `app/`, `components/` or `app/globals.css` done. In Claude Code, launch the `design-auditor` agent once the work is finished. In any other tool, run `pnpm audit:design` and work through its output; `AGENTS.md` at the repo root says the same.
+
+**What comes back.** A verdict, findings grouped as blocker / should fix / note (each with file and line, the rule it breaks and where that rule lives), and an ordered fix plan. The auditor never edits code. The session that asked for the audit applies the plan.
+
+**Options.** `--base <ref>` picks the branch to compare with (default `origin/dev`). `--strict` exits 1 on errors, for CI. `--json` prints findings for another tool to read.
+
+**Keeping it honest.** When a rule in this file changes, change the matching pattern in `scripts/design-audit.mjs` and the checklist in the agent file in the same PR. An approved exception recorded in §3 is not a finding.
 
 End of file.
