@@ -55,10 +55,10 @@ export default function ErrorBoundary({
         ) : null}
       </p>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-        <Button onClick={reset} size="lg" mono>
+        <Button onClick={reset} size="lg">
           Try again
         </Button>
-        <ButtonLink href="/" variant="outline" size="lg" mono>
+        <ButtonLink href="/" variant="secondary" size="lg">
           Home
         </ButtonLink>
       </div>

@@ -1,5 +1,5 @@
 import { CopyEmailButton } from "@/components/copy-email-button";
-import { ButtonLink } from "@/components/ui";
+import { ButtonLink, buttonStyles, CtaArrow, TextLink } from "@/components/ui";
 
 const EMAIL = "megh.bpgc@gmail.com";
 const LINKEDIN_URL = "https://www.linkedin.com/in/megh-gupta-917280200";
@@ -9,13 +9,6 @@ type Props = {
   connectHref: string;
   className?: string;
 };
-
-// Local class string used by non-ButtonLink copy-email button and a plain
-// anchor (external LinkedIn). Mirrors `<Button variant="hairline" size="touch">`
-// exactly so the three siblings read identical. Matches hairline + touch's
-// buttonStyles() output in components/ui/button.tsx.
-const ghost =
-  "inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-border px-5 text-sm text-fg transition-colors duration-150 hover:bg-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2";
 
 /**
  * End-of-study contact block (G-M1, option #1). Sits between the last
@@ -43,17 +36,16 @@ export function CaseStudyContact({ connectHref, className = "" }: Props) {
       </p>
       <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
         <ButtonLink href={connectHref} size="touch">
-          Book 20 min <span aria-hidden="true">→</span>
+          Book 20 min <CtaArrow />
         </ButtonLink>
-        <CopyEmailButton email={EMAIL} label="Copy email" className={ghost} />
-        <a
-          href={LINKEDIN_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={ghost}
-        >
-          LinkedIn <span aria-hidden="true">↗</span>
-        </a>
+        <CopyEmailButton
+          email={EMAIL}
+          label="Copy email"
+          className={buttonStyles({ variant: "secondary", size: "touch" })}
+        />
+        <TextLink href={LINKEDIN_URL} direction="external">
+          LinkedIn
+        </TextLink>
       </div>
     </section>
   );

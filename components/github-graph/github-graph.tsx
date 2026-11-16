@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui";
 import {
   type ContributionDay,
   type ContributionLevel,
@@ -288,22 +288,34 @@ export function GithubGraph({ login, total, contributions }: GithubGraphProps) {
       </div>
 
       <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
-        {SCENE_ORDER.map((item) => (
-          <Button
-            key={item}
-            size="sm"
-            mono
-            variant={scene === item ? "primary" : "hairline"}
-            aria-pressed={scene === item}
-            onClick={() => show(item)}
-          >
-            {item === "graph" ? "Graph" : item === "hello" ? "Hello" : "Heart"}
-          </Button>
-        ))}
+        <div
+          role="tablist"
+          aria-label="Contribution scene"
+          className="inline-flex items-center rounded-full border border-border bg-bg-elevated p-1 font-mono text-xs"
+        >
+          {SCENE_ORDER.map((item) => {
+            const active = scene === item;
+            const label =
+              item === "graph" ? "Graph" : item === "hello" ? "Hello" : "Heart";
+            return (
+              <button
+                key={item}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => show(item)}
+                className={`rounded-full px-3 py-1.5 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${
+                  active ? "bg-fg text-bg" : "text-fg-muted hover:text-fg"
+                }`}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
         <Button
           size="sm"
-          mono
-          variant="outline"
+          variant="secondary"
           aria-pressed={playing}
           onClick={() => setPlaying((value) => !value)}
         >

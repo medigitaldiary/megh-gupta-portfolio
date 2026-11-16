@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import { TextLinkButton } from "@/components/ui";
 import "./agents.css";
 
 const CURSORS = [
@@ -26,9 +27,6 @@ type Cursor = {
 };
 
 type LogLine = { t: string; agent: string; text: string };
-
-const DOCK_BUTTON =
-  "mx-2 mb-2 inline-flex min-h-11 items-center justify-center rounded-lg bg-accent px-4 font-mono text-[11px] uppercase tracking-[0.14em] text-accent-fg transition-opacity duration-150 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2";
 
 export function ResumeAgents({
   children,
@@ -741,15 +739,14 @@ export function ResumeAgents({
               ))}
             </ol>
           ) : null}
-          <button
-            type="button"
-            className={DOCK_BUTTON}
+          <TextLinkButton
+            className="mx-2 mb-2"
             onClick={() =>
               settled ? api.current.rebuild() : api.current.skip()
             }
           >
             {settled ? "Watch it build again" : "Skip"}
-          </button>
+          </TextLinkButton>
         </div>
       )}
     </div>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ButtonLink } from "@/components/ui";
+import { ButtonLink, TextLink } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -33,15 +33,13 @@ export default function NotFound() {
         somewhere real.
       </p>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-        <ButtonLink href="/" size="lg" mono>
+        <ButtonLink href="/" size="lg">
           Home
         </ButtonLink>
-        <ButtonLink href="/#work" variant="outline" size="lg" mono>
-          Selected Work
+        <ButtonLink href="/#work" variant="secondary" size="lg">
+          Selected work
         </ButtonLink>
-        <ButtonLink href="/#connect" variant="outline" size="lg" mono>
-          Contact
-        </ButtonLink>
+        <TextLink href="/#connect">Contact</TextLink>
       </div>
     </main>
   );

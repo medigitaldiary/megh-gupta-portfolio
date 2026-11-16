@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SectionHeader } from "@/components/section-header";
+import { TextLink } from "@/components/ui";
 import {
   durationLabel,
   type ExperienceEntry,
@@ -171,12 +172,7 @@ export function ExperienceRoadmap({
         </div>
 
         <p className="mt-10 text-right">
-          <a
-            href="#work"
-            className="rounded-sm font-mono text-fg-muted text-xs uppercase tracking-[0.16em] underline decoration-transparent underline-offset-4 transition-colors duration-150 hover:text-fg hover:decoration-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-          >
-            See what shipped ↓
-          </a>
+          <TextLink href="#work">See what shipped</TextLink>
         </p>
       </div>
     </section>
@@ -348,14 +344,9 @@ function ReleaseNotes({ release }: { release: Release }) {
       {release.linkOut && (
         <p>
           {release.linkOut.label}{" "}
-          <a
-            href={release.linkOut.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent"
-          >
+          <TextLink href={release.linkOut.url} direction="external">
             {release.linkOut.display ?? release.linkOut.url}
-          </a>
+          </TextLink>
         </p>
       )}
     </div>
