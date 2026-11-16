@@ -59,6 +59,8 @@ Define in `app/globals.css` as CSS variables. Tailwind reads them via `@theme`.
 }
 ```
 
+**Tone scopes (preview only).** `/preview/v4.1` and `/preview/v4.3` put one fold on pine with the class `tone-pine`, which re-points these same tokens at the swapped Oatmeal / Pine pair (`tone-oat` switches a subtree back). No new hue. Values and contrast: `design-system/02-tokens.md` §2.20.
+
 **Rule:** No other colors. If a design needs a fifth family, ask first. The Oatmeal / Pine / Lilac palette was promoted from the `/preview/v3` experiment, so earlier commits may still show the retired `#FAFAF7 / #111111 / #1F4D3A` stack. Treat the values here as the source of truth. Lilac stays decorative (highlighter marks, outer focus-ring glow, hover washes); never as text or as the focus-ring outline itself (focus-ring outline is pine on light surfaces, oatmeal on pine; G-A6 + G-C16). Never a colour that carries meaning.
 
 **Approved exceptions to the three-colour rule.** Six sets of hex values live outside the Oatmeal / Pine / Lilac palette on purpose. They are the only exceptions. Any new one needs to be added here before it ships.
@@ -137,6 +139,7 @@ Use Tailwind defaults (`p-4`, `gap-8`, etc.). For section padding on the homepag
 - `/preview/resume` is built live by ten named cursors (`components/resume-agents/`). Preview only, behind the pass. Reduced motion, or no JavaScript, shows the finished resume. Explicit ask, 10 Nov 2026.
 - Experience bar on `/preview/v3.2` carries a looping sheen across the current role (`components/experience-roadmap.tsx`, keyframes `exp-sheen` in `app/globals.css`). Off under reduced motion. Explicit ask, 15 Nov 2026.
 - `/preview/resumev2` is the same build, started by one "Watch it get built" button. No log, skip, or replay. The walkthrough plays once and ends on the finished resume. Explicit ask, 15 Nov 2026.
+- `/preview/v4.1` and `/preview/v4.3` run one shared rise-and-fade on each fold's header and content as it enters the screen (`.fold-flow [data-reveal]` in `app/globals.css`). Pure CSS, tied to scroll, static under reduced motion and in browsers without view timelines. This is the fade-up the list above already allows, recorded here because it is scroll-linked. Explicit ask, 16 Nov 2026.
 - The highlight CTA (`<Button variant="highlight">`, `.cta-highlight` in `app/globals.css`) runs a continuous 7s gradient flow with a matching glow. Its tertiary form (`<TextLink highlight>`, `.link-highlight`) runs the same flow as a 2px underline. One on the site at a time, pill or link. Holds still under reduced motion. Explicit ask, 15 Nov 2026.
 
 ### Iconography

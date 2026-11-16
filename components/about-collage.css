@@ -700,6 +700,51 @@
   }
 }
 
+/* Fold-flow previews (/preview/v4.1, /preview/v4.3). The stage lets the
+   page's lilac wash run through, so no hard line shows where the fold
+   starts. The slip takes the shared chapter label and the section
+   heading size. */
+.about-collage--flow {
+  background: transparent;
+}
+
+.about-collage--flow .about-collage-stage {
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 40%,
+    color-mix(in srgb, var(--bg-elevated) 55%, transparent),
+    transparent 70%
+  );
+}
+
+/* The grain fades in from the top, so its edge does not draw a line. */
+.about-collage--flow .about-collage-stage::before {
+  mask-image: linear-gradient(to bottom, transparent, #000 14rem);
+}
+
+.about-collage-eyebrow {
+  margin-top: 0.4rem;
+  margin-bottom: 0.6rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.about-collage--flow .about-collage-title {
+  font-size: clamp(1.875rem, 5vw, 3rem);
+}
+
+.about-collage-leadout {
+  position: absolute;
+  right: 0;
+  bottom: 1.5rem;
+  left: 0;
+  z-index: 26;
+  text-align: center;
+  opacity: var(--b);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .about-collage {
     --p: 1;
