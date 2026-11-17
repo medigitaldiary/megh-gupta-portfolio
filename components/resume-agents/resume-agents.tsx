@@ -31,10 +31,12 @@ type LogLine = { t: string; agent: string; text: string };
 export function ResumeAgents({
   children,
   cta = false,
+  scroll = false,
   startRef,
 }: {
   children: ReactNode;
   cta?: boolean;
+  scroll?: boolean;
   startRef?: { current: (() => void) | null };
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -321,8 +323,9 @@ export function ResumeAgents({
     }
 
     let nudgeAt = 0;
+    let followMode = false;
     function nudge(el: HTMLElement) {
-      if (handed) return;
+      if (handed || followMode) return;
       const now = performance.now();
       if (now - nudgeAt < 520) return;
       const box = el.getBoundingClientRect();
@@ -593,6 +596,44 @@ export function ResumeAgents({
       }
     }
 
+    function onScreen(el: HTMLElement) {
+      const box = el.getBoundingClientRect();
+      const visibleTop = Math.max(box.top, 48);
+      const visibleBottom = Math.min(box.bottom, window.innerHeight - 72);
+      return visibleBottom - visibleTop > 28;
+    }
+
+    async function follow(token: number) {
+      followMode = true;
+      const busy = new Set<HTMLElement>();
+      while (alive && token === generation) {
+        const next = blocks().find(
+          (block) =>
+            block.dataset.state !== "done" &&
+            !busy.has(block) &&
+            onScreen(block),
+        );
+        if (!next) {
+          const remaining = blocks().some(
+            (block) => block.dataset.state !== "done",
+          );
+          if (!remaining) {
+            roaming = true;
+            setSettled(true);
+            stage.classList.add("is-settled");
+            return;
+          }
+          await wait(160);
+          continue;
+        }
+        busy.add(next);
+        await runJob(next, token);
+        busy.delete(next);
+        if (!alive || token !== generation) return;
+        await wait(220);
+      }
+    }
+
     async function begin() {
       generation += 1;
       const token = generation;
@@ -608,6 +649,21 @@ export function ResumeAgents({
       await wait(280);
       if (!alive || token !== generation) return;
       await play(token);
+    }
+
+    async function beginFollow() {
+      generation += 1;
+      const token = generation;
+      handed = false;
+      roaming = false;
+      running.clear();
+      setLines([]);
+      setStatus("Built 0 / 0");
+      setSettled(false);
+      stage.classList.remove("is-settled");
+      clearBlocks();
+      if (!alive || token !== generation) return;
+      await follow(token);
     }
 
     function handOver() {
@@ -663,7 +719,7 @@ export function ResumeAgents({
       if (startRef) {
         startRef.current = () => {
           setIdle(false);
-          void begin();
+          void (scroll ? beginFollow() : begin());
         };
       }
     } else {
@@ -691,7 +747,7 @@ export function ResumeAgents({
       for (const el of marquees.values()) el.remove();
       if (startRef) startRef.current = null;
     };
-  }, [cta, startRef]);
+  }, [cta, scroll, startRef]);
 
   const stageClass = [
     "agents-page",

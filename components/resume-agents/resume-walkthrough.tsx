@@ -5,7 +5,7 @@ import { ResumeAgents } from "@/components/resume-agents/resume-agents";
 import { ResumeDocument } from "@/components/resume-document";
 import { Button } from "@/components/ui";
 
-export function ResumeWalkthrough() {
+export function ResumeWalkthrough({ scroll = false }: { scroll?: boolean }) {
   const startRef = useRef<(() => void) | null>(null);
   const [started, setStarted] = useState(false);
   const [motionOk, setMotionOk] = useState(true);
@@ -17,7 +17,7 @@ export function ResumeWalkthrough() {
   }, []);
 
   return (
-    <ResumeAgents cta startRef={startRef}>
+    <ResumeAgents cta scroll={scroll} startRef={startRef}>
       <ResumeDocument
         headerAside={
           started || !motionOk ? null : (
