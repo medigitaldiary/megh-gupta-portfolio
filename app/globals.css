@@ -398,11 +398,25 @@ section {
    left-to-right on its own timing. Scoped: has no effect elsewhere. */
 .cs-cloud {
   left: 0;
+  /* --cs-size is each cloud's desktop width in px (set inline). Phones get
+     half, tablets three quarters, so a cloud never spans the whole screen. */
+  width: calc(var(--cs-size) * 0.5px);
   will-change: transform;
   animation-name: cs-cloud-drift;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   filter: blur(9px) drop-shadow(0 18px 30px rgba(60, 78, 110, 0.14));
+}
+
+@media (min-width: 640px) {
+  .cs-cloud {
+    width: calc(var(--cs-size) * 0.75px);
+  }
+}
+@media (min-width: 1024px) {
+  .cs-cloud {
+    width: calc(var(--cs-size) * 1px);
+  }
 }
 
 @keyframes cs-cloud-drift {
