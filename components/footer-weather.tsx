@@ -51,7 +51,7 @@ export function WeatherFooter({
         />
         <div
           aria-hidden="true"
-          className="-z-10 pointer-events-none absolute inset-0 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0%,black_45%)]"
+          className="wx-fade -z-10 pointer-events-none absolute inset-0 overflow-hidden"
         >
           <div className="wx-layer wx-veil" />
           <div className="wx-layer wx-sun" />

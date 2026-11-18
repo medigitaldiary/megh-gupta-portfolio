@@ -479,6 +479,21 @@ section {
   );
 }
 
+/* The weather layers fade in from the top of the footer along an eased
+   curve, so the storm's dark tint and the rain blend into the fold above
+   instead of ending in a line. Longer than the clouds' own fade. */
+.wx-fade {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.06) 12%,
+    rgba(0, 0, 0, 0.2) 24%,
+    rgba(0, 0, 0, 0.45) 38%,
+    rgba(0, 0, 0, 0.75) 52%,
+    black 68%
+  );
+}
+
 /* The tilt: rain falls at an angle. The box is oversized so the rotated
    corners never show. Drizzle barely leans, the storm leans most. */
 .wx-tilt {
@@ -569,8 +584,8 @@ section {
   }
 }
 
-/* Lightning: one soft white flash with an echo, every 7 seconds. Well
-   under the three-flashes-a-second limit (WCAG 2.3.1). */
+/* Lightning: one soft white flash with an echo. The first comes 0.8s
+   after the switch, then one every 6 seconds. */
 .wx-flash {
   background-color: #ffffff;
   opacity: 0;
@@ -578,20 +593,23 @@ section {
 [data-weather="storm"] .wx-flash {
   visibility: visible;
   transition: none;
-  animation: wx-flash 7s linear 1s infinite;
+  animation: wx-flash 6s linear 0.8s infinite;
 }
+/* Timeline after the switch to the storm: the storm fades in by 0.6s,
+   the flash peaks at 0.89s, its echo at 1.07s, and both are gone by
+   1.16s. Then the same every 6s (6.89s, 12.89s, ...). Two flashes in
+   any one second, under the limit of three. */
 @keyframes wx-flash {
   0%,
-  90%,
-  92.5%,
-  95%,
+  3%,
+  6%,
   100% {
     opacity: 0;
   }
-  91% {
+  1.5% {
     opacity: 0.55;
   }
-  93.5% {
+  4.5% {
     opacity: 0.3;
   }
 }
