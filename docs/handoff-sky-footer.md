@@ -12,6 +12,7 @@ I'm continuing work on the **sky footer** in my portfolio repo (`medigitaldiary/
 - `/preview/footer-sky`: the footer by itself.
 - `/preview/v5`: v4.1 with the sky footer in place of Contact and the footer.
 - `/preview/v5.1`: the current version. It brings the footer in line with the other folds and has the latest pill set.
+- `/preview/v5.3`: v5.1 plus a weather toy. One button in the meta strip cycles the sky through sunny, drizzle, rain, thunderstorm and winter morning (`components/footer-weather.tsx`, `.wx-*` in `app/globals.css`).
 
 **Key files:**
 - `components/footer-sky.tsx` (the fold)
