@@ -23,7 +23,7 @@
 | 11 | [Work card and shelf](#11-work-card-and-shelf) | `components/work-thumbnails.tsx`, `selected-work-shelf.tsx` | v3, v3.1, case study |
 | 12 | [About collage](#12-about-collage) | `components/about-collage.tsx`, `.css` | v3, v3.1 |
 | 13 | [Contact fold + booker](#13-contact-fold-and-booker) | `components/contact.tsx`, `cal-embed.tsx` | v3, v3.1 |
-| 14 | [Footer](#14-footer) | `components/site-footer.tsx` | v3, v3.1 |
+| 14 | [Footer](#14-footer) (site footer, sky footer) | `components/site-footer.tsx`, `footer-sky.tsx`, `sky-weather.tsx` | v3, v3.1, `/preview/footer-sky`, v5, v5.1, v5.2 |
 | 15 | [Relock pill](#15-relock-pill) (retired) | retired | retired |
 | 16 | [Case-study shell](#16-case-study-shell) (header, index, headline metric, prose, keep reading) | `app/work/[slug]/page.tsx`, `case-study/case-study-toc.tsx` | case study |
 | 17 | [Case-study blocks](#17-case-study-blocks) (Section, Callout, DataTable, Metric, StepGrid, Timeline, Embed frame) | `components/case-study/*` | case study |
@@ -293,6 +293,18 @@ Three CTA tiers. Primary and secondary are `<Button>` and `<ButtonLink>` in `com
 - **Mobile:** centred stack; a row from `sm`.
 - **Tokens:** `--fg-subtle`, `--fg`, `--text-label`, `--leading-body`, `--container-content`.
 - **Usage rule:** not rendered on case-study pages.
+
+### 14a. Sky footer
+
+| | |
+|---|---|
+| **Anatomy** | The closing fold on the footer sky: H2 "Let's connect.", contact pills (Book, LinkedIn, GitHub, Gmail, phone), then the meta line (IST clock, "made with zero em dashes"). Clouds drift behind it. On `/preview/v5.2` a segmented control sits in the open sky between the pills and the meta line. |
+| **Where** | `components/footer-sky.tsx`, clouds in `components/cloud-background.tsx`. `/preview/footer-sky`, `/preview/v5`, `/preview/v5.1`. The weather switch is `components/sky-weather.tsx`, only on `/preview/v5.2`. |
+| **Weather** | Five skies, one at a time: Sunny (the current footer, plus a sun), Drizzle (fine streaks), Rain (steady streaks, lower clouds), Storm (heavier streaks, a short flash, darker mid-sky), Winter morning (slow snow, pale sky). The control uses the segmented track from §1e. Each segment is a native radio in one fieldset, so arrow keys move the selection. Active segment: `bg-fg text-bg`. |
+| **States** | Pills keep §1a / §1b. Sky crossfades in 500ms. Rain, snow and the flash are CSS. Reduced motion: drift, rain, snow and the flash hold still. The chosen sky colour stays. |
+| **Mobile** | Same stack as v5.1. The control shows icons, with the weather name on a line under the track. From `sm`, icon and word sit in the track. Clouds draw at 0.58 of their desktop width. |
+| **Tokens** | Footer sky stops, plus the blue palette already in `cloud-background.tsx` (`#5e8bb7`, `#7ea6ce`, `#a9c5de`, `#d2e1ee`, `#edf3f8`, `#b3c3d3`). Bottom stop stays on `#a9c5de` or lighter so pine meta text holds. |
+| **Usage rule** | Preview only, until the closing fold has a home. One weather control. It does not replace the Book pill. |
 
 ---
 

@@ -6,13 +6,17 @@
  * - "dawn" (default): sky-blue at top warming into gold at the horizon,
  *   with a low warm sun-glow. The current live version.
  * - "blue": pure blue-and-white, no warm tones anywhere. A cooler,
- *   more editorial feel — for the experiment at /preview/sky.
+ *   more editorial feel, for the experiment at /preview/sky.
  * - "footer": the dawn sky turned upside down. It starts on the page
  *   colour (--bg) and cools into blue at the bottom, so a footer can
  *   grow out of the page with no visible seam. Sandbox: /preview/footer-sky.
+ * - `weather`: v5.2 only. Remixes the footer sky with the blue palette
+ *   already in this file. The bottom stop stays light enough for pine text.
  *
  * Scoped inline; nothing here leaks into the rest of the site.
  */
+
+import type { CSSProperties } from "react";
 
 // Eight clouds across the vertical band. Durations vary slightly for
 // parallax; delays are chosen so at load time the phases are evenly
@@ -63,7 +67,100 @@ const PALETTES: Record<
   },
 };
 
-function CloudSvg({ shadowFill }: { shadowFill: string }) {
+// v5.2 skies. Every stop is already in the footer or blue palette above.
+// The last stop stays on #A9C5DE or lighter so the meta line stays pine.
+export const SKY_WEATHERS = [
+  {
+    id: "sunny",
+    label: "Sunny",
+    ariaLabel: "Sunny",
+    sky: "linear-gradient(180deg,var(--bg) 0%,#F1E6CE 24%,#E3DFCF 48%,#CCDAE7 76%,#B7CDE1 100%)",
+    glow: "radial-gradient(ellipse at center,rgba(255,239,200,0.95) 0%,rgba(255,232,187,0.55) 24%,transparent 58%)",
+    shadowFill: "#E3DFCF",
+    highlight: "#FFFFFF",
+    cloudAlpha: 0.82,
+    cloudScale: 0.92,
+    sun: true,
+    rain: "none",
+    snow: false,
+    flash: false,
+  },
+  {
+    id: "drizzle",
+    label: "Drizzle",
+    ariaLabel: "Drizzle",
+    sky: "linear-gradient(180deg,var(--bg) 0%,#E3DFCF 22%,#CCDAE7 50%,#B7CDE1 76%,#A9C5DE 100%)",
+    glow: "radial-gradient(ellipse at center,rgba(255,255,255,0.35) 0%,rgba(255,255,255,0.12) 30%,transparent 60%)",
+    shadowFill: "#D5DBE3",
+    highlight: "#FFFFFF",
+    cloudAlpha: 0.95,
+    cloudScale: 1,
+    sun: false,
+    rain: "fine",
+    snow: false,
+    flash: false,
+  },
+  {
+    id: "rain",
+    label: "Rain",
+    ariaLabel: "Rain",
+    sky: "linear-gradient(180deg,var(--bg) 0%,#CCDAE7 20%,#A9C5DE 48%,#7EA6CE 74%,#A9C5DE 100%)",
+    glow: "radial-gradient(ellipse at center,rgba(255,255,255,0.2) 0%,rgba(255,255,255,0.06) 28%,transparent 58%)",
+    shadowFill: "#B3C3D3",
+    highlight: "#EDF3F8",
+    cloudAlpha: 1,
+    cloudScale: 1.05,
+    sun: false,
+    rain: "steady",
+    snow: false,
+    flash: false,
+  },
+  {
+    id: "storm",
+    label: "Storm",
+    ariaLabel: "Thunderstorm",
+    sky: "linear-gradient(180deg,var(--bg) 0%,#A9C5DE 18%,#5E8BB7 46%,#7EA6CE 72%,#A9C5DE 100%)",
+    glow: "radial-gradient(ellipse at center,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0.04) 26%,transparent 55%)",
+    shadowFill: "#5E8BB7",
+    highlight: "#D2E1EE",
+    cloudAlpha: 1,
+    cloudScale: 1.12,
+    sun: false,
+    rain: "heavy",
+    snow: false,
+    flash: true,
+  },
+  {
+    id: "winter",
+    label: "Winter",
+    ariaLabel: "Winter morning",
+    sky: "linear-gradient(180deg,var(--bg) 0%,#F6ECD1 16%,#EDF3F8 42%,#D2E1EE 72%,#EDF3F8 100%)",
+    glow: "radial-gradient(ellipse at center,rgba(255,255,255,0.75) 0%,rgba(255,255,255,0.22) 32%,transparent 62%)",
+    shadowFill: "#D2E1EE",
+    highlight: "#FFFFFF",
+    cloudAlpha: 0.7,
+    cloudScale: 1,
+    sun: false,
+    rain: "none",
+    snow: true,
+    flash: false,
+  },
+] as const;
+
+export type SkyWeatherId = (typeof SKY_WEATHERS)[number]["id"];
+
+export function skyWeatherById(id: SkyWeatherId) {
+  const found = SKY_WEATHERS.find((item) => item.id === id);
+  return found ?? SKY_WEATHERS[0];
+}
+
+function CloudSvg({
+  shadowFill,
+  highlight,
+}: {
+  shadowFill: string;
+  highlight: string;
+}) {
   return (
     <svg
       viewBox="0 0 300 140"
@@ -74,50 +171,77 @@ function CloudSvg({ shadowFill }: { shadowFill: string }) {
       role="presentation"
     >
       <ellipse cx="150" cy="108" rx="112" ry="22" fill={shadowFill} />
-      <ellipse cx="70" cy="92" rx="42" ry="36" fill="#FFFFFF" />
-      <ellipse cx="130" cy="64" rx="62" ry="52" fill="#FFFFFF" />
-      <ellipse cx="205" cy="72" rx="54" ry="46" fill="#FFFFFF" />
-      <ellipse cx="248" cy="92" rx="36" ry="32" fill="#FFFFFF" />
-      <ellipse cx="140" cy="45" rx="55" ry="14" fill="#FFFFFF" opacity="0.7" />
+      <ellipse cx="70" cy="92" rx="42" ry="36" fill={highlight} />
+      <ellipse cx="130" cy="64" rx="62" ry="52" fill={highlight} />
+      <ellipse cx="205" cy="72" rx="54" ry="46" fill={highlight} />
+      <ellipse cx="248" cy="92" rx="36" ry="32" fill={highlight} />
+      <ellipse
+        cx="140"
+        cy="45"
+        rx="55"
+        ry="14"
+        fill={highlight}
+        opacity="0.7"
+      />
     </svg>
   );
 }
 
 export function CloudBackground({
   palette = "dawn",
+  weather,
   className = "",
 }: {
   palette?: Palette;
+  /** v5.2 sky footer. Omit it and the palette renders as before. */
+  weather?: SkyWeatherId;
   className?: string;
 }) {
-  const p = PALETTES[palette];
+  const base = PALETTES[palette];
+  const w = weather ? skyWeatherById(weather) : null;
+  const sky = w?.sky ?? base.sky;
+  const glow = w?.glow ?? base.glow;
+  const shadowFill = w?.shadowFill ?? base.shadowFill;
+  const highlight = w?.highlight ?? base.highlight;
+
   return (
     <div
       aria-hidden="true"
       className={`-z-20 absolute inset-0 overflow-hidden ${className}`}
     >
-      <div className="absolute inset-0" style={{ background: p.sky }} />
       <div
-        className="absolute inset-x-0 top-[55%] mx-auto h-[70vh] w-[85vw] max-w-4xl rounded-full blur-2xl"
-        style={{ background: p.glow }}
+        className={w ? "sky-wx-sky absolute inset-0" : "absolute inset-0"}
+        style={{ background: sky }}
       />
+      <div
+        className={`absolute inset-x-0 top-[55%] mx-auto h-[70vh] w-[85vw] max-w-4xl rounded-full blur-2xl ${w ? "sky-wx-sky" : ""}`}
+        style={{ background: glow }}
+      />
+      {w?.sun ? <div className="sky-sun" /> : null}
 
-      {CLOUDS.map((c, i) => (
-        <div
-          // biome-ignore lint/suspicious/noArrayIndexKey: static config
-          key={i}
-          className="cs-cloud absolute"
-          style={{
-            top: c.top,
-            width: `${c.size}px`,
-            opacity: c.opacity,
-            animationDuration: `${c.duration}s`,
-            animationDelay: `${c.delay}s`,
-          }}
-        >
-          <CloudSvg shadowFill={p.shadowFill} />
-        </div>
-      ))}
+      {CLOUDS.map((c, i) => {
+        const style = {
+          top: c.top,
+          opacity: Math.min(1, c.opacity * (w?.cloudAlpha ?? 1)),
+          animationDuration: `${c.duration}s`,
+          animationDelay: `${c.delay}s`,
+          ...(w
+            ? { "--cs-w": `${Math.round(c.size * w.cloudScale)}px` }
+            : { width: `${c.size}px` }),
+        } as CSSProperties;
+        return (
+          <div
+            // biome-ignore lint/suspicious/noArrayIndexKey: static config
+            key={i}
+            className={
+              w ? "cs-cloud sky-wx-cloud absolute" : "cs-cloud absolute"
+            }
+            style={style}
+          >
+            <CloudSvg shadowFill={shadowFill} highlight={highlight} />
+          </div>
+        );
+      })}
     </div>
   );
 }

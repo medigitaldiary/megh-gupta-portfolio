@@ -421,6 +421,190 @@ section {
   }
 }
 
+/* v5.2 sky footer weather. Same cloud drift as above. Rain, snow and
+   the lightning flash are CSS only, and they hold still under reduced
+   motion. The sky colour stays so the chosen weather still reads. */
+.sky-wx-sky {
+  transition: background 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sky-wx-cloud {
+  width: var(--cs-w);
+}
+
+@media (max-width: 640px) {
+  .sky-wx-cloud {
+    width: calc(var(--cs-w) * 0.58);
+  }
+}
+
+.sky-sun {
+  position: absolute;
+  top: 48%;
+  right: 14%;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 999px;
+  background: rgba(255, 239, 200, 0.95);
+  box-shadow: 0 0 48px 20px rgba(255, 232, 187, 0.8);
+}
+
+@media (max-width: 640px) {
+  .sky-sun {
+    top: 40%;
+    right: 8%;
+    width: 3rem;
+    height: 3rem;
+    box-shadow: 0 0 32px 12px rgba(255, 232, 187, 0.75);
+  }
+}
+
+.sky-fx {
+  position: absolute;
+  inset: -30% 0;
+  transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sky-fx.is-off {
+  opacity: 0;
+  animation-play-state: paused;
+}
+
+.sky-rain-fine {
+  background-image: repeating-linear-gradient(
+    100deg,
+    transparent 0 12px,
+    rgba(255, 255, 255, 0.7) 12px 13px
+  );
+  background-size: 32px 40px;
+  animation: sky-rain-fall 1.6s linear infinite;
+}
+
+.sky-rain-fine.is-on {
+  opacity: 0.55;
+}
+
+.sky-rain-steady {
+  background-image: repeating-linear-gradient(
+    104deg,
+    transparent 0 8px,
+    rgba(255, 255, 255, 0.8) 8px 9.5px
+  );
+  background-size: 22px 34px;
+  animation: sky-rain-fall 0.72s linear infinite;
+}
+
+.sky-rain-steady.is-on {
+  opacity: 0.72;
+}
+
+.sky-rain-back {
+  background-image: repeating-linear-gradient(
+    98deg,
+    transparent 0 14px,
+    rgba(255, 255, 255, 0.45) 14px 15px
+  );
+  background-size: 36px 48px;
+  animation: sky-rain-fall 1.15s linear infinite;
+}
+
+.sky-rain-back.is-on {
+  opacity: 0.4;
+}
+
+.sky-rain-heavy {
+  background-image: repeating-linear-gradient(
+    108deg,
+    transparent 0 5px,
+    rgba(255, 255, 255, 0.82) 5px 6.5px
+  );
+  background-size: 16px 28px;
+  animation: sky-rain-fall 0.42s linear infinite;
+}
+
+.sky-rain-heavy.is-on {
+  opacity: 0.8;
+}
+
+@keyframes sky-rain-fall {
+  from {
+    background-position: 0 -48px;
+  }
+  to {
+    background-position: -18px 48px;
+  }
+}
+
+.sky-snow {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.95) 1.1px, transparent 1.7px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.7) 1.5px, transparent 2.1px);
+  background-size: 54px 72px, 86px 104px;
+  background-position: 0 0, 28px 20px;
+  animation: sky-snow-fall 16s linear infinite;
+}
+
+.sky-snow.is-on {
+  opacity: 0.85;
+}
+
+@keyframes sky-snow-fall {
+  from {
+    background-position: 0 -72px, 28px -84px;
+  }
+  to {
+    background-position: 20px 72px, 46px 104px;
+  }
+}
+
+.sky-flash {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  opacity: 0;
+  animation: sky-flash 7.5s linear infinite;
+}
+
+@keyframes sky-flash {
+  0%,
+  88%,
+  100% {
+    opacity: 0;
+  }
+  89% {
+    opacity: 0.42;
+  }
+  90.2% {
+    opacity: 0.04;
+  }
+  91.4% {
+    opacity: 0.26;
+  }
+  93% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-wx-sky,
+  .sky-fx {
+    transition: none;
+  }
+
+  .sky-rain-fine,
+  .sky-rain-steady,
+  .sky-rain-back,
+  .sky-rain-heavy,
+  .sky-snow,
+  .sky-flash {
+    animation: none;
+  }
+
+  .sky-flash {
+    opacity: 0;
+  }
+}
+
 /* Lab scene — laptop cursor blink + rising bubbles in flasks.
    Scoped classes so they never leak to other pages. */
 .lab-cursor {
@@ -731,6 +915,31 @@ section {
   .nav-chip-in,
   .nav-chip-out {
     animation: none;
+  }
+}
+
+/* v5.1 status lamp. Pine fill. A ring breathes out 3px once every 1.2s,
+   tight enough to stay on the chip. Holds still under reduced motion. */
+@keyframes nav-dot-blink {
+  0% {
+    box-shadow: 0 0 0 0 rgba(31, 59, 46, 0.4);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(31, 59, 46, 0);
+  }
+}
+
+.nav-dot-live {
+  background-color: var(--fg);
+  animation: nav-dot-blink 1.2s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-dot-live {
+    animation: none;
+    opacity: 1;
+    box-shadow: none;
   }
 }
 

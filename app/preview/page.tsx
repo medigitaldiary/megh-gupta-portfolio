@@ -98,6 +98,10 @@ export default function PreviewIndex() {
         <Link className="underline" href="/preview/v5.1">
           /preview/v5.1
         </Link>
+        . v5.1 with a weather switch on the sky:{" "}
+        <Link className="underline" href="/preview/v5.2">
+          /preview/v5.2
+        </Link>
         .
       </p>
     </main>

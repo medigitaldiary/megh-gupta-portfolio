@@ -36,30 +36,48 @@ export const DEFAULT_NAV_ITEMS: NavItem[] = [
 ];
 
 const LINKEDIN_URL = "https://www.linkedin.com/in/meghxgupta";
+const GITHUB_URL = "https://github.com/medigitaldiary";
 const RESUME_URL = "/resume.pdf";
+
+type ChipLine = { readonly text: string; readonly cta?: boolean };
 
 // The hero greeting already says the name. These four lines take turns
 // in the left slot. The last one is the contact CTA: filled pine, arrow,
 // and a jump to the connect fold. The others scroll back to the top.
-const CHIP_LINES = [
+const CHIP_LINES: readonly ChipLine[] = [
   { text: "Product Manager" },
   { text: "Building in fintech" },
   { text: "Got a problem?" },
   { text: "Let's connect.", cta: true },
-] as const;
-// Still time before the swap. ~4.3s of readable text after the 500ms flip.
-const CHIP_HOLD_MS = 4800;
-// Keep in sync with nav-chip-in / nav-chip-out in globals.css.
+];
+// v5.1 only. Order is the one Megh set: availability, then context, then role.
+const ROLE_CHIP_LINES: readonly ChipLine[] = [
+  { text: "Open to product roles" },
+  { text: "Building in fintech" },
+  { text: "Product Manager" },
+];
+// Each line stays up for 3s. The 500ms flip runs at the start of that
+// window, so the line is readable for ~2.5s. Three role lines = 9s
+// per full pass. Keep the flip in sync with nav-chip-in / nav-chip-out.
+const CHIP_HOLD_MS = 3000;
 const CHIP_FLIP_MS = 500;
 
 function StatusChip({
   paused,
   tabIndex,
   onScrollTop,
+  lines,
+  live = false,
+  loop = false,
 }: {
   paused: boolean;
   tabIndex: number;
   onScrollTop: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+  lines: readonly ChipLine[];
+  /** v5.1: green lamp that blinks, instead of the pine dot. */
+  live?: boolean;
+  /** Keep rotating so the hold can be watched. Default stops after one pass. */
+  loop?: boolean;
 }) {
   const [index, setIndex] = useState(0);
   const [outgoing, setOutgoing] = useState<number | null>(null);
@@ -70,8 +88,8 @@ function StatusChip({
   const sizerRef = useRef<HTMLSpanElement>(null);
   const primed = useRef(false);
 
-  const line = CHIP_LINES[index];
-  const isCta = "cta" in line && line.cta;
+  const line = lines[index] ?? lines[0] ?? { text: "" };
+  const isCta = line.cta === true;
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -86,22 +104,22 @@ function StatusChip({
     };
   }, []);
 
-  // Stop after one full cycle through the four lines. WCAG 2.2.2 for
-  // auto-updating content: finite duration or an explicit pause. The
-  // chip also pauses on hover and focus via the existing `paused` prop.
+  // Default: stop after one full cycle. WCAG 2.2.2 for auto-updating
+  // content: finite duration or an explicit pause. The chip also pauses
+  // on hover and focus via the existing `paused` prop. `loop` keeps going
+  // (v5.1, so the hold can be watched) and still pauses the same way.
   const cycled = useRef(false);
   useEffect(() => {
     if (paused || reduceMotion || pageHidden || cycled.current) return;
     const id = window.setInterval(() => {
       setIndex((current) => {
-        const next = (current + 1) % CHIP_LINES.length;
-        // First return to index 0 marks one full cycle complete.
-        if (next === 0) cycled.current = true;
+        const next = (current + 1) % lines.length;
+        if (!loop && next === 0) cycled.current = true;
         return next;
       });
     }, CHIP_HOLD_MS);
     return () => window.clearInterval(id);
-  }, [paused, reduceMotion, pageHidden]);
+  }, [paused, reduceMotion, pageHidden, lines, loop]);
 
   useEffect(() => {
     if (prevIndex.current === index) return;
@@ -191,7 +209,7 @@ function StatusChip({
         className="pointer-events-none invisible absolute inline-flex w-max items-center gap-2 whitespace-nowrap"
         aria-hidden="true"
       >
-        <span className="h-1.5 w-1.5 shrink-0" />
+        <span className={live ? "h-2.5 w-2.5 shrink-0" : "h-1.5 w-1.5 shrink-0"} />
         <span>{line.text}</span>
         {isCta ? (
           <span className="h-3.5 w-3.5 shrink-0">
@@ -201,8 +219,10 @@ function StatusChip({
       </span>
       <span
         aria-hidden="true"
-        className={`mr-2 h-1.5 w-1.5 shrink-0 rounded-full transition-colors duration-500 ${
-          isCta ? "bg-accent-fg" : "bg-fg"
+        className={`mr-2 shrink-0 rounded-full ${
+          live
+            ? "nav-dot-live h-2.5 w-2.5 bg-fg"
+            : `h-1.5 w-1.5 transition-colors duration-500 ${isCta ? "bg-accent-fg" : "bg-fg"}`
         }`}
       />
       <span
@@ -212,7 +232,7 @@ function StatusChip({
         <span className="invisible whitespace-nowrap">{line.text}</span>
         {outgoing !== null && !reduceMotion ? (
           <span className="nav-chip-out absolute inset-0 flex items-center whitespace-nowrap">
-            {CHIP_LINES[outgoing].text}
+            {lines[outgoing]?.text}
           </span>
         ) : null}
         <span
@@ -241,12 +261,21 @@ export function Nav({
   hide,
   order,
   wide = false,
+  resume = true,
+  github = false,
+  chip = "default",
 }: {
   hide?: string[];
   /** Nav ids in the order the folds appear, when a page reorders them. */
   order?: string[];
   /** Fold-flow previews: the bar takes the folds' px-6 md:px-8 gutter. */
   wide?: boolean;
+  /** Resume pill on the right. v5.1 moves it into the hero and passes false. */
+  resume?: boolean;
+  /** Icon-only GitHub, immediately to the right of LinkedIn. */
+  github?: boolean;
+  /** v5.1: three role lines and a blinking green dot. */
+  chip?: "default" | "roles";
 } = {}) {
   // `hide` is a list of nav ids to drop (e.g. `["lab", "writing"]`). Keeping
   // the filter here, not at the call site, means callers can be server
@@ -443,6 +472,9 @@ export function Nav({
               paused={collapsed || hovered || focusWithin}
               tabIndex={collapsed ? -1 : 0}
               onScrollTop={scrollToTop}
+              lines={chip === "roles" ? ROLE_CHIP_LINES : CHIP_LINES}
+              live={chip === "roles"}
+              loop={chip === "roles"}
             />
           </div>
 
@@ -500,20 +532,36 @@ export function Nav({
                 <LinkedInIcon />
               </span>
             </a>
-            <ButtonLink
-              href={RESUME_URL}
-              variant="secondary"
-              size="sm"
-              target="_blank"
-              rel="noopener noreferrer"
-              tabIndex={collapsed ? -1 : 0}
-              className="shrink-0"
-            >
-              <span>Resume</span>
-              <span className="h-3.5 w-3.5">
-                <DownloadIcon />
-              </span>
-            </ButtonLink>
+            {github ? (
+              <a
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub profile"
+                tabIndex={collapsed ? -1 : 0}
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#181717]/30 bg-bg-elevated text-[#181717] transition-colors duration-150 hover:border-[#181717] hover:bg-[#181717] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#181717] focus-visible:ring-offset-2"
+              >
+                <span className="h-[18px] w-[18px]">
+                  <GitHubIcon />
+                </span>
+              </a>
+            ) : null}
+            {resume ? (
+              <ButtonLink
+                href={RESUME_URL}
+                variant="secondary"
+                size="sm"
+                target="_blank"
+                rel="noopener noreferrer"
+                tabIndex={collapsed ? -1 : 0}
+                className="shrink-0"
+              >
+                <span>Resume</span>
+                <span className="h-3.5 w-3.5">
+                  <DownloadIcon />
+                </span>
+              </ButtonLink>
+            ) : null}
           </div>
 
           {/* Mobile: hamburger */}
@@ -567,19 +615,34 @@ export function Nav({
                 <LinkedInIcon />
               </span>
             </a>
-            <ButtonLink
-              href={RESUME_URL}
-              variant="secondary"
-              size="lg"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setMenuOpen(false)}
-            >
-              Resume
-              <span className="h-4 w-4">
-                <DownloadIcon />
-              </span>
-            </ButtonLink>
+            {github ? (
+              <a
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub profile"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#181717]/30 bg-bg-elevated text-[#181717] hover:border-[#181717] hover:bg-[#181717] hover:text-white"
+              >
+                <span className="h-5 w-5">
+                  <GitHubIcon />
+                </span>
+              </a>
+            ) : null}
+            {resume ? (
+              <ButtonLink
+                href={RESUME_URL}
+                variant="secondary"
+                size="lg"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMenuOpen(false)}
+              >
+                Resume
+                <span className="h-4 w-4">
+                  <DownloadIcon />
+                </span>
+              </ButtonLink>
+            ) : null}
           </div>
         </div>
       )}
@@ -716,6 +779,19 @@ function ArrowRightIcon() {
     >
       <path d="M5 12h14" />
       <path d="M13 6l6 6-6 6" />
+    </svg>
+  );
+}
+
+function GitHubIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="h-full w-full"
+      aria-hidden="true"
+    >
+      <path d="M12 .5a11.5 11.5 0 00-3.635 22.412c.575.105.786-.25.786-.556 0-.274-.01-1.001-.015-1.966-3.2.695-3.877-1.542-3.877-1.542-.523-1.33-1.278-1.685-1.278-1.685-1.044-.714.079-.7.079-.7 1.155.082 1.762 1.187 1.762 1.187 1.027 1.76 2.695 1.251 3.352.957.104-.744.402-1.252.732-1.54-2.554-.29-5.24-1.277-5.24-5.687 0-1.256.449-2.283 1.187-3.089-.12-.291-.515-1.463.112-3.05 0 0 .967-.31 3.17 1.18a10.98 10.98 0 015.77 0c2.202-1.49 3.168-1.18 3.168-1.18.628 1.587.233 2.759.114 3.05.74.806 1.184 1.833 1.184 3.089 0 4.422-2.69 5.394-5.253 5.679.412.354.78 1.053.78 2.123 0 1.532-.014 2.767-.014 3.145 0 .309.208.667.79.554A11.502 11.502 0 0012 .5z" />
     </svg>
   );
 }

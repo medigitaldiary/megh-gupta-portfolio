@@ -12,6 +12,7 @@ export function Hero({
   wide = false,
   leadOut,
   threeLine = false,
+  resume = false,
 }: {
   link?: "travel";
   settled?: boolean;
@@ -28,6 +29,8 @@ export function Hero({
    * so both keep the six-line wrap.
    */
   threeLine?: boolean;
+  /** v5.1: Resume sits beside Let's connect. The nav no longer carries it. */
+  resume?: boolean;
 }) {
   const portrait = (
     <Image
@@ -97,11 +100,23 @@ export function Hero({
 
           <div
             data-hero-reveal
-            className={`mt-8 ${handoff ? "opacity-0" : ""}`}
+            className={`mt-8 flex flex-wrap items-center gap-3 ${handoff ? "opacity-0" : ""}`}
           >
             <ButtonLink href="#connect" size="lg">
               Let&apos;s connect <CtaArrow />
             </ButtonLink>
+            {resume ? (
+              <ButtonLink
+                href="/resume.pdf"
+                variant="secondary"
+                size="lg"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Resume
+                <DownloadIcon />
+              </ButtonLink>
+            ) : null}
           </div>
         </div>
 
@@ -128,5 +143,24 @@ export function Hero({
       )}
       {link === "travel" ? <HeroLink /> : null}
     </section>
+  );
+}
+
+function DownloadIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-4 w-4"
+      aria-hidden="true"
+    >
+      <path d="M12 3v12" />
+      <path d="M7 10l5 5 5-5" />
+      <path d="M4 21h16" />
+    </svg>
   );
 }
