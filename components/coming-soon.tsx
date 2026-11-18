@@ -1,6 +1,11 @@
 import Image from "next/image";
 import { CloudBackground } from "@/components/cloud-background";
 import { CopyEmailButton } from "@/components/copy-email-button";
+import {
+  WeatherLayers,
+  WeatherMain,
+  WeatherToggle,
+} from "@/components/footer-weather";
 
 const CONTACT_EMAIL = "megh.bpgc@gmail.com";
 const LINKEDIN_URL = "https://www.linkedin.com/in/meghxgupta";
@@ -82,15 +87,49 @@ function LinkedInMark() {
   );
 }
 
-export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
+const MAIN_CLASS =
+  "relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-16 text-center md:px-8";
+
+export function ComingSoon({
+  palette = "dawn",
+  weather = false,
+}: {
+  palette?: Palette;
+  /**
+   * The weather toy from the sky footer, for the whole screen: one
+   * button at the bottom cycles the sky through five moods
+   * (components/footer-weather.tsx). Used on / only.
+   */
+  weather?: boolean;
+}) {
+  const t = TOKENS[palette];
+  const content = <ComingSoonContent palette={palette} weather={weather} />;
+  if (weather) {
+    return (
+      <WeatherMain className={MAIN_CLASS} style={{ color: t.headline }}>
+        {content}
+      </WeatherMain>
+    );
+  }
+  return (
+    <main id="main" className={MAIN_CLASS} style={{ color: t.headline }}>
+      {content}
+    </main>
+  );
+}
+
+function ComingSoonContent({
+  palette,
+  weather,
+}: {
+  palette: Palette;
+  weather: boolean;
+}) {
   const t = TOKENS[palette];
   return (
-    <main
-      id="main"
-      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-16 text-center md:px-8"
-      style={{ color: t.headline }}
-    >
+    <>
       <CloudBackground palette={palette} />
+      {weather && <WeatherLayers />}
 
       <div
         aria-hidden="true"
@@ -188,6 +227,15 @@ export function ComingSoon({ palette = "dawn" }: { palette?: Palette }) {
           }}
         />
       </div>
-    </main>
+
+      {weather && (
+        <div
+          className="absolute inset-x-0 bottom-4 flex justify-center"
+          style={{ color: t.muted }}
+        >
+          <WeatherToggle className="" />
+        </div>
+      )}
+    </>
   );
 }
