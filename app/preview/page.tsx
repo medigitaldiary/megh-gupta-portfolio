@@ -98,6 +98,10 @@ export default function PreviewIndex() {
         <Link className="underline" href="/preview/v5.1">
           /preview/v5.1
         </Link>
+        . v5.1 with a weather toy in the footer:{" "}
+        <Link className="underline" href="/preview/v5.3">
+          /preview/v5.3
+        </Link>
         .
       </p>
     </main>
