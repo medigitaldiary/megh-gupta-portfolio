@@ -1,4 +1,5 @@
 import { CloudBackground } from "@/components/cloud-background";
+import { WeatherFooter, WeatherToggle } from "@/components/footer-weather";
 import { IstClock } from "@/components/site-footer";
 import { SOCIALS } from "@/components/social-links";
 import { buttonStyles } from "@/components/ui/button";
@@ -40,6 +41,7 @@ export function FooterSky({
   flow,
   wide = false,
   aligned = false,
+  weather = false,
 }: {
   /** Fold-flow previews: chapter number above the headline. */
   flow?: { index?: string };
@@ -53,8 +55,15 @@ export function FooterSky({
    * a phone pill joins the row.
    */
   aligned?: boolean;
+  /**
+   * /preview/v5.3: the aligned footer plus a weather toy. One button in
+   * the meta strip cycles the sky through five moods
+   * (components/footer-weather.tsx). Implies `aligned`.
+   */
+  weather?: boolean;
 } = {}) {
-  if (aligned) return <AlignedFooterSky wide={wide} />;
+  if (aligned || weather)
+    return <AlignedFooterSky wide={wide} weather={weather} />;
   return (
     // Fold CTA: action. "Okay, how do I reach them?"
     <footer
@@ -156,73 +165,95 @@ function PhoneIcon() {
   );
 }
 
-function AlignedFooterSky({ wide }: { wide: boolean }) {
-  const secondary = buttonStyles({ variant: "secondary", size: "touch" });
+const ALIGNED_SHELL =
+  "relative isolate scroll-mt-16 overflow-hidden px-6 pt-24 pb-6 md:px-8 md:pt-32 md:pb-8";
+
+function AlignedFooterSky({
+  wide,
+  weather = false,
+}: {
+  wide: boolean;
+  weather?: boolean;
+}) {
+  const content = <AlignedFooterContent wide={wide} weather={weather} />;
+  if (weather) {
+    return <WeatherFooter className={ALIGNED_SHELL}>{content}</WeatherFooter>;
+  }
   return (
     // Fold CTA: action. "Okay, how do I reach them?"
-    <footer
-      id="connect"
-      className="relative isolate scroll-mt-16 overflow-hidden px-6 pt-24 pb-6 md:px-8 md:pt-32 md:pb-8"
-    >
+    <footer id="connect" className={ALIGNED_SHELL}>
       <CloudBackground
         palette="footer"
         className="[mask-image:linear-gradient(to_bottom,transparent_0%,black_45%)]"
       />
+      {content}
+    </footer>
+  );
+}
 
-      <div className={`mx-auto ${wide ? "max-w-6xl" : "max-w-5xl"}`}>
-        <h2
-          data-reveal
-          className="font-display text-[clamp(3rem,7vw,4rem)] leading-[1.05] tracking-tight text-fg"
-        >
-          Let&apos;s connect.
-        </h2>
+function AlignedFooterContent({
+  wide,
+  weather,
+}: {
+  wide: boolean;
+  weather: boolean;
+}) {
+  const secondary = buttonStyles({ variant: "secondary", size: "touch" });
+  return (
+    <div className={`mx-auto ${wide ? "max-w-6xl" : "max-w-5xl"}`}>
+      <h2
+        data-reveal
+        className="font-display text-[clamp(3rem,7vw,4rem)] leading-[1.05] tracking-tight text-fg"
+      >
+        Let&apos;s connect.
+      </h2>
 
-        <ul data-reveal className="mt-8 flex flex-wrap gap-3">
-          <li>
+      <ul data-reveal className="mt-8 flex flex-wrap gap-3">
+        <li>
+          <a
+            href={CAL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={buttonStyles({ variant: "primary", size: "touch" })}
+          >
+            <CalendarIcon />
+            Book 15 minutes
+          </a>
+        </li>
+        {SOCIALS.filter((s) => s.label !== "Email").map((s) => (
+          <li key={s.label}>
             <a
-              href={CAL_URL}
+              href={s.href}
               target="_blank"
               rel="noopener noreferrer"
-              className={buttonStyles({ variant: "primary", size: "touch" })}
+              className={secondary}
             >
-              <CalendarIcon />
-              Book 15 minutes
+              <span className={ICON}>{s.icon}</span>
+              {s.label}
             </a>
           </li>
-          {SOCIALS.filter((s) => s.label !== "Email").map((s) => (
-            <li key={s.label}>
-              <a
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={secondary}
-              >
-                <span className={ICON}>{s.icon}</span>
-                {s.label}
-              </a>
-            </li>
-          ))}
-          <li>
-            <a href={`mailto:${EMAIL}`} className={secondary}>
-              <GmailIcon />
-              {EMAIL}
-            </a>
-          </li>
-          <li>
-            <a href={PHONE_HREF} className={secondary}>
-              <PhoneIcon />
-              {PHONE}
-            </a>
-          </li>
-        </ul>
+        ))}
+        <li>
+          <a href={`mailto:${EMAIL}`} className={secondary}>
+            <GmailIcon />
+            {EMAIL}
+          </a>
+        </li>
+        <li>
+          <a href={PHONE_HREF} className={secondary}>
+            <PhoneIcon />
+            {PHONE}
+          </a>
+        </li>
+      </ul>
 
-        <div className="mt-16 flex flex-col gap-1 border-fg/20 border-t pt-5 text-fg text-xs leading-[1.6] sm:flex-row sm:items-center sm:justify-between md:mt-24">
-          <p>
-            <IstClock />
-          </p>
-          <p>made with zero em dashes</p>
-        </div>
+      <div className="mt-16 flex flex-col gap-1 border-fg/20 border-t pt-5 text-fg text-xs leading-[1.6] sm:flex-row sm:items-center sm:justify-between md:mt-24">
+        <p>
+          <IstClock />
+        </p>
+        {weather && <WeatherToggle />}
+        <p>made with zero em dashes</p>
       </div>
-    </footer>
+    </div>
   );
 }
