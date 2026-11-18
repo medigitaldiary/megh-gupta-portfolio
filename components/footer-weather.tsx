@@ -55,14 +55,34 @@ export function WeatherFooter({
         >
           <div className="wx-layer wx-veil" />
           <div className="wx-layer wx-sun" />
-          <div className="wx-layer wx-drizzle" />
-          <div className="wx-layer wx-rain" />
+          <Rain mood="drizzle" />
+          <Rain mood="rain" />
+          <Rain mood="storm" />
           <div className="wx-layer wx-flash" />
-          <div className="wx-layer wx-snow" />
+          <div className="wx-layer wx-snow">
+            <div className="wx-sway wx-sway-slow">
+              <div className="wx-fall wx-snow-far" />
+            </div>
+            <div className="wx-sway">
+              <div className="wx-fall wx-snow-near" />
+            </div>
+          </div>
         </div>
         {children}
       </footer>
     </WeatherContext.Provider>
+  );
+}
+
+/** A rain layer: a far, faint strip and a near, fast one, both tilted. */
+function Rain({ mood }: { mood: "drizzle" | "rain" | "storm" }) {
+  return (
+    <div className={`wx-layer wx-${mood}`}>
+      <div className="wx-tilt">
+        <div className={`wx-fall wx-${mood}-far`} />
+        <div className={`wx-fall wx-${mood}-near`} />
+      </div>
+    </div>
   );
 }
 
