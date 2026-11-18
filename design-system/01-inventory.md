@@ -655,7 +655,7 @@ Elements with **no** component-level focus classes (they get only the global rul
 | `z-index: var(--mz)` |  | variable | 1 | base | `about-collage.css:663` |
 | `z-index: var(--z)` |  | variable | 1 | base | `about-collage.css:163` |
 
-Stacking order as built, top to bottom: drag-ghost chip **80** (`product-venn-travel.tsx:343`) > timeline tooltip **70** (`experience.tsx:881`) > hero flying dot **60** (`hero-link.tsx:31`) = relock pill **60** (`relock-button.tsx:14`) > nav **50** (`nav.tsx:321`) = skip link **50** > mobile menu **40** (`nav.tsx:441`) > lifted work card **20** (`work-thumbnails.tsx:295`). The About collage runs its own local stack (0 to 40) inside `isolation: isolate` (`about-collage.css:28`).
+Stacking order as built, top to bottom: open mobile menu **80** (portaled from `nav.tsx`) = drag-ghost chip **80** (`product-venn-travel.tsx:343`) > timeline tooltip **70** (`experience.tsx:881`) > hero flying dot **60** (`hero-link.tsx:31`) = relock pill **60** (`relock-button.tsx:14`) > nav **50** (`nav.tsx`) = skip link **50** > lifted work card **20** (`work-thumbnails.tsx:295`). The About collage runs its own local stack (0 to 40) inside `isolation: isolate` (`about-collage.css:28`).
 
 ### 2.10 Motion
 
