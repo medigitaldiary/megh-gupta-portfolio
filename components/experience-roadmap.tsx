@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { type FoldFlow, FoldLeadOut } from "@/components/fold-flow";
 import { SectionHeader } from "@/components/section-header";
-import { TextLink } from "@/components/ui";
+import { CtaArrow, TextLink } from "@/components/ui";
 import { setCompanyFocus } from "@/lib/company-focus";
 import {
   durationLabel,
@@ -169,11 +169,13 @@ export function ExperienceRoadmap({
             className={flow ? "" : undefined}
           />
           <div className="flex items-center gap-3 md:mb-2">
-            <span className="font-hand text-lg leading-none text-accent">
-              try this
-            </span>
-            <span aria-hidden="true" className="text-accent">
-              ↗
+            <span className="inline-flex items-center gap-1.5 text-accent">
+              <span className="font-hand text-lg leading-none">try this</span>
+              {/* Drawn, not the ↗ character. iPhone and iPad paint that glyph as a colour emoji. */}
+              <CtaArrow
+                direction="external"
+                className="size-[1.125rem] shrink-0"
+              />
             </span>
             <ViewToggle value={view} onChange={setView} />
           </div>
@@ -268,7 +270,7 @@ function WorkLinks({
             document.getElementById("work")?.scrollIntoView();
           }}
           aria-label={`Show the ${count} case ${count === 1 ? "study" : "studies"} from ${name}`}
-          className="group inline-flex min-h-11 items-center"
+          className="group hidden min-h-11 items-center md:inline-flex"
         >
           <span className="inline-flex items-center gap-2 rounded-full border border-border bg-bg-elevated px-3 py-1.5 text-fg text-sm transition-colors duration-150 group-hover:border-fg">
             {name}

@@ -236,7 +236,7 @@ Three CTA tiers. Primary and secondary are `<Button>` and `<ButtonLink>` in `com
 
 | Part | Anatomy | States | Mobile |
 |---|---|---|---|
-| Header | Section header + Kalam "try this ↗" + view toggle | | Stacks |
+| Header | Section header + Kalam "try this" + northeast arrow (`CtaArrow`, drawn so iPhone and iPad do not paint the ↗ character as an emoji) + view toggle | | Stacks |
 | **Mobile timeline** (default below `lg`) | Left spine, node dots, newest first; each node a **timeline card** (logo tile, label, chevron, role, mono dates with Kalam "now", optional metric marker) | Card open: `border-accent`, chevron rotates 90°, **entry detail** expands below. Hover: `border-fg/30`. Focus: pine ring. | **This is what phones see** |
 | **Desktop timeline** (`lg+`) | Cream band, year axis, lanes of chips positioned by date, dashed "now" line | Chip hover: lift 2px, `border-accent`, `shadow-md`; **tooltip** (portal, 280px, fade-up 160ms) on hover **or focus** | Hidden |
 | **List view** | Rows: logo tile, company (tertiary external link, underlined at rest), role, dates, chevron | First row open; open rows expand the entry detail; hover `bg-bg-elevated`; inset focus ring | Dates move under the name below 640px |
@@ -244,7 +244,7 @@ Three CTA tiers. Primary and secondary are `<Button>` and `<ButtonLink>` in `com
 | **Product tabs** (TapInvest) | Segmented control + tertiary external link | Active tab | |
 
 - **Tokens:** `--bg-elevated`, `--border`, `--accent`, `--fg-muted`, `--fg-subtle`, `--surface-band`, `--highlight`, `--radius-xl`, `--radius-2xl`, `--shadow-sm`, `--shadow-md`, `--z-tooltip`, `--text-body-compact`, `--leading-body`.
-- **Usage rule:** fold 2's job is trajectory. The timeline is the default because it answers "where has this person been" at a glance. The tooltip duplicates the card summary, so nothing is hover-only.
+- **Usage rule:** fold 2's job is trajectory. The timeline is the default because it answers "where has this person been" at a glance. The tooltip duplicates the card summary, so nothing is hover-only. On the roadmap, the "here is what shipped" company chips are `md` and up. Phones keep the label only.
 
 ---
 
