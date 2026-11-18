@@ -387,7 +387,7 @@ export function Nav({
     const toggled: HTMLElement[] = [];
     let node: HTMLElement | null = nav;
     while (node && node !== document.body) {
-      const parent = node.parentElement;
+      const parent: HTMLElement | null = node.parentElement;
       if (!parent) break;
       for (const sibling of parent.children) {
         if (sibling === node) continue;
