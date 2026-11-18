@@ -1,15 +1,22 @@
 "use client";
 
-import { createContext, type ReactNode, useContext, useState } from "react";
+import {
+  type CSSProperties,
+  createContext,
+  type ReactNode,
+  useContext,
+  useState,
+} from "react";
 import { CloudBackground } from "@/components/cloud-background";
 
-// Weather toy for the sky footer (/preview/v5.3).
+// Weather toy for the sky footer (/preview/v5.3) and the coming-soon
+// page at / (WeatherMain).
 //
-// One button in the meta strip cycles the sky through five moods. The
+// One button cycles the sky through five moods. The
 // clouds stay the background; each mood only adds layers on top of them:
 // a veil that tints the sky, plus sun, rain, a lightning flash or snow.
 // The looks live in app/globals.css (.wx-*), keyed off data-weather on
-// the footer. Every colour is one the sky already uses (CLAUDE.md §3).
+// the footer or the page. Every colour is one the sky already uses (CLAUDE.md §3).
 // Reduced motion keeps the look but stills the rain, snow and flash.
 
 const WEATHERS = [
@@ -27,6 +34,12 @@ const WeatherContext = createContext<{
   next: () => void;
 } | null>(null);
 
+function useWeather() {
+  const [index, setIndex] = useState(0);
+  const next = () => setIndex((i) => (i + 1) % WEATHERS.length);
+  return { index, next, id: WEATHERS[index].id };
+}
+
 /** The footer element itself, with the sky and the weather layers. */
 export function WeatherFooter({
   className,
@@ -35,42 +48,71 @@ export function WeatherFooter({
   className: string;
   children: ReactNode;
 }) {
-  const [index, setIndex] = useState(0);
-  const next = () => setIndex((i) => (i + 1) % WEATHERS.length);
+  const { index, next, id } = useWeather();
   return (
     <WeatherContext.Provider value={{ index, next }}>
       {/* Fold CTA: action. "Okay, how do I reach them?" */}
-      <footer
-        id="connect"
-        data-weather={WEATHERS[index].id}
-        className={className}
-      >
+      <footer id="connect" data-weather={id} className={className}>
         <CloudBackground
           palette="footer"
           className="[mask-image:linear-gradient(to_bottom,transparent_0%,black_45%)]"
         />
-        <div
-          aria-hidden="true"
-          className="wx-fade -z-10 pointer-events-none absolute inset-0 overflow-hidden"
-        >
-          <div className="wx-layer wx-veil" />
-          <div className="wx-layer wx-sun" />
-          <Rain mood="drizzle" />
-          <Rain mood="rain" />
-          <Rain mood="storm" />
-          <div className="wx-layer wx-flash" />
-          <div className="wx-layer wx-snow">
-            <div className="wx-sway wx-sway-slow">
-              <div className="wx-fall wx-snow-far" />
-            </div>
-            <div className="wx-sway">
-              <div className="wx-fall wx-snow-near" />
-            </div>
-          </div>
-        </div>
+        <WeatherLayers fade />
         {children}
       </footer>
     </WeatherContext.Provider>
+  );
+}
+
+/**
+ * The coming-soon page's <main>, carrying the weather for the whole
+ * screen. The page passes its own sky, veil and copy as children, with
+ * <WeatherLayers /> between the sky and the veil.
+ */
+export function WeatherMain({
+  className,
+  style,
+  children,
+}: {
+  className: string;
+  style?: CSSProperties;
+  children: ReactNode;
+}) {
+  const { index, next, id } = useWeather();
+  return (
+    <WeatherContext.Provider value={{ index, next }}>
+      <main id="main" data-weather={id} className={className} style={style}>
+        {children}
+      </main>
+    </WeatherContext.Provider>
+  );
+}
+
+/**
+ * The weather itself: tint, sun, rain, lightning and snow. `fade` eases
+ * it in from the top, for a footer that grows out of the page above.
+ */
+export function WeatherLayers({ fade = false }: { fade?: boolean }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`-z-10 pointer-events-none absolute inset-0 overflow-hidden${fade ? " wx-fade" : ""}`}
+    >
+      <div className="wx-layer wx-veil" />
+      <div className="wx-layer wx-sun" />
+      <Rain mood="drizzle" />
+      <Rain mood="rain" />
+      <Rain mood="storm" />
+      <div className="wx-layer wx-flash" />
+      <div className="wx-layer wx-snow">
+        <div className="wx-sway wx-sway-slow">
+          <div className="wx-fall wx-snow-far" />
+        </div>
+        <div className="wx-sway">
+          <div className="wx-fall wx-snow-near" />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -87,7 +129,12 @@ function Rain({ mood }: { mood: "drizzle" | "rain" | "storm" }) {
 }
 
 /** The one control: shows the current weather, a click moves to the next. */
-export function WeatherToggle() {
+export function WeatherToggle({
+  className = "-my-3 -ml-3 self-start sm:ml-0 sm:self-auto",
+}: {
+  /** Placement only. Colour comes from the parent text colour. */
+  className?: string;
+} = {}) {
   const ctx = useContext(WeatherContext);
   if (!ctx) return null;
   const current = WEATHERS[ctx.index];
@@ -98,7 +145,7 @@ export function WeatherToggle() {
       onClick={ctx.next}
       aria-label={`Weather: ${current.label}. Change to ${upcoming.label.toLowerCase()}.`}
       title="Change the weather"
-      className="-my-3 -ml-3 inline-flex sm:ml-0 min-h-11 items-center gap-1.5 self-start rounded-full px-3 text-fg text-xs underline decoration-fg/30 underline-offset-4 transition-colors duration-150 hover:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 sm:self-auto"
+      className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-xs underline underline-offset-4 transition-[text-decoration-color] duration-150 [text-decoration-color:color-mix(in_srgb,currentColor_35%,transparent)] hover:[text-decoration-color:currentColor] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 ${className}`}
     >
       <WeatherIcon id={current.id} />
       <span>{current.label.toLowerCase()}, tap to change</span>
