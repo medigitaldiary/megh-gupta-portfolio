@@ -19,12 +19,13 @@ export const metadata: Metadata = {
 export default function PortfolioV5Preview() {
   return (
     <>
-      <Nav hide={["lab", "writing"]} wide />
+      <Nav hide={["lab", "writing"]} wide resume={false} github chip="roles" />
       <main id="main" className="fold-flow">
         {/* Fold 1: hook. Who is this and why keep scrolling? */}
         <Hero
           link="travel"
           wide
+          resume
           leadOut={{ href: "#experience", label: "Where I have done it" }}
         />
         {/* Fold 2: trajectory. Where has this person been? */}
