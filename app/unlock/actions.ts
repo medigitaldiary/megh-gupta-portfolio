@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import {
   checkPassword,
   createPass,
@@ -46,12 +45,4 @@ export async function unlock(
 
   // The client plays the "ADMITTED" animation, then navigates.
   return { status: "admitted", next, expiresAt: pass.expires.toISOString() };
-}
-
-/** "Lock again" — tear up the pass and go back to the door. */
-export async function relock(formData: FormData) {
-  const jar = await cookies();
-  jar.delete(PASS_COOKIE);
-  const next = safeNextPath(formData.get("next"));
-  redirect(`/unlock?next=${encodeURIComponent(next)}`);
 }

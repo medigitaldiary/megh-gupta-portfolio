@@ -24,7 +24,7 @@
 | 12 | [About collage](#12-about-collage) | `components/about-collage.tsx`, `.css` | v3, v3.1 |
 | 13 | [Contact fold + booker](#13-contact-fold-and-booker) | `components/contact.tsx`, `cal-embed.tsx` | v3, v3.1 |
 | 14 | [Footer](#14-footer) | `components/site-footer.tsx` | v3, v3.1 |
-| 15 | [Relock pill](#15-relock-pill) | `components/relock-button.tsx` | all locked pages |
+| 15 | [Relock pill](#15-relock-pill) (retired) | retired | retired |
 | 16 | [Case-study shell](#16-case-study-shell) (header, index, headline metric, prose, keep reading) | `app/work/[slug]/page.tsx`, `case-study/case-study-toc.tsx` | case study |
 | 17 | [Case-study blocks](#17-case-study-blocks) (Section, Callout, DataTable, Metric, StepGrid, Timeline, Embed frame) | `components/case-study/*` | case study |
 | 18 | [Backstage pass](#18-backstage-pass-unlock) (ticket, password field, submit, status, stamps) | `components/backstage-pass.tsx`, `app/unlock/backstage.css` | `/unlock` |
@@ -298,13 +298,7 @@ Three CTA tiers. Primary and secondary are `<Button>` and `<ButtonLink>` in `com
 
 ## 15. Relock pill
 
-- **Anatomy:** fixed bottom-right (`z-floating` 60) frosted oat pill with a lock icon and mono "LOCK AGAIN".
-- **States:**
-  - hover: lifts 2px, inverts to pine, and the icon tilts -12°;
-  - pending: "Locking…" with `opacity 0.6`. This is one of only two disabled states on the site.
-- **Mobile:** same corner. It sits over content, including the last line of the contact fold and the footer. Computed height ≈ 34px.
-- **Tokens:** `--bg-elevated`, `--fg`, `--accent-fg`, `--shadow-md`, `--text-micro`, `--tracking-label`, `--radius-full`, `--z-floating`, `--opacity-disabled`.
-- **Usage rule:** shown only on locked routes (`/preview/*`, `/work/*`).
+Retired. The floating "Lock again" pill is gone from `/preview/*`, `/paper-preview`, and `/work/*`. Those routes stay gated by the 24-hour pass (`middleware.ts`, `lib/preview-auth.ts`). There is no manual lock control.
 
 ---
 
