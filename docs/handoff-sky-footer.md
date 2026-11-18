@@ -26,12 +26,12 @@ I'm continuing work on the **sky footer** in my portfolio repo (`medigitaldiary/
 - The colour and motion exceptions for this footer are recorded in CLAUDE.md §3.
 
 **Open items:**
-1. Clouds look oversized on phones (375px). Scale them down for mobile.
-2. Lighthouse has not been run on v5 or v5.1.
+1. Done: clouds scale to half size on phones and three quarters on tablets (`.cs-cloud` in `app/globals.css`).
+2. Lighthouse (mobile, 18 Nov 2026, local production build): `/` scores 98 / 100 / 96 / 100 with real throttling. `/preview/v5.3` scores 96 / 93 / 96 / 69. The 69 is the preview's noindex. The 93 is the About collage photos, which overlap as tap targets until the scroll fans them out. Best Practices 96 is Vercel Analytics failing to load locally. Lighthouse's estimated mode swings between about 82 and 97 locally on `/`; run PageSpeed Insights on the live URL for the real number.
 3. `design-system/02-components.md` has no entry for the sky footer yet.
 4. Pick a home: decide whether v5.1's closing fold goes to the homepage.
 5. Trade-off to confirm: v5 and v5.1 drop the inline Cal booker in favour of a "book" pill that opens Cal in a new tab.
 
-**History:** [#153](https://github.com/medigitaldiary/megh-gupta-portfolio/pull/153) (sky footer and v5), [#155](https://github.com/medigitaldiary/megh-gupta-portfolio/pull/155) (shipped to `main`), then #156 to #159 (v5.1 and later tweaks). Read `git log origin/dev` for details.
+**History:** [#153](https://github.com/medigitaldiary/megh-gupta-portfolio/pull/153) (sky footer and v5), [#155](https://github.com/medigitaldiary/megh-gupta-portfolio/pull/155) (shipped to `main`), then #156 to #159 (v5.1 and later tweaks), #161 and #168 (v5.3 weather toy), #170 and #172 (weather on `/`). Read `git log origin/dev` for details.
 
 **First step:** ask me which open item to start with.

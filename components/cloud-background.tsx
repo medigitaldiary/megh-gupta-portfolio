@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 /**
  * Soft cumulus sky for the coming-soon page.
  *
@@ -107,13 +109,17 @@ export function CloudBackground({
           // biome-ignore lint/suspicious/noArrayIndexKey: static config
           key={i}
           className="cs-cloud absolute"
-          style={{
-            top: c.top,
-            width: `${c.size}px`,
-            opacity: c.opacity,
-            animationDuration: `${c.duration}s`,
-            animationDelay: `${c.delay}s`,
-          }}
+          style={
+            {
+              top: c.top,
+              // Base width in px at desktop; .cs-cloud scales it down on
+              // smaller screens (app/globals.css).
+              "--cs-size": c.size,
+              opacity: c.opacity,
+              animationDuration: `${c.duration}s`,
+              animationDelay: `${c.delay}s`,
+            } as CSSProperties
+          }
         >
           <CloudSvg shadowFill={p.shadowFill} />
         </div>
