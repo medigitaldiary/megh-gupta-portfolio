@@ -283,6 +283,23 @@ footer a:hover {
   text-underline-offset: 4px;
 }
 
+/* Nav social circles. Tailwind's hover: utilities are emitted inside
+   @media (hover: hover). A desktop whose primary pointer is coarse
+   never matches that query, so the LinkedIn and GitHub fills never
+   run. A plain :hover still fires when the pointer is over the circle.
+   Brand marks, same hexes as the buttons in components/nav.tsx. */
+nav a[aria-label="LinkedIn profile"]:hover {
+  border-color: #0a66c2;
+  background-color: #0a66c2;
+  color: #fff;
+}
+
+nav a[aria-label="GitHub profile"]:hover {
+  border-color: #181717;
+  background-color: #181717;
+  color: #fff;
+}
+
 /* Shelf preview card — cream swapped for a lilac-leaning cream
    with a lilac rim and thin lilac top border. !important is
    required because the host rule uses Tailwind's arbitrary-value
