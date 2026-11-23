@@ -102,6 +102,14 @@ export default function PreviewIndex() {
         <Link className="underline" href="/preview/v5.3">
           /preview/v5.3
         </Link>
+        . v5.3 with a bento About fold:{" "}
+        <Link className="underline" href="/preview/v5.4">
+          /preview/v5.4
+        </Link>
+        . v5.4 with the About fold on oatmeal:{" "}
+        <Link className="underline" href="/preview/v5.5">
+          /preview/v5.5
+        </Link>
         .
       </p>
     </main>

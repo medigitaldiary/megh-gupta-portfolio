@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
 import { ButtonLink } from "@/components/ui";
 
 export type NavItem = {
@@ -36,30 +37,48 @@ export const DEFAULT_NAV_ITEMS: NavItem[] = [
 ];
 
 const LINKEDIN_URL = "https://www.linkedin.com/in/meghxgupta";
+const GITHUB_URL = "https://github.com/medigitaldiary";
 const RESUME_URL = "/resume.pdf";
+
+type ChipLine = { readonly text: string; readonly cta?: boolean };
 
 // The hero greeting already says the name. These four lines take turns
 // in the left slot. The last one is the contact CTA: filled pine, arrow,
 // and a jump to the connect fold. The others scroll back to the top.
-const CHIP_LINES = [
+const CHIP_LINES: readonly ChipLine[] = [
   { text: "Product Manager" },
   { text: "Building in fintech" },
   { text: "Got a problem?" },
   { text: "Let's connect.", cta: true },
-] as const;
-// Still time before the swap. ~4.3s of readable text after the 500ms flip.
-const CHIP_HOLD_MS = 4800;
-// Keep in sync with nav-chip-in / nav-chip-out in globals.css.
+];
+// v5.1 only. Order is the one Megh set: availability, then context, then role.
+const ROLE_CHIP_LINES: readonly ChipLine[] = [
+  { text: "Open to product roles" },
+  { text: "Building in fintech" },
+  { text: "Product Manager" },
+];
+// Each line stays up for 3s. The 500ms flip runs at the start of that
+// window, so the line is readable for ~2.5s. Three role lines = 9s
+// per full pass. Keep the flip in sync with nav-chip-in / nav-chip-out.
+const CHIP_HOLD_MS = 3000;
 const CHIP_FLIP_MS = 500;
 
 function StatusChip({
   paused,
   tabIndex,
   onScrollTop,
+  lines,
+  live = false,
+  loop = false,
 }: {
   paused: boolean;
   tabIndex: number;
   onScrollTop: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+  lines: readonly ChipLine[];
+  /** v5.1: green lamp that blinks, instead of the pine dot. */
+  live?: boolean;
+  /** Keep rotating so the hold can be watched. Default stops after one pass. */
+  loop?: boolean;
 }) {
   const [index, setIndex] = useState(0);
   const [outgoing, setOutgoing] = useState<number | null>(null);
@@ -70,8 +89,8 @@ function StatusChip({
   const sizerRef = useRef<HTMLSpanElement>(null);
   const primed = useRef(false);
 
-  const line = CHIP_LINES[index];
-  const isCta = "cta" in line && line.cta;
+  const line = lines[index] ?? lines[0] ?? { text: "" };
+  const isCta = line.cta === true;
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -86,22 +105,22 @@ function StatusChip({
     };
   }, []);
 
-  // Stop after one full cycle through the four lines. WCAG 2.2.2 for
-  // auto-updating content: finite duration or an explicit pause. The
-  // chip also pauses on hover and focus via the existing `paused` prop.
+  // Default: stop after one full cycle. WCAG 2.2.2 for auto-updating
+  // content: finite duration or an explicit pause. The chip also pauses
+  // on hover and focus via the existing `paused` prop. `loop` keeps going
+  // (v5.1, so the hold can be watched) and still pauses the same way.
   const cycled = useRef(false);
   useEffect(() => {
     if (paused || reduceMotion || pageHidden || cycled.current) return;
     const id = window.setInterval(() => {
       setIndex((current) => {
-        const next = (current + 1) % CHIP_LINES.length;
-        // First return to index 0 marks one full cycle complete.
-        if (next === 0) cycled.current = true;
+        const next = (current + 1) % lines.length;
+        if (!loop && next === 0) cycled.current = true;
         return next;
       });
     }, CHIP_HOLD_MS);
     return () => window.clearInterval(id);
-  }, [paused, reduceMotion, pageHidden]);
+  }, [paused, reduceMotion, pageHidden, lines, loop]);
 
   useEffect(() => {
     if (prevIndex.current === index) return;
@@ -191,7 +210,9 @@ function StatusChip({
         className="pointer-events-none invisible absolute inline-flex w-max items-center gap-2 whitespace-nowrap"
         aria-hidden="true"
       >
-        <span className="h-1.5 w-1.5 shrink-0" />
+        <span
+          className={live ? "h-2.5 w-2.5 shrink-0" : "h-1.5 w-1.5 shrink-0"}
+        />
         <span>{line.text}</span>
         {isCta ? (
           <span className="h-3.5 w-3.5 shrink-0">
@@ -201,8 +222,10 @@ function StatusChip({
       </span>
       <span
         aria-hidden="true"
-        className={`mr-2 h-1.5 w-1.5 shrink-0 rounded-full transition-colors duration-500 ${
-          isCta ? "bg-accent-fg" : "bg-fg"
+        className={`mr-2 shrink-0 rounded-full ${
+          live
+            ? "nav-dot-live h-2.5 w-2.5 bg-fg"
+            : `h-1.5 w-1.5 transition-colors duration-500 ${isCta ? "bg-accent-fg" : "bg-fg"}`
         }`}
       />
       <span
@@ -212,7 +235,7 @@ function StatusChip({
         <span className="invisible whitespace-nowrap">{line.text}</span>
         {outgoing !== null && !reduceMotion ? (
           <span className="nav-chip-out absolute inset-0 flex items-center whitespace-nowrap">
-            {CHIP_LINES[outgoing].text}
+            {lines[outgoing]?.text}
           </span>
         ) : null}
         <span
@@ -241,12 +264,21 @@ export function Nav({
   hide,
   order,
   wide = false,
+  resume = true,
+  github = false,
+  chip = "default",
 }: {
   hide?: string[];
   /** Nav ids in the order the folds appear, when a page reorders them. */
   order?: string[];
   /** Fold-flow previews: the bar takes the folds' px-6 md:px-8 gutter. */
   wide?: boolean;
+  /** Resume pill on the right. v5.1 moves it into the hero and passes false. */
+  resume?: boolean;
+  /** Icon-only GitHub, immediately to the right of LinkedIn. */
+  github?: boolean;
+  /** v5.1: three role lines and a blinking green dot. */
+  chip?: "default" | "roles";
 } = {}) {
   // `hide` is a list of nav ids to drop (e.g. `["lab", "writing"]`). Keeping
   // the filter here, not at the call site, means callers can be server
@@ -268,6 +300,9 @@ export function Nav({
   const [activeId, setActiveId] = useState<string>("");
   const menuRef = useRef<HTMLDivElement>(null);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
+  // A finger-open must not move focus. On a phone, focusing a link in the
+  // sheet scrolls the fixed layer and the next tap never lands.
+  const openedByPointer = useRef(false);
   // Collapse the status chip + right CTAs once past the hero, unless the viewer
   // is hovering or keyboard-focused in the nav. The pill stays anchored.
   const collapsed = scrolled && !hovered && !focusWithin;
@@ -333,17 +368,39 @@ export function Nav({
     };
   }, [menuOpen]);
 
-  // Mark everything outside <nav> as inert while the drawer is open, so a
-  // keyboard user can only reach drawer items. Reverse on close.
+  // Mark everything outside the nav as inert while the drawer is open, so a
+  // keyboard user can only reach drawer items. Walk up from the nav and inert
+  // each ancestor's other children. Never inert an ancestor of the nav: on a
+  // phone the hamburger is often not the focused element yet, and inerting
+  // the wrapper that contains the nav makes the cross and every menu link dead.
   useEffect(() => {
-    const siblings = Array.from(document.body.children) as HTMLElement[];
+    const nav = hamburgerRef.current?.closest("nav");
+    if (!menuOpen || !nav) return;
+    const skip = new Set([
+      "SCRIPT",
+      "STYLE",
+      "LINK",
+      "META",
+      "TITLE",
+      "NOSCRIPT",
+    ]);
     const toggled: HTMLElement[] = [];
-    for (const el of siblings) {
-      if (el.tagName === "NAV" || el.contains(document.activeElement)) continue;
-      if (menuOpen && !el.hasAttribute("inert")) {
-        el.setAttribute("inert", "");
-        toggled.push(el);
+    let node: HTMLElement | null = nav;
+    while (node && node !== document.body) {
+      const parent: HTMLElement | null = node.parentElement;
+      if (!parent) break;
+      for (const sibling of parent.children) {
+        if (sibling === node) continue;
+        if (!(sibling instanceof HTMLElement)) continue;
+        if (skip.has(sibling.tagName)) continue;
+        if (sibling.hasAttribute("inert")) continue;
+        // The open menu is portaled to the body. Inerting it would make
+        // the cross and every link dead again.
+        if (sibling.hasAttribute("data-mobile-menu")) continue;
+        sibling.setAttribute("inert", "");
+        toggled.push(sibling);
       }
+      node = parent;
     }
     return () => {
       for (const el of toggled) el.removeAttribute("inert");
@@ -353,8 +410,9 @@ export function Nav({
   // Move focus into the drawer on open; return it to the hamburger on close.
   useEffect(() => {
     if (menuOpen) {
+      if (openedByPointer.current) return;
       const first = menuRef.current?.querySelector<HTMLElement>("a,button");
-      first?.focus();
+      first?.focus({ preventScroll: true });
     } else if (hamburgerRef.current) {
       // Only refocus if the user hasn't moved elsewhere already.
       if (
@@ -398,192 +456,283 @@ export function Nav({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [menuOpen]);
 
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const onChange = () => {
+      if (mq.matches) setMenuOpen(false);
+    };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
   function scrollToTop(e: React.MouseEvent) {
     e.preventDefault();
     window.scrollTo({ top: 0, behavior: "smooth" });
     setMenuOpen(false);
   }
 
+  const menu =
+    menuOpen && typeof document !== "undefined"
+      ? createPortal(
+          <div
+            id="mobile-menu"
+            ref={menuRef}
+            data-mobile-menu=""
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site menu"
+            className="fixed inset-0 z-[80] flex flex-col bg-bg md:hidden"
+            onClick={(e) => {
+              const target = e.target as HTMLElement;
+              if (
+                target === e.currentTarget ||
+                target.hasAttribute("data-menu-sheet")
+              ) {
+                setMenuOpen(false);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setMenuOpen(false);
+            }}
+          >
+            <div
+              data-menu-sheet=""
+              className={`mx-auto flex h-16 w-full items-center justify-end ${
+                wide ? "max-w-[76rem] px-6" : "max-w-6xl px-4"
+              }`}
+            >
+              <button
+                type="button"
+                aria-label="Close menu"
+                onClick={() => setMenuOpen(false)}
+                className="inline-flex h-10 w-10 touch-manipulation items-center justify-center rounded-md text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              >
+                <span aria-hidden="true" className="font-mono text-xl">
+                  ✕
+                </span>
+              </button>
+            </div>
+            <div
+              data-menu-sheet=""
+              className="flex flex-1 flex-col items-center justify-center gap-6"
+            >
+              {navItems.map((item) => (
+                <a
+                  key={item.id}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="inline-flex touch-manipulation items-center gap-3 rounded-sm text-lg text-fg-muted transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                >
+                  <span className="h-5 w-5">
+                    <item.Icon />
+                  </span>
+                  {item.label}
+                </a>
+              ))}
+              <div className="mt-4 flex items-center gap-3">
+                <a
+                  href={LINKEDIN_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn profile"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#0A66C2]/30 bg-bg-elevated text-[#0A66C2] hover:border-[#0A66C2] hover:bg-[#0A66C2] hover:text-white"
+                >
+                  <span className="h-5 w-5">
+                    <LinkedInIcon />
+                  </span>
+                </a>
+                {github ? (
+                  <a
+                    href={GITHUB_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="GitHub profile"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#181717]/30 bg-bg-elevated text-[#181717] hover:border-[#181717] hover:bg-[#181717] hover:text-white"
+                  >
+                    <span className="h-5 w-5">
+                      <GitHubIcon />
+                    </span>
+                  </a>
+                ) : null}
+                {resume ? (
+                  <ButtonLink
+                    href={RESUME_URL}
+                    variant="secondary"
+                    size="lg"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Resume
+                    <span className="h-4 w-4">
+                      <DownloadIcon />
+                    </span>
+                  </ButtonLink>
+                ) : null}
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )
+      : null;
+
   return (
-    <nav
-      aria-label="Primary"
-      className="sticky top-0 z-50"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onFocus={() => setFocusWithin(true)}
-      onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
-          setFocusWithin(false);
-        }
-      }}
-    >
-      {/* Outer bar is always transparent — the pill carries its own weight,
+    <>
+      {menu}
+      <nav
+        aria-label="Primary"
+        className="z-50 sticky top-0"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onFocus={() => setFocusWithin(true)}
+        onBlur={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+            setFocusWithin(false);
+          }
+        }}
+      >
+        {/* Outer bar is always transparent — the pill carries its own weight,
           and keeping a single surface across the scroll threshold removes the
-          backdrop-filter transition that was causing the collapse jerk. */}
-      <div>
-        <div
-          className={`mx-auto grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-3 md:h-[72px] ${
-            // 76rem = the folds' 72rem column plus this bar's own gutters,
-            // so the chip and the Resume pill sit on the folds' edges.
-            wide ? "max-w-[76rem] px-6 md:px-8" : "max-w-6xl px-4 md:px-6"
-          }`}
-        >
-          {/* Left: status chip. Four lines, the last one a contact CTA.
+          backdrop-filter transition that was causing the collapse jerk.
+          The open menu is a separate layer on the body, so this bar stays put. */}
+        <div className="relative z-50">
+          <div
+            className={`mx-auto grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-3 md:h-[72px] ${
+              // 76rem = the folds' 72rem column plus this bar's own gutters,
+              // so the chip and the Resume pill sit on the folds' edges.
+              wide ? "max-w-[76rem] px-6 md:px-8" : "max-w-6xl px-4 md:px-6"
+            }`}
+          >
+            {/* Left: status chip. Four lines, the last one a contact CTA.
               The pill eases to the width of whichever line is showing.
               Hidden from md up to 860px so the longer lines don't push
               Resume off the bar. Collapses once the hero leaves. */}
-          <div
-            className={`justify-self-start will-change-[transform,opacity] transition-[transform,opacity] duration-[400ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] motion-reduce:transition-none ${
-              collapsed
-                ? "pointer-events-none translate-x-10 opacity-0"
-                : "translate-x-0 opacity-100"
-            }`}
-          >
-            <StatusChip
-              paused={collapsed || hovered || focusWithin}
-              tabIndex={collapsed ? -1 : 0}
-              onScrollTop={scrollToTop}
-            />
-          </div>
+            <div
+              className={`justify-self-start will-change-[transform,opacity] transition-[transform,opacity] duration-[400ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] motion-reduce:transition-none ${
+                collapsed
+                  ? "pointer-events-none translate-x-10 opacity-0"
+                  : "translate-x-0 opacity-100"
+              }`}
+            >
+              <StatusChip
+                paused={collapsed || hovered || focusWithin}
+                tabIndex={collapsed ? -1 : 0}
+                onScrollTop={scrollToTop}
+                lines={chip === "roles" ? ROLE_CHIP_LINES : CHIP_LINES}
+                live={chip === "roles"}
+                loop={chip === "roles"}
+              />
+            </div>
 
-          {/* Center pill — always visible. Slightly bumped shadow when floating
+            {/* Center pill — always visible. Slightly bumped shadow when floating
               alone (collapsed) so it reads as a raised capsule. */}
-          <div
-            role="tablist"
-            aria-label="Sections"
-            className={`hidden items-center gap-0.5 rounded-full border border-border bg-bg-elevated p-1 transition-shadow duration-300 ease-out md:flex ${
-              collapsed ? "shadow-md" : "shadow-sm"
-            }`}
-          >
-            {navItems.map((item) => {
-              const isActive = activeId === item.id;
-              const { Icon } = item;
-              return (
-                <a
-                  key={item.id}
-                  role="tab"
-                  aria-selected={isActive}
-                  href={item.href}
-                  className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${
-                    isActive
-                      ? "bg-bg text-fg shadow-sm"
-                      : "text-fg-muted hover:text-fg"
-                  }`}
-                >
-                  <span className="h-4 w-4">
-                    <Icon />
-                  </span>
-                  <span>{item.label}</span>
-                </a>
-              );
-            })}
-          </div>
+            <div
+              role="tablist"
+              aria-label="Sections"
+              className={`hidden items-center gap-0.5 rounded-full border border-border bg-bg-elevated p-1 transition-shadow duration-300 ease-out md:flex ${
+                collapsed ? "shadow-md" : "shadow-sm"
+              }`}
+            >
+              {navItems.map((item) => {
+                const isActive = activeId === item.id;
+                const { Icon } = item;
+                return (
+                  <a
+                    key={item.id}
+                    role="tab"
+                    aria-selected={isActive}
+                    href={item.href}
+                    className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${
+                      isActive
+                        ? "bg-bg text-fg shadow-sm"
+                        : "text-fg-muted hover:text-fg"
+                    }`}
+                  >
+                    <span className="h-4 w-4">
+                      <Icon />
+                    </span>
+                    <span>{item.label}</span>
+                  </a>
+                );
+              })}
+            </div>
 
-          {/* Right: LinkedIn + Resume. Same gentle fade + short slide inward
+            {/* Right: LinkedIn + Resume. Same gentle fade + short slide inward
               so the pair reads as tucking behind the pill. */}
-          <div
-            className={`hidden items-center justify-end gap-2 justify-self-end will-change-[transform,opacity] transition-[transform,opacity] duration-[400ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] motion-reduce:transition-none md:flex ${
-              collapsed
-                ? "pointer-events-none -translate-x-10 opacity-0"
-                : "translate-x-0 opacity-100"
-            }`}
-          >
-            <a
-              href={LINKEDIN_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn profile"
-              tabIndex={collapsed ? -1 : 0}
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#0A66C2]/30 bg-bg-elevated text-[#0A66C2] transition-colors duration-150 hover:border-[#0A66C2] hover:bg-[#0A66C2] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A66C2] focus-visible:ring-offset-2"
+            <div
+              className={`hidden items-center justify-end gap-2 justify-self-end will-change-[transform,opacity] transition-[transform,opacity] duration-[400ms] ease-[cubic-bezier(0.22,0.61,0.36,1)] motion-reduce:transition-none md:flex ${
+                collapsed
+                  ? "pointer-events-none -translate-x-10 opacity-0"
+                  : "translate-x-0 opacity-100"
+              }`}
             >
-              <span className="h-[18px] w-[18px]">
-                <LinkedInIcon />
-              </span>
-            </a>
-            <ButtonLink
-              href={RESUME_URL}
-              variant="secondary"
-              size="sm"
-              target="_blank"
-              rel="noopener noreferrer"
-              tabIndex={collapsed ? -1 : 0}
-              className="shrink-0"
-            >
-              <span>Resume</span>
-              <span className="h-3.5 w-3.5">
-                <DownloadIcon />
-              </span>
-            </ButtonLink>
-          </div>
+              <a
+                href={LINKEDIN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn profile"
+                tabIndex={collapsed ? -1 : 0}
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#0A66C2]/30 bg-bg-elevated text-[#0A66C2] transition-colors duration-150 hover:border-[#0A66C2] hover:bg-[#0A66C2] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A66C2] focus-visible:ring-offset-2"
+              >
+                <span className="h-[18px] w-[18px]">
+                  <LinkedInIcon />
+                </span>
+              </a>
+              {github ? (
+                <a
+                  href={GITHUB_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub profile"
+                  tabIndex={collapsed ? -1 : 0}
+                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#181717]/30 bg-bg-elevated text-[#181717] transition-colors duration-150 hover:border-[#181717] hover:bg-[#181717] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#181717] focus-visible:ring-offset-2"
+                >
+                  <span className="h-[18px] w-[18px]">
+                    <GitHubIcon />
+                  </span>
+                </a>
+              ) : null}
+              {resume ? (
+                <ButtonLink
+                  href={RESUME_URL}
+                  variant="secondary"
+                  size="sm"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  tabIndex={collapsed ? -1 : 0}
+                  className="shrink-0"
+                >
+                  <span>Resume</span>
+                  <span className="h-3.5 w-3.5">
+                    <DownloadIcon />
+                  </span>
+                </ButtonLink>
+              ) : null}
+            </div>
 
-          {/* Mobile: hamburger */}
-          <button
-            ref={hamburgerRef}
-            type="button"
-            aria-expanded={menuOpen}
-            aria-controls="mobile-menu"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            onClick={() => setMenuOpen((v) => !v)}
-            className="col-start-3 inline-flex h-10 w-10 items-center justify-center justify-self-end rounded-md text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
-          >
-            <span aria-hidden="true" className="font-mono text-xl">
-              {menuOpen ? "✕" : "☰"}
-            </span>
-          </button>
-        </div>
-      </div>
-
-      {menuOpen && (
-        <div
-          id="mobile-menu"
-          ref={menuRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Site menu"
-          className="fixed inset-x-0 top-16 bottom-0 z-40 flex flex-col items-center justify-center gap-6 bg-bg md:hidden"
-        >
-          {navItems.map((item) => (
-            <a
-              key={item.id}
-              href={item.href}
-              onClick={() => setMenuOpen(false)}
-              className="inline-flex items-center gap-3 rounded-sm text-lg text-fg-muted transition-colors duration-150 ease-out hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            {/* Mobile: hamburger */}
+            <button
+              ref={hamburgerRef}
+              type="button"
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-hidden={menuOpen || undefined}
+              tabIndex={menuOpen ? -1 : 0}
+              onClick={(e) => {
+                openedByPointer.current = e.detail > 0;
+                setMenuOpen((v) => !v);
+              }}
+              className="col-start-3 inline-flex h-10 w-10 touch-manipulation items-center justify-center justify-self-end rounded-md text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
             >
-              <span className="h-5 w-5">
-                <item.Icon />
+              <span aria-hidden="true" className="font-mono text-xl">
+                {menuOpen ? "✕" : "☰"}
               </span>
-              {item.label}
-            </a>
-          ))}
-          <div className="mt-4 flex items-center gap-3">
-            <a
-              href={LINKEDIN_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn profile"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#0A66C2]/30 bg-bg-elevated text-[#0A66C2] hover:border-[#0A66C2] hover:bg-[#0A66C2] hover:text-white"
-            >
-              <span className="h-5 w-5">
-                <LinkedInIcon />
-              </span>
-            </a>
-            <ButtonLink
-              href={RESUME_URL}
-              variant="secondary"
-              size="lg"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setMenuOpen(false)}
-            >
-              Resume
-              <span className="h-4 w-4">
-                <DownloadIcon />
-              </span>
-            </ButtonLink>
+            </button>
           </div>
         </div>
-      )}
-    </nav>
+      </nav>
+    </>
   );
 }
 
@@ -716,6 +865,19 @@ function ArrowRightIcon() {
     >
       <path d="M5 12h14" />
       <path d="M13 6l6 6-6 6" />
+    </svg>
+  );
+}
+
+function GitHubIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="h-full w-full"
+      aria-hidden="true"
+    >
+      <path d="M12 .5a11.5 11.5 0 00-3.635 22.412c.575.105.786-.25.786-.556 0-.274-.01-1.001-.015-1.966-3.2.695-3.877-1.542-3.877-1.542-.523-1.33-1.278-1.685-1.278-1.685-1.044-.714.079-.7.079-.7 1.155.082 1.762 1.187 1.762 1.187 1.027 1.76 2.695 1.251 3.352.957.104-.744.402-1.252.732-1.54-2.554-.29-5.24-1.277-5.24-5.687 0-1.256.449-2.283 1.187-3.089-.12-.291-.515-1.463.112-3.05 0 0 .967-.31 3.17 1.18a10.98 10.98 0 015.77 0c2.202-1.49 3.168-1.18 3.168-1.18.628 1.587.233 2.759.114 3.05.74.806 1.184 1.833 1.184 3.089 0 4.422-2.69 5.394-5.253 5.679.412.354.78 1.053.78 2.123 0 1.532-.014 2.767-.014 3.145 0 .309.208.667.79.554A11.502 11.502 0 0012 .5z" />
     </svg>
   );
 }

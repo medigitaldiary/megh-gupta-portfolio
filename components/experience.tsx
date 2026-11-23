@@ -4,7 +4,7 @@ import Image from "next/image";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { SectionHeader } from "@/components/section-header";
-import { TextLink } from "@/components/ui";
+import { CtaArrow, TextLink } from "@/components/ui";
 import {
   durationLabel,
   type ExperienceEntry,
@@ -27,11 +27,13 @@ export function Experience() {
         <div className="mb-10 flex flex-col gap-6 md:mb-14 md:flex-row md:items-end md:justify-between">
           <SectionHeader eyebrow="Experience" title="Where I've been." />
           <div className="flex items-center gap-3 md:mb-2">
-            <span className="font-hand text-lg leading-none text-accent">
-              try this
-            </span>
-            <span aria-hidden="true" className="text-accent">
-              ↗
+            <span className="inline-flex items-center gap-1.5 text-accent">
+              <span className="font-hand text-lg leading-none">try this</span>
+              {/* Drawn, not the ↗ character. iPhone and iPad paint that glyph as a colour emoji. */}
+              <CtaArrow
+                direction="external"
+                className="size-[1.125rem] shrink-0"
+              />
             </span>
             <ViewToggle value={view} onChange={setView} />
           </div>

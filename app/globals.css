@@ -283,6 +283,23 @@ footer a:hover {
   text-underline-offset: 4px;
 }
 
+/* Nav social circles. Tailwind's hover: utilities are emitted inside
+   @media (hover: hover). A desktop whose primary pointer is coarse
+   never matches that query, so the LinkedIn and GitHub fills never
+   run. A plain :hover still fires when the pointer is over the circle.
+   Brand marks, same hexes as the buttons in components/nav.tsx. */
+nav a[aria-label="LinkedIn profile"]:hover {
+  border-color: #0a66c2;
+  background-color: #0a66c2;
+  color: #fff;
+}
+
+nav a[aria-label="GitHub profile"]:hover {
+  border-color: #181717;
+  background-color: #181717;
+  color: #fff;
+}
+
 /* Shelf preview card — cream swapped for a lilac-leaning cream
    with a lilac rim and thin lilac top border. !important is
    required because the host rule uses Tailwind's arbitrary-value
@@ -380,6 +397,49 @@ section {
   to {
     opacity: 1;
     translate: 0 0;
+  }
+}
+
+/* About bento marquee (/preview/v5.4). The track holds the card row
+   twice; sliding it by -50% lands copy two exactly where copy one began,
+   so the loop has no seam. Hover, keyboard focus and the Pause button
+   (data-paused) hold it. Edges fade out with a mask. Reduced motion: no
+   drift, the duplicate hides and the row scrolls by hand. Explicit ask,
+   23 Nov 2026. Scoped: has no effect elsewhere. */
+.bento-marquee {
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 4%,
+    #000 96%,
+    transparent 100%
+  );
+}
+.bento-track {
+  animation: bento-drift 70s linear infinite;
+}
+.bento-marquee:hover .bento-track,
+.bento-marquee:focus-within .bento-track,
+.bento-marquee[data-paused="true"] .bento-track {
+  animation-play-state: paused;
+}
+@keyframes bento-drift {
+  to {
+    translate: -50% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bento-marquee {
+    overflow-x: auto;
+    mask-image: none;
+    padding-inline: 1.5rem;
+  }
+  .bento-track {
+    animation: none;
+  }
+  .bento-track [data-copy="1"],
+  .bento-toggle {
+    display: none;
   }
 }
 
@@ -946,6 +1006,31 @@ section {
   .nav-chip-in,
   .nav-chip-out {
     animation: none;
+  }
+}
+
+/* v5 status lamp. Pine fill. A ring breathes out 3px once every 1.2s,
+   tight enough to stay on the chip. Holds still under reduced motion. */
+@keyframes nav-dot-blink {
+  0% {
+    box-shadow: 0 0 0 0 rgba(31, 59, 46, 0.4);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(31, 59, 46, 0);
+  }
+}
+
+.nav-dot-live {
+  background-color: var(--fg);
+  animation: nav-dot-blink 1.2s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-dot-live {
+    animation: none;
+    opacity: 1;
+    box-shadow: none;
   }
 }
 

@@ -143,7 +143,7 @@ Three CTA tiers. Primary and secondary are `<Button>` and `<ButtonLink>` in `com
 | **Variants** | `hide` prop drops sections; v3 and v3.1 hide Lab and Writing, so the pill shows Experience, Work, About, Contact. |
 | **Status chip** | Pill that rotates 4 lines every `--interval-chip` (4.8s) with a 500ms slide; the 4th line ("Let's connect.") is a pine CTA with an arrow that jumps to `#connect`; the others scroll to top. Width eases to the text. Pauses on hover, focus, hidden tab and reduced motion. |
 | **Section pill** | Icon + label tabs, scroll-spy active state (`bg-bg text-fg shadow-sm`), `shadow-sm` → `shadow-md` once collapsed. |
-| **States** | **Collapsed** after 80px scroll (unless hovered / focused): chip and right CTAs fade and slide out, `tabIndex -1`. **Menu open**: full-screen oat sheet (`z-menu` 40) under the bar, body scroll locked, `Esc` closes. |
+| **States** | **Collapsed** after 80px scroll (unless hovered / focused): chip and right CTAs fade and slide out, `tabIndex -1`. **Menu open**: on phones the sheet is portaled to the body as a full-screen oat layer (`z` 80, above page tooltips), with the cross in its own top bar. Body scroll locked. `Esc`, the cross, or a tap on the empty sheet closes. A tap opens it without moving focus. A keyboard open moves focus to the first item. |
 | **Mobile** | Chip visible at the left; hidden 768 to 859px (`--breakpoint-nav-chip`); back from 860. After 80px of scroll only the hamburger remains. Menu links are text-height (computed 28px), icons 20px, Resume 48px, LinkedIn 44px. |
 | **Tokens** | `--container-wide`, `--bg-elevated`, `--border`, `--fg`, `--fg-muted`, `--accent`, `--shadow-sm`, `--shadow-md`, `--z-nav`, `--z-menu`, `--duration-slow`, `--ease-emphasized`, `--interval-chip` |
 | **Usage rule** | Nav items mirror the fold order and names (CLAUDE.md §14). Case-study pages render **no nav** today; the back link is the only route home. |
@@ -236,7 +236,7 @@ Three CTA tiers. Primary and secondary are `<Button>` and `<ButtonLink>` in `com
 
 | Part | Anatomy | States | Mobile |
 |---|---|---|---|
-| Header | Section header + Kalam "try this ↗" + view toggle | | Stacks |
+| Header | Section header + Kalam "try this" + northeast arrow (`CtaArrow`, drawn so iPhone and iPad do not paint the ↗ character as an emoji) + view toggle | | Stacks |
 | **Mobile timeline** (default below `lg`) | Left spine, node dots, newest first; each node a **timeline card** (logo tile, label, chevron, role, mono dates with Kalam "now", optional metric marker) | Card open: `border-accent`, chevron rotates 90°, **entry detail** expands below. Hover: `border-fg/30`. Focus: pine ring. | **This is what phones see** |
 | **Desktop timeline** (`lg+`) | Cream band, year axis, lanes of chips positioned by date, dashed "now" line | Chip hover: lift 2px, `border-accent`, `shadow-md`; **tooltip** (portal, 280px, fade-up 160ms) on hover **or focus** | Hidden |
 | **List view** | Rows: logo tile, company (tertiary external link, underlined at rest), role, dates, chevron | First row open; open rows expand the entry detail; hover `bg-bg-elevated`; inset focus ring | Dates move under the name below 640px |
@@ -244,7 +244,7 @@ Three CTA tiers. Primary and secondary are `<Button>` and `<ButtonLink>` in `com
 | **Product tabs** (TapInvest) | Segmented control + tertiary external link | Active tab | |
 
 - **Tokens:** `--bg-elevated`, `--border`, `--accent`, `--fg-muted`, `--fg-subtle`, `--surface-band`, `--highlight`, `--radius-xl`, `--radius-2xl`, `--shadow-sm`, `--shadow-md`, `--z-tooltip`, `--text-body-compact`, `--leading-body`.
-- **Usage rule:** fold 2's job is trajectory. The timeline is the default because it answers "where has this person been" at a glance. The tooltip duplicates the card summary, so nothing is hover-only.
+- **Usage rule:** fold 2's job is trajectory. The timeline is the default because it answers "where has this person been" at a glance. The tooltip duplicates the card summary, so nothing is hover-only. On the roadmap, the "here is what shipped" company chips are `md` and up. Phones keep the label only.
 
 ---
 
@@ -271,6 +271,16 @@ Three CTA tiers. Primary and secondary are `<Button>` and `<ButtonLink>` in `com
 | **Mobile** | 210svh track; separate photo layout and smaller stickers (5.85rem); tips sit **over the bottom of the photo** and open on **tap**; copy fixed at 15px. |
 | **Tokens** | `--bg`, `--bg-elevated` (as `--paper`), `--fg`, `--fg-muted`, `--fg-subtle`, `--highlight`, `--border`, `--text-micro`, `--text-small`, `--text-body-compact`, `--leading-body`, `--tracking-display`, `--shadow-xs`. Geometry is internal (02-tokens §4). |
 | **Usage rule** | Palette stays oatmeal / pine / lilac; the Vox yellow-blue-red is deliberately not used (`about-collage.css:2`, confirmed by Megh). |
+
+### 12b. About bento marquee (`/preview/v5.4`, `/preview/v5.5`)
+
+| | |
+|---|---|
+| **Anatomy** | Pine fold on v5.4, oatmeal on v5.5 (blends into the sky footer, which starts on `--bg`). Header row: eyebrow + H2 left, two bio paragraphs right (stacked on phones). Below it, a full-bleed **card row** that drifts on a loop, then a row with the lead-out and a **Pause / Play** button. Columns come in three shapes: **big** square (`--h`), **wide** (1.5 × `--h`) and **stack** (two half squares, either slot can be empty). Card kinds: photo (optional big word bottom-left, small note top-right, over a pine scrim), framed (photo on a lilac mat, words on the mat), type (mono label, optional thumbnails), places (three words stepped across), split (photo + oatmeal panel with three words), inset (pill photo + caption), pattern (pine scallops on oatmeal). All corners 18px. |
+| **States** | Drifts right to left on a 70s linear loop. **Hover**, **focus inside** and **Pause** (`aria-pressed`) hold it. Reduced motion: no drift, the duplicate row and the Pause button are hidden, and the row scrolls by hand. |
+| **Mobile** | `--h` 12rem and `--g` 0.75rem (18rem and 1rem from `md`). Same order; the page itself never scrolls sideways. |
+| **Tokens** | `--bg`, `--bg-elevated`, `--fg`, `--fg-muted`, `--border`, `--highlight`, plus `tone-pine` / `tone-oat` scopes. Card surfaces follow the fold: on pine, type cards sit on pine-elevated and cream panels on oatmeal; on oatmeal, type cards turn solid pine and cream panels lift to `--bg-elevated` with an inset `--border` hairline. The photo scrim is pine at 55% (top) and 88% (bottom). |
+| **Usage rule** | Type on photos never sits on a face: the big word goes bottom-left, the note top-right. Keep every card a real fact from the About copy or `lib/about-vox.ts`. |
 
 ---
 
