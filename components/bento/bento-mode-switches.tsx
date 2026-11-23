@@ -135,7 +135,11 @@ export function WindowShadeSwitch({ area }: { area?: string } = {}) {
   return (
     <SwitchCard
       eyebrow="Seat 14A · window"
-      caption="Drag the shade down. The cabin goes dark."
+      caption={
+        area
+          ? "Drag the shade down."
+          : "Drag the shade down. The cabin goes dark."
+      }
       area={area}
     >
       <button

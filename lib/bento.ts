@@ -15,7 +15,6 @@ export const BENTO_TILE_LENSES: Record<string, BentoLens[]> = {
   "product-led-seo-engine": ["tech", "business"],
   "ultra-web-platform": ["user", "tech"],
   "bond-bytes": ["user", "business"],
-  numbers: ["business"],
 };
 
 // The three case studies on the board, with the short form of each

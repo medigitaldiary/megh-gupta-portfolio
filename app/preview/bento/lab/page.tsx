@@ -15,6 +15,7 @@ import {
   PedalSwitch,
   WindowShadeSwitch,
 } from "@/components/bento/bento-mode-switches";
+import { NumbersTile } from "@/components/bento/bento-widgets";
 import "../bento.css";
 
 export const metadata: Metadata = {
@@ -78,6 +79,13 @@ export default function BentoLabPage() {
           </div>
           <div className="lg:col-span-4 lg:row-span-2">
             <RaceBibCard />
+          </div>
+        </div>
+
+        <p className="bento-eyebrow mt-8 mb-3">Off the board, for now</p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+          <div className="min-h-[13.5rem]">
+            <NumbersTile />
           </div>
         </div>
 

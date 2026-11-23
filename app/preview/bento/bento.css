@@ -63,8 +63,7 @@
     "route route"
     "seo seo"
     "ultra ultra"
-    "venn nums"
-    "shade shade"
+    "venn shade"
     "bytes bytes"
     "prints prints"
     "connect connect";
@@ -93,20 +92,16 @@
   grid-area: venn;
   min-height: 13.5rem;
 }
-.bento-area-nums {
-  grid-area: nums;
-  min-height: 13.5rem;
-}
 .bento-area-shade {
   grid-area: shade;
-  min-height: 21rem;
+  min-height: 13.5rem;
 }
 .bento-area-connect {
   grid-area: connect;
 }
 
-/* Desktop: 12 columns, 10 rows. Five rows fill one screen, so the whole
-   board is two folds. */
+/* Desktop: 12 columns, 9 rows. Five rows fill one screen, so the whole
+   board fits in two folds. */
 @media (min-width: 1024px) {
   .bento-grid {
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -120,14 +115,12 @@
       "seo seo seo seo intro intro intro intro ultra ultra ultra ultra"
       "prints prints prints bytes bytes bytes bytes bytes venn venn shade shade"
       "prints prints prints bytes bytes bytes bytes bytes venn venn shade shade"
-      "prints prints prints bytes bytes bytes bytes bytes venn venn shade shade"
-      "nums nums nums nums connect connect connect connect connect connect connect connect"
-      "nums nums nums nums connect connect connect connect connect connect connect connect";
+      "prints prints prints bytes bytes bytes bytes bytes connect connect connect connect"
+      "prints prints prints bytes bytes bytes bytes bytes connect connect connect connect";
   }
 
   .bento-area-ultra,
   .bento-area-venn,
-  .bento-area-nums,
   .bento-area-shade {
     min-height: 0;
   }
@@ -1287,6 +1280,13 @@ html[data-ink]::view-transition-new(root) {
   border-radius: 999px;
   background: var(--border);
   box-shadow: inset 0 1px 1px rgba(31, 59, 46, 0.3);
+}
+
+/* On the board the shade sits in a two-row tile, so the window shrinks. */
+@media (min-width: 1024px) {
+  .bento-area-shade .bento-window {
+    width: min(100%, 7.5rem);
+  }
 }
 
 /* ── Guitar pedal ── */

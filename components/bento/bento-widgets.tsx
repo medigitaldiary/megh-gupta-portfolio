@@ -435,7 +435,14 @@ export function VennTile() {
 
 // ── Numbers tile ───────────────────────────────────────────────
 
-export function NumbersTile({ lenses }: { lenses: string }) {
+export function NumbersTile({
+  lenses,
+  area,
+}: {
+  lenses?: string;
+  // Grid area on the board; the card lab places it by itself.
+  area?: string;
+} = {}) {
   const [i, setI] = useState(0);
   const reduced = useReducedMotion() ?? false;
 
@@ -454,7 +461,7 @@ export function NumbersTile({ lenses }: { lenses: string }) {
     <section
       aria-label="Numbers I have moved"
       data-lenses={lenses}
-      className="bento-tile bento-area-nums flex flex-col justify-between p-4 md:p-5"
+      className={`bento-tile ${area ?? "h-full"} flex flex-col justify-between p-4 md:p-5`}
     >
       <p className="bento-eyebrow">Receipts</p>
       <div key={i} className="bento-roll">

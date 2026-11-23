@@ -13,7 +13,6 @@ import {
 } from "@/components/bento/bento-tiles";
 import {
   type BentoPrint,
-  NumbersTile,
   PrintStack,
   type RouteJob,
   RouteTile,
@@ -146,7 +145,6 @@ export default async function BentoPreviewPage() {
           <VennTile />
           {/* The board's day and night switch, in the route's world. */}
           <WindowShadeSwitch area="bento-area-shade" />
-          <NumbersTile lenses={lensesFor("numbers")} />
           {bytes ? (
             <WorkTile
               card={bytes.card}
