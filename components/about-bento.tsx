@@ -186,7 +186,29 @@ function Frame({
   );
 }
 
-function CardBody({ card, big }: { card: Card; big: boolean }) {
+// Card surfaces flip with the fold. On pine, type cards lift to
+// pine-elevated and cream panels stay oatmeal. On oatmeal, type cards turn
+// solid pine (the dark tiles in the reference) and cream panels lift to
+// --bg-elevated with a toasted-oat hairline so they don't melt into the page.
+function surfaces(onPine: boolean) {
+  return {
+    ink: onPine ? "bg-bg-elevated" : "tone-pine bg-bg",
+    cream: onPine
+      ? "tone-oat bg-bg"
+      : "tone-oat bg-bg-elevated ring-1 ring-border ring-inset",
+  };
+}
+
+function CardBody({
+  card,
+  big,
+  onPine,
+}: {
+  card: Card;
+  big: boolean;
+  onPine: boolean;
+}) {
+  const { ink, cream } = surfaces(onPine);
   const sizes = big
     ? "(min-width: 768px) 18rem, 12rem"
     : "(min-width: 768px) 9rem, 6rem";
@@ -235,7 +257,9 @@ function CardBody({ card, big }: { card: Card; big: boolean }) {
       );
     case "type":
       return (
-        <div className="absolute inset-0 flex flex-col justify-between bg-bg-elevated p-3 md:p-4">
+        <div
+          className={`absolute inset-0 flex flex-col justify-between p-3 md:p-4 ${ink}`}
+        >
           <span className="font-mono text-[10px] uppercase leading-snug tracking-[0.16em] text-fg md:text-xs">
             {card.label}
           </span>
@@ -261,7 +285,9 @@ function CardBody({ card, big }: { card: Card; big: boolean }) {
       );
     case "places":
       return (
-        <div className="absolute inset-0 flex flex-col justify-between bg-bg-elevated p-3 font-mono text-[10px] uppercase tracking-[0.16em] text-fg md:p-4 md:text-xs">
+        <div
+          className={`absolute inset-0 flex flex-col justify-between p-3 font-mono ${ink} text-[10px] uppercase tracking-[0.16em] text-fg md:p-4 md:text-xs`}
+        >
           <span>{card.places[0]}</span>
           <span className="self-center">{card.places[1]}</span>
           <span className="self-end">{card.places[2]}</span>
@@ -273,7 +299,9 @@ function CardBody({ card, big }: { card: Card; big: boolean }) {
           <div className="relative">
             <Fill photo={card.photo} sizes="(min-width: 768px) 13.5rem, 9rem" />
           </div>
-          <div className="tone-oat flex flex-col justify-between bg-bg px-4 py-5 font-display text-xl text-fg md:px-6 md:py-8 md:text-3xl">
+          <div
+            className={`flex flex-col justify-between px-4 py-5 font-display text-xl text-fg md:px-6 md:py-8 md:text-3xl ${cream}`}
+          >
             <span>{card.words[0]}</span>
             <span>{card.words[1]}</span>
             <span>{card.words[2]}</span>
@@ -282,7 +310,9 @@ function CardBody({ card, big }: { card: Card; big: boolean }) {
       );
     case "inset":
       return (
-        <div className="tone-oat absolute inset-0 flex flex-col items-center gap-1.5 bg-bg p-2 md:gap-2 md:p-3">
+        <div
+          className={`absolute inset-0 flex flex-col items-center gap-1.5 p-2 md:gap-2 md:p-3 ${cream}`}
+        >
           <span className="relative h-1/2 w-full overflow-hidden rounded-full">
             <Fill photo={card.photo} sizes="(min-width: 768px) 8rem, 6rem" />
           </span>
@@ -293,7 +323,7 @@ function CardBody({ card, big }: { card: Card; big: boolean }) {
       );
     case "pattern":
       return (
-        <div className="tone-oat absolute inset-0 bg-bg">
+        <div className={`absolute inset-0 ${cream}`}>
           <span className="absolute top-2 left-0 w-full text-center font-mono text-[9px] uppercase tracking-[0.16em] text-fg md:top-3 md:text-[11px]">
             {card.label}
           </span>
@@ -321,7 +351,7 @@ function CardBody({ card, big }: { card: Card; big: boolean }) {
   }
 }
 
-function Strip({ copy }: { copy: number }) {
+function Strip({ copy, onPine }: { copy: number; onPine: boolean }) {
   return (
     // Every copy carries a trailing gap (pr) equal to the column gap, so
     // two copies side by side are exactly twice one copy: -50% is seamless.
@@ -334,26 +364,26 @@ function Strip({ copy }: { copy: number }) {
         <li key={col.id} className="shrink-0">
           {col.size === "big" && (
             <Frame className="size-[var(--h)]">
-              <CardBody card={col.card} big />
+              <CardBody card={col.card} big onPine={onPine} />
             </Frame>
           )}
           {col.size === "wide" && (
             <Frame className="h-[var(--h)] w-[calc(var(--h)*1.5)]">
-              <CardBody card={col.card} big />
+              <CardBody card={col.card} big onPine={onPine} />
             </Frame>
           )}
           {col.size === "stack" && (
             <div className="flex h-[var(--h)] w-[calc((var(--h)-var(--g))/2)] flex-col justify-between">
               {col.top ? (
                 <Frame className="size-[calc((var(--h)-var(--g))/2)]">
-                  <CardBody card={col.top} big={false} />
+                  <CardBody card={col.top} big={false} onPine={onPine} />
                 </Frame>
               ) : (
                 <span />
               )}
               {col.bottom ? (
                 <Frame className="size-[calc((var(--h)-var(--g))/2)]">
-                  <CardBody card={col.bottom} big={false} />
+                  <CardBody card={col.bottom} big={false} onPine={onPine} />
                 </Frame>
               ) : (
                 <span />
@@ -373,6 +403,7 @@ export function AboutBento({
   flow?: FoldFlow;
 } = {}) {
   const [paused, setPaused] = useState(false);
+  const onPine = flow?.tone === "pine";
 
   return (
     <section
@@ -425,8 +456,8 @@ export function AboutBento({
         className="bento-marquee mt-12 [--g:0.75rem] [--h:12rem] md:mt-16 md:[--g:1rem] md:[--h:18rem]"
       >
         <div className="bento-track flex w-max">
-          <Strip copy={0} />
-          <Strip copy={1} />
+          <Strip copy={0} onPine={onPine} />
+          <Strip copy={1} onPine={onPine} />
         </div>
       </div>
 
