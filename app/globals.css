@@ -400,6 +400,49 @@ section {
   }
 }
 
+/* About bento marquee (/preview/v5.4). The track holds the card row
+   twice; sliding it by -50% lands copy two exactly where copy one began,
+   so the loop has no seam. Hover, keyboard focus and the Pause button
+   (data-paused) hold it. Edges fade out with a mask. Reduced motion: no
+   drift, the duplicate hides and the row scrolls by hand. Explicit ask,
+   23 Nov 2026. Scoped: has no effect elsewhere. */
+.bento-marquee {
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 4%,
+    #000 96%,
+    transparent 100%
+  );
+}
+.bento-track {
+  animation: bento-drift 70s linear infinite;
+}
+.bento-marquee:hover .bento-track,
+.bento-marquee:focus-within .bento-track,
+.bento-marquee[data-paused="true"] .bento-track {
+  animation-play-state: paused;
+}
+@keyframes bento-drift {
+  to {
+    translate: -50% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bento-marquee {
+    overflow-x: auto;
+    mask-image: none;
+    padding-inline: 1.5rem;
+  }
+  .bento-track {
+    animation: none;
+  }
+  .bento-track [data-copy="1"],
+  .bento-toggle {
+    display: none;
+  }
+}
+
 /* About fold horizontal story track — hide the native scrollbar in
    favour of the custom progress bar below the row. Scrolling, snap, and
    keyboard focus all still work. Scoped: has no effect elsewhere. */

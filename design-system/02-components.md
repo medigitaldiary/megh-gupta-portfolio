@@ -272,6 +272,16 @@ Three CTA tiers. Primary and secondary are `<Button>` and `<ButtonLink>` in `com
 | **Tokens** | `--bg`, `--bg-elevated` (as `--paper`), `--fg`, `--fg-muted`, `--fg-subtle`, `--highlight`, `--border`, `--text-micro`, `--text-small`, `--text-body-compact`, `--leading-body`, `--tracking-display`, `--shadow-xs`. Geometry is internal (02-tokens §4). |
 | **Usage rule** | Palette stays oatmeal / pine / lilac; the Vox yellow-blue-red is deliberately not used (`about-collage.css:2`, confirmed by Megh). |
 
+### 12b. About bento marquee (`/preview/v5.4`)
+
+| | |
+|---|---|
+| **Anatomy** | Pine fold. Header row: eyebrow + H2 left, two bio paragraphs right (stacked on phones). Below it, a full-bleed **card row** that drifts on a loop, then a row with the lead-out and a **Pause / Play** button. Columns come in three shapes: **big** square (`--h`), **wide** (1.5 × `--h`) and **stack** (two half squares, either slot can be empty). Card kinds: photo (optional big word bottom-left, small note top-right, over a pine scrim), framed (photo on a lilac mat, words on the mat), type (mono label, optional thumbnails), places (three words stepped across), split (photo + oatmeal panel with three words), inset (pill photo + caption), pattern (pine scallops on oatmeal). All corners 18px. |
+| **States** | Drifts right to left on a 70s linear loop. **Hover**, **focus inside** and **Pause** (`aria-pressed`) hold it. Reduced motion: no drift, the duplicate row and the Pause button are hidden, and the row scrolls by hand. |
+| **Mobile** | `--h` 12rem and `--g` 0.75rem (18rem and 1rem from `md`). Same order; the page itself never scrolls sideways. |
+| **Tokens** | `--bg`, `--bg-elevated`, `--fg`, `--fg-muted`, `--highlight`, plus `tone-pine` / `tone-oat` scopes. The photo scrim is pine at 55% (top) and 88% (bottom). |
+| **Usage rule** | Type on photos never sits on a face: the big word goes bottom-left, the note top-right. Keep every card a real fact from the About copy or `lib/about-vox.ts`. |
+
 ---
 
 ## 13. Contact fold and booker
