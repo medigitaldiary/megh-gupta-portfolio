@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BentoBoard } from "@/components/bento/bento-board";
 import { BentoEntrance } from "@/components/bento/bento-entrance";
+import { WindowShadeSwitch } from "@/components/bento/bento-mode-switches";
 import { ModeToggle } from "@/components/bento/bento-mode-toggle";
 import {
   ConnectTile,
@@ -143,6 +144,8 @@ export default async function BentoPreviewPage() {
             />
           ) : null}
           <VennTile />
+          {/* The board's day and night switch, in the route's world. */}
+          <WindowShadeSwitch area="bento-area-shade" />
           <NumbersTile lenses={lensesFor("numbers")} />
           {bytes ? (
             <WorkTile

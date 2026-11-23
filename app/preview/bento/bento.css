@@ -64,6 +64,7 @@
     "seo seo"
     "ultra ultra"
     "venn nums"
+    "shade shade"
     "bytes bytes"
     "prints prints"
     "connect connect";
@@ -96,12 +97,16 @@
   grid-area: nums;
   min-height: 13.5rem;
 }
+.bento-area-shade {
+  grid-area: shade;
+  min-height: 21rem;
+}
 .bento-area-connect {
   grid-area: connect;
 }
 
-/* Desktop: 12 columns, 9 rows. Five rows fill one screen, so the whole
-   board fits in two folds. */
+/* Desktop: 12 columns, 10 rows. Five rows fill one screen, so the whole
+   board is two folds. */
 @media (min-width: 1024px) {
   .bento-grid {
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -113,15 +118,17 @@
       "seo seo seo seo intro intro intro intro ultra ultra ultra ultra"
       "seo seo seo seo intro intro intro intro ultra ultra ultra ultra"
       "seo seo seo seo intro intro intro intro ultra ultra ultra ultra"
-      "prints prints prints bytes bytes bytes bytes bytes venn venn nums nums"
-      "prints prints prints bytes bytes bytes bytes bytes venn venn nums nums"
-      "prints prints prints bytes bytes bytes bytes bytes connect connect connect connect"
-      "prints prints prints bytes bytes bytes bytes bytes connect connect connect connect";
+      "prints prints prints bytes bytes bytes bytes bytes venn venn shade shade"
+      "prints prints prints bytes bytes bytes bytes bytes venn venn shade shade"
+      "prints prints prints bytes bytes bytes bytes bytes venn venn shade shade"
+      "nums nums nums nums connect connect connect connect connect connect connect connect"
+      "nums nums nums nums connect connect connect connect connect connect connect connect";
   }
 
   .bento-area-ultra,
   .bento-area-venn,
-  .bento-area-nums {
+  .bento-area-nums,
+  .bento-area-shade {
     min-height: 0;
   }
 }
@@ -1159,7 +1166,7 @@ html[data-ink]::view-transition-new(root) {
 
 .bento-window {
   position: relative;
-  width: 9.5rem;
+  width: min(100%, 9.5rem);
   aspect-ratio: 3 / 4;
   padding: 0.875rem;
   border-radius: 46% / 36%;

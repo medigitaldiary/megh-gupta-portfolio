@@ -251,7 +251,7 @@ export function ConnectTile() {
         <h2 className="mt-3 font-display text-[2.5rem] text-accent-fg leading-[1.05] tracking-tight md:text-[3rem] lg:text-[2.25rem] xl:text-[2.5rem]">
           Fifteen minutes is enough.
         </h2>
-        <p className="mt-3 max-w-md text-accent-fg/80 text-base leading-normal lg:hidden xl:block xl:text-sm">
+        <p className="mt-3 max-w-md text-accent-fg/80 text-base leading-normal lg:text-sm">
           A role, a product problem, or a question about bonds. Pick a slot or
           drop a line.
         </p>

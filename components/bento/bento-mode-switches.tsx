@@ -13,19 +13,29 @@ function SwitchCard({
   eyebrow,
   children,
   caption,
+  area,
 }: {
   eyebrow: string;
   children: ReactNode;
   caption: string;
+  // On the board the card takes a grid area and drops the status label,
+  // which has no room in a two-column tile.
+  area?: string;
 }) {
   const { mode } = useBentoBoard();
   return (
-    <section className="bento-tile flex h-full flex-col gap-4 p-5 md:p-6">
+    <section
+      className={`bento-tile flex h-full flex-col gap-4 ${
+        area ? `${area} p-4 md:p-5` : "p-5 md:p-6"
+      }`}
+    >
       <div className="flex items-center justify-between gap-3">
         <p className="bento-eyebrow">{eyebrow}</p>
-        <p className="bento-eyebrow" aria-live="polite">
-          {mode === "night" ? "After hours" : "Day job"}
-        </p>
+        {area ? null : (
+          <p className="bento-eyebrow" aria-live="polite">
+            {mode === "night" ? "After hours" : "Day job"}
+          </p>
+        )}
       </div>
       <div className="flex min-h-0 flex-1 items-center justify-center">
         {children}
@@ -66,16 +76,32 @@ function playClick() {
 
 // ── 1. Aeroplane window shade ──────────────────────────────────
 // Drag the shade down and the cabin goes dark. A tap or the keyboard
-// does the same thing.
+// does the same thing. With `area` it is the board's tile, and the switch
+// spreads the ink bleed from the window.
 
-export function WindowShadeSwitch() {
-  const { mode, setMode } = useBentoBoard();
+export function WindowShadeSwitch({ area }: { area?: string } = {}) {
+  const { mode, setMode, toggleMode } = useBentoBoard();
   const night = mode === "night";
   const [drag, setDrag] = useState<number | null>(null);
   const start = useRef<{ y: number; pull: number; height: number } | null>(
     null,
   );
   const dragged = useRef(false);
+  const windowRef = useRef<HTMLButtonElement | null>(null);
+
+  const switchTo = (next: "day" | "night") => {
+    if (next === mode) return;
+    if (!area) {
+      setMode(next);
+      return;
+    }
+    const rect = windowRef.current?.getBoundingClientRect();
+    toggleMode(
+      rect
+        ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+        : undefined,
+    );
+  };
 
   const pull = drag ?? (night ? 1 : 0);
 
@@ -100,7 +126,7 @@ export function WindowShadeSwitch() {
 
   const onPointerEnd = () => {
     if (start.current && dragged.current && drag !== null) {
-      setMode(drag > 0.5 ? "night" : "day");
+      switchTo(drag > 0.5 ? "night" : "day");
     }
     start.current = null;
     setDrag(null);
@@ -110,8 +136,10 @@ export function WindowShadeSwitch() {
     <SwitchCard
       eyebrow="Seat 14A · window"
       caption="Drag the shade down. The cabin goes dark."
+      area={area}
     >
       <button
+        ref={windowRef}
         type="button"
         role="switch"
         aria-checked={night}
@@ -128,7 +156,7 @@ export function WindowShadeSwitch() {
             dragged.current = false;
             return;
           }
-          setMode(night ? "day" : "night");
+          switchTo(night ? "day" : "night");
         }}
       >
         <span className="bento-window-pane">

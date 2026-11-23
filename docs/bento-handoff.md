@@ -19,14 +19,15 @@ You are continuing work on Megh Gupta's portfolio repo (`medigitaldiary/megh-gup
 - `lib/bento.ts` (board data)
 
 **Done so far**
-1. Board built: route tile (Lucknow flips "City of Nawabs" to Hindi; Goa stop with BITS crest chip, Backstage, Waves '22; Bengaluru jobs), work tiles, print stack, Venn lenses, numbers, connect. Scan mode, the BLR now tile and the workbench were removed later; the grid is 9 rows on desktop.
+1. Board built: route tile (Lucknow flips "City of Nawabs" to Hindi; Goa stop with BITS crest chip, Backstage, Waves '22; Bengaluru jobs), work tiles, print stack, Venn lenses, numbers, connect, and the window shade (seat 14A) as the board's day/night switch. Scan mode, the BLR now tile and the workbench were removed; the grid is 10 rows on desktop.
 2. Card lab: six object cards (GT650 retro dials with a synthesised engine sound and 05000 km, AI call card, Waves crew pass, cassette, crossfader, HYROX bib) and four day/night switches (window shade, guitar pedal, ignition key, clock out).
 3. Fly-in entrance: tiles fly in one by one and snap; small loops start after landing.
 4. Ink bleed day/night: one sun/moon toggle (bottom left, `T` key too) spreads the new theme with a marbled edge. Built on the View Transitions API, not the html2canvas recipe from the PDF Megh shared, so glass and videos keep working.
 5. `CLAUDE.md` updated with the bento exceptions (28px radius, glass, night mode, entrance, ink bleed).
 
 **Open decisions (ask Megh)**
-- Which lab cards and which switch move onto the board.
+- Which lab cards move onto the board (the window shade already did).
+- Whether to keep the floating sun/moon toggle now that the shade is on the board.
 - Stand-in values: bib number, sample call, clock-in time.
 - Short "day" flash on reload when night was saved.
 
