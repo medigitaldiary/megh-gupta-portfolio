@@ -3,7 +3,6 @@ import Link from "next/link";
 import { CoverVideo } from "@/components/bento/bento-widgets";
 import { CopyEmailButton } from "@/components/copy-email-button";
 import { BENTO_CAL, BENTO_EMAIL, BENTO_LINKEDIN } from "@/lib/bento";
-import type { LabCard } from "@/lib/lab";
 import type { WorkCard } from "@/lib/work";
 
 // Server-rendered tiles for the bento board. Anything that holds state
@@ -128,25 +127,6 @@ export function WorkTile({
       data-lenses={lenses}
       className={`bento-tile bento-link ${area} group flex flex-col`}
     >
-      {/* Scan mode face: number, role, where, when. */}
-      <div
-        data-scan-show
-        className="absolute inset-0 z-20 flex-col justify-between bg-bg-elevated p-6"
-      >
-        <p className="bento-eyebrow">
-          {card.company} · {card.timeline}
-        </p>
-        <div>
-          <p className="font-display text-[3rem] text-fg leading-none tracking-tight">
-            {value}
-          </p>
-          <p className="mt-2 text-fg-muted text-sm leading-snug">{label}</p>
-        </div>
-        <p className="text-fg text-sm">
-          {card.title} · {card.role}
-        </p>
-      </div>
-
       {layout === "bleed" ? (
         <>
           <div className="absolute inset-0 bg-fg">
@@ -256,101 +236,27 @@ function Arrow() {
   );
 }
 
-// ── Workbench ──────────────────────────────────────────────────
-// Lab projects sorted by how done they are. Stages come from lib/lab.ts.
-
-export function WorkbenchTile({
-  building,
-  testing,
-  shipped,
-  moreShipped,
-  lenses,
-}: {
-  building: LabCard[];
-  testing: LabCard[];
-  shipped: LabCard[];
-  moreShipped: number;
-  lenses: string;
-}) {
-  const columns = [
-    { id: "building", label: "Building", cards: building },
-    { id: "testing", label: "Testing", cards: testing },
-    { id: "shipped", label: "Shipped", cards: shipped },
-  ];
-
-  return (
-    <section
-      aria-label="The workbench: side projects by stage"
-      data-lenses={lenses}
-      className="bento-tile bento-area-bench flex flex-col gap-4 p-5 md:p-6"
-    >
-      <div className="flex items-baseline justify-between gap-3">
-        <p className="bento-eyebrow">The workbench</p>
-        <p className="text-fg-muted text-sm">Things I build after hours.</p>
-      </div>
-      <div className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-3">
-        {columns.map((col) => (
-          <div
-            key={col.id}
-            className="flex flex-col gap-2 rounded-[18px] bg-bg/60 p-3"
-          >
-            <p className="flex items-center gap-1.5 font-mono text-[0.625rem] text-fg-muted uppercase tracking-[0.1em]">
-              <span
-                className="bento-stage-dot"
-                data-stage={col.id}
-                aria-hidden="true"
-              />
-              {col.label}
-              <span className="ml-auto text-fg-subtle">
-                {col.cards.length + (col.id === "shipped" ? moreShipped : 0)}
-              </span>
-            </p>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-1">
-              {col.cards.map((card) => (
-                <div
-                  key={card.slug}
-                  className="rounded-[12px] bg-bg-elevated px-3 py-2 shadow-[0_1px_2px_rgba(31,59,46,0.08)]"
-                >
-                  <p className="text-fg text-sm leading-tight">{card.title}</p>
-                  <p className="mt-0.5 truncate font-mono text-[0.625rem] text-fg-subtle uppercase tracking-[0.08em]">
-                    {card.stack.join(" · ")}
-                  </p>
-                </div>
-              ))}
-            </div>
-            {col.id === "shipped" && moreShipped > 0 ? (
-              <p className="px-1 text-fg-subtle text-xs">
-                +{moreShipped} more in daily use
-              </p>
-            ) : null}
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 // ── Connect ────────────────────────────────────────────────────
 
 export function ConnectTile() {
   return (
     <section
       aria-label="Get in touch"
-      className="bento-tile bento-tile-pine bento-area-connect flex flex-col justify-between gap-8 p-6 md:p-8"
+      className="bento-tile bento-tile-pine bento-area-connect flex flex-col justify-between gap-6 p-6 md:p-8 lg:p-6 xl:p-7"
     >
       <div>
         <p className="bento-eyebrow bento-eyebrow-on-pine">
           Let&apos;s connect
         </p>
-        <h2 className="mt-3 font-display text-[2.5rem] text-accent-fg leading-[1.05] tracking-tight md:text-[3rem]">
+        <h2 className="mt-3 font-display text-[2.5rem] text-accent-fg leading-[1.05] tracking-tight md:text-[3rem] lg:text-[2.25rem] xl:text-[2.5rem]">
           Fifteen minutes is enough.
         </h2>
-        <p className="mt-3 max-w-md text-accent-fg/80 text-base leading-normal">
+        <p className="mt-3 max-w-md text-accent-fg/80 text-base leading-normal lg:hidden xl:block xl:text-sm">
           A role, a product problem, or a question about bonds. Pick a slot or
           drop a line.
         </p>
       </div>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex shrink-0 flex-wrap gap-3">
         <a
           href={BENTO_CAL}
           target="_blank"

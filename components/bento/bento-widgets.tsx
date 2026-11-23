@@ -328,7 +328,6 @@ export function PrintStack({ prints }: { prints: BentoPrint[] }) {
   return (
     <section
       aria-label="Off the clock"
-      data-scan-dim
       className="bento-tile bento-area-prints flex flex-col p-5 md:p-6"
     >
       <div className="flex items-center justify-between">
@@ -389,7 +388,6 @@ export function VennTile() {
   return (
     <section
       aria-label="Filter the board by lens"
-      data-scan-dim
       className="bento-tile bento-area-venn flex flex-col justify-between p-4 md:p-5"
     >
       <p className="bento-eyebrow">Pick a lens</p>
@@ -472,104 +470,6 @@ export function NumbersTile({ lenses }: { lenses: string }) {
             className={`h-1 flex-1 rounded-full ${idx === i ? "bg-fg" : "bg-border"}`}
           />
         ))}
-      </div>
-    </section>
-  );
-}
-
-// ── Bengaluru, right now ───────────────────────────────────────
-
-function statusFor(day: string, hour: number): string {
-  if (hour < 7) return "Asleep. Email works.";
-  const weekend = day === "Sat" || day === "Sun";
-  if (day === "Sun" && hour < 11) return "Probably on the GT650.";
-  if (weekend) return hour < 19 ? "Out exploring." : "Guitar, or FIFA.";
-  if (hour < 10) return "Coffee, then standup.";
-  if (hour < 19) return "Shipping.";
-  if (hour < 21) return "At the gym.";
-  return "Guitar, or FIFA.";
-}
-
-export function NowTile() {
-  const [now, setNow] = useState<{ time: string; status: string } | null>(null);
-
-  useEffect(() => {
-    const fmt = new Intl.DateTimeFormat("en-IN", {
-      timeZone: "Asia/Kolkata",
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-      weekday: "short",
-    });
-    const hourFmt = new Intl.DateTimeFormat("en-GB", {
-      timeZone: "Asia/Kolkata",
-      hour: "2-digit",
-      hour12: false,
-    });
-    const tick = () => {
-      const date = new Date();
-      const parts = fmt.formatToParts(date);
-      const get = (type: string) =>
-        parts.find((p) => p.type === type)?.value ?? "";
-      const hour = Number(hourFmt.format(date)) % 24;
-      setNow({
-        time: `${get("hour")}:${get("minute")} ${get("dayPeriod").toUpperCase()}`,
-        status: statusFor(get("weekday"), hour),
-      });
-    };
-    tick();
-    const id = window.setInterval(tick, 20000);
-    return () => window.clearInterval(id);
-  }, []);
-
-  return (
-    <section
-      aria-label="Bengaluru, right now"
-      data-scan-dim
-      className="bento-tile bento-area-now flex flex-col justify-between p-4 md:p-5"
-    >
-      <p className="bento-eyebrow flex items-center gap-1.5">
-        <span className="bento-live-dot" aria-hidden="true" />
-        BLR · now
-      </p>
-      <div>
-        <p className="font-display text-[1.5rem] text-fg leading-none tracking-tight md:text-[1.625rem]">
-          {now?.time ?? "··:··"}
-        </p>
-        <p className="mt-1.5 min-h-5 text-fg-muted text-sm leading-snug">
-          {now?.status ?? ""}
-        </p>
-      </div>
-    </section>
-  );
-}
-
-// ── Scan mode switch ───────────────────────────────────────────
-
-export function ScanSwitch() {
-  const { scan, setScan } = useBentoBoard();
-
-  return (
-    <section
-      aria-label="Scan mode"
-      className="bento-tile bento-area-scan flex flex-col justify-between p-4 md:p-5"
-    >
-      <p className="bento-eyebrow">Scan mode</p>
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-fg text-sm leading-snug">
-          Short on time?
-          <span className="block text-fg-muted">Numbers only.</span>
-        </p>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={scan}
-          aria-label="Scan mode: show numbers, roles and contact only"
-          onClick={() => setScan(!scan)}
-          className="bento-switch shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-elevated"
-        >
-          <span className="bento-switch-knob" />
-        </button>
       </div>
     </section>
   );

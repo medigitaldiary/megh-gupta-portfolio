@@ -6,7 +6,7 @@ Paste everything below the line into a new chat to pick up the work.
 
 You are continuing work on Megh Gupta's portfolio repo (`medigitaldiary/megh-gupta-portfolio`). Read `CLAUDE.md` first; it holds the locked rules (palette, no em dashes, branch flow, motion exceptions).
 
-**Project:** a one-page bento board, a second take on the portfolio, meant to live at `bento.meghgupta.in` later. All sections fit in two folds on desktop. The idea: the route LKO → GOI → BLR is the page identity (a boarding pass), with work tiles, a photo stack, a Venn, numbers, a workbench and a contact tile around it.
+**Project:** a one-page bento board, a second take on the portfolio, meant to live at `bento.meghgupta.in` later. All sections fit in two folds on desktop. The idea: the route LKO → GOI → BLR is the page identity (a boarding pass), with work tiles, a photo stack, a Venn, numbers and a contact tile around it.
 
 **Where it is**
 - Branch: `mxg/cool-archimedes-2ol5k5`. Draft PR into `dev`: #137.
@@ -15,11 +15,11 @@ You are continuing work on Megh Gupta's portfolio repo (`medigitaldiary/megh-gup
 
 **Key files**
 - `app/preview/bento/page.tsx`, `app/preview/bento/bento.css` (the one approved CSS file for the board)
-- `components/bento/`: `bento-board.tsx` (shared state: lens, scan, day/night mode), `bento-tiles.tsx`, `bento-widgets.tsx`, `bento-entrance.tsx` (fly-in), `bento-ink.ts` + `bento-mode-toggle.tsx` (ink bleed day/night), `bento-lab-cards.tsx`, `bento-mode-switches.tsx`
+- `components/bento/`: `bento-board.tsx` (shared state: lens, day/night mode), `bento-tiles.tsx`, `bento-widgets.tsx`, `bento-entrance.tsx` (fly-in), `bento-ink.ts` + `bento-mode-toggle.tsx` (ink bleed day/night), `bento-lab-cards.tsx`, `bento-mode-switches.tsx`
 - `lib/bento.ts` (board data)
 
 **Done so far**
-1. Board built: route tile (Lucknow flips "City of Nawabs" to Hindi; Goa stop with BITS crest chip, Backstage, Waves '22; Bengaluru jobs), work tiles, print stack, Venn lenses, numbers, scan mode, now tile, workbench, connect.
+1. Board built: route tile (Lucknow flips "City of Nawabs" to Hindi; Goa stop with BITS crest chip, Backstage, Waves '22; Bengaluru jobs), work tiles, print stack, Venn lenses, numbers, connect. Scan mode, the BLR now tile and the workbench were removed later; the grid is 9 rows on desktop.
 2. Card lab: six object cards (GT650 retro dials with a synthesised engine sound and 05000 km, AI call card, Waves crew pass, cassette, crossfader, HYROX bib) and four day/night switches (window shade, guitar pedal, ignition key, clock out).
 3. Fly-in entrance: tiles fly in one by one and snap; small loops start after landing.
 4. Ink bleed day/night: one sun/moon toggle (bottom left, `T` key too) spreads the new theme with a marbled edge. Built on the View Transitions API, not the html2canvas recipe from the PDF Megh shared, so glass and videos keep working.

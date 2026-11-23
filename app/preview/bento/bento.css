@@ -66,8 +66,6 @@
     "venn nums"
     "bytes bytes"
     "prints prints"
-    "scan now"
-    "bench bench"
     "connect connect";
 }
 
@@ -98,23 +96,12 @@
   grid-area: nums;
   min-height: 13.5rem;
 }
-.bento-area-scan {
-  grid-area: scan;
-  min-height: 8.5rem;
-}
-.bento-area-now {
-  grid-area: now;
-  min-height: 8.5rem;
-}
-.bento-area-bench {
-  grid-area: bench;
-}
 .bento-area-connect {
   grid-area: connect;
 }
 
-/* Desktop: 12 columns, 10 rows. Five rows fill one screen, so the whole
-   board is two folds. */
+/* Desktop: 12 columns, 9 rows. Five rows fill one screen, so the whole
+   board fits in two folds. */
 @media (min-width: 1024px) {
   .bento-grid {
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -128,16 +115,13 @@
       "seo seo seo seo intro intro intro intro ultra ultra ultra ultra"
       "prints prints prints bytes bytes bytes bytes bytes venn venn nums nums"
       "prints prints prints bytes bytes bytes bytes bytes venn venn nums nums"
-      "prints prints prints bytes bytes bytes bytes bytes scan scan now now"
-      "bench bench bench bench bench bench connect connect connect connect connect connect"
-      "bench bench bench bench bench bench connect connect connect connect connect connect";
+      "prints prints prints bytes bytes bytes bytes bytes connect connect connect connect"
+      "prints prints prints bytes bytes bytes bytes bytes connect connect connect connect";
   }
 
   .bento-area-ultra,
   .bento-area-venn,
-  .bento-area-nums,
-  .bento-area-scan,
-  .bento-area-now {
+  .bento-area-nums {
     min-height: 0;
   }
 }
@@ -206,7 +190,7 @@
 }
 
 /* ── Glass ────────────────────────────────────────────────── */
-/* Only on small things: pills, buttons, the switch. The big tiles stay
+/* Only on small things: pills and buttons. The big tiles stay
    solid so phones are not asked to blur half the screen. */
 
 .bento-glass {
@@ -468,74 +452,6 @@
   }
 }
 
-/* ── Workbench ────────────────────────────────────────────── */
-
-.bento-stage-dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 999px;
-  border: 1.5px solid var(--fg);
-}
-
-.bento-stage-dot[data-stage="testing"] {
-  background: linear-gradient(90deg, var(--fg) 50%, transparent 50%);
-}
-
-.bento-stage-dot[data-stage="shipped"] {
-  background: var(--fg);
-}
-
-/* ── Scan mode ────────────────────────────────────────────── */
-
-.bento-switch {
-  position: relative;
-  width: 3.25rem;
-  height: 2rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--bg) 70%, transparent);
-  box-shadow:
-    inset 0 2px 3px rgba(31, 59, 46, 0.22),
-    inset 0 -1px 1px var(--bento-shine),
-    0 0 0 1px rgba(31, 59, 46, 0.08);
-  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.bento-switch[aria-checked="true"] {
-  background: var(--fg);
-}
-
-.bento-switch-knob {
-  position: absolute;
-  top: 0.1875rem;
-  left: 0.1875rem;
-  width: 1.625rem;
-  height: 1.625rem;
-  border-radius: 999px;
-  background: var(--bg-elevated);
-  box-shadow:
-    inset 0 1.5px 1px var(--bento-shine),
-    inset 0 -1.5px 1px var(--bento-ink-soft),
-    0 3px 5px -2px rgba(31, 59, 46, 0.5);
-  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.bento-switch[aria-checked="true"] .bento-switch-knob {
-  transform: translateX(1.25rem);
-}
-
-.bento [data-scan-show] {
-  display: none;
-}
-
-.bento[data-scan="on"] [data-scan-show] {
-  display: flex;
-}
-
-.bento[data-scan="on"] [data-scan-dim] {
-  opacity: 0.3;
-  filter: saturate(0.5);
-}
-
 /* ── Entrance ─────────────────────────────────────────────── */
 /* Tiles wait hidden, fly in one by one (bento-entrance.tsx sets the
    direction and the delay), then snap. A tile's own animations are held
@@ -763,8 +679,7 @@ html[data-ink]::view-transition-new(root) {
   .bento-tile,
   .bento-btn,
   .bento-print,
-  .bento-flip > span,
-  .bento-switch-knob {
+  .bento-flip > span {
     transition: none;
   }
 

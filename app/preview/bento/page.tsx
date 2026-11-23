@@ -8,17 +8,14 @@ import { ModeToggle } from "@/components/bento/bento-mode-toggle";
 import {
   ConnectTile,
   IntroTile,
-  WorkbenchTile,
   WorkTile,
 } from "@/components/bento/bento-tiles";
 import {
   type BentoPrint,
-  NowTile,
   NumbersTile,
   PrintStack,
   type RouteJob,
   RouteTile,
-  ScanSwitch,
   VennTile,
 } from "@/components/bento/bento-widgets";
 import { ABOUT_VOX_CHAPTERS } from "@/lib/about-vox";
@@ -26,7 +23,6 @@ import { BENTO_PRINT_IDS, BENTO_TILE_LENSES, BENTO_WORK } from "@/lib/bento";
 import { getCaseStudy } from "@/lib/case-study";
 import { withCoverVideos } from "@/lib/cover-video";
 import { formatDateRange, getAllExperience } from "@/lib/experience";
-import { getEfficiencyLabCards, getSideQuestLabCards } from "@/lib/lab";
 import { getWorkCardBySlug, type WorkCard } from "@/lib/work";
 import "./bento.css";
 
@@ -102,13 +98,6 @@ export default async function BentoPreviewPage() {
   });
   const goa = ABOUT_VOX_CHAPTERS.find((c) => c.id === "convocation");
 
-  const sideQuests = getSideQuestLabCards();
-  const inUse = getEfficiencyLabCards();
-  const shipped = [
-    ...sideQuests.filter((c) => c.stage === "v1" || c.stage === "shipped"),
-    ...inUse,
-  ];
-
   return (
     <BentoBoard>
       <main className="mx-auto max-w-[90rem] px-4 pt-4 pb-10 md:px-8 lg:px-12 lg:pt-6">
@@ -166,19 +155,10 @@ export default async function BentoPreviewPage() {
             />
           ) : null}
 
-          {/* Tiles 6 to 8: person. Would I want to work with them? */}
+          {/* Tile 6: person. Would I want to work with them? */}
           <PrintStack prints={prints} />
-          <ScanSwitch />
-          <NowTile />
-          <WorkbenchTile
-            building={sideQuests.filter((c) => c.stage === "building")}
-            testing={sideQuests.filter((c) => c.stage === "testing")}
-            shipped={shipped.slice(0, 3)}
-            moreShipped={Math.max(0, shipped.length - 3)}
-            lenses={lensesFor("workbench")}
-          />
 
-          {/* Tile 9: action. How do I reach them? */}
+          {/* Tile 7: action. How do I reach them? */}
           <ConnectTile />
         </BentoEntrance>
 
