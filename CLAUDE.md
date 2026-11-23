@@ -352,6 +352,7 @@ Before declaring any task complete, verify:
 - [ ] All external links have `rel="noopener noreferrer"` and open in new tab where appropriate.
 - [ ] All interactive elements are keyboard-navigable and have focus states.
 - [ ] No hardcoded colors outside the CSS variables defined in Section 3.
+- [ ] For any UI or UX change: the `design-auditor` agent has reviewed it (§16). Fix its blockers or say in the PR body why one stands.
 
 For a new case study specifically:
 - [ ] Frontmatter complete (no missing required fields).
@@ -595,5 +596,28 @@ Before merging any PR that touches `app/layout.tsx`, homepage content, or introd
 - Do not silently `noindex` a real page. If a page shouldn't be indexed, say so in the PR body.
 
 The detailed content spec for future sections' meta (case studies, Lab, Stack, Connect) lives in `PRD.md §7.5`. This file only holds the shape rules.
+
+---
+
+## 16. Design audit agent (runs on every pull request)
+
+`design-auditor` is a Claude agent that checks a change against this file and `design-system/`, then reports what does not follow the design system and an ordered plan to fix it. It reads code only and never edits it.
+
+| Piece | File | Job |
+|---|---|---|
+| The agent | `.claude/agents/design-auditor.md` | Its instructions: where the rules live, the review checklist, the report format. |
+| The trigger | `.github/workflows/design-audit.yml` | Starts the agent on GitHub whenever a pull request that touches `app/` or `components/` is opened or updated. The agent posts one `## Design audit` comment on the PR and updates it on later pushes. |
+
+**What it checks.** CTA tiers (one primary per fold, the right tier, the highlight limit), token colours, radius, shadow and z-index, type roles and mobile hierarchy, component states and focus rings, touch targets, motion and its reduced-motion fallback, icons, fold jobs and nav order, copy voice, SEO on new pages, and whether the spec in `design-system/` was updated with the change.
+
+**What comes back.** A verdict (pass, pass with fixes, blocked), findings grouped as blocker / should fix / note with file and line and the rule each breaks, anything that needs Megh's call, an ordered fix plan, and a list of what it could not check. It does not see rendered pages, so visual questions are listed as "not checked" with the page and width to look at.
+
+**It works for any tool.** The audit runs on the pull request, so it does not matter which AI tool or person wrote the code. Inside a Claude Code session the same agent can be launched by hand before opening a PR.
+
+**It does not block merging.** The comment is advice. Promotion PRs from `dev` to `main` are skipped, because their changes were audited on the way into `dev`.
+
+**Setup it depends on.** The Claude GitHub App installed on the repository, and a repository secret named `CLAUDE_CODE_OAUTH_TOKEN` (made with `claude setup-token`). Without the secret the workflow fails and no audit is posted.
+
+**Keeping it honest.** When a rule in this file changes, update the checklist in the agent file in the same PR. An approved exception recorded in §3 is not a finding.
 
 End of file.

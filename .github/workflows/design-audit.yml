@@ -1,0 +1,57 @@
+name: Design audit
+
+# Starts the design-auditor agent on every pull request that touches UI
+# code. The agent's instructions live in .claude/agents/design-auditor.md.
+# It reads the change, compares it with CLAUDE.md and design-system/, and
+# posts one "Design audit" comment with findings and a fix plan.
+# Needs the Claude GitHub App on the repository and a repository secret
+# named CLAUDE_CODE_OAUTH_TOKEN (create it with `claude setup-token`).
+# Spec: CLAUDE.md section 16.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - "app/**"
+      - "components/**"
+
+concurrency:
+  group: design-audit-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    # dev to main promotions were audited on their way into dev.
+    if: github.head_ref != 'dev'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            You are the design-auditor agent for this repository.
+
+            Read .claude/agents/design-auditor.md first. It is your full set of
+            instructions, including the section "When you run on a pull request".
+            Follow it exactly.
+
+            Repository: ${{ github.repository }}
+            Pull request number: ${{ github.event.pull_request.number }}
+            Base branch: origin/${{ github.base_ref }}
+            Temp directory for the report file: ${{ runner.temp }}
+
+            Audit what this pull request changes against the base branch, then
+            post the report as one comment on the pull request.
+          claude_args: |
+            --max-turns 60
+            --allowedTools "Read,Grep,Glob,Write,Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git merge-base:*),Bash(git fetch:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr comment:*)"
