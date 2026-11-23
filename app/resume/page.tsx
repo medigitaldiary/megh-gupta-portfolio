@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     locale: "en_IN",
     images: [
       {
-        url: "/opengraph-image",
+        url: "/images/og/megh-gupta.jpg",
         width: 1200,
         height: 630,
         alt: "Megh Gupta in a white turtleneck",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     title: "Megh Gupta · Resume",
     description:
       "Associate Product Manager, Fintech. Founding PM at BondScanner and platform PM on Tap Invest's ultra app.",
-    images: ["/opengraph-image"],
+    images: ["/images/og/megh-gupta.jpg"],
   },
 };
 

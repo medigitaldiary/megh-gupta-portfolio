@@ -85,7 +85,7 @@ export const metadata: Metadata = {
     username: "meghgupta",
     images: [
       {
-        url: "/opengraph-image",
+        url: "/images/og/megh-gupta.jpg",
         width: 1200,
         height: 630,
         alt: "Megh Gupta in a white turtleneck",
@@ -96,7 +96,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
-    images: ["/opengraph-image"],
+    images: ["/images/og/megh-gupta.jpg"],
   },
   category: "personal",
 };
@@ -112,7 +112,7 @@ const jsonLd = {
       name: "Megh Gupta",
       alternateName: "meghgupta",
       url: `${SITE_URL}/`,
-      image: `${SITE_URL}/opengraph-image`,
+      image: `${SITE_URL}/images/og/megh-gupta.jpg`,
       jobTitle: "Product Manager",
       description: DESCRIPTION,
       worksFor: {
